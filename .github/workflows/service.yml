@@ -1,10 +1,15 @@
 name: Service's default build
 
-on: [push]
+on:
+  workflow_call:
+    outputs:
+      firstword:
+        description: "The first output string"
+        value: ${{ jobs.FirstJob.outputs.foo }}
 
 jobs:
 
-  Explore-GitHub-Actions:
+  FirstJob:
     runs-on: ubuntu-latest
     steps:
       - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
@@ -18,3 +23,6 @@ jobs:
         run: |
           ls ${{ github.workspace }}
       - run: echo "🍏 This job's status is ${{ job.status }}."
+
+      - id: finalStep
+        run: echo "::set-output name=foo::bar"
