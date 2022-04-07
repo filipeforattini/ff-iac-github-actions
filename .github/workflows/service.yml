@@ -1,5 +1,7 @@
 name: Service\'s default build
 
+on: [push]
+
 jobs:
 
   Explore-GitHub-Actions:
