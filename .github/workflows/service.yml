@@ -1,4 +1,4 @@
-name: Service\'s default build
+name: Service's default build
 
 on: [push]
 
