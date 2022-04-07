@@ -1,4 +1,4 @@
-name: Service's default build
+name: service
 
 on:
   workflow_call:
