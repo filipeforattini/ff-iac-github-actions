@@ -12,20 +12,24 @@ jobs:
   Setup:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
+
+      # nodejs
       - name: Check node repository
         id: check_node_repository
         uses: andstor/file-existence-action@v1
         with:
           files: "package.json"
 
+      - if: steps.check_node_repository.outputs.files_exists == 'true'
+        run: echo "::set-output name=package_language::node"
+
+      # python
       - name: Check python repository
         id: check_python_repository
         uses: andstor/file-existence-action@v1
         with:
           files: "requirements.txt"
-
-      - if: steps.check_node_repository.outputs.files_exists == 'true'
-        run: echo "::set-output name=package_language::node"
 
       - if: steps.check_python_repository.outputs.files_exists == 'true'
         run: echo "::set-output name=package_language::python"
