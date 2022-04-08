@@ -19,9 +19,9 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
-      NoLanguageDetected: ${{ steps.check_else_write.outputs.NoLanguageDetected }}
-      RepositoryIsNode: ${{ steps.check_node_repository_write.outputs.RepositoryIsNode }}
-      RepositoryIsPython: ${{ steps.check_python_repository_write.outputs.RepositoryIsPython }}
+      NoLanguageDetected: ${{ steps.check_else_write.outputs.test }}
+      RepositoryIsNode: ${{ steps.check_node_repository_write.outputs.test }}
+      RepositoryIsPython: ${{ steps.check_python_repository_write.outputs.test }}
 
     steps:
       - uses: actions/checkout@v3
@@ -35,7 +35,7 @@ jobs:
 
       - name: Update with Node reference
         if: steps.check_node_repository.outputs.files_exists == 'true'
-        run: echo "::set-output name=RepositoryIsNode::'true'"
+        run: echo "::set-output name=test::true"
 
       # python
       - name: Check if python repository
@@ -46,7 +46,7 @@ jobs:
 
       - name: Update with Python reference
         if: steps.check_python_repository.outputs.files_exists == 'true'
-        run: echo "::set-output name=RepositoryIsPython::'true'"
+        run: echo "::set-output name=test::true"
 
       # else
       - name: Update with undefined reference
@@ -54,7 +54,7 @@ jobs:
           always()
           && steps.check_node_repository.outputs.files_exists == 'false'
           && steps.check_python_repository.outputs.files_exists == 'false'
-        run: echo "::set-output name=NoLanguageDetected::'true'"
+        run: echo "::set-output name=test::true"
 
   Checkpoint:
     runs-on: ubuntu-latest
