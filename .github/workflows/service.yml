@@ -101,7 +101,7 @@ jobs:
         if: |
           always()
           && steps.check_yarn_lock.outputs.files_exists == 'false'
-          && steps.check_package_lock.outputs.files_exists == 'true'
+          && steps.check_package_lock.outputs.files_exists == 'false'
         run: npm ci
 
       - run: npm run lint --if-present
