@@ -31,7 +31,7 @@ jobs:
         id: check_node_repository
         uses: andstor/file-existence-action@v1
         with:
-          files: "package.json"
+          files: "package.json, **/*.{js|ts}"
 
       - name: check_node_repository_write
         if: steps.check_node_repository.outputs.files_exists == 'true'
@@ -42,12 +42,13 @@ jobs:
         id: check_python_repository
         uses: andstor/file-existence-action@v1
         with:
-          files: "requirements.txt"
+          files: "requirements.txt, **/*.py"
 
       - name: check_python_repository_write
         if: steps.check_python_repository.outputs.files_exists == 'true'
         run: echo "::set-output name=answer::true"
 
+      # else
       - name: check_else_write
         if: |
           always()
