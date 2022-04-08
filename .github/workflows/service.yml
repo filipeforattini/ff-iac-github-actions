@@ -35,7 +35,7 @@ jobs:
 
       - name: Update with Node reference
         if: steps.check_node_repository.outputs.files_exists == 'true'
-        run: echo "::set-output name=RepositoryIsNode::true"
+        run: echo "::set-output name=RepositoryIsNode::'true'"
 
       # python
       - name: Check if python repository
@@ -46,7 +46,7 @@ jobs:
 
       - name: Update with Python reference
         if: steps.check_python_repository.outputs.files_exists == 'true'
-        run: echo "::set-output name=RepositoryIsPython::true"
+        run: echo "::set-output name=RepositoryIsPython::'true'"
 
       # else
       - name: Update with undefined reference
@@ -54,7 +54,7 @@ jobs:
           always()
           && steps.check_node_repository.outputs.files_exists == 'false'
           && steps.check_python_repository.outputs.files_exists == 'false'
-        run: echo "::set-output name=NoLanguageDetected::true"
+        run: echo "::set-output name=NoLanguageDetected::'true'"
 
   Checkpoint:
     runs-on: ubuntu-latest
@@ -64,10 +64,6 @@ jobs:
       - run: echo "RepositoryIsNode=${{needs.Setup.outputs.RepositoryIsNode}}"
       - run: echo "RepositoryIsPython=${{needs.Setup.outputs.RepositoryIsPython}}"
       - run: echo "NoLanguageDetected=${{needs.Setup.outputs.NoLanguageDetected}}"
-
-      - run: echo "RepositoryIsNode=${needs.Setup.outputs.RepositoryIsNode}"
-      - run: echo "RepositoryIsPython=${needs.Setup.outputs.RepositoryIsPython}"
-      - run: echo "NoLanguageDetected=${needs.Setup.outputs.NoLanguageDetected}"
 
 
   Install-Node:
