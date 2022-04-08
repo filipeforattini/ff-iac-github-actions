@@ -27,29 +27,29 @@ jobs:
       - uses: actions/checkout@v3
 
       # nodejs
-      - name: Check node repository
+      - name: Check if Node repository
         id: check_node_repository
         uses: andstor/file-existence-action@v1
         with:
           files: "package.json"
 
-      - name: check_node_repository_write
+      - name: Update with Node reference
         if: steps.check_node_repository.outputs.files_exists == 'true'
         run: echo "::set-output name=RepositoryIsNode::true"
 
       # python
-      - name: Check python repository
+      - name: Check if python repository
         id: check_python_repository
         uses: andstor/file-existence-action@v1
         with:
           files: "requirements.txt, **/*.py"
 
-      - name: check_python_repository_write
+      - name: Update with Python reference
         if: steps.check_python_repository.outputs.files_exists == 'true'
         run: echo "::set-output name=RepositoryIsPython::true"
 
       # else
-      - name: check_else_write
+      - name: Update with undefined reference
         if: |
           always()
           && steps.check_node_repository.outputs.files_exists == 'false'
