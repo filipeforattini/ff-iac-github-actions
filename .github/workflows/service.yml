@@ -14,8 +14,9 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
-      RepositoryIsNode: ${{ steps.check_node_repository_write.outputs.is_node }}
-      RepositoryIsPython: ${{ steps.check_node_repository_write.outputs.is_python }}
+      NoLanguageDetected: ${{ steps.package_language.outputs.answer }}
+      RepositoryIsNode: ${{ steps.check_node_repository_write.outputs.answer }}
+      RepositoryIsPython: ${{ steps.check_python_repository_write.outputs.answer }}
 
     steps:
       - uses: actions/checkout@v3
@@ -29,7 +30,7 @@ jobs:
 
       - name: check_node_repository_write
         if: steps.check_node_repository.outputs.files_exists == 'true'
-        run: echo "::set-output name=is_node::true"
+        run: echo "::set-output name=answer::true"
 
       # python
       - name: Check python repository
@@ -38,14 +39,16 @@ jobs:
         with:
           files: "requirements.txt"
 
-      - if: steps.check_python_repository.outputs.files_exists == 'true'
-        run: echo "::set-output name=is_python::true"
+      - name: check_python_repository_write
+        if: steps.check_python_repository.outputs.files_exists == 'true'
+        run: echo "::set-output name=answer::true"
 
-      - if: |
+      - name: check_else_write
+        if: |
           always()
           && steps.check_node_repository.outputs.files_exists == 'false'
           && steps.check_python_repository.outputs.files_exists == 'false'
-        run: echo "::set-output name=package_language::not_found"
+        run: echo "::set-output name=answer::true"
 
 
   Install-Node:
