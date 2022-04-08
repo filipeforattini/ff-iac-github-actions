@@ -33,6 +33,7 @@ jobs:
 
   Install-Node:
     runs-on: ubuntu-latest
+    needs: Setup
     if: jobs.Setup.outputs.package_language == 'node'
 
     strategy:
