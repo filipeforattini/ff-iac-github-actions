@@ -19,41 +19,44 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
-      NoLanguageDetected: ${{ steps.check_else_write.outputs.test }}
-      RepositoryIsNode: ${{ steps.check_node_repository_write.outputs.test }}
-      RepositoryIsPython: ${{ steps.check_python_repository_write.outputs.test }}
+      NoLanguageDetected: "${{ steps.check_else_write.outputs.test }}"
+      RepositoryIsNode: ${{ steps.check_node_write.outputs.test }}
+      RepositoryIsPython: ${{ steps.check_python_write.outputs.test }}
 
     steps:
       - uses: actions/checkout@v3
 
       # nodejs
       - name: Check if Node repository
-        id: check_node_repository
+        id: check_node
         uses: andstor/file-existence-action@v1
         with:
           files: "package.json"
 
       - name: Update with Node reference
-        if: steps.check_node_repository.outputs.files_exists == 'true'
+        id: check_node_write
+        if: steps.check_node.outputs.files_exists == 'true'
         run: echo "::set-output name=test::true"
 
       # python
       - name: Check if python repository
-        id: check_python_repository
+        id: check_python
         uses: andstor/file-existence-action@v1
         with:
           files: "requirements.txt, **/*.py"
 
       - name: Update with Python reference
-        if: steps.check_python_repository.outputs.files_exists == 'true'
+        id: check_python_write
+        if: steps.check_python.outputs.files_exists == 'true'
         run: echo "::set-output name=test::true"
 
       # else
       - name: Update with undefined reference
+        id: check_else_write
         if: |
           always()
-          && steps.check_node_repository.outputs.files_exists == 'false'
-          && steps.check_python_repository.outputs.files_exists == 'false'
+          && steps.check_node.outputs.files_exists == 'false'
+          && steps.check_python.outputs.files_exists == 'false'
         run: echo "::set-output name=test::true"
 
   Checkpoint:
