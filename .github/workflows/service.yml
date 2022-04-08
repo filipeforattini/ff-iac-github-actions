@@ -5,13 +5,13 @@ on:
     outputs:
       NoLanguageDetected: 
         description: "Checks if a language is detected"
-        value: ${{ steps.check_else_write.outputs.answer }}
+        value: ${{ jobs.Setup.outputs.NoLanguageDetected }}
       RepositoryIsNode:
         description: "Checks if the repository is a Node.js repository"
-        value: ${{ steps.check_node_repository_write.outputs.answer }}
+        value: ${{ jobs.Setup.outputs.RepositoryIsNode }}
       RepositoryIsPython:
         description: "Checks if the repository is a Python repository"
-        value: ${{ steps.check_python_repository_write.outputs.answer }}
+        value: ${{ jobs.Setup.outputs.RepositoryIsPython }}
 
 jobs:
 
