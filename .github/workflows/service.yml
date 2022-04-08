@@ -72,6 +72,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      # checks
       - name: Check yarn.lock
         id: check_yarn_lock
         uses: andstor/file-existence-action@v1
@@ -84,11 +85,26 @@ jobs:
         with:
           files: "package.lock"
 
+      # install node
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
 
+      # load caches
+      - uses: actions/cache@v2
+        if: steps.check_yarn_lock.outputs.files_exists == 'true'
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+
+      - uses: actions/cache@v2
+        if: steps.check_package_lock.outputs.files_exists == 'true'
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/package-lock.lock') }}
+          
+      # install dependencies
       - name: Install dependencies with yarn install
         if: steps.check_yarn_lock.outputs.files_exists == 'true'
         run: yarn
@@ -104,11 +120,7 @@ jobs:
           && steps.check_package_lock.outputs.files_exists == 'false'
         run: npm install
 
-      - uses: actions/cache@v2
-        with:
-          path: '**/node_modules'
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
-
+      # run scripts
       - run: npm run lint --if-present
 
       - run: npm run test --if-present
