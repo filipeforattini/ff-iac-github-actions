@@ -1,12 +1,17 @@
 name: service
 
 on:
-
   workflow_call:
     outputs:
-      package_language:
-        description: "Repository main language"
-        value: ${{ jobs.Setup.outputs.package_language }}
+      NoLanguageDetected: 
+        description: "Checks if a language is detected"
+        value: ${{ steps.check_else_write.outputs.answer }}
+      RepositoryIsNode:
+        description: "Checks if the repository is a Node.js repository"
+        value: ${{ steps.check_node_repository_write.outputs.answer }}
+      RepositoryIsPython:
+        description: "Checks if the repository is a Python repository"
+        value: ${{ steps.check_python_repository_write.outputs.answer }}
 
 jobs:
 
@@ -14,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
-      NoLanguageDetected: ${{ steps.package_language.outputs.answer }}
+      NoLanguageDetected: ${{ steps.check_else_write.outputs.answer }}
       RepositoryIsNode: ${{ steps.check_node_repository_write.outputs.answer }}
       RepositoryIsPython: ${{ steps.check_python_repository_write.outputs.answer }}
 
