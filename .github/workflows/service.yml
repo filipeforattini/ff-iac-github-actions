@@ -89,6 +89,9 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
+      - run: echo check_yarn_lock=${{steps.check_yarn_lock.outputs.files_exists}}
+      - run: echo check_package_lock=${{steps.check_package_lock.outputs.files_exists}}
+
       - name: yarn install
         if: steps.check_yarn_lock.outputs.files_exists == 'true'
         run: yarn
@@ -108,7 +111,7 @@ jobs:
         with:
           path: '**/node_modules'
           key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
-          
+
       - run: npm run lint --if-present
 
       - run: npm run test --if-present
