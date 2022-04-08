@@ -30,6 +30,12 @@ jobs:
       - if: steps.check_python_repository.outputs.files_exists == 'true'
         run: echo "::set-output name=package_language::python"
 
+      - if: |
+          always()
+          && steps.check_node_repository.outputs.files_exists == 'false'
+          && steps.check_python_repository.outputs.files_exists == 'false'
+        run: echo "::set-output name=package_language::not_found"
+
 
   Install-Node:
     runs-on: ubuntu-latest
