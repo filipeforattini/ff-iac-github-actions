@@ -31,7 +31,8 @@ jobs:
         id: check_node_repository
         uses: andstor/file-existence-action@v1
         with:
-          files: "package.json, **/*.{js|ts}"
+          files: "package.json"
+          # files: "package.json, **/*.{js|ts}"
 
       - name: check_node_repository_write
         if: steps.check_node_repository.outputs.files_exists == 'true'
