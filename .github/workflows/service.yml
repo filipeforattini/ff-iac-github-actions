@@ -32,7 +32,6 @@ jobs:
         uses: andstor/file-existence-action@v1
         with:
           files: "package.json"
-          # files: "package.json, **/*.{js|ts}"
 
       - name: check_node_repository_write
         if: steps.check_node_repository.outputs.files_exists == 'true'
@@ -114,3 +113,10 @@ jobs:
 
       - name: Pip install
         run: pip install -r requirements.txt
+
+  Ending:
+    runs-on: ubuntu-latest
+    needs: Setup
+
+    steps:
+      - run: echo ${{needs.Setup.outputs.RepositoryIsNode}}
