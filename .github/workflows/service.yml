@@ -119,4 +119,6 @@ jobs:
     needs: Setup
 
     steps:
-      - run: echo ${{needs.Setup.outputs.RepositoryIsNode}}
+      - run: echo "is node? ${{needs.Setup.outputs.RepositoryIsNode}}"
+      - run: echo "is python? ${{needs.Setup.outputs.RepositoryIsPython}}"
+      - run: echo "problem? ${{needs.Setup.outputs.NoLanguageDetected}}"
