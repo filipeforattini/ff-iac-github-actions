@@ -79,7 +79,7 @@ jobs:
           files: "yarn.lock"
 
       - name: Check package.lock
-        id: check_yarn_npm
+        id: check_package_lock
         uses: andstor/file-existence-action@v1
         with:
           files: "package.lock"
@@ -89,15 +89,15 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Yarn install
+      - name: yarn install
         if: steps.check_yarn_lock.outputs.files_exists == 'true'
         run: yarn
 
-      - name: Npm ci
+      - name: npm ci
         if: steps.check_package_lock.outputs.files_exists == 'true'
         run: npm ci
 
-      - name: Npm install
+      - name: npm install
         if: |
           always()
           && steps.check_yarn_lock.outputs.files_exists == 'false'
