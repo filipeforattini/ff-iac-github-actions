@@ -106,9 +106,9 @@ jobs:
         if: steps.check_yarn_lock.outputs.files_exists == 'true'
         run: npm ci
 
+      - run: npm run test --if-present
+
       - run: npm run build --if-present
-      
-      - run: npm test --if-present
 
 
   Install-Python:
