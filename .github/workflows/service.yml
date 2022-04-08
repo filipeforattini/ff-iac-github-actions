@@ -4,32 +4,36 @@ on:
   workflow_call:
     outputs:
       firstword:
-        description: "The first output string"
-        value: ${{ jobs.FirstJob.outputs.foo }}
+        description: "Repository main language"
+        value: ${{ jobs.Setup.outputs.package_language }}
 
 jobs:
 
-  FirstJob:
+  Setup:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
-      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
-      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
-      - name: Check out repository code
-        uses: actions/checkout@v3
-      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
-      - run: echo "🖥️ The workflow is now ready to test your code on the runner."
-      - name: List files in the repository
-        run: |
-          ls ${{ github.workspace }}
-      - run: echo "🍏 This job's status is ${{ job.status }}."
+      - name: Check node repository
+        id: check_node_repository
+        uses: andstor/file-existence-action@v1
+        with:
+          files: "package.json"
 
-      - id: finalStep
-        run: echo "::set-output name=foo::bar"
+      - name: Check python repository
+        id: check_python_repository
+        uses: andstor/file-existence-action@v1
+        with:
+          files: "requirements.txt"
+
+      - if: steps.check_node_repository.outputs.files_exists == 'true'
+        run: echo "::set-output name=package_language::node"
+
+      - if: steps.check_python_repository.outputs.files_exists == 'true'
+        run: echo "::set-output name=package_language::python"
 
 
-  Install:
+  Install-Node:
     runs-on: ubuntu-latest
+    if: jobs.Setup.outputs.package_language == 'node'
 
     strategy:
       matrix:
@@ -48,7 +52,7 @@ jobs:
         id: check_yarn_npm
         uses: andstor/file-existence-action@v1
         with:
-          files: "yarn.lock"
+          files: "package.lock"
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
