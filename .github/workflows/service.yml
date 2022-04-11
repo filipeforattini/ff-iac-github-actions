@@ -137,7 +137,7 @@ jobs:
       - name: Write dockerfile first part
         if: steps.check_dockerfile.outputs.files_exists == 'false'
         run: |
-          echo FROM node:${{ matrix.node-version }}-alpine     > dockerfile
+          echo FROM node:${{ matrix.node-version }}-alpine      > dockerfile
           echo WORKDIR /app                                     >> dockerfile
           echo COPY . /app                                      >> dockerfile
 
@@ -150,7 +150,7 @@ jobs:
       - name: Write dockerfile command npm ci
         if: |
           steps.check_dockerfile.outputs.files_exists == 'false'
-          && steps.check_yarn_lock.outputs.files_exists == 'true'
+          && steps.check_package_lock.outputs.files_exists == 'true'
         run: echo RUN yarn                                      >> dockerfile
 
       - name: Write dockerfile command npm install
