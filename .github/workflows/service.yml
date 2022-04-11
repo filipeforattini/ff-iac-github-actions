@@ -137,7 +137,7 @@ jobs:
       - name: Write dockerfile first part
         if: steps.check_dockerfile.outputs.files_exists == 'false'
         run: |
-          echo FROM node:${{ matrix.node-version }}-alpine"     > dockerfile
+          echo FROM node:${{ matrix.node-version }}-alpine     > dockerfile
           echo WORKDIR /app                                     >> dockerfile
           echo COPY . /app                                      >> dockerfile
 
