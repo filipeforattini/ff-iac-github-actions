@@ -23,7 +23,9 @@ jobs:
       RepositoryIsNode: ${{ steps.check_node_write.outputs.answer }}
       RepositoryIsPython: ${{ steps.check_python_write.outputs.answer }}
       Branch: ${{ steps.commit_data.outputs.branch }}
-      Hash: ${{ steps.commit_data.outputs.sha_short }}
+      ShaHash: ${{ steps.commit_data.outputs.sha_short }}
+      Date: ${{ steps.commit_data.outputs.date }}
+      Timestamp: ${{ steps.commit_data.outputs.timestamp }}
 
     steps:
       - uses: actions/checkout@v3
@@ -34,6 +36,8 @@ jobs:
         run: |
           echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
           echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+          echo "::set-output name=date::$(date +'%Y-%m-%d')"
+          echo "::set-output name=timestamp::$(date +%s)"
 
       # nodejs
       - name: Check if Node repository
@@ -188,7 +192,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: ghcr.io/${{ github.repository }}:latest, ghcr.io/${{ github.repository }}:t-${{date +%s}}, ghcr.io/${{ github.repository }}:c-${{needs.Setup.outputs.Hash}}, ghcr.io/${{ github.repository }}:c-${{needs.Setup.outputs.Branch}}
+          tags: ghcr.io/${{ github.repository }}:latest, ghcr.io/${{ github.repository }}:t-${{needs.Setup.outputs.Timestamp}}, ghcr.io/${{ github.repository }}:c-${{needs.Setup.outputs.ShaHash}}, ghcr.io/${{ github.repository }}:c-${{needs.Setup.outputs.Branch}}
 
   Install-Python:
     runs-on: ubuntu-latest
