@@ -205,7 +205,7 @@ jobs:
           DOCKER_IMAGE_TAGS="${DOCKER_IMAGE_TAGS}, ghcr.io/${{ github.repository }}:node-${{matrix.node-version}}-d-${{needs.Setup.outputs.Date}}"
           DOCKER_IMAGE_TAGS="${DOCKER_IMAGE_TAGS}, ghcr.io/${{ github.repository }}:node-${{matrix.node-version}}-b-${{needs.Setup.outputs.Branch}}"
           DOCKER_IMAGE_TAGS="${DOCKER_IMAGE_TAGS}, ghcr.io/${{ github.repository }}:node-${{matrix.node-version}}-c-${{needs.Setup.outputs.ShaHash}}"
-          echo "${DOCKER_IMAGE_TAGS}"
+          echo "TAGS=${DOCKER_IMAGE_TAGS}"
           echo "::set-output name=docker_image_tags::${DOCKER_IMAGE_TAGS}"
 
       - name: Build and push
