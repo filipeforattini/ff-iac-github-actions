@@ -55,7 +55,6 @@ jobs:
           echo "::set-output name=date::$(date +'%Y-%m-%d')"
           echo "::set-output name=timestamp::$(date +%s)"
 
-
       # language nodejs
       - name: Check if Node repository
         id: check_node
@@ -88,6 +87,13 @@ jobs:
           && steps.check_node.outputs.files_exists == 'false'
           && steps.check_python.outputs.files_exists == 'false'
         run: echo "::set-output name=answer::true"
+
+      # teste
+      - uses: actions/github-script@v6
+        with:
+          script: |
+            const { print } = require('./scripts/common.js')
+            print('Hello World!')
 
   Build-Node:
     runs-on: ubuntu-latest
