@@ -5,7 +5,7 @@ on:
     inputs:
       type:
         type: string
-        required: true
+        required: false
         default: service
       containerRegistry:
         type: string
