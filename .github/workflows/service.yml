@@ -184,9 +184,6 @@ jobs:
           echo ENTRYPOINT [\"npm\"]                             >> dockerfile
           echo CMD [\"start\"]                                  >> dockerfile
 
-      - name: PRINT DOCKERFILE
-        run: cat dockerfile
-
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
       - name: Set up Docker Buildx
@@ -195,12 +192,28 @@ jobs:
       - name: Log in to registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
 
+      - name: Write dockerfile last part
+        id: generate_docker_image_tags
+        run: |
+          DOCKER_IMAGE_TAGS="ghcr.io/${{ github.repository }}:latest"
+          DOCKER_IMAGE_TAGS="${DOCKER_IMAGE_TAGS}, ghcr.io/${{ github.repository }}:d-${{needs.Setup.outputs.Date}}"
+          DOCKER_IMAGE_TAGS="${DOCKER_IMAGE_TAGS}, ghcr.io/${{ github.repository }}:b-${{needs.Setup.outputs.Branch}}"
+          DOCKER_IMAGE_TAGS="${DOCKER_IMAGE_TAGS}, ghcr.io/${{ github.repository }}:c-${{needs.Setup.outputs.ShaHash}}"
+          DOCKER_IMAGE_TAGS="${DOCKER_IMAGE_TAGS}, ghcr.io/${{ github.repository }}:t-${{needs.Setup.outputs.Timestamp}}"
+          DOCKER_IMAGE_TAGS="${DOCKER_IMAGE_TAGS}, ghcr.io/${{ github.repository }}:node-${{matrix.node-version}}"
+          DOCKER_IMAGE_TAGS="${DOCKER_IMAGE_TAGS}, ghcr.io/${{ github.repository }}:node-${{matrix.node-version}}-latest"
+          DOCKER_IMAGE_TAGS="${DOCKER_IMAGE_TAGS}, ghcr.io/${{ github.repository }}:node-${{matrix.node-version}}-d-${{needs.Setup.outputs.Date}}"
+          DOCKER_IMAGE_TAGS="${DOCKER_IMAGE_TAGS}, ghcr.io/${{ github.repository }}:node-${{matrix.node-version}}-b-${{needs.Setup.outputs.Branch}}"
+          DOCKER_IMAGE_TAGS="${DOCKER_IMAGE_TAGS}, ghcr.io/${{ github.repository }}:node-${{matrix.node-version}}-c-${{needs.Setup.outputs.ShaHash}}"
+          echo "${DOCKER_IMAGE_TAGS}"
+          echo "::set-output name=docker_image_tags::${DOCKER_IMAGE_TAGS}"
+
       - name: Build and push
         uses: docker/build-push-action@v2
         with:
           context: .
           push: true
-          tags: ghcr.io/${{ github.repository }}:latest, ghcr.io/${{ github.repository }}:t-${{needs.Setup.outputs.Timestamp}}, ghcr.io/${{ github.repository }}:c-${{needs.Setup.outputs.ShaHash}}, ghcr.io/${{ github.repository }}:b-${{needs.Setup.outputs.Branch}}, ghcr.io/${{ github.repository }}:node-${{matrix.node-version}}, ghcr.io/${{ github.repository }}:node-${{matrix.node-version}}-c-${{needs.Setup.outputs.ShaHash}}, ghcr.io/${{ github.repository }}:d-${{needs.Setup.outputs.Date}}
+          tags: ${{steps.generate_docker_image_tags.outputs.docker_image_tags}}
 
   Install-Python:
     runs-on: ubuntu-latest
