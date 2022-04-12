@@ -13,7 +13,7 @@ on:
         default: ghcr.io
       mysqlEnabled:
         type: boolean
-        required: true
+        required: false
         default: false
     
     outputs:
