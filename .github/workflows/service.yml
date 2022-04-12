@@ -51,6 +51,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           ref: main
+          path: .ff
           repository: filipeforattini/ff-iac-github-actions
 
       # get commit hash
@@ -103,7 +104,7 @@ jobs:
       - uses: actions/github-script@v6
         with:
           script: |
-            const { print } = require('./ff-iac-github-actions/scripts/common.js')
+            const { print } = require('./.ff/scripts/common.js')
             print('Hello World!')
 
   Build-Node:
