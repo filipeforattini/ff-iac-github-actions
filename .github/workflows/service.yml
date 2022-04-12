@@ -189,22 +189,26 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
-      - name: Log in to registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
-
-      - name: Write dockerfile last part
+      - name: Login to GHCR
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+        
+      - name: Define image tags
         id: generate_docker_image_tags
         run: |
-          DOCKER_IMAGE_TAGS="ghcr.io/${{ github.repository }}:latest"
-          DOCKER_IMAGE_TAGS="${DOCKER_IMAGE_TAGS}, ghcr.io/${{ github.repository }}:d-${{needs.Setup.outputs.Date}}"
-          DOCKER_IMAGE_TAGS="${DOCKER_IMAGE_TAGS}, ghcr.io/${{ github.repository }}:b-${{needs.Setup.outputs.Branch}}"
-          DOCKER_IMAGE_TAGS="${DOCKER_IMAGE_TAGS}, ghcr.io/${{ github.repository }}:c-${{needs.Setup.outputs.ShaHash}}"
-          DOCKER_IMAGE_TAGS="${DOCKER_IMAGE_TAGS}, ghcr.io/${{ github.repository }}:t-${{needs.Setup.outputs.Timestamp}}"
-          DOCKER_IMAGE_TAGS="${DOCKER_IMAGE_TAGS}, ghcr.io/${{ github.repository }}:node-${{matrix.node-version}}"
-          DOCKER_IMAGE_TAGS="${DOCKER_IMAGE_TAGS}, ghcr.io/${{ github.repository }}:node-${{matrix.node-version}}-latest"
-          DOCKER_IMAGE_TAGS="${DOCKER_IMAGE_TAGS}, ghcr.io/${{ github.repository }}:node-${{matrix.node-version}}-d-${{needs.Setup.outputs.Date}}"
-          DOCKER_IMAGE_TAGS="${DOCKER_IMAGE_TAGS}, ghcr.io/${{ github.repository }}:node-${{matrix.node-version}}-b-${{needs.Setup.outputs.Branch}}"
-          DOCKER_IMAGE_TAGS="${DOCKER_IMAGE_TAGS}, ghcr.io/${{ github.repository }}:node-${{matrix.node-version}}-c-${{needs.Setup.outputs.ShaHash}}"
+          DOCKER_IMAGE_TAGS="ghcr.io/${{github.repository}}:latest"
+          DOCKER_IMAGE_TAGS="${DOCKER_IMAGE_TAGS}, ghcr.io/${{github.repository}}:d-${{needs.Setup.outputs.Date}}"
+          DOCKER_IMAGE_TAGS="${DOCKER_IMAGE_TAGS}, ghcr.io/${{github.repository}}:b-${{needs.Setup.outputs.Branch}}"
+          DOCKER_IMAGE_TAGS="${DOCKER_IMAGE_TAGS}, ghcr.io/${{github.repository}}:c-${{needs.Setup.outputs.ShaHash}}"
+          DOCKER_IMAGE_TAGS="${DOCKER_IMAGE_TAGS}, ghcr.io/${{github.repository}}:t-${{needs.Setup.outputs.Timestamp}}"
+          DOCKER_IMAGE_TAGS="${DOCKER_IMAGE_TAGS}, ghcr.io/${{github.repository}}:node-${{matrix.node-version}}"
+          DOCKER_IMAGE_TAGS="${DOCKER_IMAGE_TAGS}, ghcr.io/${{github.repository}}:node-${{matrix.node-version}}-latest"
+          DOCKER_IMAGE_TAGS="${DOCKER_IMAGE_TAGS}, ghcr.io/${{github.repository}}:node-${{matrix.node-version}}-d-${{needs.Setup.outputs.Date}}"
+          DOCKER_IMAGE_TAGS="${DOCKER_IMAGE_TAGS}, ghcr.io/${{github.repository}}:node-${{matrix.node-version}}-b-${{needs.Setup.outputs.Branch}}"
+          DOCKER_IMAGE_TAGS="${DOCKER_IMAGE_TAGS}, ghcr.io/${{github.repository}}:node-${{matrix.node-version}}-c-${{needs.Setup.outputs.ShaHash}}"
           echo "TAGS=${DOCKER_IMAGE_TAGS}"
           echo "::set-output name=docker_image_tags::${DOCKER_IMAGE_TAGS}"
 
@@ -213,7 +217,10 @@ jobs:
         with:
           context: .
           push: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
           tags: ${{steps.generate_docker_image_tags.outputs.docker_image_tags}}
+          labels: "organization: ${{github.repository_owner}}, repository: ${{github.repository}}, branch: ${{needs.Setup.outputs.Branch}}, commit: ${{needs.Setup.outputs.ShaHash}}, date: ${{needs.Setup.outputs.Date}}, timestamp: ${{needs.Setup.outputs.Timestamp}}"
 
   Install-Python:
     runs-on: ubuntu-latest
