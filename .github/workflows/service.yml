@@ -147,7 +147,7 @@ jobs:
           files: "dockerfile"
 
       - name: Check .dockerignore
-        id: check_dockerfile
+        id: check_dockerignore
         uses: andstor/file-existence-action@v1
         with:
           files: ".dockerignore"
