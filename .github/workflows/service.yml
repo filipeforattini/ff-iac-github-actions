@@ -44,12 +44,15 @@ jobs:
       RepositoryIsPython: ${{ steps.check_python_write.outputs.answer }}
 
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/checkout@v3
+      - name: Downloading current repository
+        uses: actions/checkout@v3
+      
+      - name: Cloning tools
+        uses: actions/checkout@v3
         with:
-          repository: filipeforattini/ff-iac-github-actions
-          branch: main
+          ref: main
           path: _scripts
+          repository: filipeforattini/ff-iac-github-actions
 
       # get commit hash
       - name: Get commit hash
