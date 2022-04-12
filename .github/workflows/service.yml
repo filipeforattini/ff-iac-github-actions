@@ -95,6 +95,8 @@ jobs:
           && steps.check_python.outputs.files_exists == 'false'
         run: echo "::set-output name=answer::true"
 
+      - run: ls -la
+
       # teste
       - uses: actions/github-script@v6
         with:
