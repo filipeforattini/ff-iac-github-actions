@@ -2,6 +2,20 @@ name: service
 
 on:
   workflow_call:
+    inputs:
+      type:
+        type: string
+        required: true
+        default: service
+      containerRegistry:
+        type: string
+        required: true
+        default: ghcr.io
+      mysqlEnabled:
+        type: boolean
+        required: true
+        default: false
+    
     outputs:
       NoLanguageDetected: 
         description: "Checks if a language is detected"
@@ -41,6 +55,7 @@ jobs:
           echo "::set-output name=date::$(date +'%Y-%m-%d')"
           echo "::set-output name=timestamp::$(date +%s)"
 
+
       # language nodejs
       - name: Check if Node repository
         id: check_node
@@ -74,7 +89,7 @@ jobs:
           && steps.check_python.outputs.files_exists == 'false'
         run: echo "::set-output name=answer::true"
 
-  Install-Node:
+  Build-Node:
     runs-on: ubuntu-latest
     needs: Setup
     if: |
@@ -231,7 +246,7 @@ jobs:
           tags: ${{steps.generate_docker_image_tags.outputs.docker_image_tags}}
           labels: "organization: ${{github.repository_owner}}, repository: ${{github.repository}}, branch: ${{needs.Setup.outputs.Branch}}, commit: ${{needs.Setup.outputs.ShaHash}}, date: ${{needs.Setup.outputs.Date}}, timestamp: ${{needs.Setup.outputs.Timestamp}}"
 
-  Install-Python:
+  Build-Python:
     runs-on: ubuntu-latest
     needs: Setup
     if: |
