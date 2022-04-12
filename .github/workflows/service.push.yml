@@ -39,7 +39,7 @@ jobs:
           echo "::set-output name=date::$(date +'%Y-%m-%d')"
           echo "::set-output name=timestamp::$(date +%s)"
 
-      # nodejs
+      # language nodejs
       - name: Check if Node repository
         id: check_node
         uses: andstor/file-existence-action@v1
@@ -51,7 +51,7 @@ jobs:
         if: steps.check_node.outputs.files_exists == 'true'
         run: echo "::set-output name=answer::true"
 
-      # python
+      # language python
       - name: Check if python repository
         id: check_python
         uses: andstor/file-existence-action@v1
@@ -63,7 +63,7 @@ jobs:
         if: steps.check_python.outputs.files_exists == 'true'
         run: echo "::set-output name=answer::true"
 
-      # else
+      # language else
       - name: Update with undefined reference
         id: check_else_write
         if: |
@@ -75,8 +75,10 @@ jobs:
   Install-Node:
     runs-on: ubuntu-latest
     needs: Setup
-    if: needs.Setup.outputs.RepositoryIsNode == 'true'
-    
+    if: |
+      github.event_name == 'release'
+      && needs.Setup.outputs.RepositoryIsNode == 'true'
+
     strategy:
       matrix:
         node-version: [16, 17]
@@ -225,7 +227,9 @@ jobs:
   Install-Python:
     runs-on: ubuntu-latest
     needs: Setup
-    if: needs.Setup.outputs.RepositoryIsPython == 'true'
+    if: |
+      github.event_name == 'release'
+      && needs.Setup.outputs.RepositoryIsPython == 'true'
 
     strategy:
       matrix:
