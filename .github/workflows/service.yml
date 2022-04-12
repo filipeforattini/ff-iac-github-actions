@@ -45,6 +45,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
+        with:
+          repository: filipeforattini/ff-iac-github-actions
+          branch: main
+          path: _scripts
 
       # get commit hash
       - name: Get commit hash
@@ -92,7 +97,7 @@ jobs:
       - uses: actions/github-script@v6
         with:
           script: |
-            const { print } = require('./scripts/common.js')
+            const { print } = require('./_scripts/common.js')
             print('Hello World!')
 
   Build-Node:
