@@ -19,13 +19,15 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
-      NoLanguageDetected: "${{ steps.check_else_write.outputs.answer }}"
-      RepositoryIsNode: ${{ steps.check_node_write.outputs.answer }}
-      RepositoryIsPython: ${{ steps.check_python_write.outputs.answer }}
+      # globals
       Branch: ${{ steps.commit_data.outputs.branch }}
       ShaHash: ${{ steps.commit_data.outputs.sha_short }}
       Date: ${{ steps.commit_data.outputs.date }}
       Timestamp: ${{ steps.commit_data.outputs.timestamp }}
+      # repository-wise
+      NoLanguageDetected: "${{ steps.check_else_write.outputs.answer }}"
+      RepositoryIsNode: ${{ steps.check_node_write.outputs.answer }}
+      RepositoryIsPython: ${{ steps.check_python_write.outputs.answer }}
 
     steps:
       - uses: actions/checkout@v3
@@ -76,7 +78,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: Setup
     if: |
-      github.event_name == 'release'
+      github.event_name == 'push'
       && needs.Setup.outputs.RepositoryIsNode == 'true'
 
     strategy:
@@ -233,7 +235,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: Setup
     if: |
-      github.event_name == 'release'
+      github.event_name == 'push'
       && needs.Setup.outputs.RepositoryIsPython == 'true'
 
     strategy:
