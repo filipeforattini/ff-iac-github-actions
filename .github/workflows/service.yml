@@ -99,6 +99,7 @@ jobs:
       - run: |
           pwd
           ls -la
+          ls -la .ff
       - run: |
           cd .ff;
           pwd
