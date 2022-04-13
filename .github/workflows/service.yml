@@ -65,7 +65,7 @@ jobs:
       # get commit hash
       - name: PRINT SETUP
         run: |
-          branch = $(echo ${{steps.script_setup.outputs.result}} | jq -r '.git.branch')
+          echo branch = $(echo ${{steps.script_setup.outputs.result}} | jq -r '.git.branch')
 
       # get commit hash
       - name: Get commit hash
