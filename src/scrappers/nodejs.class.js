@@ -22,9 +22,15 @@ module.exports = class Nodejs extends Scrapper {
         ? 'npm ci' 
         : 'npm install'
 
+    const cacheKey = hasYarnLock 
+      ? 'yarn.lock' 
+      : hasPackageLock 
+        ? 'package-lock.json' 
+        : 'package.json'
 
     this
       .add('nodejs', {
+        cacheKey,
         hasYarnLock,
         hasPackageLock,
         dependencyCommand,
