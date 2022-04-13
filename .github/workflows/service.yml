@@ -60,7 +60,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: Setup
     env:
-      PIPELINE_SETUP: ${{ jobs.Setup.outputs.PipelineConfig }}
+      PIPELINE_SETUP: ${{ needs.Setup.outputs.PipelineConfig }}
     if: |
       github.event_name == 'push'
       && $(echo $PIPELINE_SETUP | jq -r '.code.isNode') == 'true'
