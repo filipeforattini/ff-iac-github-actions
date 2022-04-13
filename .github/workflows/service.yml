@@ -67,7 +67,7 @@ jobs:
         env:
           PIPELINE_SETUP: ${{ steps.script_setup.outputs.result}}
         run: |
-          echo branch = $($PIPELINE_SETUP | jq -r '.git.branch')
+          echo branch = $(echo $PIPELINE_SETUP | jq -r '.git.branch')
 
       # get commit hash
       - name: Get commit hash
