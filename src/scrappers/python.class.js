@@ -4,6 +4,7 @@ module.exports = class Python extends Scrapper {
   setup () {
     const startCommand = 'python app.py'
     const dependencyCommand = 'pip install -r requirements.txt'
+    const dockerignore = ['']
 
     this
       .add('python', {
@@ -12,6 +13,7 @@ module.exports = class Python extends Scrapper {
       })
       .add('dockerfile', {
         startCommand,
+        dockerignore,
         dependencyCommand,
       })
   }

@@ -20,13 +20,13 @@ module.exports = class Git extends Scrapper {
           branch: this.getBranchFromRepository(),
           commit: this.getCommitShaFromRepository(),
         },
-      })
-      .add('actor', {
-        ...this.context.payload.head_commit.commiter,
 
-        messages: this.context.payload.commits.map(c => c.message),
-        lastName: this.context.payload.head_commit.committer.name.split(' ').pop(),
-        firstName: this.context.payload.head_commit.committer.name.split(' ').shift(),
+        actor: {
+          ...this.context.payload.head_commit.commiter,
+          messages: this.context.payload.commits.map(c => c.message),
+          lastName: this.context.payload.head_commit.committer.name.split(' ').pop(),
+          firstName: this.context.payload.head_commit.committer.name.split(' ').shift(),
+        }
       })
   }
 
