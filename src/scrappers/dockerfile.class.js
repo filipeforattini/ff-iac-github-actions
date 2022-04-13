@@ -12,21 +12,24 @@ module.exports = class Dockerfile extends Scrapper {
       ? true
       : false
 
+    const containerName = this.context.repository.full_name
+    const containerRegistry = this.inputs.containerRegistry
+
     this
       .add('dockerfile', {
         hasDockerfile,
         hasDockerignore,
         tags: [
-          `ghcr.io/${{github.repository}}:latest"
-          `${DOCKER_IMAGE_TAGS}, ghcr.io/${{github.repository}}:d-${{needs.Setup.outputs.Date}}"
-          `${DOCKER_IMAGE_TAGS}, ghcr.io/${{github.repository}}:b-${{needs.Setup.outputs.Branch}}"
-          `${DOCKER_IMAGE_TAGS}, ghcr.io/${{github.repository}}:c-${{needs.Setup.outputs.ShaHash}}"
-          `${DOCKER_IMAGE_TAGS}, ghcr.io/${{github.repository}}:t-${{needs.Setup.outputs.Timestamp}}"
-          `${DOCKER_IMAGE_TAGS}, ghcr.io/${{github.repository}}:node-${{matrix.node-version}}"
-          `${DOCKER_IMAGE_TAGS}, ghcr.io/${{github.repository}}:node-${{matrix.node-version}}-latest"
-          `${DOCKER_IMAGE_TAGS}, ghcr.io/${{github.repository}}:node-${{matrix.node-version}}-d-${{needs.Setup.outputs.Date}}"
-          `${DOCKER_IMAGE_TAGS}, ghcr.io/${{github.repository}}:node-${{matrix.node-version}}-b-${{needs.Setup.outputs.Branch}}"
-          `${DOCKER_IMAGE_TAGS}, ghcr.io/${{github.repository}}:node-${{matrix.node-version}}-c-${{needs.Setup.outputs.ShaHash}}"  
+          `${containerRegistry}/${containerName}:latest`,
+          `${containerRegistry}/${containerName}:d-${this.output.run.date}`,
+          `${containerRegistry}/${containerName}:b-${this.output.git.branch}`,
+          `${containerRegistry}/${containerName}:c-${this.output.git.commit}`,
+          `${containerRegistry}/${containerName}:t-${this.output.run.timestamp}`,
+          // `${containerRegistry}/${containerName}:node-${matrix.node-version}`,
+          // `${containerRegistry}/${containerName}:node-${matrix.node-version}-latest`,
+          // `${containerRegistry}/${containerName}:node-${matrix.node-version}-d-${needs.Setup.outputs.Date}`,
+          // `${containerRegistry}/${containerName}:node-${matrix.node-version}-b-${needs.Setup.outputs.Branch}`,
+          // `${containerRegistry}/${containerName}:node-${matrix.node-version}-c-${needs.Setup.outputs.ShaHash}`,  
         ]
       })
   }
