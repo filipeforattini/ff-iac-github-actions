@@ -1,13 +1,26 @@
 const git = require('./src/git')
 
 module.exports = ({ github, context }) => console.log({
-  github,
-  context,
+  githubJson: JSON.stringify(github),
+  contextJson: JSON.stringify(context),
 
   // git related
-  repository: {
+  fromRepository: {
     branch: git.branch(),
     commit: git.commitSha(),
+  },
+
+  fromContext: {
+    branch: context.ref.replace('/refs/heads/', ''),
+    commit: context.sha.substring(0, 7),
+  },
+
+  // run related
+  run: {
+    id: context.runId,
+    count: context.runNumber,
+    event: context.eventName,
+    repository: context.workflow,
   },
   
   // time related
