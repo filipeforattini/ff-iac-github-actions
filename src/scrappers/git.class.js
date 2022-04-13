@@ -5,7 +5,10 @@ module.exports = class Git extends Scrapper {
   setup () {
     const commit = this.context.sha.substring(0, 7)
     const branch = this.context.ref.replace('refs/heads/', '')
-    // const [ firstName, ...surnames ] = this.context.payload.head_commit.committer.name.split(' ')
+
+    console.log('AQUIIII =', JSON.stringify(this.context.payload.head_commit))
+
+    const [ firstName, ...surnames ] = this.context.payload.head_commit.committer.name.split(' ')
 
     this
       .add('git', {
