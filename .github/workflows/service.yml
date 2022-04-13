@@ -59,10 +59,10 @@ jobs:
         uses: actions/github-script@v6
         id: script_setup
         with:
-          result-encoding: string
+          # result-encoding: string
           script: |
             const Setup = require('./.ff/scripts/setup')
-            Setup({ github, context })
+            return Setup({ github, context })
 
       # get commit hash
       - name: PRINT SETUP
