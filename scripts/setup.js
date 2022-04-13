@@ -1,6 +1,9 @@
 const git = require('./src/git')
 
 module.exports = ({ github, context }) => console.log(JSON.stringify({
+  // githubJson: JSON.stringify(github),
+  // contextJson: JSON.stringify(context),
+
   // time related
   time: {
     stepTimestamp: Date.now(),
@@ -35,7 +38,7 @@ module.exports = ({ github, context }) => console.log(JSON.stringify({
   // actor related
   actor: {
     ...context.payload.head_commit.commiter,
-    firstName: context.payload.head_commit.commiter.split(' ').shift(),
+    firstName: context.payload.head_commit.committer.split(' ').shift(),
     messages: context.payload.commits.map(c => c.message),
   },
 
