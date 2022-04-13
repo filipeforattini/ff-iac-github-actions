@@ -17,15 +17,9 @@ on:
         default: false
     
     outputs:
-      NoLanguageDetected: 
-        description: "Checks if a language is detected"
-        value: ${{ jobs.Setup.outputs.NoLanguageDetected }}
-      RepositoryIsNode:
-        description: "Checks if the repository is a Node.js repository"
-        value: ${{ jobs.Setup.outputs.RepositoryIsNode }}
-      RepositoryIsPython:
-        description: "Checks if the repository is a Python repository"
-        value: ${{ jobs.Setup.outputs.RepositoryIsPython }}
+      PipelineConfig: 
+        description: "Used pipeline config"
+        value: ${{ jobs.Setup.outputs.PipelineConfig }}
 
 jobs:
 
@@ -33,15 +27,7 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
-      # globals
-      Branch: ${{ steps.commit_data.outputs.branch }}
-      ShaHash: ${{ steps.commit_data.outputs.sha_short }}
-      Date: ${{ steps.commit_data.outputs.date }}
-      Timestamp: ${{ steps.commit_data.outputs.timestamp }}
-      # repository-wise
-      NoLanguageDetected: "${{ steps.check_else_write.outputs.answer }}"
-      RepositoryIsNode: ${{ steps.check_node_write.outputs.answer }}
-      RepositoryIsPython: ${{ steps.check_python_write.outputs.answer }}
+      PipelineConfig: ${{ steps.script_setup.outputs.result }}
 
     steps:
       - name: Cloning repository
@@ -74,7 +60,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: Setup
     env:
-      PIPELINE_SETUP: ${{ steps.script_setup.outputs.result}}
+      PIPELINE_SETUP: ${{ jobs.Setup.outputs.PipelineConfig }}
     if: |
       github.event_name == 'push'
       && $(echo $PIPELINE_SETUP | jq -r '.code.isNode') == 'true'
