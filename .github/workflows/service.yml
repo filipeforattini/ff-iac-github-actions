@@ -28,6 +28,8 @@ jobs:
 
     outputs:
       PipelineConfig: ${{ steps.script_setup.outputs.result }}
+      BuildNode: ${{ steps.define_builders.outputs.build_node }}
+      BuildPython: ${{ steps.define_builders.outputs.build_python }}
 
     steps:
       - name: Cloning repository
@@ -49,21 +51,27 @@ jobs:
           script: return require('./.ff/src/steps/setup')({ context })
 
       # get commit hash
-      - name: PRINT SETUP
+      # - name: PRINT SETUP
+      #   env:
+      #     PIPELINE_SETUP: ${{ steps.script_setup.outputs.result}}
+      #   run: |
+      #     echo all = $PIPELINE_SETUP
+      #     echo branch = $(echo $PIPELINE_SETUP | jq -r '.git.branch')
+
+      - name: Define build path
         env:
           PIPELINE_SETUP: ${{ steps.script_setup.outputs.result}}
+        id: define_builders
         run: |
-          echo all = $PIPELINE_SETUP
-          echo branch = $(echo $PIPELINE_SETUP | jq -r '.git.branch')
+          echo "::set-output name=build_node::$(echo $PIPELINE_SETUP | jq -r '.code.isNode')"
+          echo "::set-output name=build_python::$(echo $PIPELINE_SETUP | jq -r '.code.isPython')"
 
   Build-Node:
     runs-on: ubuntu-latest
     needs: Setup
-    env:
-      PIPELINE_SETUP: ${{ needs.Setup.outputs.PipelineConfig }}
     if: |
       github.event_name == 'push'
-      && $(echo $PIPELINE_SETUP | jq -r '.code.isNode') == 'true'
+      && needs.Setup.outputs.BuildNode == 'true'
 
     strategy:
       matrix:
@@ -207,11 +215,9 @@ jobs:
   Build-Python:
     runs-on: ubuntu-latest
     needs: Setup
-    env:
-      PIPELINE_SETUP: ${{ steps.script_setup.outputs.result}}
     if: |
       github.event_name == 'push'
-      && $(echo $PIPELINE_SETUP | jq -r '.code.isPython') == 'true'
+      && needs.Setup.outputs.BuildPython == 'true'
 
     strategy:
       matrix:
