@@ -49,7 +49,7 @@ jobs:
         id: script_setup
         with:
           result-encoding: string
-          script: "return require('./.ff/src/steps/setup')({ context, inputs: \"${{ inputs }}\" })"
+          script: "return require('./.ff/src/steps/setup')({ context, inputs: ${{ inputs }} })"
 
       - name: Define build path
         env:
