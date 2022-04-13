@@ -1,4 +1,4 @@
-const mergeDeep = require('../src/merge-deep')
+const mergeDeep = require('../merge-deep')
 const { 
   Git, 
   Run, 
