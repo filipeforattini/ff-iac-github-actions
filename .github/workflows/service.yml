@@ -50,7 +50,7 @@ jobs:
         with:
           result-encoding: string
           script: |
-            require('./.ff/src/steps/setup')({ 
+            return require('./.ff/src/steps/setup')({ 
               context, 
               inputs: { 
                 containerRegistry: "${{ inputs.containerRegistry }}",
