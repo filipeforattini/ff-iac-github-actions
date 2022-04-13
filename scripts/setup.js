@@ -6,6 +6,7 @@ module.exports = function Setup (...args) {
   const output = providers
     .map(p => {
       const cls = p
+      console.log({ p })
       return cls.load(...args)
     })
     .reduce((acc, i) => ({ ...acc, ...i.data() }), {})
