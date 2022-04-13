@@ -12,8 +12,8 @@ module.exports = class Dockerfile extends Scrapper {
       ? true
       : false
 
-    const containerName = this.context.repository.full_name
     const containerRegistry = this.inputs.containerRegistry
+    const containerName = this.context.payload.repository.full_name
 
     this
       .add('dockerfile', {
