@@ -60,7 +60,7 @@ jobs:
         id: script_setup
         with:
           result-encoding: string
-          script: return require('./.ff/scripts/setup')({ context })
+          script: return require('./.ff/scripts/steps/setup')({ context })
 
       # get commit hash
       - name: PRINT SETUP
