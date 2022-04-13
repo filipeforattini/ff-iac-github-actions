@@ -66,7 +66,7 @@ jobs:
       # get commit hash
       - name: PRINT SETUP
         run: |
-          echo ${{steps.script_setup.outputs.setup}}"
+          echo ${{steps.script_setup.outputs.result}}"
 
       # get commit hash
       - name: Get commit hash

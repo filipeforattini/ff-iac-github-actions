@@ -8,7 +8,7 @@ module.exports = function Setup (...args) {
     .map(p => p.load(...args))
     .reduce((acc, i) => mergeDeep(acc, i.data), {})
 
-  console.log(`::set-output name=setup::${JSON.stringify(output)}`)
+  console.log(JSON.stringify(output))
   
   return process.exit(0)
 }
