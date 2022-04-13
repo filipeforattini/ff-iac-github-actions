@@ -10,7 +10,7 @@ const {
 } = require('../scrappers')
 
 module.exports = function Setup (args) {
-  let providers = [ Git, Run, Helm, Code ]
+  let providers = [ Git, Run, Code ]
   let output = {}
 
   output = providers.map(p => p.load(args, output))
@@ -22,7 +22,7 @@ module.exports = function Setup (args) {
   output = providers.map(p => p.load(args, output))
     .reduce((acc, i) => mergeDeep(acc, i.data), output)
   
-  providers = [ Dockerfile ]
+  providers = [ Helm, Dockerfile ]
 
   output = providers.map(p => p.load(args, output))
     .reduce((acc, i) => mergeDeep(acc, i.data), output)
