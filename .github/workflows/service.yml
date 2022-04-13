@@ -53,7 +53,7 @@ jobs:
             require('./.ff/src/steps/setup')({ 
               context, 
               inputs: { 
-                containerRegistry: ${{ inputs.containerRegistry }},
+                containerRegistry: "${{ inputs.containerRegistry }}",
               },
             })
 
