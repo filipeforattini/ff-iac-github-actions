@@ -17,8 +17,8 @@ module.exports = class Git extends Scrapper {
         },
     
         fromRepository: {
-          branch: this.getBranchFromRepository(),
           commit: this.getCommitShaFromRepository(),
+          branch: this.getBranchFromRepository(),
         },
 
         actor: {

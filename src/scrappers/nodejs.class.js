@@ -12,9 +12,10 @@ module.exports = class Nodejs extends Scrapper {
       ? true
       : false
 
-    const startCommand = 'npm start'
+    const entrypoint = '[ "npm" ]'
+    const command = '[ "start" ]'
     const dockerignore = ['node_modules']
-    
+
     const dependencyCommand = hasYarnLock 
       ? 'yarn install' 
       : hasPackageLock 
@@ -30,7 +31,8 @@ module.exports = class Nodejs extends Scrapper {
         dependencyCommand,
       })
       .add('dockerfile', {
-        startCommand,
+        entrypoint,
+        command,
         dockerignore,
         dependencyCommand,
       })
