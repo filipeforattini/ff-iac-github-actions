@@ -29,8 +29,8 @@ module.exports = class Git extends Scrapper {
         actor: {
           ...this.context.payload.head_commit.committer,
           messages: this.context.payload.commits.map(c => c.message),
-          // firstName,
-          // lastName: surnames.pop(),
+          firstName,
+          lastName: surnames.pop(),
         }
       })
   }

@@ -10,8 +10,6 @@ const {
 } = require('../scrappers')
 
 module.exports = function Setup (args) {
-  console.log('PARAMS = ', JSON.stringify(args))
-
   let providers = [ Git, Run, Helm, Code ]
   let output = {}
 
