@@ -1,7 +1,6 @@
-import { exit } from 'process'
-import { Git, Run, Config } from './src'
+const { Git, Run, Config } = require('./src')
 
-export default function Setup (...args) {
+module.exports = function Setup (...args) {
   const providers = [ Git, Run, Config ]
 
   const output = providers
@@ -10,5 +9,5 @@ export default function Setup (...args) {
 
   console.log(JSON.stringify(output))
   
-  return exit(0)
+  return process.exit(0)
 }
