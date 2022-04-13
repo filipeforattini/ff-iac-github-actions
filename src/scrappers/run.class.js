@@ -3,7 +3,7 @@ const Scrapper =  require('./scrapper.class')
 module.exports = class Run extends Scrapper {
   setup () {
     this
-      .add('time', {
+      .add('run', {
         id: this.context.runId,
         stepTimestamp: Date.now(),
         count: this.context.runNumber,
