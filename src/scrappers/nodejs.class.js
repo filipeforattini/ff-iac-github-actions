@@ -27,7 +27,6 @@ module.exports = class Nodejs extends Scrapper {
       .add('nodejs', {
         hasYarnLock,
         hasPackageLock,
-        startCommand,
         dependencyCommand,
       })
       .add('dockerfile', {

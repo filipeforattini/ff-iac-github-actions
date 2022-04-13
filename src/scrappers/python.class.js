@@ -9,7 +9,6 @@ module.exports = class Python extends Scrapper {
 
     this
       .add('python', {
-        startCommand,
         dependencyCommand,
       })
       .add('dockerfile', {
