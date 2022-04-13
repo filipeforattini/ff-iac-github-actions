@@ -50,7 +50,8 @@ jobs:
         with:
           result-encoding: string
           script: |
-            console.log(${{ inputs }})
+            console.log(JSON.stringify(${{ inputs }}))
+            console.log(${{ JSON.stringify(inputs) }})
             require('./.ff/src/steps/setup')({ context })
 
       - name: Define build path
