@@ -8,5 +8,5 @@ module.exports = function Setup (...args) {
     .map(p => p.load(...args))
     .reduce((acc, i) => mergeDeep(acc, i.data), {})
 
-  return output
+  return JSON.stringify(output)
 }
