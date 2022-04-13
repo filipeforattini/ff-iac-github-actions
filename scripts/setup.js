@@ -4,7 +4,10 @@ module.exports = function Setup (...args) {
   const providers = [ Git, Run, Config ]
 
   const output = providers
-    .map(p => p.load(...args))
+    .map(p => {
+      const cls = p
+      return cls.load(...args)
+    })
     .reduce((acc, i) => ({ ...acc, ...i.data() }), {})
 
   console.log(JSON.stringify(output))
