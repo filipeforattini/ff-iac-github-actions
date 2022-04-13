@@ -4,11 +4,11 @@ const Scrapper = require('./scrapper.class')
 
 module.exports = class Nodejs extends Scrapper {
   setup () {
-    const hasPackageLock = fs.existsSync(path.join(process.pwd(), 'package-lock.json'))
+    const hasPackageLock = fs.existsSync(path.join(process.cwd(), 'package-lock.json'))
       ? true
       : false
 
-    const hasYarnLock = fs.existsSync(path.join(process.pwd(), 'yarn.lock'))
+    const hasYarnLock = fs.existsSync(path.join(process.cwd(), 'yarn.lock'))
       ? true
       : false
 

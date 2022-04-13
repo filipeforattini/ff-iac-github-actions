@@ -7,11 +7,11 @@ module.exports = class Dockerfile extends Scrapper {
     const startCommand = 'python app.py'
     const dependencyCommand = 'pip install -r requirements.txt'
 
-    const hasDockerfile = fs.existsSync(path.join(process.pwd(), 'dockerfile'))
+    const hasDockerfile = fs.existsSync(path.join(process.cwd(), 'dockerfile'))
       ? true
       : false
 
-    const hasDockerignore = fs.existsSync(path.join(process.pwd(), '.dockerignore'))
+    const hasDockerignore = fs.existsSync(path.join(process.cwd(), '.dockerignore'))
       ? true
       : false
 

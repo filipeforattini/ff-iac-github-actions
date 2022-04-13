@@ -4,11 +4,11 @@ const Scrapper = require('./scrapper.class')
 
 module.exports = class Code extends Scrapper {
   setup () {
-    const isNode = fs.existsSync(path.join(process.pwd(), 'package.json'))
+    const isNode = fs.existsSync(path.join(process.cwd(), 'package.json'))
       ? true
       : false
 
-    const isPython = fs.existsSync(path.join(process.pwd(), 'requirements.txt'))
+    const isPython = fs.existsSync(path.join(process.cwd(), 'requirements.txt'))
       ? true
       : false
 
