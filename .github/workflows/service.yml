@@ -54,6 +54,13 @@ jobs:
           path: .ff
           repository: filipeforattini/ff-iac-github-actions
 
+      # teste
+      - uses: actions/github-script@v6
+        with:
+          script: |
+            const step = require('./.ff/scripts/setup.js')
+            step({ github, context })
+
       # get commit hash
       - name: Get commit hash
         id: commit_data
@@ -96,12 +103,6 @@ jobs:
           && steps.check_python.outputs.files_exists == 'false'
         run: echo "::set-output name=answer::true"
 
-      # teste
-      - uses: actions/github-script@v6
-        with:
-          script: |
-            const { print } = require('./.ff/scripts/common.js')
-            print('Hello World!')
 
   Build-Node:
     runs-on: ubuntu-latest
