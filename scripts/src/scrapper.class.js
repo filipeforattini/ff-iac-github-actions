@@ -11,7 +11,7 @@ module.exports = class Scrapper {
   }
 
   static load (...args) {
-    const instance = new RunInformation(...args)
+    const instance = new this(...args)
     instance.setup()
     return instance
   }

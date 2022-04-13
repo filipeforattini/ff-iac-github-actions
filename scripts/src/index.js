@@ -1,3 +1,5 @@
-module.Git = require('./git.class')
-module.Run = require('./run.class')
-module.Pipeline = require('./pipeline.class')
+module.exports = {
+  Git: require('./git.class'),
+  Run: require('./run.class'),
+  Pipeline: require('./pipeline.class'),
+}
