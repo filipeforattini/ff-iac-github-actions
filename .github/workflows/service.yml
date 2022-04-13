@@ -50,9 +50,12 @@ jobs:
         with:
           result-encoding: string
           script: |
-            console.log(JSON.stringify(${{ inputs }}))
-            console.log(${{ JSON.stringify(inputs) }})
-            require('./.ff/src/steps/setup')({ context })
+            require('./.ff/src/steps/setup')({ 
+              context, 
+              inputs: { 
+                containerRegistry: ${{ inputs.containerRegistry }},
+              },
+            })
 
       - name: Define build path
         env:
