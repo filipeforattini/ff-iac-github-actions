@@ -96,15 +96,6 @@ jobs:
           && steps.check_python.outputs.files_exists == 'false'
         run: echo "::set-output name=answer::true"
 
-      - run: |
-          pwd
-          ls -la
-          ls -la .ff
-      - run: |
-          cd .ff;
-          pwd
-          ls -la
-
       # teste
       - uses: actions/github-script@v6
         with:
