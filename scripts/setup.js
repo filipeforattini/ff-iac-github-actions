@@ -38,8 +38,9 @@ module.exports = ({ github, context }) => console.log(JSON.stringify({
   // actor related
   actor: {
     ...context.payload.head_commit.commiter,
-    firstName: context.payload.head_commit.committer.split(' ').shift(),
     messages: context.payload.commits.map(c => c.message),
+    lastName: context.payload.head_commit.committer.split(' ').pop(),
+    firstName: context.payload.head_commit.committer.split(' ').shift(),
   },
 
   // pipeline related
