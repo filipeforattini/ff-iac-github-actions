@@ -61,16 +61,16 @@ jobs:
           echo "::set-output name=cache_key::$(echo $PIPELINE_SETUP | jq -r '.code.cacheKey')"
           echo "::set-output name=dependency_command::$(echo $PIPELINE_SETUP | jq -r '.code.dependencyCommand')"
 
-  Notify-Slack:
-    runs-on: ubuntu-latest
-    env:
-      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-      SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
-      SLACK_USERNAME: ${{ secrets.SLACK_USERNAME }}
-    steps:
-      - name: Notify Slack
-        uses: actions/slack@v2
-        with:
+  # Notify-Slack:
+  #   runs-on: ubuntu-latest
+  #   env:
+  #     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+  #     SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+  #     SLACK_USERNAME: ${{ secrets.SLACK_USERNAME }}
+  #   steps:
+  #     - name: Notify Slack
+  #       uses: actions/slack@v2
+  #       with:
 
 
   Build-Node:
