@@ -59,7 +59,7 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            import Setup from './.ff/scripts/setup'
+            const Setup = require('./.ff/scripts/setup')
             Setup({ github, context })
 
       # get commit hash
