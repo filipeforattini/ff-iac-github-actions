@@ -2,11 +2,21 @@ const Scrapper = require('./scrapper.class')
 
 module.exports = class Helm extends Scrapper {
   setup () {
+    const repository = this.context.repository.name
+
+    const pipeline = repository.includes('-svc-')
+      ? 'svc'
+      : repository.includes('-app-')
+        ? 'app'
+        : repository.includes('-iac-')
+          ? 'iac'
+          : 'unknown'
+
     this
       .add('helm', {
-        pipeline: 'service',
-        name: 'svc',
-        namespace: this.context.workflow,
+        pipeline,
+        pod: pipeline,
+        namespace: repository,
       })
   }
 }
