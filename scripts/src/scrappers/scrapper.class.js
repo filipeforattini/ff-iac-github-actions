@@ -1,12 +1,13 @@
 const mergeDeep = require('../merge-deep')
 
 module.exports = class Scrapper {
-  constructor ({ github, context, core, glob, io, exec }) {
+  constructor ({ github, context, core, glob, io, exec }, output) {
     this.io = io
     this.core = core
     this.exec = exec
     this.glob = glob
     this.github = github
+    this.output = output
     this.context = context
 
     this.data = {}
