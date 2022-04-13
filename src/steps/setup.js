@@ -2,7 +2,7 @@ const mergeDeep = require('../merge-deep')
 const { 
   Git, 
   Run, 
-  Pipeline,
+  Helm,
   Code, 
   Nodejs,
   Python,
@@ -10,7 +10,7 @@ const {
 } = require('../scrappers')
 
 module.exports = function Setup (args) {
-  let providers = [ Git, Run, Pipeline, Code ]
+  let providers = [ Git, Run, Helm, Code ]
   let output = {}
 
   output = providers.map(p => p.load(args, output))

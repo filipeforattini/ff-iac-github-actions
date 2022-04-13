@@ -30,6 +30,8 @@ jobs:
       PipelineConfig: ${{ steps.script_setup.outputs.result }}
       BuildNode: ${{ steps.define_builders.outputs.build_node }}
       BuildPython: ${{ steps.define_builders.outputs.build_python }}
+      CacheKey: ${{ steps.define_builders.outputs.cache_key }}
+      DependencyCommand: ${{ steps.define_builders.outputs.dependency_command }}
 
     steps:
       - name: Cloning repository
@@ -42,21 +44,12 @@ jobs:
           path: .ff
           repository: filipeforattini/ff-iac-github-actions
 
-      # setup
       - name: Pipeline setup
         uses: actions/github-script@v6
         id: script_setup
         with:
           result-encoding: string
           script: return require('./.ff/src/steps/setup')({ context })
-
-      # get commit hash
-      # - name: PRINT SETUP
-      #   env:
-      #     PIPELINE_SETUP: ${{ steps.script_setup.outputs.result}}
-      #   run: |
-      #     echo all = $PIPELINE_SETUP
-      #     echo branch = $(echo $PIPELINE_SETUP | jq -r '.git.branch')
 
       - name: Define build path
         env:
@@ -65,6 +58,8 @@ jobs:
         run: |
           echo "::set-output name=build_node::$(echo $PIPELINE_SETUP | jq -r '.code.isNode')"
           echo "::set-output name=build_python::$(echo $PIPELINE_SETUP | jq -r '.code.isPython')"
+          echo "::set-output name=cache_key::$(echo $PIPELINE_SETUP | jq -r '.code.cacheKey')"
+          echo "::set-output name=dependency_command::$(echo $PIPELINE_SETUP | jq -r '.code.dependencyCommand')"
 
   Build-Node:
     runs-on: ubuntu-latest
@@ -89,35 +84,28 @@ jobs:
       # load caches
       - name: Load cache from yarn.lock
         uses: actions/cache@v2
-        env:
-          PIPELINE_SETUP: ${{ steps.script_setup.outputs.result}}
-        if: steps.check_yarn_lock.outputs.files_exists == 'true'
+        if: needs.Setup.outputs.CacheKey == 'yarn.lock'
         with:
           path: '**/node_modules'
           key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
 
-      - name: Load cache from package.json
+      - name: Load cache from package-lock.json
         uses: actions/cache@v2
-        if: steps.check_package_lock.outputs.files_exists == 'true'
+        if: needs.Setup.outputs.CacheKey == 'package-lock.json'
         with:
           path: '**/node_modules'
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/package-lock.lock') }}
-          
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/package-lock.json') }}
+
+      - name: Load cache from package.json
+        uses: actions/cache@v2
+        if: needs.Setup.outputs.CacheKey == 'package-lock.json'
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/package.json') }}
+
       # install dependencies
-      - name: Install dependencies with yarn install
-        if: steps.check_yarn_lock.outputs.files_exists == 'true'
-        run: yarn
-
-      - name: Install dependencies with npm ci
-        if: steps.check_package_lock.outputs.files_exists == 'true'
-        run: npm ci
-
-      - name: Install dependencies with npm install
-        if: |
-          always()
-          && steps.check_yarn_lock.outputs.files_exists == 'false'
-          && steps.check_package_lock.outputs.files_exists == 'false'
-        run: npm install
+      - name: Install dependencies
+        run: ${{ needs.Setup.outputs.DependencyCommand }}
 
       # run scripts
       - run: npm run lint --if-present

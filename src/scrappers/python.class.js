@@ -8,6 +8,9 @@ module.exports = class Python extends Scrapper {
     const dependencyCommand = 'pip install -r requirements.txt'
 
     this
+      .add('code', {
+        dependencyCommand,
+      })
       .add('python', {
         dependencyCommand,
       })
