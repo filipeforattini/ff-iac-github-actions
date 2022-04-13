@@ -1,47 +1,14 @@
-const git = require('./src/git')
+import { exit } from 'process'
+import { Git, Run, Config } from './src'
 
-module.exports = ({ github, context }) => console.log(JSON.stringify({
-  // time related
-  time: {
-    stepTimestamp: Date.now(),
-    date: context.payload.head_commit.timestamp.substring(0, 10),
-    timestamp: new Date(context.payload.head_commit.timestamp).getTime(),
-  },
+export default function Setup (...args) {
+  const providers = [ Git, Run, Config ]
 
-  // git related
-  git: {
-    branch: context.ref.replace('refs/heads/', ''),
-    commit: context.sha.substring(0, 7),
+  const output = providers
+    .map(p => p.load(args))
+    .reduce((acc, i) => ({ ...acc, ...i.data() }), {})
 
-    fromRepository: {
-      branch: git.branch(),
-      commit: git.commitSha(),
-    },
+  console.log(JSON.stringify(output))
   
-    fromContext: {
-      branch: context.ref.replace('refs/heads/', ''),
-      commit: context.sha.substring(0, 7),
-    },
-  },
-
-  // run related
-  run: {
-    id: context.runId,
-    count: context.runNumber,
-    event: context.eventName,
-    repository: context.workflow,
-  },
-
-  // actor related
-  actor: {
-    ...context.payload.head_commit.commiter,
-    messages: context.payload.commits.map(c => c.message),
-    lastName: context.payload.head_commit.committer.name.split(' ').pop(),
-    firstName: context.payload.head_commit.committer.name.split(' ').shift(),
-  },
-
-  // pipeline related
-  config: {
-    type: 'service',
-  },
-}))
+  return exit(0)
+}

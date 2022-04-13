@@ -55,11 +55,12 @@ jobs:
           repository: filipeforattini/ff-iac-github-actions
 
       # teste
-      - uses: actions/github-script@v6
+      - name: Pipeline setup
+        uses: actions/github-script@v6
         with:
           script: |
-            const step = require('./.ff/scripts/setup.js')
-            step({ github, context })
+            import Setup from './.ff/scripts/setup'
+            Setup({ github, context })
 
       # get commit hash
       - name: Get commit hash
