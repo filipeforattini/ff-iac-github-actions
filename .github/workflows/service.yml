@@ -61,6 +61,18 @@ jobs:
           echo "::set-output name=cache_key::$(echo $PIPELINE_SETUP | jq -r '.code.cacheKey')"
           echo "::set-output name=dependency_command::$(echo $PIPELINE_SETUP | jq -r '.code.dependencyCommand')"
 
+  Notify-Slack:
+    runs-on: ubuntu-latest
+    env:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+      SLACK_USERNAME: ${{ secrets.SLACK_USERNAME }}
+    steps:
+      - name: Notify Slack
+        uses: actions/slack@v2
+        with:
+
+
   Build-Node:
     runs-on: ubuntu-latest
     needs: Setup
@@ -74,6 +86,17 @@ jobs:
     
     steps:
       - uses: actions/checkout@v3
+
+      - name: Define build path
+        env:
+          PIPELINE_SETUP: ${{ steps.script_setup.outputs.result}}
+        id: define_builders
+        run: |
+          echo "::set-output name=build_node::$(echo $PIPELINE_SETUP | jq -r '.code.isNode')"
+          echo "::set-output name=build_python::$(echo $PIPELINE_SETUP | jq -r '.code.isPython')"
+          echo "::set-output name=cache_key::$(echo $PIPELINE_SETUP | jq -r '.code.cacheKey')"
+          echo "::set-output name=dependency_command::$(echo $PIPELINE_SETUP | jq -r '.code.dependencyCommand')"
+
 
       # install node
       - name: Use Node.js ${{ matrix.node-version }}
