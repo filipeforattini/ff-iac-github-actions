@@ -157,11 +157,11 @@ jobs:
           result-encoding: string
           script: |
             return require('./.ff/src/steps/generate-dockerfile')({ 
-              image = 'node',
-              tag = '${{ matrix.node-version }}-alpine',
-              dependencyCommand = '${{ steps.node_setup.outputs.docker_dependency_command }}',
-              entrypoint = '${{ steps.node_setup.outputs.docker_entrypoint }}',
-              command = '${{ steps.node_setup.outputs.docker_command }}',
+              image: 'node',
+              tag: '${{ matrix.node-version }}-alpine',
+              dependencyCommand: '${{ steps.node_setup.outputs.docker_dependency_command }}',
+              entrypoint: '${{ steps.node_setup.outputs.docker_entrypoint }}',
+              command: '${{ steps.node_setup.outputs.docker_command }}',
             })
 
       # build
