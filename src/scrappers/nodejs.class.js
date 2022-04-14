@@ -12,8 +12,8 @@ module.exports = class Nodejs extends Scrapper {
       ? true
       : false
 
-    const entrypoint = '[ "npm" ]'
-    const command = '[ "start" ]'
+    const entrypoint = [ "npm" ]
+    const command = [ "start" ]
     const dockerignore = ['node_modules']
 
     const dependencyCommand = hasYarnLock 
