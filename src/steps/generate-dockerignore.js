@@ -8,6 +8,8 @@ const stub = `
 `;
 
 module.exports = (params, writeFile = true) => {
+  console.log({ params })
+  
   const {
     generatedAt = new Date().toISOString(),
     assetsToIgnore = [],
@@ -23,6 +25,8 @@ module.exports = (params, writeFile = true) => {
     ].concat(assetsToIgnore).join('\n'),
   })
 
+  console.log(content)
+  
   if (writeFile) {
     fs.writeFileSync(path.join(process.cwd(), 'dockerfile'), content)
   }
