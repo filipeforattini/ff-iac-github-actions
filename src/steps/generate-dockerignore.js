@@ -7,9 +7,9 @@ const stub = `
 {{assetsToIgnore}}
 `;
 
-module.exports = (params, writeFile = true) => {
+module.exports = function (params, writeFile = true) {
   console.log({ params })
-  
+
   const {
     generatedAt = new Date().toISOString(),
     assetsToIgnore = [],

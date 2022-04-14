@@ -19,7 +19,7 @@ ENTRYPOINT ["{{entrypoint}}"]
 CMD ["{{command}}"]
 `;
 
-module.exports = (params, writeFile = true) => {
+module.exports = function (params, writeFile = true) {
   console.log({ params })
 
   const {
@@ -48,11 +48,11 @@ module.exports = (params, writeFile = true) => {
     command,
   })
 
+  console.log(content)
+  
   if (writeFile) {
     fs.writeFileSync(path.join(process.cwd(), 'dockerfile'), content)
   }
-
-  console.log(content)
 
   return content
 }
