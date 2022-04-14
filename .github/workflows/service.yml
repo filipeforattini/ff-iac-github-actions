@@ -30,13 +30,13 @@ jobs:
       PipelineConfig: ${{ steps.script_setup.outputs.result }}
       BuildNode: ${{ steps.define_builders.outputs.build_node }}
       BuildPython: ${{ steps.define_builders.outputs.build_python }}
-      CacheKey: ${{ steps.define_builders.outputs.cache_key }}
-      DependencyCommand: ${{ steps.define_builders.outputs.dependency_command }}
 
     steps:
+
+      # pre-job
       - name: Cloning repository
         uses: actions/checkout@v3
-      
+
       - name: Cloning tools
         uses: actions/checkout@v3
         with:
@@ -64,20 +64,6 @@ jobs:
         run: |
           echo "::set-output name=build_node::$(echo $PIPELINE_SETUP | jq -r '.code.isNode')"
           echo "::set-output name=build_python::$(echo $PIPELINE_SETUP | jq -r '.code.isPython')"
-          echo "::set-output name=cache_key::$(echo $PIPELINE_SETUP | jq -r '.code.cacheKey')"
-          echo "::set-output name=dependency_command::$(echo $PIPELINE_SETUP | jq -r '.code.dependencyCommand')"
-
-  # Notify-Slack:
-  #   runs-on: ubuntu-latest
-  #   env:
-  #     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-  #     SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
-  #     SLACK_USERNAME: ${{ secrets.SLACK_USERNAME }}
-  #   steps:
-  #     - name: Notify Slack
-  #       uses: actions/slack@v2
-  #       with:
-
 
   Build-Node:
     runs-on: ubuntu-latest
@@ -91,18 +77,30 @@ jobs:
         node-version: [16, 17]
     
     steps:
-      - uses: actions/checkout@v3
 
-      - name: Define build path
+      # pre-job
+      - name: Cloning repository
+        uses: actions/checkout@v3
+
+      - name: Cloning tools
+        uses: actions/checkout@v3
+        with:
+          ref: main
+          path: .ff
+          repository: filipeforattini/ff-iac-github-actions
+
+      - name: Load setup configs
         env:
-          PIPELINE_SETUP: ${{ steps.script_setup.outputs.result}}
-        id: define_builders
+          PIPELINE_SETUP: ${{ needs.Setup.outputs.PipelineConfig }}
+        id: node_setup
         run: |
-          echo "::set-output name=build_node::$(echo $PIPELINE_SETUP | jq -r '.code.isNode')"
-          echo "::set-output name=build_python::$(echo $PIPELINE_SETUP | jq -r '.code.isPython')"
           echo "::set-output name=cache_key::$(echo $PIPELINE_SETUP | jq -r '.code.cacheKey')"
           echo "::set-output name=dependency_command::$(echo $PIPELINE_SETUP | jq -r '.code.dependencyCommand')"
-
+          echo "::set-output name=has_dockerfile::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.hasDockerfile')"
+          echo "::set-output name=has_dockerignore::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.hasDockerignore')"
+          echo "::set-output name=docker_command::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.command')"
+          echo "::set-output name=docker_entrypoint::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.entrypoint')"
+          echo "::set-output name=docker_dependency_command::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.dependencyCommand')"
 
       # install node
       - name: Use Node.js ${{ matrix.node-version }}
@@ -113,28 +111,28 @@ jobs:
       # load caches
       - name: Load cache from yarn.lock
         uses: actions/cache@v2
-        if: needs.Setup.outputs.CacheKey == 'yarn.lock'
+        if: jobs.node_setup.outputs.cache_key == 'yarn.lock'
         with:
           path: '**/node_modules'
           key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
 
       - name: Load cache from package-lock.json
         uses: actions/cache@v2
-        if: needs.Setup.outputs.CacheKey == 'package-lock.json'
+        if: jobs.node_setup.outputs.cache_key == 'package-lock.json'
         with:
           path: '**/node_modules'
           key: ${{ runner.os }}-modules-${{ hashFiles('**/package-lock.json') }}
 
       - name: Load cache from package.json
         uses: actions/cache@v2
-        if: needs.Setup.outputs.CacheKey == 'package-lock.json'
+        if: jobs.node_setup.outputs.cache_key == 'package-lock.json'
         with:
           path: '**/node_modules'
           key: ${{ runner.os }}-modules-${{ hashFiles('**/package.json') }}
 
       # install dependencies
       - name: Install dependencies
-        run: ${{ needs.Setup.outputs.DependencyCommand }}
+        run: ${{ jobs.node_setup.outputs.dependency_command }}
 
       # run scripts
       - run: npm run lint --if-present
@@ -142,53 +140,30 @@ jobs:
       - run: npm run build --if-present
 
       # pre-build
-      - name: Check .dockerignore
-        id: check_dockerignore
-        uses: andstor/file-existence-action@v1
+      - name: Create .dockerignore
+        uses: actions/github-script@v6
+        if: steps.node_setup.outputs.has_dockerignore == 'false'
         with:
-          files: ".dockerignore"
+          result-encoding: string
+          script: |
+            return require('./.ff/src/steps/generate-dockerignore')({ 
+              assetsToIgnore: ['node_modules'],
+            })
 
-      - name: Check dockerfile
-        id: check_dockerfile
-        uses: andstor/file-existence-action@v1
+      - name: Create dockerfile
+        uses: actions/github-script@v6
+        if: steps.node_setup.outputs.has_dockerfile == 'false'
         with:
-          files: "dockerfile"
-
-      - name: Write .dockerignore
-        if: steps.check_dockerignore.outputs.files_exists == 'false'
-        run: echo "node_modules" > .dockerignore
-      
-      - name: Write dockerfile first part
-        if: steps.check_dockerfile.outputs.files_exists == 'false'
-        run: |
-          echo FROM node:${{ matrix.node-version }}-alpine      >  dockerfile
-          echo WORKDIR /app                                     >> dockerfile
-          echo COPY . /app                                      >> dockerfile
-
-      - name: Write dockerfile command yarn
-        if: |
-          steps.check_dockerfile.outputs.files_exists == 'false'
-          && steps.check_yarn_lock.outputs.files_exists == 'true'
-        run: echo RUN yarn                                      >> dockerfile
-
-      - name: Write dockerfile command npm ci
-        if: |
-          steps.check_dockerfile.outputs.files_exists == 'false'
-          && steps.check_package_lock.outputs.files_exists == 'true'
-        run: echo RUN yarn                                      >> dockerfile
-
-      - name: Write dockerfile command npm install
-        if: |
-          steps.check_dockerfile.outputs.files_exists == 'false'
-          && steps.check_yarn_lock.outputs.files_exists == 'false'
-          && steps.check_package_lock.outputs.files_exists == 'false'
-        run: echo RUN npm install                               >> dockerfile
-
-      - name: Write dockerfile last part
-        if: steps.check_dockerfile.outputs.files_exists == 'false'
-        run: |
-          echo ENTRYPOINT [\"npm\"]                             >> dockerfile
-          echo CMD [\"start\"]                                  >> dockerfile
+          result-encoding: string
+          script: |
+            return require('./.ff/src/steps/generate-dockerfile')({ 
+              image = 'node',
+              tag = '${{ matrix.node-version }}-alpine',
+              maintainer = '${{ context.payload.head_commit.committer.email }}',
+              dependencyCommand = '${{ steps.node_setup.outputs.docker_dependency_command }}',
+              entrypoint = '${{ steps.node_setup.outputs.docker_entrypoint }}',
+              command = ''${{ steps.node_setup.outputs.docker_command }}'',
+            })
 
       # build
       - name: Set up QEMU

@@ -4,9 +4,9 @@ const {
   Run, 
   Helm,
   Code, 
+  Docker,
   Nodejs,
   Python,
-  Dockerfile,
 } = require('../scrappers')
 
 module.exports = function Setup (args) {
@@ -22,7 +22,7 @@ module.exports = function Setup (args) {
   output = providers.map(p => p.load(args, output))
     .reduce((acc, i) => mergeDeep(acc, i.data), output)
   
-  providers = [ Helm, Dockerfile ]
+  providers = [ Helm, Docker ]
 
   output = providers.map(p => p.load(args, output))
     .reduce((acc, i) => mergeDeep(acc, i.data), output)
