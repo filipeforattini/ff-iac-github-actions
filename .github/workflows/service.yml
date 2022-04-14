@@ -111,21 +111,21 @@ jobs:
       # load caches
       - name: Load cache from yarn.lock
         uses: actions/cache@v2
-        if: jobs.node_setup.outputs.cache_key == 'yarn.lock'
+        if: steps.node_setup.outputs.cache_key == 'yarn.lock'
         with:
           path: '**/node_modules'
           key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
 
       - name: Load cache from package-lock.json
         uses: actions/cache@v2
-        if: jobs.node_setup.outputs.cache_key == 'package-lock.json'
+        if: steps.node_setup.outputs.cache_key == 'package-lock.json'
         with:
           path: '**/node_modules'
           key: ${{ runner.os }}-modules-${{ hashFiles('**/package-lock.json') }}
 
       - name: Load cache from package.json
         uses: actions/cache@v2
-        if: jobs.node_setup.outputs.cache_key == 'package-lock.json'
+        if: steps.node_setup.outputs.cache_key == 'package-lock.json'
         with:
           path: '**/node_modules'
           key: ${{ runner.os }}-modules-${{ hashFiles('**/package.json') }}
@@ -159,7 +159,6 @@ jobs:
             return require('./.ff/src/steps/generate-dockerfile')({ 
               image = 'node',
               tag = '${{ matrix.node-version }}-alpine',
-              maintainer = '${{ context.payload.head_commit.committer.email }}',
               dependencyCommand = '${{ steps.node_setup.outputs.docker_dependency_command }}',
               entrypoint = '${{ steps.node_setup.outputs.docker_entrypoint }}',
               command = ''${{ steps.node_setup.outputs.docker_command }}'',
