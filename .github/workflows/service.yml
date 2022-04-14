@@ -132,7 +132,7 @@ jobs:
 
       # install dependencies
       - name: Install dependencies
-        run: ${{ jobs.node_setup.outputs.dependency_command }}
+        run: ${{ steps.node_setup.outputs.dependency_command }}
 
       # run scripts
       - run: npm run lint --if-present
