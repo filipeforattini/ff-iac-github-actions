@@ -26,7 +26,7 @@ module.exports = function (params, writeFile = true) {
     image,
     tag,
     maintainer,
-    labels = [ 'TZ=GMT', 'ENV=development' ],
+    labels = [],
     environemntVariables = [ 'TZ=GMT', 'ENV=development' ],
     generatedAt = new Date().toISOString(),
     dependencyCommand,

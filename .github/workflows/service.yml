@@ -159,6 +159,7 @@ jobs:
             return require('./.ff/src/steps/generate-dockerfile')({ 
               image: 'node',
               tag: '${{ matrix.node-version }}-alpine',
+              labels: [ 'node-version=${{ matrix.node-version }}', 'archtecture=alpine' ],
               dependencyCommand: '${{ steps.node_setup.outputs.docker_dependency_command }}',
               entrypoint: '${{ steps.node_setup.outputs.docker_entrypoint }}',
               command: '${{ steps.node_setup.outputs.docker_command }}',
