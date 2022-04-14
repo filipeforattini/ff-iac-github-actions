@@ -161,7 +161,7 @@ jobs:
               tag = '${{ matrix.node-version }}-alpine',
               dependencyCommand = '${{ steps.node_setup.outputs.docker_dependency_command }}',
               entrypoint = '${{ steps.node_setup.outputs.docker_entrypoint }}',
-              command = ''${{ steps.node_setup.outputs.docker_command }}'',
+              command = '${{ steps.node_setup.outputs.docker_command }}',
             })
 
       # build
