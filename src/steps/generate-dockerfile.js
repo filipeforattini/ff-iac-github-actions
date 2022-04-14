@@ -26,7 +26,7 @@ module.exports = function (params, writeFile = true) {
     image,
     tag,
     maintainer,
-    labels = [],
+    labels = [ 'TZ=GMT', 'ENV=development' ],
     environemntVariables = [ 'TZ=GMT', 'ENV=development' ],
     generatedAt = new Date().toISOString(),
     dependencyCommand,
@@ -43,7 +43,7 @@ module.exports = function (params, writeFile = true) {
     maintainer,
     labels: [
       `builtAt=${new Date().toISOString().substring(0, 10)}`,
-    ].concat(labels).join(' '),
+    ].concat(labels).join(' \\\n\t'),
     environemntVariables: [].concat(environemntVariables).join(' \\\n\t'),
     dependencyCommand,
     entrypoint,
