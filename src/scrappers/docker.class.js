@@ -15,22 +15,25 @@ module.exports = class Docker extends Scrapper {
     const containerRegistry = this.inputs.containerRegistry
     const containerName = this.context.payload.repository.full_name
 
+    let tags = [
+      `${containerRegistry}/${containerName}:latest`,
+      `${containerRegistry}/${containerName}:d-${this.output.run.date}`,
+      `${containerRegistry}/${containerName}:b-${this.output.git.branch}`,
+      `${containerRegistry}/${containerName}:c-${this.output.git.commit}`,
+      `${containerRegistry}/${containerName}:t-${this.output.run.timestamp}`,
+        // `${containerRegistry}/${containerName}:node-${matrix.node-version}`,
+        // `${containerRegistry}/${containerName}:node-${matrix.node-version}-latest`,
+        // `${containerRegistry}/${containerName}:node-${matrix.node-version}-d-${needs.Setup.outputs.Date}`,
+        // `${containerRegistry}/${containerName}:node-${matrix.node-version}-b-${needs.Setup.outputs.Branch}`,
+        // `${containerRegistry}/${containerName}:node-${matrix.node-version}-c-${needs.Setup.outputs.ShaHash}`,  
+    ]
+
     this
       .add('dockerfile', {
         hasDockerfile,
         hasDockerignore,
-        tags: [
-          `${containerRegistry}/${containerName}:latest`,
-          `${containerRegistry}/${containerName}:d-${this.output.run.date}`,
-          `${containerRegistry}/${containerName}:b-${this.output.git.branch}`,
-          `${containerRegistry}/${containerName}:c-${this.output.git.commit}`,
-          `${containerRegistry}/${containerName}:t-${this.output.run.timestamp}`,
-          // `${containerRegistry}/${containerName}:node-${matrix.node-version}`,
-          // `${containerRegistry}/${containerName}:node-${matrix.node-version}-latest`,
-          // `${containerRegistry}/${containerName}:node-${matrix.node-version}-d-${needs.Setup.outputs.Date}`,
-          // `${containerRegistry}/${containerName}:node-${matrix.node-version}-b-${needs.Setup.outputs.Branch}`,
-          // `${containerRegistry}/${containerName}:node-${matrix.node-version}-c-${needs.Setup.outputs.ShaHash}`,  
-        ]
+        tags,
+        tagsAsString: tags.join(', ')
       })
   }
 }

@@ -20,7 +20,6 @@ module.exports = function (params, writeFile = true) {
   const content = template.render({
     generatedAt,
     assetsToIgnore: [
-      '.github',
       '.vscode',
     ].concat(assetsToIgnore).join('\n'),
   })

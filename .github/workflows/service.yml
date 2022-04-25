@@ -44,20 +44,20 @@ jobs:
           path: .ff
           repository: filipeforattini/ff-iac-github-actions
 
-      - name: Pipeline setup
+      - name: Pipeline config scrapper
         uses: actions/github-script@v6
         id: script_setup
         with:
           result-encoding: string
           script: |
-            return require('./.ff/src/steps/setup')({ 
+            return require('./.ff/src/steps/config-scrapper')({ 
               context, 
               inputs: { 
                 containerRegistry: "${{ inputs.containerRegistry }}",
               },
             })
 
-      - name: Define build path
+      - name: Define pipeline paths
         env:
           PIPELINE_SETUP: ${{ steps.script_setup.outputs.result}}
         id: define_builders
@@ -101,6 +101,7 @@ jobs:
           echo "::set-output name=docker_command::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.command')"
           echo "::set-output name=docker_entrypoint::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.entrypoint')"
           echo "::set-output name=docker_dependency_command::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.dependencyCommand')"
+          echo "::set-output name=docker_image_tags::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.tagsAsString')"
 
       # install node
       - name: Use Node.js ${{ matrix.node-version }}
@@ -178,22 +179,6 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
         
-      - name: Define image tags
-        id: generate_docker_image_tags
-        run: |
-          DOCKER_IMAGE_TAGS="ghcr.io/${{github.repository}}:latest"
-          DOCKER_IMAGE_TAGS="${DOCKER_IMAGE_TAGS}, ghcr.io/${{github.repository}}:d-${{needs.Setup.outputs.Date}}"
-          DOCKER_IMAGE_TAGS="${DOCKER_IMAGE_TAGS}, ghcr.io/${{github.repository}}:b-${{needs.Setup.outputs.Branch}}"
-          DOCKER_IMAGE_TAGS="${DOCKER_IMAGE_TAGS}, ghcr.io/${{github.repository}}:c-${{needs.Setup.outputs.ShaHash}}"
-          DOCKER_IMAGE_TAGS="${DOCKER_IMAGE_TAGS}, ghcr.io/${{github.repository}}:t-${{needs.Setup.outputs.Timestamp}}"
-          DOCKER_IMAGE_TAGS="${DOCKER_IMAGE_TAGS}, ghcr.io/${{github.repository}}:node-${{matrix.node-version}}"
-          DOCKER_IMAGE_TAGS="${DOCKER_IMAGE_TAGS}, ghcr.io/${{github.repository}}:node-${{matrix.node-version}}-latest"
-          DOCKER_IMAGE_TAGS="${DOCKER_IMAGE_TAGS}, ghcr.io/${{github.repository}}:node-${{matrix.node-version}}-d-${{needs.Setup.outputs.Date}}"
-          DOCKER_IMAGE_TAGS="${DOCKER_IMAGE_TAGS}, ghcr.io/${{github.repository}}:node-${{matrix.node-version}}-b-${{needs.Setup.outputs.Branch}}"
-          DOCKER_IMAGE_TAGS="${DOCKER_IMAGE_TAGS}, ghcr.io/${{github.repository}}:node-${{matrix.node-version}}-c-${{needs.Setup.outputs.ShaHash}}"
-          echo "TAGS = ${DOCKER_IMAGE_TAGS}"
-          echo "::set-output name=docker_image_tags::${DOCKER_IMAGE_TAGS}"
-
       - name: Build and push
         uses: docker/build-push-action@v2
         with:
@@ -201,7 +186,7 @@ jobs:
           push: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          tags: ${{steps.generate_docker_image_tags.outputs.docker_image_tags}}
+          tags: ${{steps.node_setup.outputs.docker_image_tags}}
           labels: "organization: ${{github.repository_owner}}, repository: ${{github.repository}}, branch: ${{needs.Setup.outputs.Branch}}, commit: ${{needs.Setup.outputs.ShaHash}}, date: ${{needs.Setup.outputs.Date}}, timestamp: ${{needs.Setup.outputs.Timestamp}}"
 
   Build-Python:
@@ -221,12 +206,11 @@ jobs:
       - name: Pip install
         run: pip install -r requirements.txt
 
-
   Deploy:
     runs-on: ubuntu-latest
     needs: 
       - Build-Node
-      - Build-Python
 
     steps:
-      - run: echo "helm upgrade --install X"
+      - run: |
+          echo "helm upgrade --install X"
