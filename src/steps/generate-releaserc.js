@@ -1,13 +1,17 @@
 const fs = require("fs");
 const path = require("path");
 
-module.exports = function ({} = {}) {
+module.exports = function ({ files = [] } = {}) {
   let releaseFile = {
     branches: [
       "+([0-9])?(.{+([0-9]),x}).x",
       "main",
       "master",
       "next",
+      "bug/*",
+      "bugfix/*",
+      "release/*",
+      "feature/*",
       "next-major",
       {
         name: "beta",
@@ -15,10 +19,6 @@ module.exports = function ({} = {}) {
       },
       {
         name: "alpha",
-        prerelease: true,
-      },
-      {
-        name: "feature/*",
         prerelease: true,
       },
     ],
@@ -35,8 +35,7 @@ module.exports = function ({} = {}) {
             "docs",
             "readme.md",
             "changelog.md",
-            "package.json",
-            "requirements.txt",
+            ...files,
           ],
           message:
             "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}",

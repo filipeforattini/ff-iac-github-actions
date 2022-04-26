@@ -202,10 +202,15 @@ jobs:
         if: steps.node_setup.outputs.has_releaserc == 'false'
         with:
           result-encoding: string
-          script: return require('./.ff/src/steps/generate-releaserc')({})
+          script: |
+            return require('./.ff/src/steps/generate-releaserc')({
+              files: [ 'package.json' ]
+            })
 
       - name: .releaserc
-        run: cat .releaserc.json
+        run: |
+          cat .releaserc.json
+          touch changelog.md
 
       - name: Semantic Release dependencies
         run: |
@@ -217,11 +222,6 @@ jobs:
             @semantic-release/changelog \
             @semantic-release/commit-analyzer \
             @semantic-release/release-notes-generator
-
-      - name: .releaserc
-        run: |
-          cat .releaserc.json
-          cat package.json
 
       - name: Release version
         env:
