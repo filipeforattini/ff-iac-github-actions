@@ -37,7 +37,6 @@ module.exports = function ({ files = [] } = {}) {
         "@semantic-release/git",
         {
           assets: [
-            "dist/**/*.{js,css,py}",
             "docs",
             "readme.md",
             "changelog.md",

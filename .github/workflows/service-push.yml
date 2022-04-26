@@ -201,14 +201,14 @@ jobs:
           result-encoding: string
           script: |
             return require('./.ff/src/steps/generate-releaserc')({
-              files: [ 'package.json' ]
+              files: [ 
+                'package.json',
+                'dist/**/*.{js,css,py}',
+              ]
             })
 
       - name: Print .releaserc.json
         run: cat .releaserc.json
-
-      - name: Create changelog.md
-        run: touch changelog.md
 
       - name: Semantic Release dependencies
         run: |
@@ -347,6 +347,11 @@ jobs:
         run: |
           echo "::set-output name=deploy_as_k8s::$(echo $PIPELINE_SETUP | jq -r '.deploy.deployAsK8s')"
           echo "::set-output name=deploy_as_chart::$(echo $PIPELINE_SETUP | jq -r '.deploy.deployAsChart')"
+          echo "::set-output name=deploy_ecossystem::$(echo $PIPELINE_SETUP | jq -r '.deploy.ecossystem')"
+          echo "::set-output name=deploy_organization::$(echo $PIPELINE_SETUP | jq -r '.deploy.organization')"
+          echo "::set-output name=deploy_container_registry::$(echo $PIPELINE_SETUP | jq -r '.deploy.containerRegistry')"
+          echo "::set-output name=deploy_repository::$(echo $PIPELINE_SETUP | jq -r '.deploy.repository')"
+          echo "::set-output name=deploy_tag::$(echo $PIPELINE_SETUP | jq -r '.deploy.tag')"
 
       # deploy
       - name: Install YTT
@@ -361,8 +366,12 @@ jobs:
             -f ./.ff/deploy/as-k8s/service.schema.yml \
             -f ./.ff/deploy/as-k8s/service.yml \
             -f ./manifests/k8s-values.yml \
-            --data-value repository=${{github.repository}} \
-            --data-value tag=c-${{needs.Setup.outputs.ShaHash}} > ./manifests/k8s-to-apply.yml
+            --data-value ecossystem=${{steps.deploy_setup.outputs.deploy_ecossystem}} \
+            --data-value organization=${{steps.deploy_setup.outputs.deploy_organization}} \
+            --data-value containerRegistry=${{steps.deploy_setup.outputs.deploy_container_registry}} \
+            --data-value repository=${{steps.deploy_setup.outputs.deploy_repository}} \
+            --data-value tag=${{steps.deploy_setup.outputs.deploy_tag}} \
+              > ./manifests/k8s-to-apply.yml
 
       - name: Print YAML
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
