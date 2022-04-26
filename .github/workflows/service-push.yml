@@ -103,6 +103,7 @@ jobs:
           echo "::set-output name=PipelineConfig::$(echo $PIPELINE_SETUP)"
           echo "::set-output name=cache_key::$(echo $PIPELINE_SETUP | jq -r '.code.cacheKey')"
           echo "::set-output name=dependency_command::$(echo $PIPELINE_SETUP | jq -r '.code.dependencyCommand')"
+          echo "::set-output name=has_releaserc::$(echo $PIPELINE_SETUP | jq -r '.git.hasReleaserc')"
           echo "::set-output name=has_dockerfile::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.hasDockerfile')"
           echo "::set-output name=has_dockerignore::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.hasDockerignore')"
           echo "::set-output name=docker_command::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.command')"
@@ -145,6 +146,14 @@ jobs:
       # run scripts
       - run: npm run lint --if-present
       - run: npm run test --if-present
+
+      # release
+      - name: Create .releaserc.json
+        uses: actions/github-script@v6
+        if: steps.node_setup.outputs.has_releaserc == 'false'
+        with:
+          result-encoding: string
+          script: return require('./.ff/src/steps/generate-releaserc')()
 
       - name: Release version
         env:
