@@ -207,10 +207,8 @@ jobs:
               files: [ 'package.json' ]
             })
 
-      - name: .releaserc
-        run: |
-          cat .releaserc.json
-          touch changelog.md
+      - name: Create changelog.md
+        run: touch changelog.md
 
       - name: Semantic Release dependencies
         run: |
