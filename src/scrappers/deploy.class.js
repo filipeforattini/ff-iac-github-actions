@@ -5,6 +5,7 @@ const Scrapper = require('./scrapper.class')
 module.exports = class Deploy extends Scrapper {
   setup () {
     const repository = this.context.payload.repository.name
+    const containerRegistry = this.inputs.containerRegistry
 
     const podName = repository.includes('-svc-')
       ? 'svc'
