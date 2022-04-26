@@ -250,7 +250,7 @@ jobs:
             -f ./.ff/deploy/as-k8s/service.yml \
             -f ./manifests/k8s-values.yml \
             --data-value repository=${{github.repository}} \
-            --data-balue tag=c-${{needs.Setup.outputs.ShaHash}} > ./manifests/k8s-to-apply.yml
+            --data-value tag=c-${{needs.Setup.outputs.ShaHash}} > ./manifests/k8s-to-apply.yml
 
       - run: cat ./manifests/k8s-to-apply.yml
 
