@@ -23,6 +23,7 @@ on:
 
 jobs:
 
+
   #--------------------------------------------------#
   #                    Setup Jobs                    # 
   #--------------------------------------------------#
@@ -69,6 +70,7 @@ jobs:
           echo "::set-output name=build_python::$(echo $PIPELINE_SETUP | jq -r '.code.isPython')"
           echo $PIPELINE_SETUP
 
+
   #--------------------------------------------------#
   #                  Tests: Node.js                  # 
   #--------------------------------------------------#
@@ -101,13 +103,6 @@ jobs:
         run: |
           echo "::set-output name=cache_key::$(echo $PIPELINE_SETUP | jq -r '.code.cacheKey')"
           echo "::set-output name=dependency_command::$(echo $PIPELINE_SETUP | jq -r '.code.dependencyCommand')"
-          echo "::set-output name=has_releaserc::$(echo $PIPELINE_SETUP | jq -r '.git.hasReleaserc')"
-          echo "::set-output name=has_dockerfile::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.hasDockerfile')"
-          echo "::set-output name=has_dockerignore::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.hasDockerignore')"
-          echo "::set-output name=docker_command::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.command')"
-          echo "::set-output name=docker_entrypoint::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.entrypoint')"
-          echo "::set-output name=docker_dependency_command::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.dependencyCommand')"
-          echo "::set-output name=docker_image_tags::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.tagsAsString')"
 
       # install node
       - name: Use Node.js ${{ matrix.node-version }}
@@ -145,6 +140,7 @@ jobs:
       - run: npm run lint --if-present
       - run: npm run test --if-present
 
+
   #--------------------------------------------------#
   #                  Tests: Python                   # 
   #--------------------------------------------------#
@@ -165,10 +161,11 @@ jobs:
       - name: Pip install
         run: pip install -r requirements.txt
 
+
   #--------------------------------------------------#
   #                     Release                      # 
   #--------------------------------------------------#
-  Release:
+  Release-Node:
     runs-on: ubuntu-latest
     needs: 
       - Setup
@@ -226,6 +223,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npx semantic-release
 
+
   #--------------------------------------------------#
   #                  Build: Node.js                  # 
   #--------------------------------------------------#
@@ -233,7 +231,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: 
       - Setup
-      - Release
+      - Release-Node
 
     strategy:
       matrix:
@@ -316,6 +314,7 @@ jobs:
           tags: ${{steps.node_setup.outputs.docker_image_tags}}
           labels: "organization: ${{github.repository_owner}}, repository: ${{github.repository}}, branch: ${{needs.Setup.outputs.Branch}}, commit: ${{needs.Setup.outputs.ShaHash}}, date: ${{needs.Setup.outputs.Date}}, timestamp: ${{needs.Setup.outputs.Timestamp}}"
 
+
   #--------------------------------------------------#
   #                      Deploy                      # 
   #--------------------------------------------------#
@@ -362,7 +361,12 @@ jobs:
             --data-value repository=${{github.repository}} \
             --data-value tag=c-${{needs.Setup.outputs.ShaHash}} > ./manifests/k8s-to-apply.yml
 
-      - uses: actions-hub/kubectl@master
+      - name: Print YAML
+        if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
+        run: cat ./manifests/k8s-to-apply.yml
+
+      - name: Apply kubernetes YAML
+        uses: actions-hub/kubectl@master
         env:
           KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
         with:
