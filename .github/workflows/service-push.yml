@@ -195,13 +195,13 @@ jobs:
       - name: Semantic Release dependencies
         run: |
           npm i -g \
-            "@semantic-release" \
-            "@semantic-release/git" \
-            "@semantic-release/npm" \
-            "@semantic-release/github" \
-            "@semantic-release/changelog" \
-            "@semantic-release/commit-analyzer" \
-            "@semantic-release/release-notes-generator"
+            @semantic-release \
+            @semantic-release/git \
+            @semantic-release/npm \
+            @semantic-release/github \
+            @semantic-release/changelog \
+            @semantic-release/commit-analyzer \
+            @semantic-release/release-notes-generator
 
       - name: Release version
         env:
