@@ -80,10 +80,7 @@ jobs:
     strategy:
       matrix:
         node-version: [16, 17]
-
-    outputs:
-      PipelineConfig: ${{ steps.node_setup.outputs.PipelineConfig }}
-
+    
     steps:
 
       # pre-job
@@ -102,7 +99,6 @@ jobs:
           PIPELINE_SETUP: ${{ needs.Setup.outputs.PipelineConfig }}
         id: node_setup
         run: |
-          echo "::set-output name=PipelineConfig::$(echo $PIPELINE_SETUP)"
           echo "::set-output name=cache_key::$(echo $PIPELINE_SETUP | jq -r '.code.cacheKey')"
           echo "::set-output name=dependency_command::$(echo $PIPELINE_SETUP | jq -r '.code.dependencyCommand')"
           echo "::set-output name=has_releaserc::$(echo $PIPELINE_SETUP | jq -r '.git.hasReleaserc')"
@@ -150,16 +146,13 @@ jobs:
       - run: npm run test --if-present
 
   #--------------------------------------------------#
-  #                 Release: Node.js                 # 
+  #                     Release                      # 
   #--------------------------------------------------#
-  Release-Node:
+  Release:
     runs-on: ubuntu-latest
     needs: 
       - Setup
       - Tests-Node
-
-    outputs:
-      PipelineConfig: ${{ steps.node_setup.outputs.PipelineConfig }}
 
     steps:
 
@@ -178,10 +171,9 @@ jobs:
 
       - name: Load setup configs
         env:
-          PIPELINE_SETUP: ${{ needs.Tests-Node.outputs.PipelineConfig }}
+          PIPELINE_SETUP: ${{ needs.Setup.outputs.PipelineConfig }}
         id: node_setup
         run: |
-          echo "::set-output name=PipelineConfig::$(echo $PIPELINE_SETUP)"
           echo "::set-output name=cache_key::$(echo $PIPELINE_SETUP | jq -r '.code.cacheKey')"
           echo "::set-output name=dependency_command::$(echo $PIPELINE_SETUP | jq -r '.code.dependencyCommand')"
           echo "::set-output name=has_releaserc::$(echo $PIPELINE_SETUP | jq -r '.git.hasReleaserc')"
@@ -221,14 +213,13 @@ jobs:
   #--------------------------------------------------#
   Build-Node:
     runs-on: ubuntu-latest
-    needs: Release-Node
+    needs: 
+      - Setup
+      - Release-Node
 
     strategy:
       matrix:
         node-version: [16, 17]
-
-    outputs:
-      PipelineConfig: ${{ steps.node_setup.outputs.PipelineConfig }}
 
     steps:
 
@@ -245,10 +236,9 @@ jobs:
 
       - name: Load setup configs
         env:
-          PIPELINE_SETUP: ${{ needs.Release-Node.outputs.PipelineConfig }}
+          PIPELINE_SETUP: ${{ needs.Setup.outputs.PipelineConfig }}
         id: node_setup
         run: |
-          echo "::set-output name=PipelineConfig::$(echo $PIPELINE_SETUP)"
           echo "::set-output name=cache_key::$(echo $PIPELINE_SETUP | jq -r '.code.cacheKey')"
           echo "::set-output name=dependency_command::$(echo $PIPELINE_SETUP | jq -r '.code.dependencyCommand')"
           echo "::set-output name=has_releaserc::$(echo $PIPELINE_SETUP | jq -r '.git.hasReleaserc')"
@@ -334,6 +324,7 @@ jobs:
   Deploy:
     runs-on: ubuntu-latest
     needs:
+      - Setup
       - Build-Node
       - Build-Python
 
@@ -352,7 +343,7 @@ jobs:
 
       - name: Load setup configs
         env:
-          PIPELINE_SETUP: ${{ needs.Build-Node.outputs.PipelineConfig }}
+          PIPELINE_SETUP: ${{ needs.Setup.outputs.PipelineConfig }}
         id: deploy_setup
         run: |
           echo "::set-output name=deploy_as_k8s::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.deployAsK8s')"
