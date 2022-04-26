@@ -4,14 +4,15 @@ const path = require("path");
 module.exports = function ({ files = [] } = {}) {
   let releaseFile = {
     branches: [
+      // tags
       "+([0-9])?(.{+([0-9]),x}).x",
+
+      // production
       "main",
       "master",
+
+      // alpha
       "next",
-      "bug/*",
-      "bugfix/*",
-      "release/*",
-      "feature/*",
       "next-major",
       {
         name: "beta",
@@ -21,6 +22,12 @@ module.exports = function ({ files = [] } = {}) {
         name: "alpha",
         prerelease: true,
       },
+
+      // git-flow
+      "bug/*",
+      "bugfix/*",
+      "release/*",
+      "feature/*",
     ],
     plugins: [
       "@semantic-release/commit-analyzer",
