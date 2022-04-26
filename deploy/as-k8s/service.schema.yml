@@ -1,0 +1,48 @@
+#@data/values-schema
+
+---
+ecossystem: ff
+organization: filipeforattini
+containerRegistry: ghcr.io
+repository: ff-svc-repository
+tag: latest
+
+environment: dev
+
+namespace:
+  enable: true
+  annotations:
+    linkerd.io/inject: enabled
+  labels:
+    ff/ecossystem: ff
+
+deployment:
+  enable: true
+  replicas: 1
+  name: svc
+  port: 80
+
+  resources:
+    enable: false
+    claim:
+      limits:
+        memory: 512Mi
+        cpu: "1"
+      requests:
+        memory: 64Mi
+        cpu: "0.2"
+
+  annotations:
+    linkerd.io/inject: enabled
+
+  labels:
+    ff/ecossystem: ff
+
+ingress:
+  enable: false
+  name: svc
+  type: alb
+  domain: ff.io
+
+  alb:
+    certificateArn: secret

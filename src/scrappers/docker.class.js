@@ -28,12 +28,22 @@ module.exports = class Docker extends Scrapper {
         // `${containerRegistry}/${containerName}:node-${matrix.node-version}-c-${needs.Setup.outputs.ShaHash}`,  
     ]
 
+    const deployAsK8s = fs.existsSync(path.join(process.cwd(), 'manifests', 'k8s-values.yml'))
+      ? true
+      : false
+
+    const deployAsChart = fs.existsSync(path.join(process.cwd(), 'manifests', 'charts-values.yml'))
+      ? true
+      : false
+
     this
       .add('dockerfile', {
         hasDockerfile,
         hasDockerignore,
         tags,
-        tagsAsString: tags.join(', ')
+        tagsAsString: tags.join(', '),
+        deployAsK8s,
+        deployAsChart,
       })
   }
 }

@@ -1,0 +1,103 @@
+#@ load("@ytt:data", "data")
+#@ load("@ytt:sha256", "sha256")
+
+#@ configHash = sha256.sum("data")
+
+---
+#@ if data.values.namespace.enable:
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: #@ data.values.repository
+  labels: #@ data.values.namespace.labels
+  annotations: #@ data.values.namespace.annotations
+#@ end
+
+---
+apiVersion: v1
+kind: Secret
+type: Opaque
+metadata:
+  name: dataParams
+  #@ if data.values.namespace.enable:
+  namespace: #@ data.values.repository
+  #@ else:
+  namespace: default
+  #@ end
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: #@ configHash
+data:
+  config: #@ configHash
+
+---
+#@ if data.values.deployment.enable:
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: #@ data.values.deployment.name
+  #@ if data.values.namespace.enable:
+  namespace: #@ data.values.repository
+  #@ else:
+  namespace: default
+  #@ end
+spec:
+  replicas: #@ data.values.deployment.replicas
+  selector:
+    matchLabels:
+      ff/selector: #@ data.values.repository
+  template:
+    metadata:
+      labels:
+        ff/ecossystem: #@ data.values.ecossystem
+        ff/selector: #@ data.values.repository
+    spec:
+      containers:
+        - name: #@ data.values.deployment.name
+          image: #@ "{}/{}/{}:{}".format(data.values.containerRegistry, data.values.organization, data.values.repository, data.values.tag)
+          imagePullPolicy: Always
+          #@ if/end data.values.deployment.resources.enable:
+          resources: #@ data.values.deployment.resources.claim
+          labels: #@ data.values.deployment.labels
+          annotations: #@ data.values.deployment.annotations
+          env:
+            - name: DEBUG
+              value: "*"
+            - name: TZ
+              value: America/Sao_Paulo
+#@ end
+
+---
+#@ if data.values.ingress.enable:
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: #@ data.values.ingress.name
+  #@ if data.values.namespace.enable:
+  namespace: #@ data.values.repository
+  #@ else:
+  namespace: default
+  #@ end
+  annotations:
+    #@ if data.values.ingress.type == "alb":
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/ssl-redirect: "443"
+    alb.ingress.kubernetes.io/success-codes: 200-399
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/ssl-policy: ELBSecurityPolicy-2016-08
+    alb.ingress.kubernetes.io/group.name: #@ data.values.ecossystem
+    alb.ingress.kubernetes.io/load-balancer-name: #@ data.values.ecossystem
+    alb.ingress.kubernetes.io/certificate-arn: #@ data.values.ingress.alb.certificateArn
+    #@ end
+spec:
+  rules:
+  - host: #@ "{}.{}.{}".format(data.values.repository, data.values.environment, data.values.ingress.domain)
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: #@ data.values.deployment.name
+            port:
+              number: #@ data.values.deployment.port
+#@ end

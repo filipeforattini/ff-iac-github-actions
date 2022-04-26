@@ -212,5 +212,44 @@ jobs:
       - Build-Node
 
     steps:
-      - run: |
-          echo "helm upgrade --install X"
+
+      # pre-job
+      - name: Cloning repository
+        uses: actions/checkout@v3
+
+      - name: Cloning tools
+        uses: actions/checkout@v3
+        with:
+          ref: main
+          path: .ff
+          repository: filipeforattini/ff-iac-github-actions
+
+      - name: Load setup configs
+        env:
+          PIPELINE_SETUP: ${{ needs.Setup.outputs.PipelineConfig }}
+        id: deploy_setup
+        run: |
+          echo "::set-output name=deploy_as_k8s::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.deployAsK8s')"
+          echo "::set-output name=deploy_as_chart::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.deployAsChart')"
+
+      # deploy
+      - name: Install YTT
+        uses: vmware-tanzu/carvel-setup-action@v1
+        with:
+          only: ytt
+
+      - name: Generates kubernetes YAML
+        if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
+        run: |
+          ytt \
+            -f ./.ff/deploy/as-k8s/service.schema.yml \
+            -f ./.ff/deploy/as-k8s/service.yml \
+            -f ./manifests/k8s-values.yml \
+            --data-value repository=${{github.repository}} \
+            --data-balue commit=${{needs.Setup.outputs.ShaHash}} > ./manifests/k8s-to-apply.yml
+
+      - uses: actions-hub/kubectl
+        env:
+          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+        with:
+          args: apply -f ./manifests/k8s-to-apply.yml
