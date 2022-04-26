@@ -366,4 +366,5 @@ jobs:
         env:
           KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
           args: apply -f ./manifests/k8s-to-apply.yml
