@@ -1,3 +1,4 @@
+const fs = require('fs')
 const Scrapper = require('./scrapper.class')
 
 module.exports = class Deploy extends Scrapper {
