@@ -25,15 +25,18 @@ module.exports = class Deploy extends Scrapper {
     const deployAsChart = fs.existsSync(path.join(process.cwd(), 'manifests', 'charts-values.yml'))
       ? true
       : false
+
     this
-      .add('helm', {
+      .add('dockerfile', {
+        containerRegistry,
+      })
+      .add('deploy', {
         pipeline,
         deployAsK8s,
         deployAsChart,
         containerName,
-        pod: pipeline,
+        podName: pipeline,
         containerRegistry,
-        namespace: repository,
       })
   }
 }

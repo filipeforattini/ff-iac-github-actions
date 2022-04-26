@@ -6,6 +6,7 @@ const Scrapper = require('./scrapper.class')
 module.exports = class Git extends Scrapper {
   setup () {
     const commit = this.context.sha.substring(0, 7)
+    const repository = this.context.payload.repository.name
     const branch = this.context.ref.replace('refs/heads/', '')
     const [ firstName, ...surnames ] = this.context.payload.head_commit.committer.name.split(' ')
 
@@ -14,11 +15,17 @@ module.exports = class Git extends Scrapper {
       : false
 
     this
+      .add('run', {
+        repository
+      })
+      .add('deploy', {
+        namespace: repository
+      })
       .add('git', {
         branch,
         commit,
+        repository,
         hasReleaserc,
-        repository: this.context.payload.repository.name,
         repositoryFull: this.context.payload.repository.full_name,
         organization: this.context.payload.repository.full_name.split('/')[0],
 

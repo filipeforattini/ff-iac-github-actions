@@ -20,7 +20,7 @@ module.exports = class Docker extends Scrapper {
       `${containerRegistry}/${containerName}:d-${this.output.run.date}`,
       `${containerRegistry}/${containerName}:b-${this.output.git.branch}`,
       `${containerRegistry}/${containerName}:c-${this.output.git.commit}`,
-      `${containerRegistry}/${containerName}:t-${this.output.run.timestamp}`,
+      `${containerRegistry}/${containerName}:t-${this.output.run.startTimestamp}`,
         // `${containerRegistry}/${containerName}:node-${matrix.node-version}`,
         // `${containerRegistry}/${containerName}:node-${matrix.node-version}-latest`,
         // `${containerRegistry}/${containerName}:node-${matrix.node-version}-d-${needs.Setup.outputs.Date}`,

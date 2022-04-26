@@ -8,9 +8,8 @@ module.exports = class Run extends Scrapper {
         stepTimestamp: Date.now(),
         count: this.context.runNumber,
         event: this.context.eventName,
-        repository: this.context.workflow,
         date: this.context.payload.head_commit.timestamp.substring(0, 10),
-        timestamp: new Date(this.context.payload.head_commit.timestamp).getTime(),
+        startTimestamp: new Date(this.context.payload.head_commit.timestamp).getTime(),
       })
   }
 }
