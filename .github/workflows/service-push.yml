@@ -252,7 +252,7 @@ jobs:
             --data-value repository=${{github.repository}} \
             --data-value tag=c-${{needs.Setup.outputs.ShaHash}} > ./manifests/k8s-to-apply.yml
 
-      - run: cat ./manifests/k8s-to-apply.yml
+      - run: cat ./manifests/k8s-to-apply.yml 
 
       - uses: actions-hub/kubectl@master
         env:
