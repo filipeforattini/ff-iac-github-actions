@@ -23,6 +23,9 @@ on:
 
 jobs:
 
+  #--------------------------------------------------#
+  #                    Setup Jobs                    # 
+  #--------------------------------------------------#
   Setup:
     runs-on: ubuntu-latest
 
@@ -66,12 +69,13 @@ jobs:
           echo "::set-output name=build_python::$(echo $PIPELINE_SETUP | jq -r '.code.isPython')"
           echo $PIPELINE_SETUP
 
-  Build-Node:
+  #--------------------------------------------------#
+  #                  Tests: Node.js                  # 
+  #--------------------------------------------------#
+  Tests-Node:
     runs-on: ubuntu-latest
     needs: Setup
-    if: |
-      github.event_name == 'push'
-      && needs.Setup.outputs.BuildNode == 'true'
+    if: needs.Setup.outputs.BuildNode == 'true'
 
     strategy:
       matrix:
@@ -85,8 +89,6 @@ jobs:
       # pre-job
       - name: Cloning repository
         uses: actions/checkout@v3
-        with:
-          persist-credentials: false
 
       - name: Cloning tools
         uses: actions/checkout@v3
@@ -147,6 +149,47 @@ jobs:
       - run: npm run lint --if-present
       - run: npm run test --if-present
 
+  #--------------------------------------------------#
+  #                 Release: Node.js                 # 
+  #--------------------------------------------------#
+  Release-Node:
+    runs-on: ubuntu-latest
+    needs: Tests-Node
+
+    outputs:
+      PipelineConfig: ${{ steps.node_setup.outputs.PipelineConfig }}
+
+    steps:
+
+      # pre-job
+      - name: Cloning repository
+        uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+
+      - name: Cloning tools
+        uses: actions/checkout@v3
+        with:
+          ref: main
+          path: .ff
+          repository: filipeforattini/ff-iac-github-actions
+
+      - name: Load setup configs
+        env:
+          PIPELINE_SETUP: ${{ needs.Tests-Node.outputs.PipelineConfig }}
+        id: node_setup
+        run: |
+          echo "::set-output name=PipelineConfig::$(echo $PIPELINE_SETUP)"
+          echo "::set-output name=cache_key::$(echo $PIPELINE_SETUP | jq -r '.code.cacheKey')"
+          echo "::set-output name=dependency_command::$(echo $PIPELINE_SETUP | jq -r '.code.dependencyCommand')"
+          echo "::set-output name=has_releaserc::$(echo $PIPELINE_SETUP | jq -r '.git.hasReleaserc')"
+          echo "::set-output name=has_dockerfile::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.hasDockerfile')"
+          echo "::set-output name=has_dockerignore::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.hasDockerignore')"
+          echo "::set-output name=docker_command::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.command')"
+          echo "::set-output name=docker_entrypoint::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.entrypoint')"
+          echo "::set-output name=docker_dependency_command::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.dependencyCommand')"
+          echo "::set-output name=docker_image_tags::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.tagsAsString')"
+
       # release
       - name: Create .releaserc.json
         uses: actions/github-script@v6
@@ -155,10 +198,66 @@ jobs:
           result-encoding: string
           script: return require('./.ff/src/steps/generate-releaserc')()
 
+      - name: Semantic Release dependencies
+        uses: actions/github-script@v6
+        if: steps.node_setup.outputs.has_releaserc == 'false'
+        run: |
+          npm i -g \
+            "@semantic-release" \
+            "@semantic-release/git" \
+            "@semantic-release/npm" \
+            "@semantic-release/github" \
+            "@semantic-release/changelog" \
+            "@semantic-release/commit-analyzer" \
+            "@semantic-release/release-notes-generator"
+
       - name: Release version
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npx semantic-release
+
+  #--------------------------------------------------#
+  #                  Build: Node.js                  # 
+  #--------------------------------------------------#
+  Build-Node:
+    runs-on: ubuntu-latest
+    needs: Release-Node
+
+    strategy:
+      matrix:
+        node-version: [16, 17]
+
+    outputs:
+      PipelineConfig: ${{ steps.node_setup.outputs.PipelineConfig }}
+
+    steps:
+
+      # pre-job
+      - name: Cloning repository
+        uses: actions/checkout@v3
+
+      - name: Cloning tools
+        uses: actions/checkout@v3
+        with:
+          ref: main
+          path: .ff
+          repository: filipeforattini/ff-iac-github-actions
+
+      - name: Load setup configs
+        env:
+          PIPELINE_SETUP: ${{ needs.Release-Node.outputs.PipelineConfig }}
+        id: node_setup
+        run: |
+          echo "::set-output name=PipelineConfig::$(echo $PIPELINE_SETUP)"
+          echo "::set-output name=cache_key::$(echo $PIPELINE_SETUP | jq -r '.code.cacheKey')"
+          echo "::set-output name=dependency_command::$(echo $PIPELINE_SETUP | jq -r '.code.dependencyCommand')"
+          echo "::set-output name=has_releaserc::$(echo $PIPELINE_SETUP | jq -r '.git.hasReleaserc')"
+          echo "::set-output name=has_dockerfile::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.hasDockerfile')"
+          echo "::set-output name=has_dockerignore::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.hasDockerignore')"
+          echo "::set-output name=docker_command::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.command')"
+          echo "::set-output name=docker_entrypoint::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.entrypoint')"
+          echo "::set-output name=docker_dependency_command::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.dependencyCommand')"
+          echo "::set-output name=docker_image_tags::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.tagsAsString')"
 
       # pre-build
       - name: Create .dockerignore
@@ -209,6 +308,9 @@ jobs:
           tags: ${{steps.node_setup.outputs.docker_image_tags}}
           labels: "organization: ${{github.repository_owner}}, repository: ${{github.repository}}, branch: ${{needs.Setup.outputs.Branch}}, commit: ${{needs.Setup.outputs.ShaHash}}, date: ${{needs.Setup.outputs.Date}}, timestamp: ${{needs.Setup.outputs.Timestamp}}"
 
+  #--------------------------------------------------#
+  #                  Build: Python                   # 
+  #--------------------------------------------------#
   Build-Python:
     runs-on: ubuntu-latest
     needs: Setup
@@ -226,10 +328,14 @@ jobs:
       - name: Pip install
         run: pip install -r requirements.txt
 
+  #--------------------------------------------------#
+  #                 Deploy: Node.js                  # 
+  #--------------------------------------------------#
   Deploy:
     runs-on: ubuntu-latest
-    needs: 
+    needs:
       - Build-Node
+      - Build-Python
 
     steps:
 
