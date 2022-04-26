@@ -319,7 +319,7 @@ jobs:
         run: pip install -r requirements.txt
 
   #--------------------------------------------------#
-  #                 Deploy: Node.js                  # 
+  #                      Deploy                      # 
   #--------------------------------------------------#
   Deploy:
     runs-on: ubuntu-latest
