@@ -4,19 +4,15 @@ const Scrapper = require('./scrapper.class')
 
 module.exports = class Deploy extends Scrapper {
   setup () {
-    const repository = this.context.payload.repository.full_name
+    const repository = this.context.payload.repository.name
 
-    const pipeline = repository.includes('-svc-')
+    const podName = repository.includes('-svc-')
       ? 'svc'
       : repository.includes('-app-')
         ? 'app'
         : repository.includes('-iac-')
           ? 'iac'
           : 'unknown'
-
-
-    const containerRegistry = this.inputs.containerRegistry
-    const containerName = this.context.payload.repository.full_name
 
     const deployAsK8s = fs.existsSync(path.join(process.cwd(), 'manifests', 'k8s-values.yml'))
       ? true
@@ -31,11 +27,9 @@ module.exports = class Deploy extends Scrapper {
         containerRegistry,
       })
       .add('deploy', {
-        pipeline,
+        podName,
         deployAsK8s,
         deployAsChart,
-        containerName,
-        podName: pipeline,
         containerRegistry,
       })
   }
