@@ -1,33 +1,54 @@
-const fs = require('fs')
-const path = require('path')
+const fs = require("fs");
+const path = require("path");
 
-module.exports = function (writeFile = true) {
+module.exports = function ({}) {
   let releaseFile = {
+    branches: [
+      "+([0-9])?(.{+([0-9]),x}).x",
+      "main",
+      "master",
+      "next",
+      "next-major",
+      {
+        name: "beta",
+        prerelease: true,
+      },
+      {
+        name: "alpha",
+        prerelease: true,
+      },
+      {
+        name: "feature/*",
+        prerelease: true,
+      },
+    ],
     plugins: [
       "@semantic-release/commit-analyzer",
       "@semantic-release/release-notes-generator",
       "@semantic-release/changelog",
       "@semantic-release/npm",
-      ["@semantic-release/git", {
-        "assets": [
-          "dist/**/*.{js,css,py}", 
-          "docs", 
-          "readme.md",
-          'changelog.md',
-          "package.json",
-          "requirements.txt",
-        ],
-        "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
-      }],
-      "@semantic-release/github"
+      [
+        "@semantic-release/git",
+        {
+          assets: [
+            "dist/**/*.{js,css,py}",
+            "docs",
+            "readme.md",
+            "changelog.md",
+            "package.json",
+            "requirements.txt",
+          ],
+          message:
+            "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}",
+        },
+      ],
+      "@semantic-release/github",
     ],
-  }
+  };
 
-  releaseFile = JSON.stringify(releaseFile, null, 2)
-  
-  if (writeFile) {
-    fs.writeFileSync(path.join(process.cwd(), '.releaserc.json'), releaseFile)
-  }
-  
-  return releaseFile
-}
+  releaseFile = JSON.stringify(releaseFile, null, 2);
+
+  fs.writeFileSync(path.join(process.cwd(), ".releaserc.json"), releaseFile);
+
+  return releaseFile;
+};
