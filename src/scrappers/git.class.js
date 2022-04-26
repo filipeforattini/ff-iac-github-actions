@@ -7,6 +7,10 @@ module.exports = class Git extends Scrapper {
     const branch = this.context.ref.replace('refs/heads/', '')
     const [ firstName, ...surnames ] = this.context.payload.head_commit.committer.name.split(' ')
 
+    const hasReleaserc = fs.existsSync(path.join(process.cwd(), '.releaserc'))
+      ? true
+      : false
+
     this
       .add('git', {
         branch,

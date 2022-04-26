@@ -55,9 +55,12 @@ jobs:
 
 Configure your 
 
-## Workflow
+## Workflows
 
-### 1. Setup:
+
+### A) Service Push
+
+#### 1. Setup:
 Organizes the whole workflow jobs' inputs.
 
 1. Checkout your code and few tools from this repo.
@@ -70,7 +73,7 @@ Organizes the whole workflow jobs' inputs.
     1. <small>(TODO)</small> Create environments
 1. Define which path should this build go.
 
-### 2. Depending on the event
+#### 2. Depending on the event
 
 - if [ event_name = push ]
     1. Build your repository. Supported: nodejs, python
@@ -91,4 +94,4 @@ Organizes the whole workflow jobs' inputs.
         1. Checkout your code and few tools from this repo again.
         1. Define few variables for your build
     1. Team approval
-        1. 
+

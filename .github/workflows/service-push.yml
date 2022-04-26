@@ -85,6 +85,8 @@ jobs:
       # pre-job
       - name: Cloning repository
         uses: actions/checkout@v3
+        with:
+          persist-credentials: false
 
       - name: Cloning tools
         uses: actions/checkout@v3
@@ -143,7 +145,11 @@ jobs:
       # run scripts
       - run: npm run lint --if-present
       - run: npm run test --if-present
-      - run: npm run build --if-present
+
+      - name: Release version
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx semantic-release
 
       # pre-build
       - name: Create .dockerignore
