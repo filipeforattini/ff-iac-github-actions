@@ -204,6 +204,9 @@ jobs:
               files: [ 'package.json' ]
             })
 
+      - name: Print .releaserc.json
+        run: cat .releaserc.json
+
       - name: Create changelog.md
         run: touch changelog.md
 
