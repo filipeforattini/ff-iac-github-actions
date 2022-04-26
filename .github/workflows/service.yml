@@ -246,9 +246,9 @@ jobs:
             -f ./.ff/deploy/as-k8s/service.yml \
             -f ./manifests/k8s-values.yml \
             --data-value repository=${{github.repository}} \
-            --data-balue commit=${{needs.Setup.outputs.ShaHash}} > ./manifests/k8s-to-apply.yml
+            --data-balue tag=${{needs.Setup.outputs.ShaHash}} > ./manifests/k8s-to-apply.yml
 
-      - uses: actions-hub/kubectl
+      - uses: actions-hub/kubectl@master
         env:
           KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
         with:
