@@ -173,7 +173,6 @@ jobs:
     needs: 
       - Setup
       - Tests-Node
-      - Tests-Python
 
     steps:
 
