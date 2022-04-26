@@ -212,6 +212,9 @@ jobs:
           result-encoding: string
           script: return require('./.ff/src/steps/generate-releaserc')()
 
+      - name: .releaserc
+        run: cat .releaserc.json
+        
       - name: Semantic Release dependencies
         run: |
           npm i -D \
@@ -222,6 +225,7 @@ jobs:
             @semantic-release/changelog \
             @semantic-release/commit-analyzer \
             @semantic-release/release-notes-generator
+
 
       - name: Release version
         env:
