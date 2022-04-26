@@ -215,7 +215,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: 
       - Setup
-      - Release-Node
+      - Release
 
     strategy:
       matrix:
