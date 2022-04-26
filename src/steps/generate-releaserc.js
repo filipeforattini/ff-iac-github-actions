@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 
-module.exports = function ({}) {
+module.exports = function ({} = {}) {
   let releaseFile = {
     branches: [
       "+([0-9])?(.{+([0-9]),x}).x",

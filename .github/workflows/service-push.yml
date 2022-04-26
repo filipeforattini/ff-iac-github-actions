@@ -194,15 +194,7 @@ jobs:
           PIPELINE_SETUP: ${{ needs.Setup.outputs.PipelineConfig }}
         id: node_setup
         run: |
-          echo "::set-output name=cache_key::$(echo $PIPELINE_SETUP | jq -r '.code.cacheKey')"
-          echo "::set-output name=dependency_command::$(echo $PIPELINE_SETUP | jq -r '.code.dependencyCommand')"
           echo "::set-output name=has_releaserc::$(echo $PIPELINE_SETUP | jq -r '.git.hasReleaserc')"
-          echo "::set-output name=has_dockerfile::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.hasDockerfile')"
-          echo "::set-output name=has_dockerignore::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.hasDockerignore')"
-          echo "::set-output name=docker_command::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.command')"
-          echo "::set-output name=docker_entrypoint::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.entrypoint')"
-          echo "::set-output name=docker_dependency_command::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.dependencyCommand')"
-          echo "::set-output name=docker_image_tags::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.tagsAsString')"
 
       # release
       - name: Create .releaserc.json
@@ -210,11 +202,11 @@ jobs:
         if: steps.node_setup.outputs.has_releaserc == 'false'
         with:
           result-encoding: string
-          script: return require('./.ff/src/steps/generate-releaserc')()
+          script: return require('./.ff/src/steps/generate-releaserc')({})
 
       - name: .releaserc
         run: cat .releaserc.json
-        
+
       - name: Semantic Release dependencies
         run: |
           npm i -D \
@@ -226,6 +218,10 @@ jobs:
             @semantic-release/commit-analyzer \
             @semantic-release/release-notes-generator
 
+      - name: .releaserc
+        run: |
+          cat .releaserc.json
+          cat package.json
 
       - name: Release version
         env:
