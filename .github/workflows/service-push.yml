@@ -199,8 +199,6 @@ jobs:
           script: return require('./.ff/src/steps/generate-releaserc')()
 
       - name: Semantic Release dependencies
-        uses: actions/github-script@v6
-        if: steps.node_setup.outputs.has_releaserc == 'false'
         run: |
           npm i -g \
             "@semantic-release" \
