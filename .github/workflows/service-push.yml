@@ -64,6 +64,7 @@ jobs:
         run: |
           echo "::set-output name=build_node::$(echo $PIPELINE_SETUP | jq -r '.code.isNode')"
           echo "::set-output name=build_python::$(echo $PIPELINE_SETUP | jq -r '.code.isPython')"
+          echo $PIPELINE_SETUP
 
   Build-Node:
     runs-on: ubuntu-latest
@@ -251,8 +252,6 @@ jobs:
             -f ./manifests/k8s-values.yml \
             --data-value repository=${{github.repository}} \
             --data-value tag=c-${{needs.Setup.outputs.ShaHash}} > ./manifests/k8s-to-apply.yml
-
-      - run: cat ./manifests/k8s-to-apply.yml 
 
       - uses: actions-hub/kubectl@master
         env:

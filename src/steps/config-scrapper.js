@@ -2,8 +2,8 @@ const mergeDeep = require('../merge-deep')
 const { 
   Git, 
   Run, 
-  Helm,
   Code, 
+  Deploy,
   Docker,
   Nodejs,
   Python,
@@ -22,7 +22,7 @@ module.exports = function ConfigScrapper (args) {
   output = providers.map(p => p.load(args, output))
     .reduce((acc, i) => mergeDeep(acc, i.data), output)
   
-  providers = [ Helm, Docker ]
+  providers = [ Docker, Deploy ]
 
   output = providers.map(p => p.load(args, output))
     .reduce((acc, i) => mergeDeep(acc, i.data), output)

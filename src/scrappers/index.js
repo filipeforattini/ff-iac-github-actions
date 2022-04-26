@@ -1,7 +1,7 @@
 module.exports = {
   Git: require('./git.class'),
   Run: require('./run.class'),
-  Helm: require('./helm.class'),
+  Deploy: require('./deploy.class'),
   
   // code related
   Code: require('./code.class'),
