@@ -345,8 +345,8 @@ jobs:
           PIPELINE_SETUP: ${{ needs.Setup.outputs.PipelineConfig }}
         id: deploy_setup
         run: |
-          echo "::set-output name=deploy_as_k8s::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.deployAsK8s')"
-          echo "::set-output name=deploy_as_chart::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.deployAsChart')"
+          echo "::set-output name=deploy_as_k8s::$(echo $PIPELINE_SETUP | jq -r '.deploy.deployAsK8s')"
+          echo "::set-output name=deploy_as_chart::$(echo $PIPELINE_SETUP | jq -r '.deploy.deployAsChart')"
 
       # deploy
       - name: Install YTT
@@ -369,6 +369,7 @@ jobs:
         run: cat ./manifests/k8s-to-apply.yml
 
       - name: Apply kubernetes YAML
+        if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
         uses: actions-hub/kubectl@master
         env:
           KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
