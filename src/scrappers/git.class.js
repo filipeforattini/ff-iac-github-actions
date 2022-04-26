@@ -1,4 +1,5 @@
 const fs = require('fs')
+const path = require('path')
 const thread = require('child_process')
 const Scrapper = require('./scrapper.class')
 
