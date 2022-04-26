@@ -9,7 +9,7 @@ module.exports = class Git extends Scrapper {
     const branch = this.context.ref.replace('refs/heads/', '')
     const [ firstName, ...surnames ] = this.context.payload.head_commit.committer.name.split(' ')
 
-    const hasReleaserc = fs.existsSync(path.join(process.cwd(), '.releaserc'))
+    const hasReleaserc = fs.existsSync(path.join(process.cwd(), '.releaserc.json'))
       ? true
       : false
 
@@ -17,6 +17,7 @@ module.exports = class Git extends Scrapper {
       .add('git', {
         branch,
         commit,
+        hasReleaserc,
         repository: this.context.payload.repository.name,
         repositoryFull: this.context.payload.repository.full_name,
         organization: this.context.payload.repository.full_name.split('/')[0],
