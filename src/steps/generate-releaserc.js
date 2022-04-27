@@ -10,21 +10,15 @@ module.exports = function (args = {}) {
       // tags
       "+([0-9])?(.{+([0-9]),x}).x",
 
-      // production
+      // default branch
       "main",
       "master",
 
       // alpha
       "next",
       "next-major",
-      {
-        name: "beta",
-        prerelease: true,
-      },
-      {
-        name: "alpha",
-        prerelease: true,
-      },
+      { name: "beta", prerelease: true },
+      { name: "alpha", prerelease: true },
 
       // git-flow
       "bug/*",
