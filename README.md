@@ -11,6 +11,7 @@ Your repo as an auto-helm upgrade or k8s-apply pipeline.
 
 - Semantic Versioning: [Semantic-Release](https://semantic-release.gitbook.io/semantic-release/)
 - Dockerfile linter: [Hadolint](https://github.com/marketplace/actions/hadolint-action)
+- Static docerfile analysis: [Trivy](https://aquasecurity.github.io/trivy/)
 - Static code analysis: [SonarQube](https://www.sonarqube.org/)
 
 ## Usage
