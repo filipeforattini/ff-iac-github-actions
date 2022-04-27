@@ -1,8 +1,11 @@
 const fs = require("fs");
 const path = require("path");
 
-module.exports = function ({ files = [] } = {}) {
+module.exports = function (args = {}) {
+  const { defaultBranch = "main", files = [] } = args;
+
   let releaseFile = {
+    defaultBranch,
     branches: [
       // tags
       "+([0-9])?(.{+([0-9]),x}).x",
