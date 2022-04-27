@@ -9,10 +9,13 @@ Your repo as an auto-helm upgrade or k8s-apply pipeline.
 
 ## Features
 
-- Semantic Versioning: 
-    - Node: [https://semantic-release.gitbook.io/semantic-release/](https://semantic-release.gitbook.io/semantic-release/)
+- Semantic Versioning: [Semantic-Release](https://semantic-release.gitbook.io/semantic-release/)
+- Dockerfile linter: [Hadolint](https://github.com/marketplace/actions/hadolint-action)
+- Static code analysis: [SonarQube](https://www.sonarqube.org/)
 
-## Repository Patterns
+## Usage
+
+### Repository Patterns
 
 This pipeline assumes you have just `3` types of repositories:
 
@@ -32,7 +35,7 @@ Examples:
 - `ff-app-budget`: application that organizes the company finances
 - `ff-iac-aws`: iac code to manage the aws environment
 
-## Setup
+### Setup
 
 Your repository need to implement:
 
@@ -54,16 +57,16 @@ jobs:
 | --- | --- | --- |
 | containerRegistry | ghcr.io | Container registry host that you will use |
 
-## Requirements
+### Requirements
 
 Configure your 
 
-## Workflows
+### Workflows
 
 
-### A) Service Push
+#### A) Service Push
 
-#### 1. Setup:
+##### 1. Setup:
 Organizes the whole workflow jobs' inputs.
 
 1. Checkout your code and few tools from this repo.
@@ -76,7 +79,7 @@ Organizes the whole workflow jobs' inputs.
     1. <small>(TODO)</small> Create environments
 1. Define which path should this build go.
 
-#### 2. Depending on the event
+##### 2. Depending on the event
 
 - if [ event_name = push ]
     1. Build your repository. Supported: nodejs, python
@@ -98,7 +101,9 @@ Organizes the whole workflow jobs' inputs.
         1. Define few variables for your build
     1. Team approval
 
-## Commits & Versioning
+## Daily work
+
+### Commits & Versioning
 
 ```bash
 git commit -m "action(scope): subject"
