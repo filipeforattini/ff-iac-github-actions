@@ -2,7 +2,7 @@ const fs = require("fs");
 const path = require("path");
 
 module.exports = function (args = {}) {
-  const { defaultBranch = "main", files = [] } = args;
+  const { defaultBranch = "master", files = [] } = args;
 
   let releaseFile = {
     defaultBranch,
@@ -11,8 +11,11 @@ module.exports = function (args = {}) {
       "+([0-9])?(.{+([0-9]),x}).x",
 
       // default branch
-      "main",
-      "master",
+      {
+        "name": defaultBranch,
+        "channel": "rc",
+        "prerelease": "rc"
+      },
 
       // alpha
       "next",
