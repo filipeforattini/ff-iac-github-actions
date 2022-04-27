@@ -9,13 +9,13 @@ on:
         default: service
       containerRegistry:
         type: string
-        required: true
+        required: false
         default: ghcr.io
       mysqlEnabled:
         type: boolean
         required: false
         default: false
-    
+
     outputs:
       PipelineConfig: 
         description: "Used pipeline config"
@@ -177,6 +177,7 @@ jobs:
       - name: Cloning repository
         uses: actions/checkout@v3
         with:
+          fetch-depth: 0
           persist-credentials: false
 
       - name: Cloning tools

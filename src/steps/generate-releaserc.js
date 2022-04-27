@@ -36,12 +36,7 @@ module.exports = function ({ files = [] } = {}) {
       [
         "@semantic-release/git",
         {
-          assets: [
-            "docs",
-            "readme.md",
-            "changelog.md",
-            ...files,
-          ],
+          assets: ["docs", "README.md", "CHANGELOG.md", ...files],
           message:
             "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}",
         },
@@ -49,10 +44,7 @@ module.exports = function ({ files = [] } = {}) {
       [
         "@semantic-release/github",
         {
-          assets: [
-            "dist/**/*.{js,css,py}",
-            ...files,
-          ],
+          assets: ["dist/**/*.{js,css,py}", ...files],
         },
       ],
     ],

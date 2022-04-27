@@ -1,12 +1,18 @@
-# Github Actions
+# Github Actions Fast Pipelines
 
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 
-Work in progress.
 
-Your repo as an auto-helm upgrade pipeline.
+This is a personal work in progress.
 
-## Types
+Your repo as an auto-helm upgrade or k8s-apply pipeline.
+
+## Features
+
+- Semantic Versioning: 
+    - Node: [https://semantic-release.gitbook.io/semantic-release/](https://semantic-release.gitbook.io/semantic-release/)
+
+## Repository Patterns
 
 This pipeline assumes you have just `3` types of repositories:
 
@@ -40,11 +46,6 @@ jobs:
     uses: filipeforattini/ff-iac-github-actions/.github/workflows/service.yml@main
     with:
       containerRegistry: ghcr.io
-
-  Outputs:
-    needs: Service
-    steps:
-      - run: echo PipelineSetup=${{ needs.Service.outputs.PipelineConfig }}
 ```
 
 ### Parameters
@@ -97,3 +98,19 @@ Organizes the whole workflow jobs' inputs.
         1. Define few variables for your build
     1. Team approval
 
+## Commits & Versioning
+
+```bash
+git commit -m "action(scope): subject"
+```
+
+Where the actions:
+- `feat`: new feature for the user, not a new feature for the build script
+- `fix`: bug fix for the user, not a fix for a build script
+- `docs`: documentation changes
+- `style`: formatting, lack of semicolons, etc; no changes to the production code
+- `refactor`: refactoring the production code, for example. renaming a variable
+- `test`: adding missing tests, refactoring tests; no changes to the production code
+- `chore`:updating grunted tasks, etc; no changes to the production code
+
+Adds `BREAKING CHANGE` in the commit message and it will generate a new **major** version.
