@@ -3,14 +3,18 @@ name: service
 on:
   workflow_call:
     inputs:
-      type:
+      mainBranch:
         type: string
         required: false
-        default: service
+        default: master
       containerRegistry:
         type: string
         required: false
         default: ghcr.io
+      type:
+        type: string
+        required: false
+        default: service
       mysqlEnabled:
         type: boolean
         required: false
@@ -202,6 +206,7 @@ jobs:
           result-encoding: string
           script: |
             return require('./.ff/src/steps/generate-releaserc')({
+              mainBranch: "${{ inputs.mainBranch }}",
               files: [ 
                 'package.json',
                 'dist/**/*.{js,css,py}',
