@@ -12,9 +12,9 @@ module.exports = function (args = {}) {
 
       // default branch
       {
-        "name": defaultBranch,
-        "channel": "rc",
-        "prerelease": "rc"
+        name: defaultBranch,
+        channel: "rc",
+        prerelease: "rc",
       },
 
       // alpha
@@ -33,6 +33,12 @@ module.exports = function (args = {}) {
       "@semantic-release/commit-analyzer",
       "@semantic-release/release-notes-generator",
       "@semantic-release/changelog",
+      [
+        "@semantic-release/npm",
+        {
+          npmPublish: false,
+        },
+      ],
       [
         "@semantic-release/git",
         {

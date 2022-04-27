@@ -206,7 +206,7 @@ jobs:
           result-encoding: string
           script: |
             return require('./.ff/src/steps/generate-releaserc')({
-              mainBranch: "${{ inputs.mainBranch }}",
+              defaultBranch: "${{ inputs.mainBranch }}",
               files: [ 
                 'package.json',
                 'dist/**/*.{js,css,py}',
