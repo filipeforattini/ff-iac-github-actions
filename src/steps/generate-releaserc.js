@@ -1,9 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 
-module.exports = function (args = {}) {
-  const { defaultBranch = "master", files = [] } = args;
-
+module.exports = function ({ defaultBranch = "master", files = [] }) {
   let releaseFile = {
     defaultBranch,
     branches: [
