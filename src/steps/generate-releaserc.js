@@ -9,11 +9,7 @@ module.exports = function ({ defaultBranch = "master", files = [] }) {
       "+([0-9])?(.{+([0-9]),x}).x",
 
       // default branch
-      {
-        name: defaultBranch,
-        channel: "rc",
-        prerelease: "rc",
-      },
+      defaultBranch,
 
       // alpha
       "next",
