@@ -285,7 +285,7 @@ jobs:
               assetsToIgnore: ['node_modules'],
             })
 
-      - name: Create dockerfile
+      - name: Create Dockerfile
         uses: actions/github-script@v6
         if: steps.node_setup.outputs.has_dockerfile == 'false'
         with:
