@@ -43,9 +43,9 @@ module.exports = function (params, writeFile = true) {
       `built-at=${new Date().toISOString().substring(0, 10)}`,
     ].concat(labels).join(' \\\n\t'),
     environemntVariables: [].concat(environemntVariables).join(' \\\n\t'),
-    dependencyCommand,
-    entrypoint,
-    command,
+    dependencyCommand: [].concat(dependencyCommand).join(' \\\n\t&& '),
+    entrypoint: `["${[].concat(entrypoint).join('", "')}"]`,
+    command: `["${[].concat(command).join('", "')}"]`,
   })
 
   console.log(content)

@@ -28,10 +28,8 @@ module.exports = class Nodejs extends Scrapper {
         ? 'package-lock.json' 
         : 'package.json'
 
-    const completeDependencyCommand = [
-      dependencyCommand,
-      hasYarnLock ? 'yarn cache clean' : '',
-    ].join('\\\n\t')
+    const dockerDependency = [ dependencyCommand ]
+    if (hasYarnLock) dockerDependency.push('yarn cache clean')
 
     this
       .add('code', {
@@ -48,7 +46,7 @@ module.exports = class Nodejs extends Scrapper {
         entrypoint,
         command,
         dockerignore,
-        dependencyCommand: dependencyCommand + (hasYarnLock ? '\\\\n\\t&& yarn cache clean' : ''),
+        dependencyCommand: dockerDependency,
       })
   }
 }
