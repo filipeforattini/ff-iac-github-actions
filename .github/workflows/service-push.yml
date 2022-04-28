@@ -299,6 +299,10 @@ jobs:
               entrypoint: '${{ steps.node_setup.outputs.docker_entrypoint }}',
               command: '${{ steps.node_setup.outputs.docker_command }}',
             })
+            
+      - uses: hadolint/hadolint-action@v2.0.0
+        with:
+          dockerfile: Dockerfile
 
       # build
       - name: Set up QEMU
@@ -329,6 +333,7 @@ jobs:
   #--------------------------------------------------#
   Deploy:
     runs-on: ubuntu-latest
+    environment: dev
     needs:
       - Setup
       - Build-Node
