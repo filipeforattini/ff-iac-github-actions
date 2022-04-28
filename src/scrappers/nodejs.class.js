@@ -48,7 +48,7 @@ module.exports = class Nodejs extends Scrapper {
         entrypoint,
         command,
         dockerignore,
-        dependencyCommand: completeDependencyCommand,
+        dependencyCommand: dependencyCommand + (hasYarnLock ? '\\\\n\\t&& yarn cache clean' : ''),
       })
   }
 }
