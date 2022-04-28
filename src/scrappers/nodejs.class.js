@@ -43,10 +43,10 @@ module.exports = class Nodejs extends Scrapper {
         dependencyCommand,
       })
       .add('dockerfile', {
-        entrypoint,
-        command,
         dockerignore,
-        dependencyCommand: dockerDependency,
+        entrypoint: JSON.stringify(entrypoint),
+        command: JSON.stringify(command),
+        dependencyCommand: JSON.stringify(dockerDependency),
       })
   }
 }

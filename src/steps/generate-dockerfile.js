@@ -22,7 +22,7 @@ CMD ["{{command}}"]
 module.exports = function (params, writeFile = true) {
   console.log({ params })
 
-  const {
+  let {
     image,
     tag,
     labels = [],
@@ -32,6 +32,9 @@ module.exports = function (params, writeFile = true) {
     entrypoint,
     command,
   } = params;
+
+  command = JSON.parse(command)
+  entrypoint = JSON.parse(entrypoint)
 
   const template = new Template({ stub });
 
