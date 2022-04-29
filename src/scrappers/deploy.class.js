@@ -15,6 +15,8 @@ module.exports = class Deploy extends Scrapper {
           ? 'iac'
           : 'unknown'
 
+    const ecosystem = this.inputs.ecosystem || repository.split('-')[0]
+
     const deployAsK8s = fs.existsSync(path.join(process.cwd(), 'manifests', 'k8s-values.yml'))
       ? true
       : false
@@ -29,6 +31,7 @@ module.exports = class Deploy extends Scrapper {
       })
       .add('deploy', {
         podName,
+        ecosystem,
         deployAsK8s,
         deployAsChart,
         containerRegistry,

@@ -1,7 +1,17 @@
 #@ load("@ytt:data", "data")
+#@ load("@ytt:md5", "md5")
 #@ load("@ytt:sha256", "sha256")
 
-#@ configHash = sha256.sum("data")
+#@ configMD5 = md5.sum("data")
+#@ configSHA256 = sha256.sum("data")
+
+#@ globalLabels = {}
+#@ globalLabels.update({ "ecosystem": data.values.ecosystem })
+
+#@ globalAnnotations = {}
+#@ globalAnnotations.update({ "pipe/ecosystem": data.values.ecosystem })
+#@ globalAnnotations.update({ "pipe/config-md5": configMD5 })
+#@ globalAnnotations.update({ "pipe/config-sha256": configSHA256 })
 
 ---
 #@ if data.values.namespace.enable:
@@ -9,8 +19,19 @@ apiVersion: v1
 kind: Namespace
 metadata:
   name: #@ data.values.repository
-  labels: #@ data.values.namespace.labels
-  annotations: #@ data.values.namespace.annotations
+
+  #@ namespaceLabels = {}
+  #@ namespaceLabels.update(data.values.namespace.labels)
+  #@ namespaceLabels.update(globalLabels)
+  labels: #@ namespaceLabels
+
+  #@ namespaceAnnotations = {}
+  #@ namespaceAnnotations.update(data.values.namespace.annotations)
+  #@ namespaceAnnotations.update(globalAnnotations)
+  #@ if data.values.features.enableLinkerd:
+  #@ namespaceAnnotations.update({ "linkerd.io/inject": "enabled" })
+  #@ end
+  annotations: #@ namespaceAnnotations
 #@ end
 
 ---
@@ -24,10 +45,14 @@ metadata:
   #@ else:
   namespace: default
   #@ end
-  annotations:
-    kubectl.kubernetes.io/last-applied-configuration: #@ configHash
+
+  #@ secretAnnotations = {}
+  #@ secretAnnotations.update(globalAnnotations)
+  #! kubectl.kubernetes.io/last-applied-configuration: #@ sha256
+  annotations: #@ secretAnnotations
 data:
-  config: #@ configHash
+  config-md5: #@ configMD5
+  config-sha256: #@ configSHA256
 
 ---
 #@ if data.values.deployment.enable:
@@ -40,25 +65,41 @@ metadata:
   #@ else:
   namespace: default
   #@ end
+
+  #@ deploymentLabels = {}
+  #@ deploymentLabels.update(globalLabels)
+  #@ deploymentLabels.update(data.values.deployment.labels)
+  labels: #@ deploymentLabels
+
+  #@ deploymentAnnotations = {}
+  #@ deploymentAnnotations.update(globalAnnotations)
+  #@ deploymentAnnotations.update(data.values.deployment.annotations)
+  annotations: #@ deploymentAnnotations
 spec:
   replicas: #@ data.values.deployment.replicas
   selector:
-    matchLabels:
-      ff/selector: #@ data.values.repository
+
+    #@ if data.values.deployment.matchLabels.overwrite:
+    matchLabels: #@ data.values.deployment.matchLabels.labels
+    #@ else:
+    #@ deploymentMatchLabels = {}
+    #@ deploymentMatchLabels.update({ "pipe/selector": data.values.repository })
+    matchLabels: #@ deploymentMatchLabels
+    #@ end
   template:
     metadata:
-      labels:
-        ff/ecossystem: #@ data.values.ecossystem
-        ff/selector: #@ data.values.repository
+      #@ deploymentTemplateLabels = {}
+      #@ deploymentTemplateLabels.update(globalLabels)
+      #@ deploymentTemplateLabels.update({ "pipe/ecosystem": data.values.ecosystem })
+      #@ deploymentTemplateLabels.update({ "pipe/selector": data.values.repository })
+      #@ deploymentTemplateLabels.update(data.values.deployment.templateLabels)
+      labels: #@ deploymentTemplateLabels
     spec:
       containers:
         - name: #@ data.values.deployment.name
           image: #@ "{}/{}/{}:{}".format(data.values.containerRegistry, data.values.organization, data.values.repository, data.values.tag)
           imagePullPolicy: Always
-          #@ if/end data.values.deployment.resources.enable:
-          resources: #@ data.values.deployment.resources.claim
-          labels: #@ data.values.deployment.labels
-          annotations: #@ data.values.deployment.annotations
+          resources: #@ data.values.deployment.resources
           env:
             - name: DEBUG
               value: "*"
@@ -84,8 +125,8 @@ metadata:
     alb.ingress.kubernetes.io/success-codes: 200-399
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/ssl-policy: ELBSecurityPolicy-2016-08
-    alb.ingress.kubernetes.io/group.name: #@ data.values.ecossystem
-    alb.ingress.kubernetes.io/load-balancer-name: #@ data.values.ecossystem
+    alb.ingress.kubernetes.io/group.name: #@ data.values.ecosystem
+    alb.ingress.kubernetes.io/load-balancer-name: #@ data.values.ecosystem
     alb.ingress.kubernetes.io/certificate-arn: #@ data.values.ingress.alb.certificateArn
     #@ end
 spec:

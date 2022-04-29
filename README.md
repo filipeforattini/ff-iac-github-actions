@@ -28,7 +28,7 @@ This pipeline assumes you have just `3` types of repositories:
 
 Those repositories must obey a name pattern.
 
-`{ecossystem}-{type}-{name/client/integration}`
+`{ecosystem}-{type}-{name/client/integration}`
 
 Examples:
 

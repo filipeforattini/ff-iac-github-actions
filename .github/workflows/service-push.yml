@@ -7,6 +7,9 @@ on:
         type: string
         required: false
         default: master
+      ecosystem:
+        type: string
+        required: false
       containerRegistry:
         type: string
         required: false
@@ -352,19 +355,6 @@ jobs:
           path: .ff
           repository: filipeforattini/ff-iac-github-actions
 
-      - name: Load setup configs
-        env:
-          PIPELINE_SETUP: ${{ needs.Setup.outputs.PipelineConfig }}
-        id: deploy_setup
-        run: |
-          echo "::set-output name=deploy_as_k8s::$(echo $PIPELINE_SETUP | jq -r '.deploy.deployAsK8s')"
-          echo "::set-output name=deploy_as_chart::$(echo $PIPELINE_SETUP | jq -r '.deploy.deployAsChart')"
-          echo "::set-output name=deploy_ecossystem::$(echo $PIPELINE_SETUP | jq -r '.deploy.ecossystem')"
-          echo "::set-output name=deploy_organization::$(echo $PIPELINE_SETUP | jq -r '.deploy.organization')"
-          echo "::set-output name=deploy_container_registry::$(echo $PIPELINE_SETUP | jq -r '.deploy.containerRegistry')"
-          echo "::set-output name=deploy_repository::$(echo $PIPELINE_SETUP | jq -r '.deploy.repository')"
-          echo "::set-output name=deploy_tag::$(echo $PIPELINE_SETUP | jq -r '.deploy.tag')"
-
       # deploy
       - name: Install YTT
         uses: vmware-tanzu/carvel-setup-action@v1
@@ -373,16 +363,18 @@ jobs:
 
       - name: Generates Kubernetes YAML
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
+        env:
+          PIPELINE_SETUP: ${{ steps.script_setup.outputs.result}}
         run: |
           ytt \
             -f ./.ff/deploy/as-k8s/service.schema.yml \
             -f ./.ff/deploy/as-k8s/service.yml \
             -f ./manifests/k8s-values.yml \
-            --data-value ecossystem=${{steps.deploy_setup.outputs.deploy_ecossystem}} \
-            --data-value organization=${{steps.deploy_setup.outputs.deploy_organization}} \
-            --data-value containerRegistry=${{steps.deploy_setup.outputs.deploy_container_registry}} \
-            --data-value repository=${{steps.deploy_setup.outputs.deploy_repository}} \
-            --data-value tag=${{steps.deploy_setup.outputs.deploy_tag}} \
+            --data-value ecosystem=$(echo $PIPELINE_SETUP | jq -r '.deploy.ecosystem') \
+            --data-value organization=$(echo $PIPELINE_SETUP | jq -r '.deploy.organization') \
+            --data-value containerRegistry=$(echo $PIPELINE_SETUP | jq -r '.deploy.containerRegistry') \
+            --data-value repository=$(echo $PIPELINE_SETUP | jq -r '.deploy.repository') \
+            --data-value tag=$(echo $PIPELINE_SETUP | jq -r '.deploy.tag') \
               > ./manifests/k8s-to-apply.yml
           cat ./manifests/k8s-to-apply.yml
 
