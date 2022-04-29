@@ -35,6 +35,7 @@ module.exports = function (params, writeFile = true) {
 
   command = JSON.parse(command)
   entrypoint = JSON.parse(entrypoint)
+  dependencyCommand = JSON.parse(dependencyCommand)
 
   const template = new Template({ stub });
 
