@@ -8,15 +8,15 @@ FROM {{image}}:{{tag}}
 
 LABEL {{labels}}
 
-ENV {{environemntVariables}}
+ENV {{environmentVariables}}
 
 WORKDIR /app
 COPY . /app
 
 RUN {{dependencyCommand}}
 
-ENTRYPOINT ["{{entrypoint}}"]
-CMD ["{{command}}"]
+ENTRYPOINT {{entrypoint}}
+CMD {{command}}
 `;
 
 module.exports = function (params, writeFile = true) {
@@ -26,12 +26,16 @@ module.exports = function (params, writeFile = true) {
     image,
     tag,
     labels = [],
-    environemntVariables = [ 'TZ=GMT', 'ENV=development' ],
+    environmentVariables = [ 'TZ=GMT', 'ENV=development' ],
     generatedAt = new Date().toISOString(),
     dependencyCommand,
     entrypoint,
     command,
   } = params;
+
+  labels = [
+    `built-at=${new Date().toISOString().substring(0, 10)}`,
+  ].concat(labels).join(' \\\n\t')
 
   command = JSON.parse(command)
   entrypoint = JSON.parse(entrypoint)
@@ -43,10 +47,8 @@ module.exports = function (params, writeFile = true) {
     generatedAt,
     image,
     tag,
-    labels: [
-      `built-at=${new Date().toISOString().substring(0, 10)}`,
-    ].concat(labels).join(' \\\n\t'),
-    environemntVariables: [].concat(environemntVariables).join(' \\\n\t'),
+    labels,
+    environmentVariables: [].concat(environmentVariables).join(' \\\n\t'),
     dependencyCommand: [].concat(dependencyCommand).join(' \\\n\t&& '),
     entrypoint: `["${[].concat(entrypoint).join('", "')}"]`,
     command: `["${[].concat(command).join('", "')}"]`,
