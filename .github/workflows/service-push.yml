@@ -300,7 +300,8 @@ jobs:
               command: '${{ steps.node_setup.outputs.docker_command }}',
             })
             
-      - uses: hadolint/hadolint-action@v2.0.0
+      - name: Dockerfile lint
+        uses: hadolint/hadolint-action@v2.0.0
         with:
           dockerfile: Dockerfile
 
@@ -370,7 +371,7 @@ jobs:
         with:
           only: ytt
 
-      - name: Generates kubernetes YAML
+      - name: Generates Kubernetes YAML
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
         run: |
           ytt \
@@ -383,12 +384,9 @@ jobs:
             --data-value repository=${{steps.deploy_setup.outputs.deploy_repository}} \
             --data-value tag=${{steps.deploy_setup.outputs.deploy_tag}} \
               > ./manifests/k8s-to-apply.yml
+          cat ./manifests/k8s-to-apply.yml
 
-      - name: Print YAML
-        if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
-        run: cat ./manifests/k8s-to-apply.yml
-
-      - name: Apply kubernetes YAML
+      - name: Apply Kubernetes YAML
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
         uses: actions-hub/kubectl@master
         env:
@@ -396,3 +394,12 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           args: apply -f ./manifests/k8s-to-apply.yml
+
+      - name: Get current state
+        if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
+        uses: actions-hub/kubectl@master
+        env:
+          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          args: get pods --ns ${{steps.deploy_setup.outputs.deploy_repository}}
