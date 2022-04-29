@@ -402,4 +402,4 @@ jobs:
           KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          args: get pods --ns ${{steps.deploy_setup.outputs.deploy_repository}}
+          args: get pods -n ${{steps.deploy_setup.outputs.deploy_repository}}
