@@ -14,10 +14,13 @@ on:
         type: string
         required: false
         default: ghcr.io
-      type:
+      secretsDrive:
         type: string
         required: false
-        default: service
+        default: actions
+      secrets:
+        type: string
+        required: false
       mysqlEnabled:
         type: boolean
         required: false
@@ -388,7 +391,6 @@ jobs:
             --data-value containerRegistry=${{steps.deploy_setup.outputs.deploy_container_registry}} \
             --data-value repository=${{steps.deploy_setup.outputs.deploy_repository}} \
             --data-value tag=${{steps.deploy_setup.outputs.deploy_tag}} \
-            --data-value tag=$(echo $PIPELINE_SETUP | jq -r '.deploy.tag') \
               > ./manifests/k8s-to-apply.yml
           cat ./manifests/k8s-to-apply.yml
 
