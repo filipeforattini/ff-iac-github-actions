@@ -19,7 +19,7 @@ on:
         type: string
         required: false
         default: actions
-      secrets:
+      secretsJson:
         type: string
         required: false
 
