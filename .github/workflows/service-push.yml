@@ -10,6 +10,10 @@ on:
       ecosystem:
         type: string
         required: false
+      containerRegistry:
+        type: string
+        required: false
+        default: ghcr.io
 
       mysqlEnabled:
         type: boolean
@@ -364,6 +368,11 @@ jobs:
           echo "::set-output name=deploy_repository::$(echo $PIPELINE_SETUP | jq -r '.deploy.repository')"
           echo "::set-output name=deploy_tag::$(echo $PIPELINE_SETUP | jq -r '.deploy.tag')"
 
+      - name: Install YTT
+        uses: vmware-tanzu/carvel-setup-action@v1
+        with:
+          only: ytt
+
       # deploy
       - name: Decrypt Dev Secrets
         env:
@@ -377,10 +386,15 @@ jobs:
           echo -e "#@data/values\n---\n$(cat ./manifests/k8s-secrets.env)" > ./manifests/k8s-secrets.env
           cat ./manifests/k8s-secrets.env
 
-      - name: Install YTT
-        uses: vmware-tanzu/carvel-setup-action@v1
+      - name: Apply Kubernetes YAML
+        if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
+        uses: actions-hub/kubectl@master
+        env:
+          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          only: ytt
+          args: create secret generic svc \
+            --from-file=./manifests/k8s-secrets.env
 
       - name: Generates Kubernetes YAML
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
