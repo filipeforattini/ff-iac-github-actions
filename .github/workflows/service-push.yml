@@ -355,6 +355,14 @@ jobs:
           path: .ff
           repository: filipeforattini/ff-iac-github-actions
 
+      - name: Load setup configs
+        env:
+          PIPELINE_SETUP: ${{ needs.Setup.outputs.PipelineConfig }}
+        id: deploy_setup
+        run: |
+          echo "::set-output name=deploy_as_k8s::$(echo $PIPELINE_SETUP | jq -r '.deploy.deployAsK8s')"
+          echo "::set-output name=deploy_as_chart::$(echo $PIPELINE_SETUP | jq -r '.deploy.deployAsChart')"
+
       # deploy
       - name: Install YTT
         uses: vmware-tanzu/carvel-setup-action@v1
