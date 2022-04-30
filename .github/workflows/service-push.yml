@@ -375,6 +375,13 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       # deploy
+      - name: Import GPG key
+        if: steps.deploy_setup.outputs.has_dev_secrets == 'true'
+        uses: crazy-max/ghaction-import-gpg@v4
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.GPG_DEV_PASSWORD }}
+
       - name: Decrypt Dev Secrets
         env:
           GPG_PASSWORD: ${{ secrets.GPG_DEV_PASSWORD }}
