@@ -14,7 +14,7 @@ on:
         type: string
         required: false
         default: ghcr.io
-      secretsDrive:
+      secretsDriver:
         type: string
         required: false
         default: actions
