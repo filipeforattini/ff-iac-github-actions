@@ -372,6 +372,7 @@ jobs:
         uses: vmware-tanzu/carvel-setup-action@v1
         with:
           only: ytt
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       # deploy
       - name: Decrypt Dev Secrets
