@@ -381,7 +381,7 @@ jobs:
         run: |
           gpg \ 
             --yes --batch --quiet --decrypt \ 
-            --output ./manifests/k8s-secrets.env
+            --output ./manifests/k8s-secrets.env \
             --passphrase="$GPG_PASSWORD" \
             ./manifests/secrets/dev.gpg
           echo -e "#@data/values\n---\n$(cat ./manifests/k8s-secrets.env)" > ./manifests/k8s-secrets.env
