@@ -380,16 +380,15 @@ jobs:
         uses: crazy-max/ghaction-import-gpg@v4
         with:
           gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
-          passphrase: ${{ secrets.GPG_DEV_PASSWORD }}
+          passphrase: ${{ secrets.GPG_DEV_PASSPHRASE }}
 
       - name: Decrypt Dev Secrets
         env:
-          GPG_PASSWORD: ${{ secrets.GPG_DEV_PASSWORD }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_DEV_PASSPHRASE }}
         run: |
-          gpg \ 
-            --yes --batch --quiet --decrypt \ 
+          gpg --yes --batch --quiet --decrypt \ 
             --output ./manifests/k8s-secrets.env \
-            --passphrase="$GPG_PASSWORD" \
+            --passphrase="$GPG_PASSPHRASE" \
             ./manifests/secrets/dev.gpg
           echo -e "#@data/values\n---\n$(cat ./manifests/k8s-secrets.env)" > ./manifests/k8s-secrets.env
           cat ./manifests/k8s-secrets.env
