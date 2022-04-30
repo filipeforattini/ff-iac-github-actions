@@ -58,6 +58,8 @@ jobs:
           path: .ff
           repository: filipeforattini/ff-iac-github-actions
 
+      - run: echo ${{inputs.secrets}}
+
       - name: Pipeline config scrapper
         uses: actions/github-script@v6
         id: script_setup
