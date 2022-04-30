@@ -394,15 +394,14 @@ jobs:
           echo -e "#@data/values\n---\n$(cat ./manifests/k8s-secrets.env)" > ./manifests/k8s-secrets.env
           cat ./manifests/k8s-secrets.env
 
-      - name: Apply Kubernetes YAML
+      - name: Create K8s secrets
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
         uses: actions-hub/kubectl@master
         env:
           KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          args: create secret generic svc \
-            --from-file=./manifests/k8s-secrets.env
+          args: create secret generic svc --from-file=./manifests/k8s-secrets.env
 
       - name: Generates Kubernetes YAML
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
