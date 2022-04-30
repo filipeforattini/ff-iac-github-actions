@@ -24,6 +24,14 @@ module.exports = class Deploy extends Scrapper {
     const deployAsChart = fs.existsSync(path.join(process.cwd(), 'manifests', 'charts-values.yml'))
       ? true
       : false
+    
+    const hasDevSecrets = fs.existsSync(path.join(process.cwd(), 'manifests', 'secrets', 'dev.gpg'))
+      ? true
+      : false
+
+    const hasStgSecrets = fs.existsSync(path.join(process.cwd(), 'manifests', 'secrets', 'stg.gpg'))
+      ? true
+      : false
 
     this
       .add('dockerfile', {
@@ -33,6 +41,8 @@ module.exports = class Deploy extends Scrapper {
         podName,
         ecosystem,
         deployAsK8s,
+        hasDevSecrets,
+        hasStgSecrets,
         deployAsChart,
         containerRegistry,
       })

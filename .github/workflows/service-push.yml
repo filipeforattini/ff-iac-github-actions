@@ -10,18 +10,6 @@ on:
       ecosystem:
         type: string
         required: false
-      containerRegistry:
-        type: string
-        required: false
-        default: ghcr.io
-
-      secretsDriver:
-        type: string
-        required: false
-        default: actions
-      secretsJson:
-        type: string
-        required: false
 
       mysqlEnabled:
         type: boolean
@@ -369,6 +357,7 @@ jobs:
         run: |
           echo "::set-output name=deploy_as_k8s::$(echo $PIPELINE_SETUP | jq -r '.deploy.deployAsK8s')"
           echo "::set-output name=deploy_as_chart::$(echo $PIPELINE_SETUP | jq -r '.deploy.deployAsChart')"
+          echo "::set-output name=has_dev_secrets::$(echo $PIPELINE_SETUP | jq -r '.deploy.hasDevSecrets')"
           echo "::set-output name=deploy_ecosystem::$(echo $PIPELINE_SETUP | jq -r '.deploy.ecosystem')"
           echo "::set-output name=deploy_organization::$(echo $PIPELINE_SETUP | jq -r '.deploy.organization')"
           echo "::set-output name=deploy_container_registry::$(echo $PIPELINE_SETUP | jq -r '.deploy.containerRegistry')"
@@ -376,6 +365,18 @@ jobs:
           echo "::set-output name=deploy_tag::$(echo $PIPELINE_SETUP | jq -r '.deploy.tag')"
 
       # deploy
+      - name: Decrypt Dev Secrets
+        env:
+          GPG_PASSWORD: ${{ secrets.GPG_DEV_PASSWORD }}
+        run: |
+          gpg \ 
+            --yes --batch --quiet --decrypt \ 
+            --output ./manifests/k8s-secrets.env
+            --passphrase="$GPG_PASSWORD" \
+            ./manifests/secrets/dev.gpg
+          echo -e "#@data/values\n---\n$(cat ./manifests/k8s-secrets.env)" > ./manifests/k8s-secrets.env
+          cat ./manifests/k8s-secrets.env
+
       - name: Install YTT
         uses: vmware-tanzu/carvel-setup-action@v1
         with:
