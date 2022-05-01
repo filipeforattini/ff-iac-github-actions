@@ -377,7 +377,7 @@ jobs:
       # deploy
       - name: Import GPG key
         if: steps.deploy_setup.outputs.has_dev_secrets == 'true'
-        uses: crazy-max/ghaction-import-gpg@v4
+        uses: hashicorp/ghaction-import-gpg@v2.1.0
         with:
           gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
           passphrase: ${{ secrets.GPG_DEV_PASSPHRASE }}
