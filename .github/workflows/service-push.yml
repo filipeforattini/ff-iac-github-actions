@@ -373,6 +373,11 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       # deploy
+      - name: Temporary print
+        run: |
+          echo "private_key = ${{ secrets.GPG_PRIVATE_KEY }}"
+          echo "passphrase: ${{ secrets.GPG_DEV_PASSPHRASE }}"
+
       - name: Import GPG key
         if: steps.deploy_setup.outputs.has_dev_secrets == 'true'
         uses: hashicorp/ghaction-import-gpg@v2.1.0
