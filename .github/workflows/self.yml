@@ -1,0 +1,29 @@
+name: self
+on: [ push ]
+
+jobs:
+
+
+  Release:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      # pre-job
+      - name: Cloning repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Semantic Release
+        run: |
+          npm i -g -D \
+            semantic-release \
+            @semantic-release/git \
+            @semantic-release/npm \
+            @semantic-release/github \
+            @semantic-release/changelog \
+            @semantic-release/commit-analyzer \
+            @semantic-release/release-notes-generator
+          semantic-release
