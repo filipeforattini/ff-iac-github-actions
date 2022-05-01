@@ -219,8 +219,10 @@ jobs:
         run: cat .releaserc.json
 
       - name: Semantic Release dependencies
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          npm i -D \
+          npm i -g -D \
             semantic-release \
             @semantic-release/git \
             @semantic-release/npm \
@@ -228,11 +230,7 @@ jobs:
             @semantic-release/changelog \
             @semantic-release/commit-analyzer \
             @semantic-release/release-notes-generator
-
-      - name: Release version
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx semantic-release
+          semantic-release
 
 
   #--------------------------------------------------#
