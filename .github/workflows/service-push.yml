@@ -374,9 +374,12 @@ jobs:
 
       # deploy
       - name: Temporary print
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+          GPG_DEV_PASSPHRASE: ${{ secrets.GPG_DEV_PASSPHRASE }}
         run: |
-          echo "private_key = ${{ secrets.GPG_PRIVATE_KEY }}"
-          echo "passphrase: ${{ secrets.GPG_DEV_PASSPHRASE }}"
+          echo "private_key = ${GPG_PRIVATE_KEY}"
+          echo "passphrase = ${GPG_DEV_PASSPHRASE}"
 
       - name: Import GPG key
         if: steps.deploy_setup.outputs.has_dev_secrets == 'true'
