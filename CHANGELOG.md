@@ -1,3 +1,10 @@
+## [1.0.2](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.0.1...v1.0.2) (2022-05-01)
+
+
+### Bug Fixes
+
+* prints keys - yeah i know ([5387dc3](https://github.com/filipeforattini/ff-iac-github-actions/commit/5387dc331efaea85cafee54339094dc3c64967f1))
+
 ## [1.0.1](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.0.0...v1.0.1) (2022-05-01)
 
 
