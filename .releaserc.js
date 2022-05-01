@@ -27,23 +27,11 @@ module.exports = {
     "@semantic-release/release-notes-generator",
     "@semantic-release/changelog",
     [
-      "@semantic-release/npm",
-      {
-        npmPublish: false,
-      },
-    ],
-    [
       "@semantic-release/git",
       {
         assets: ["docs", "README.md", "CHANGELOG.md", ...files],
         message:
           "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}",
-      },
-    ],
-    [
-      "@semantic-release/github",
-      {
-        assets: ["dist/**/*.{js,css,py}", ...files],
       },
     ],
   ],
