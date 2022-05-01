@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.0.0...v1.0.1) (2022-05-01)
+
+
+### Bug Fixes
+
+* removed unecessary dependencies on target repository ([b4ecacd](https://github.com/filipeforattini/ff-iac-github-actions/commit/b4ecacd5c532a6489f22ee5935541e31f5e180c3))
+
 # 1.0.0 (2022-05-01)
 
 
