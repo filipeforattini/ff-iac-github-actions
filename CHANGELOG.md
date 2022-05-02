@@ -1,3 +1,10 @@
+## [1.0.5](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.0.4...v1.0.5) (2022-05-02)
+
+
+### Bug Fixes
+
+* new kube config requirement ([e57ba0c](https://github.com/filipeforattini/ff-iac-github-actions/commit/e57ba0cdb5dab61922ad9b59f5eed4f224114762))
+
 ## [1.0.4](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.0.3...v1.0.4) (2022-05-02)
 
 
