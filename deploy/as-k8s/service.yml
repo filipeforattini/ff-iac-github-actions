@@ -83,7 +83,7 @@ spec:
     matchLabels: #@ data.values.deployment.matchLabels.labels
     #@ else:
     #@ deploymentMatchLabels = {}
-    #@ deploymentMatchLabels.update({ "pipe/selector": data.values.repository })
+    #@ deploymentMatchLabels.update({ "pipe/selector": data.values.repository + "/" + data.values.deployment.name })
     matchLabels: #@ deploymentMatchLabels
     #@ end
   template:

@@ -34,7 +34,7 @@ ingress:
   enable: false
   name: svc
   type: alb
-  domain: ff.io
+  domain: acme.io
 
   alb:
     certificateArn: secret

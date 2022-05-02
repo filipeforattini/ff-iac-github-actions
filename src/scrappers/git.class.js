@@ -20,6 +20,7 @@ module.exports = class Git extends Scrapper {
         repository
       })
       .add('deploy', {
+        repository,
         organization,
         namespace: repository,
         tag: `c-${commit}`,

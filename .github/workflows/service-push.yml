@@ -419,8 +419,6 @@ jobs:
 
       - name: Generates Kubernetes YAML
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
-        env:
-          PIPELINE_SETUP: ${{ steps.script_setup.outputs.result}}
         run: |
           ytt \
             -f ./.ff/deploy/as-k8s/service.schema.yml \
