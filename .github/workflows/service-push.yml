@@ -21,6 +21,8 @@ on:
         default: false
 
     secrets:
+      KUBE_CONFIG:
+        required: true
       GPG_PRIVATE_KEY:
         required: false
       GPG_DEV_PASSPHRASE:
@@ -404,7 +406,6 @@ jobs:
             --output ./manifests/k8s-secrets.env \
             --passphrase="$GPG_PASSPHRASE" \
             ./manifests/secrets/dev.gpg
-          echo -e "#@data/values\n---\n$(cat ./manifests/k8s-secrets.env)" > ./manifests/k8s-secrets.env
           cat ./manifests/k8s-secrets.env
 
       - name: Create K8s secrets
