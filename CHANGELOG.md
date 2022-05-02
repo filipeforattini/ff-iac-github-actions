@@ -1,3 +1,10 @@
+## [1.0.4](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.0.3...v1.0.4) (2022-05-02)
+
+
+### Bug Fixes
+
+* added unecessary paths to .gitignore ([29358a2](https://github.com/filipeforattini/ff-iac-github-actions/commit/29358a2bdbb86a074d4cc26ea597139f4ca55171))
+
 ## [1.0.3](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.0.2...v1.0.3) (2022-05-02)
 
 
