@@ -391,31 +391,34 @@ jobs:
           echo "private_key = ${GPG_PRIVATE_KEY}"
           echo "passphrase = ${GPG_DEV_PASSPHRASE}"
 
-      # - name: Import GPG key
-      #   if: steps.deploy_setup.outputs.has_dev_secrets == 'true'
-      #   uses: hashicorp/ghaction-import-gpg@v2.1.0
-      #   with:
-      #     gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
-      #     passphrase: ${{ secrets.GPG_DEV_PASSPHRASE }}
+      - name: Import GPG key
+        if: steps.deploy_setup.outputs.has_dev_secrets == 'true'
+        uses: hashicorp/ghaction-import-gpg@v2.1.0
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+          GPG_DEV_PASSPHRASE: ${{ secrets.GPG_DEV_PASSPHRASE }}
+        with:
+          gpg_private_key: ${GPG_PRIVATE_KEY}
+          passphrase: ${GPG_DEV_PASSPHRASE}
 
-      # - name: Decrypt Dev Secrets
-      #   env:
-      #     GPG_PASSPHRASE: ${{ secrets.GPG_DEV_PASSPHRASE }}
-      #   run: |
-      #     gpg --yes --batch --quiet --decrypt \ 
-      #       --output ./manifests/k8s-secrets.env \
-      #       --passphrase="$GPG_PASSPHRASE" \
-      #       ./manifests/secrets/dev.gpg
-      #     cat ./manifests/k8s-secrets.env
+      - name: Decrypt Dev Secrets
+        env:
+          GPG_PASSPHRASE: ${{ secrets.GPG_DEV_PASSPHRASE }}
+        run: |
+          gpg --yes --batch --quiet --decrypt \ 
+            --output ./manifests/k8s-secrets.env \
+            --passphrase="$GPG_PASSPHRASE" \
+            ./manifests/secrets/dev.gpg
+          cat ./manifests/k8s-secrets.env
 
-      # - name: Create K8s secrets
-      #   if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
-      #   uses: actions-hub/kubectl@master
-      #   env:
-      #     KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     args: create secret generic svc --from-file=./manifests/k8s-secrets.env
+      - name: Create K8s secrets
+        if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
+        uses: actions-hub/kubectl@master
+        env:
+          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          args: create secret generic svc --from-file=./manifests/k8s-secrets.env
 
       - name: Generates Kubernetes YAML
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
