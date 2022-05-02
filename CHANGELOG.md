@@ -1,3 +1,10 @@
+## [1.0.7](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.0.6...v1.0.7) (2022-05-02)
+
+
+### Bug Fixes
+
+* using back gpg ([b1fd064](https://github.com/filipeforattini/ff-iac-github-actions/commit/b1fd064ddbd9c25f78319b7349d90dd3ffb096bc))
+
 ## [1.0.6](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.0.5...v1.0.6) (2022-05-02)
 
 
