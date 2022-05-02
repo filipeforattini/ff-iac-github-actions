@@ -20,6 +20,16 @@ on:
         required: false
         default: false
 
+    secrets:
+      GPG_PRIVATE_KEY:
+        required: false
+      GPG_DEV_PASSPHRASE:
+        required: false
+      GPG_STG_PASSPHRASE:
+        required: false
+      GPG_PRD_PASSPHRASE:
+        required: false
+
     outputs:
       PipelineConfig: 
         description: "Used pipeline config"
