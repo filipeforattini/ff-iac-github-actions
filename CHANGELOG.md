@@ -1,3 +1,10 @@
+## [1.0.6](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.0.5...v1.0.6) (2022-05-02)
+
+
+### Bug Fixes
+
+* repository name and match labels ([d87bb7a](https://github.com/filipeforattini/ff-iac-github-actions/commit/d87bb7a0d9853097c5db3ecae8bad8f1b54aed2e))
+
 ## [1.0.5](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.0.4...v1.0.5) (2022-05-02)
 
 
