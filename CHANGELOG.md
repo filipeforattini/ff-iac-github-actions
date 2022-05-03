@@ -1,3 +1,10 @@
+# [1.5.0](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.4.1...v1.5.0) (2022-05-03)
+
+
+### Features
+
+* added registry token secret ([8af5080](https://github.com/filipeforattini/ff-iac-github-actions/commit/8af508024f41b42668dad1d7f4ea86092731f4b1))
+
 ## [1.4.1](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.4.0...v1.4.1) (2022-05-03)
 
 
