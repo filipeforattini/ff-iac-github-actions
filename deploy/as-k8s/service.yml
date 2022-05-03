@@ -93,7 +93,6 @@ spec:
     metadata:
       #@ deploymentTemplateLabels = {}
       #@ deploymentTemplateLabels.update(globalLabels)
-      #@ deploymentTemplateLabels.update({ "pipe/ecosystem": data.values.ecosystem })
       #@ deploymentTemplateLabels.update({ "pipe/selector": data.values.repository + "." + data.values.deployment.name })
       #@ deploymentTemplateLabels.update(data.values.deployment.templateLabels)
       labels: #@ deploymentTemplateLabels

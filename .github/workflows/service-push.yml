@@ -336,22 +336,6 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
         
-      # - name: Delete login token
-      #   uses: actions-hub/kubectl@master
-      #   env:
-      #     KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     args: delete secret registry-token -n ${{steps.node_setup.outputs.deploy_repository}} --ignore-not-found
-
-      # - name: Update login token
-      #   uses: actions-hub/kubectl@master
-      #   env:
-      #     KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     args: create secret generic registry-token -n ${{steps.deploy_setup.outputs.deploy_repository}} --from-file=.dockerconfigjson=$HOME/.docker/config.json --type=kubernetes.io/dockerconfigjson
-
       - name: Build and push
         uses: docker/build-push-action@v2
         with:
@@ -423,7 +407,7 @@ jobs:
           echo "::set-output name=run_started_at::$(echo $PIPELINE_SETUP | jq -r '.run.startedAt')"
 
       # deploy
-      - name: Decrypt Dev Secrets
+      - name: Decrypt [DEV] Secrets
         if: steps.deploy_setup.outputs.has_dev_secrets == 'true'
         run: |
           gpg \
@@ -432,7 +416,7 @@ jobs:
             --output ./manifests/k8s-secrets.env \
             ./manifests/secrets/dev.gpg
 
-      - name: Delete K8s secrets
+      - name: K8s delete secrets
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
         uses: actions-hub/kubectl@master
         env:
@@ -441,7 +425,7 @@ jobs:
         with:
           args: delete secret svc -n ${{steps.deploy_setup.outputs.deploy_repository}} --ignore-not-found
 
-      - name: Delete K8s secrets versioned
+      - name: K8s delete secrets versioned
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
         uses: actions-hub/kubectl@master
         env:
@@ -450,7 +434,7 @@ jobs:
         with:
           args: delete secret svc-${{needs.Release-Node.outputs.Version}} -n ${{steps.deploy_setup.outputs.deploy_repository}} --ignore-not-found
 
-      - name: Create K8s secrets
+      - name: K8s create secrets
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
         uses: actions-hub/kubectl@master
         env:
@@ -459,7 +443,7 @@ jobs:
         with:
           args: create secret generic --from-env-file=./manifests/k8s-secrets.env -n ${{steps.deploy_setup.outputs.deploy_repository}} svc
 
-      - name: Create K8s secrets versioned
+      - name: K8s create secrets versioned
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
         uses: actions-hub/kubectl@master
         env:
@@ -474,7 +458,7 @@ jobs:
           only: ytt
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Generates Kubernetes YAML
+      - name: K8s generates YAML
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
         run: |
           ytt \
@@ -490,7 +474,7 @@ jobs:
               > ./manifests/k8s-to-apply.yml
           cat ./manifests/k8s-to-apply.yml
 
-      - name: Apply Kubernetes YAML
+      - name: K8s apply YAML
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
         uses: actions-hub/kubectl@master
         env:
@@ -499,7 +483,35 @@ jobs:
         with:
           args: apply -f ./manifests/k8s-to-apply.yml
 
-      - name: Get current state
+      # - name: Setup | Install QEMU
+      #   uses: docker/setup-qemu-action@v1
+      # - name: Set up Docker Buildx
+      #   uses: docker/setup-buildx-action@v1
+
+      # - name: Config | Login to GHCR
+      #   uses: docker/login-action@v1
+      #   with:
+      #     registry: ghcr.io
+      #     username: ${{ github.repository_owner }}
+      #     password: ${{ secrets.GITHUB_TOKEN }}
+        
+      # - name: Delete login token
+      #   uses: actions-hub/kubectl@master
+      #   env:
+      #     KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     args: delete secret registry-token -n ${{steps.node_setup.outputs.deploy_repository}} --ignore-not-found
+
+      # - name: Update login token
+      #   uses: actions-hub/kubectl@master
+      #   env:
+      #     KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     args: create secret generic registry-token -n ${{steps.deploy_setup.outputs.deploy_repository}} --from-file=.dockerconfigjson=$HOME/.docker/config.json --type=kubernetes.io/dockerconfigjson
+
+      - name: K8s get current state
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
         uses: actions-hub/kubectl@master
         env:
