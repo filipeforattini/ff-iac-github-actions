@@ -340,7 +340,7 @@ jobs:
           labels: "organization: ${{github.repository_owner}}, repository: ${{github.repository}}, branch: ${{needs.Setup.outputs.Branch}}, commit: ${{needs.Setup.outputs.ShaHash}}, date: ${{needs.Setup.outputs.Date}}, timestamp: ${{needs.Setup.outputs.Timestamp}}"
 
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@stable
+        uses: aquasecurity/trivy-action@master
         with:
           image-ref: '${{ steps.node_setup.outputs.docker_main_image }}'
           format: 'table'
