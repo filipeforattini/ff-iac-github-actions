@@ -1,3 +1,10 @@
+## [1.3.6](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.3.5...v1.3.6) (2022-05-03)
+
+
+### Bug Fixes
+
+* secrets apply ([eb3809b](https://github.com/filipeforattini/ff-iac-github-actions/commit/eb3809bc0e5686291f9f8123bbd59c6038e82adf))
+
 ## [1.3.5](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.3.4...v1.3.5) (2022-05-03)
 
 
