@@ -1,3 +1,10 @@
+## [1.3.9](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.3.8...v1.3.9) (2022-05-03)
+
+
+### Bug Fixes
+
+* removed secrets cuz they are not needed anymore using inherit mode ([67b212b](https://github.com/filipeforattini/ff-iac-github-actions/commit/67b212b4138cc4cdef92d01db8e03d0a1f4ad8be))
+
 ## [1.3.8](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.3.7...v1.3.8) (2022-05-03)
 
 
