@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.2.7...v1.3.0) (2022-05-03)
+
+
+### Features
+
+* renamed few steps ([0759dd5](https://github.com/filipeforattini/ff-iac-github-actions/commit/0759dd575e1c903b0f599b2dd818cc4f024799a1))
+
 ## [1.2.7](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.2.6...v1.2.7) (2022-05-03)
 
 
