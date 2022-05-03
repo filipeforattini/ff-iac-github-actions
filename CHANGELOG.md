@@ -1,3 +1,10 @@
+## [1.3.5](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.3.4...v1.3.5) (2022-05-03)
+
+
+### Bug Fixes
+
+* secrets apply to correct namespace ([afcd412](https://github.com/filipeforattini/ff-iac-github-actions/commit/afcd4122a3736c6991718c6cf1064bd06e4a5a57))
+
 ## [1.3.4](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.3.3...v1.3.4) (2022-05-03)
 
 
