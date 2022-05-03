@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.3.14...v1.4.0) (2022-05-03)
+
+
+### Features
+
+* few adaptations for dates and annotations ([863c195](https://github.com/filipeforattini/ff-iac-github-actions/commit/863c195d424600948033aa09af9666484c26db81))
+
 ## [1.3.14](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.3.13...v1.3.14) (2022-05-03)
 
 
