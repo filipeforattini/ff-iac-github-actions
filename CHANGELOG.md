@@ -1,3 +1,10 @@
+## [1.3.14](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.3.13...v1.3.14) (2022-05-03)
+
+
+### Bug Fixes
+
+* added missing job dependency ([7f8eca7](https://github.com/filipeforattini/ff-iac-github-actions/commit/7f8eca78677e01d36204f1a40723863e18bfe257))
+
 ## [1.3.13](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.3.12...v1.3.13) (2022-05-03)
 
 
