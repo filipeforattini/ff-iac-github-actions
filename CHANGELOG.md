@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.1.0...v1.2.0) (2022-05-03)
+
+
+### Features
+
+* added upload trivy results to github ([396a4b0](https://github.com/filipeforattini/ff-iac-github-actions/commit/396a4b0d4fcf3d6697c6dae3176e3d1b9d216a73))
+
 # [1.1.0](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.0.7...v1.1.0) (2022-05-03)
 
 
