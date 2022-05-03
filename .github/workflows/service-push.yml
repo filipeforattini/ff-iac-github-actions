@@ -250,7 +250,8 @@ jobs:
             @semantic-release/release-notes-generator
           echo "\n\nINFO  semantic-release version = $(semantic-release -v)\n\n"
           semantic-release
-          echo "::set-output name=version::$(cat package.json | jq '.version')"
+          echo "::set-output name=version::$(cat package.json | jq -r '.version')"
+          echo "\n\nINFO  current version = $(cat package.json | jq -r '.version')\n\n"
 
 
   #--------------------------------------------------#
