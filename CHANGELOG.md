@@ -1,3 +1,10 @@
+## [1.3.11](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.3.10...v1.3.11) (2022-05-03)
+
+
+### Bug Fixes
+
+* version without quotes ([8e5d496](https://github.com/filipeforattini/ff-iac-github-actions/commit/8e5d4962f506e47181aac3bd6a99f7f9dccd5d05))
+
 ## [1.3.10](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.3.9...v1.3.10) (2022-05-03)
 
 
