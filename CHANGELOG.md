@@ -1,3 +1,10 @@
+## [1.4.1](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.4.0...v1.4.1) (2022-05-03)
+
+
+### Bug Fixes
+
+* selector string pattern ([5d8e61b](https://github.com/filipeforattini/ff-iac-github-actions/commit/5d8e61bb1ce30716d3c71a9aa5e100e9d3ff8644))
+
 # [1.4.0](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.3.14...v1.4.0) (2022-05-03)
 
 
