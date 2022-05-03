@@ -1,3 +1,10 @@
+## [1.3.7](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.3.6...v1.3.7) (2022-05-03)
+
+
+### Bug Fixes
+
+* strategy must be array ([1077650](https://github.com/filipeforattini/ff-iac-github-actions/commit/1077650340429498b266d9b25520203b589baa87))
+
 ## [1.3.6](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.3.5...v1.3.6) (2022-05-03)
 
 
