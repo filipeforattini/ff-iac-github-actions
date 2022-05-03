@@ -23,16 +23,6 @@ on:
         required: false
         default: false
 
-    # secrets:
-    #   KUBE_CONFIG:
-    #     required: true
-    #   GPG_DEV_PASSPHRASE:
-    #     required: false
-    #   GPG_STG_PASSPHRASE:
-    #     required: false
-    #   GPG_PRD_PASSPHRASE:
-    #     required: false
-
     outputs:
       PipelineConfig: 
         description: "Used pipeline config"
@@ -88,7 +78,11 @@ jobs:
         run: |
           echo "::set-output name=build_node::$(echo $PIPELINE_SETUP | jq -r '.code.isNode')"
           echo "::set-output name=build_python::$(echo $PIPELINE_SETUP | jq -r '.code.isPython')"
-          echo $PIPELINE_SETUP
+
+      - name: Debug | Show pipeline config
+        env:
+          PIPELINE_SETUP: ${{ steps.script_setup.outputs.result}}
+        run: echo $PIPELINE_SETUP
 
 
   #--------------------------------------------------#
@@ -342,21 +336,21 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
         
-      - name: Delete login token
-        uses: actions-hub/kubectl@master
-        env:
-          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          args: delete secret registry-token -n ${{steps.node_setup.outputs.deploy_repository}} --ignore-not-found
+      # - name: Delete login token
+      #   uses: actions-hub/kubectl@master
+      #   env:
+      #     KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     args: delete secret registry-token -n ${{steps.node_setup.outputs.deploy_repository}} --ignore-not-found
 
-      - name: Update login token
-        uses: actions-hub/kubectl@master
-        env:
-          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          args: create secret generic registry-token -n ${{steps.deploy_setup.outputs.deploy_repository}} --from-file=.dockerconfigjson=$HOME/.docker/config.json --type=kubernetes.io/dockerconfigjson
+      # - name: Update login token
+      #   uses: actions-hub/kubectl@master
+      #   env:
+      #     KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     args: create secret generic registry-token -n ${{steps.deploy_setup.outputs.deploy_repository}} --from-file=.dockerconfigjson=$HOME/.docker/config.json --type=kubernetes.io/dockerconfigjson
 
       - name: Build and push
         uses: docker/build-push-action@v2
