@@ -98,6 +98,8 @@ spec:
       #@ deploymentTemplateLabels.update(data.values.deployment.templateLabels)
       labels: #@ deploymentTemplateLabels
     spec:
+      imagePullSecrets:
+        - name: registry-token
       containers:
         - name: #@ data.values.deployment.name
           image: #@ "{}/{}/{}:{}".format(data.values.containerRegistry, data.values.organization, data.values.repository, data.values.tag)

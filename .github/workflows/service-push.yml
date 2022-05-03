@@ -296,6 +296,7 @@ jobs:
           echo "::set-output name=docker_image_fullname::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.imageFullname')"
           echo "::set-output name=docker_image_tags::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.tagsAsString')"
           echo "::set-output name=docker_main_image::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.mainImage')"
+          echo "::set-output name=deploy_repository::$(echo $PIPELINE_SETUP | jq -r '.deploy.repository')"
 
       # pre-build
       - name: Config | Create .dockerignore
@@ -341,6 +342,22 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
         
+      - name: Delete login token
+        uses: actions-hub/kubectl@master
+        env:
+          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          args: delete secret registry-token -n ${{steps.node_setup.outputs.deploy_repository}} --ignore-not-found
+
+      - name: Update login token
+        uses: actions-hub/kubectl@master
+        env:
+          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          args: create secret generic registry-token -n ${{steps.deploy_setup.outputs.deploy_repository}} --from-file=.dockerconfigjson=$HOME/.docker/config.json --type=kubernetes.io/dockerconfigjson
+
       - name: Build and push
         uses: docker/build-push-action@v2
         with:
@@ -429,6 +446,15 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           args: delete secret svc -n ${{steps.deploy_setup.outputs.deploy_repository}} --ignore-not-found
+
+      - name: Delete K8s secrets versioned
+        if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
+        uses: actions-hub/kubectl@master
+        env:
+          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          args: delete secret svc-${{needs.Release-Node.outputs.Version}} -n ${{steps.deploy_setup.outputs.deploy_repository}} --ignore-not-found
 
       - name: Create K8s secrets
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
