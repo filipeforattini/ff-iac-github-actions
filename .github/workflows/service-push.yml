@@ -261,7 +261,9 @@ jobs:
 
     strategy:
       matrix:
-        <<: *nodeVersions
+        node-version:
+          - 16
+          - 17 
 
     steps:
 
