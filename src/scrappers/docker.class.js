@@ -15,6 +15,8 @@ module.exports = class Docker extends Scrapper {
     const containerRegistry = this.inputs.containerRegistry
     const containerName = this.context.payload.repository.full_name
 
+    const mainImage = `${containerRegistry}/${containerName}:c-${this.output.git.commit}`
+
     let tags = [
       `${containerRegistry}/${containerName}:latest`,
       `${containerRegistry}/${containerName}:d-${this.output.run.date}`,
@@ -33,6 +35,7 @@ module.exports = class Docker extends Scrapper {
       .add('dockerfile', {
         hasDockerfile,
         hasDockerignore,
+        mainImage,
         tags,
         tagsAsString: tags.join(', '),
       })
