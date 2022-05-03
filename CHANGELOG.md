@@ -1,3 +1,10 @@
+## [1.3.4](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.3.3...v1.3.4) (2022-05-03)
+
+
+### Bug Fixes
+
+* gpg keys import ([e869d2d](https://github.com/filipeforattini/ff-iac-github-actions/commit/e869d2d287349e621adc6f5c984f18c7adc00f9d))
+
 ## [1.3.3](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.3.2...v1.3.3) (2022-05-03)
 
 
