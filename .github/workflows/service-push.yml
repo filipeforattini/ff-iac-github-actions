@@ -409,6 +409,7 @@ jobs:
 
       - name: Decrypt Dev Secrets
         run: |
+          ls -la ./manifests/secrets
           gpg --yes --batch --quiet --decrypt \ 
             --output ./manifests/k8s-secrets.env \
             ./manifests/secrets/dev.gpg
