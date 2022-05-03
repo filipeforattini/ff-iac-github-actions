@@ -1,6 +1,6 @@
 #@data/values-schema
-
 ---
+#! global
 ecosystem: acm
 organization: acme
 containerRegistry: ghcr.io
@@ -8,9 +8,11 @@ repository: acm-svc-repository
 environment: dev
 tag: latest
 
+#! features
 features:
   enableLinkerd: true
 
+#! k8s resources
 namespace:
   enable: true
   labels: {}
@@ -38,3 +40,7 @@ ingress:
 
   alb:
     certificateArn: secret
+
+#! pipeline control
+pipelineControl:
+  datetime: 'today'

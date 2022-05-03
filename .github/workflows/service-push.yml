@@ -409,6 +409,7 @@ jobs:
           echo "::set-output name=deploy_container_registry::$(echo $PIPELINE_SETUP | jq -r '.deploy.containerRegistry')"
           echo "::set-output name=deploy_repository::$(echo $PIPELINE_SETUP | jq -r '.deploy.repository')"
           echo "::set-output name=deploy_tag::$(echo $PIPELINE_SETUP | jq -r '.deploy.commitTag')"
+          echo "::set-output name=run_started_at::$(echo $PIPELINE_SETUP | jq -r '.run.startedAt')"
 
       # deploy
       - name: Decrypt Dev Secrets
@@ -465,6 +466,7 @@ jobs:
             --data-value containerRegistry=${{steps.deploy_setup.outputs.deploy_container_registry}} \
             --data-value repository=${{steps.deploy_setup.outputs.deploy_repository}} \
             --data-value tag=${{steps.deploy_setup.outputs.deploy_tag}} \
+            --data-value pipelineControl.datetime=${{steps.deploy_setup.outputs.run_started_at}} \
               > ./manifests/k8s-to-apply.yml
           cat ./manifests/k8s-to-apply.yml
 
