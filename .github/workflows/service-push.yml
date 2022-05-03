@@ -101,7 +101,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: &nodeVersions
+        node-version:
           - 16
           - 17 
     
