@@ -1,3 +1,10 @@
+## [1.5.1](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.5.0...v1.5.1) (2022-05-03)
+
+
+### Bug Fixes
+
+* rollback added registry token secret ([e9009c2](https://github.com/filipeforattini/ff-iac-github-actions/commit/e9009c2dbf4520ad5510eb4b7de20682e167589f))
+
 # [1.5.0](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.4.1...v1.5.0) (2022-05-03)
 
 
