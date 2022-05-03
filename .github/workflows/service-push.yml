@@ -380,6 +380,7 @@ jobs:
     environment: dev
     needs:
       - Setup
+      - Release-Node
       - Build-Node
 
     steps:
@@ -444,7 +445,7 @@ jobs:
           KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          args: create secret generic --from-env-file=./manifests/k8s-secrets.env -n ${{steps.deploy_setup.outputs.deploy_repository}} svc-${{ needs.Release-Node.outputs.Version }}
+          args: create secret generic --from-env-file=./manifests/k8s-secrets.env -n ${{steps.deploy_setup.outputs.deploy_repository}} svc-${{needs.Release-Node.outputs.Version}}
 
       - name: Install | YTT
         uses: vmware-tanzu/carvel-setup-action@v1
