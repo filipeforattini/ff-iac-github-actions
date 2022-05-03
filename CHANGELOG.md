@@ -1,3 +1,10 @@
+## [1.3.13](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.3.12...v1.3.13) (2022-05-03)
+
+
+### Bug Fixes
+
+* k8s secrets command one-liner ([3725d0a](https://github.com/filipeforattini/ff-iac-github-actions/commit/3725d0ae295b18656d05a3a8a968890d26a1d77c))
+
 ## [1.3.12](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.3.11...v1.3.12) (2022-05-03)
 
 
