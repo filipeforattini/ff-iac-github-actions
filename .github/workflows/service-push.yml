@@ -1,3 +1,6 @@
+#--------------------------------------------------#
+#                   Definitions                    # 
+#--------------------------------------------------#
 name: service
 
 on:
@@ -35,6 +38,10 @@ on:
         description: "Used pipeline config"
         value: ${{ jobs.Setup.outputs.PipelineConfig }}
 
+
+#--------------------------------------------------#
+#                  Workflow Jobs                   # 
+#--------------------------------------------------#
 jobs:
 
 
@@ -95,7 +102,9 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [16, 17]
+        node-version: &nodeVersions
+          - 16
+          - 17 
     
     steps:
 
@@ -253,7 +262,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [16]
+        <<: *nodeVersions
 
     steps:
 
@@ -358,6 +367,7 @@ jobs:
       #   with:
       #     sarif_file: 'trivy-results.sarif'
 
+
   #--------------------------------------------------#
   #                      Deploy                      # 
   #--------------------------------------------------#
@@ -398,15 +408,11 @@ jobs:
       # deploy
       - name: Decrypt Dev Secrets
         run: |
-          gpg --list-keys
-          gpg --yes --batch --quiet --decrypt --passphrase="${{ secrets.GPG_DEV_PASSPHRASE }}" --output ./manifests/k8s-secrets.env ./manifests/secrets/dev.gpg
-          cat ./manifests/k8s-secrets.env
-
-      - name: Install | YTT
-        uses: vmware-tanzu/carvel-setup-action@v1
-        with:
-          only: ytt
-          token: ${{ secrets.GITHUB_TOKEN }}
+          gpg \
+            --yes --batch --quiet --decrypt \
+            --passphrase="${{ secrets.GPG_DEV_PASSPHRASE }}" \
+            --output ./manifests/k8s-secrets.env \
+            ./manifests/secrets/dev.gpg
 
       - name: Create K8s secrets
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
@@ -415,10 +421,13 @@ jobs:
           KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          args: create secret generic \
-            -n ${{steps.deploy_setup.outputs.deploy_repository}} \
-            --from-env-file=./manifests/k8s-secrets.env \
-            svc
+          args: create secret generic -n ${{steps.deploy_setup.outputs.deploy_repository}} --from-env-file=./manifests/k8s-secrets.env svc
+
+      - name: Install | YTT
+        uses: vmware-tanzu/carvel-setup-action@v1
+        with:
+          only: ytt
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Generates Kubernetes YAML
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
