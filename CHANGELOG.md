@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.0.7...v1.1.0) (2022-05-03)
+
+
+### Features
+
+* added trivy static analysis ([853d1e5](https://github.com/filipeforattini/ff-iac-github-actions/commit/853d1e5b61b86c19bda6e9794f802247022fc74b))
+
 ## [1.0.7](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.0.6...v1.0.7) (2022-05-02)
 
 
