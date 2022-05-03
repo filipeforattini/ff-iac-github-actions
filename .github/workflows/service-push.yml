@@ -398,12 +398,12 @@ jobs:
           echo "::set-output name=deploy_tag::$(echo $PIPELINE_SETUP | jq -r '.deploy.tag')"
 
       # deploy
-      - name: Config | Import GPG key
-        if: steps.deploy_setup.outputs.has_dev_secrets == 'true'
-        uses: hashicorp/ghaction-import-gpg@v2.1.0
-        env:
-          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
-          PASSPHRASE: ${{ secrets.GPG_DEV_PASSPHRASE }}
+      # - name: Config | Import GPG key
+      #   if: steps.deploy_setup.outputs.has_dev_secrets == 'true'
+      #   uses: hashicorp/ghaction-import-gpg@v2.1.0
+      #   env:
+      #     GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+      #     PASSPHRASE: ${{ secrets.GPG_DEV_PASSPHRASE }}
 
       - name: Decrypt Dev Secrets
         run: |
