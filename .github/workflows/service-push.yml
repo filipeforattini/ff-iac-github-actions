@@ -240,6 +240,7 @@ jobs:
             @semantic-release/changelog \
             @semantic-release/commit-analyzer \
             @semantic-release/release-notes-generator
+          semantic-release -v
           semantic-release
 
 
@@ -254,7 +255,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [16, 17]
+        node-version: [16]
 
     steps:
 
@@ -407,7 +408,7 @@ jobs:
       - name: Decrypt Dev Secrets
         run: |
           gpg --list-keys
-          gpg --yes --batch --quiet --decrypt --output ./manifests/k8s-secrets.env ./manifests/secrets/dev.gpg
+          gpg --yes --batch --quiet --decrypt --passphrase="${{ secrets.GPG_DEV_PASSPHRASE }}" --output ./manifests/k8s-secrets.env ./manifests/secrets/dev.gpg
           cat ./manifests/k8s-secrets.env
 
       - name: Install | YTT
