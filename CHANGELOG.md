@@ -1,3 +1,10 @@
+## [1.5.2](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.5.1...v1.5.2) (2022-05-03)
+
+
+### Bug Fixes
+
+* renamed deploy steps ([378756c](https://github.com/filipeforattini/ff-iac-github-actions/commit/378756c699bd0b6c7ca1bd3c8749c3f30342e0ab))
+
 ## [1.5.1](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.5.0...v1.5.1) (2022-05-03)
 
 
