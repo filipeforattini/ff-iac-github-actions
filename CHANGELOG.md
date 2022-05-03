@@ -1,3 +1,10 @@
+## [1.3.12](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.3.11...v1.3.12) (2022-05-03)
+
+
+### Bug Fixes
+
+* removed unused edit param ([8c2f1a8](https://github.com/filipeforattini/ff-iac-github-actions/commit/8c2f1a86c174b116e7210e702ce197ea747edbaa))
+
 ## [1.3.11](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.3.10...v1.3.11) (2022-05-03)
 
 
