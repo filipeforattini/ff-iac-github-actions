@@ -23,15 +23,15 @@ on:
         required: false
         default: false
 
-    secrets:
-      KUBE_CONFIG:
-        required: true
-      GPG_DEV_PASSPHRASE:
-        required: false
-      GPG_STG_PASSPHRASE:
-        required: false
-      GPG_PRD_PASSPHRASE:
-        required: false
+    # secrets:
+    #   KUBE_CONFIG:
+    #     required: true
+    #   GPG_DEV_PASSPHRASE:
+    #     required: false
+    #   GPG_STG_PASSPHRASE:
+    #     required: false
+    #   GPG_PRD_PASSPHRASE:
+    #     required: false
 
     outputs:
       PipelineConfig: 
