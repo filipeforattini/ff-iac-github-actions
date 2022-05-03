@@ -413,10 +413,10 @@ jobs:
         uses: hashicorp/ghaction-import-gpg@v2.1.0
         env:
           GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
-          GPG_DEV_PASSPHRASE: ${{ secrets.GPG_DEV_PASSPHRASE }}
+          # GPG_DEV_PASSPHRASE: ${{ secrets.GPG_DEV_PASSPHRASE }}
         with:
           gpg_private_key: ${GPG_PRIVATE_KEY}
-          passphrase: ${GPG_DEV_PASSPHRASE}
+          # passphrase: ${GPG_DEV_PASSPHRASE}
 
       - name: Decrypt Dev Secrets
         env:
