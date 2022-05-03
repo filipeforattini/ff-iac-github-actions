@@ -406,7 +406,6 @@ jobs:
 
       - name: Decrypt Dev Secrets
         run: |
-          export GPG_TTY=$(tty)
           gpg --list-keys
           gpg --yes --batch --quiet --decrypt --output ./manifests/k8s-secrets.env ./manifests/secrets/dev.gpg
           cat ./manifests/k8s-secrets.env
