@@ -120,3 +120,13 @@ Where the actions:
 - `chore`:updating grunted tasks, etc; no changes to the production code
 
 Adds `BREAKING CHANGE` in the commit message and it will generate a new **major** version.
+
+### Secrets
+
+```bash
+gpg -v \
+  --symmetric \
+  --cipher-algo AES256 \
+  --output ./manifests/secrets/dev.gpg \
+  ./manifests/secrets/dev.env
+```

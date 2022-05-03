@@ -406,8 +406,8 @@ jobs:
 
       - name: Decrypt Dev Secrets
         run: |
-          ls -la ./manifests
-          ls -la ./manifests/secrets
+          export GPG_TTY=$(tty)
+          gpg --list-keys
           gpg --yes --batch --quiet --decrypt --output ./manifests/k8s-secrets.env ./manifests/secrets/dev.gpg
           cat ./manifests/k8s-secrets.env
 
@@ -441,7 +441,7 @@ jobs:
               > ./manifests/k8s-to-apply.yml
           cat ./manifests/k8s-to-apply.yml
 
-      - name: Deploy | Apply Kubernetes YAML
+      - name: Apply Kubernetes YAML
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
         uses: actions-hub/kubectl@master
         env:
@@ -450,7 +450,7 @@ jobs:
         with:
           args: apply -f ./manifests/k8s-to-apply.yml
 
-      - name: Deploy | Get current state
+      - name: Get current state
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
         uses: actions-hub/kubectl@master
         env:
