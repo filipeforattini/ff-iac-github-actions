@@ -1,3 +1,10 @@
+## [1.3.10](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.3.9...v1.3.10) (2022-05-03)
+
+
+### Bug Fixes
+
+* working better with secrets deployment ([8806c8c](https://github.com/filipeforattini/ff-iac-github-actions/commit/8806c8cd74933cf5aeaca29b92f4ba7809585a2e))
+
 ## [1.3.9](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.3.8...v1.3.9) (2022-05-03)
 
 
