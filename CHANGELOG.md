@@ -1,3 +1,10 @@
+## [1.2.5](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.2.4...v1.2.5) (2022-05-03)
+
+
+### Bug Fixes
+
+* gpg keys step needs envs ([dba2a76](https://github.com/filipeforattini/ff-iac-github-actions/commit/dba2a769e2cbfca48560160408029e147ce42776))
+
 ## [1.2.4](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.2.3...v1.2.4) (2022-05-03)
 
 
