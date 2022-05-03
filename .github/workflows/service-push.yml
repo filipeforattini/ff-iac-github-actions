@@ -101,9 +101,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version:
-          - 16
-          - 17 
+        node-version: [ 16, 17 ]
     
     steps:
 
@@ -193,6 +191,9 @@ jobs:
       - Setup
       - Tests-Node
 
+    outputs:
+      Version: ${{ steps.versioning.outputs.version }}
+
     steps:
 
       # pre-job
@@ -234,7 +235,8 @@ jobs:
       - name: Debug | Print .releaserc.json
         run: cat .releaserc.json
 
-      - name: Semantic Release dependencies
+      - name: Semantic Release
+        id: versioning
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -246,8 +248,9 @@ jobs:
             @semantic-release/changelog \
             @semantic-release/commit-analyzer \
             @semantic-release/release-notes-generator
-          echo "semantic-release version = $(semantic-release -v)"
+          echo "\n\nINFO  semantic-release version = $(semantic-release -v)\n\n"
           semantic-release
+          echo "::set-output name=version::$(cat package.json | jq '.version')"
 
 
   #--------------------------------------------------#
@@ -261,9 +264,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version:
-          - 16
-          - 17 
+        node-version: [ 16, 17 ]
 
     steps:
 
@@ -291,6 +292,7 @@ jobs:
           echo "::set-output name=docker_command::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.command')"
           echo "::set-output name=docker_entrypoint::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.entrypoint')"
           echo "::set-output name=docker_dependency_command::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.dependencyCommand')"
+          echo "::set-output name=docker_image_fullname::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.imageFullname')"
           echo "::set-output name=docker_image_tags::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.tagsAsString')"
           echo "::set-output name=docker_main_image::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.mainImage')"
 
@@ -345,10 +347,10 @@ jobs:
           push: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          tags: ${{steps.node_setup.outputs.docker_image_tags}}
+          tags: ${{steps.node_setup.outputs.docker_image_tags}}, ${{steps.node_setup.outputs.docker_image_fullname}}:${{needs.Release-Node.outputs.Version}}
           labels: "organization: ${{github.repository_owner}}, repository: ${{github.repository}}, branch: ${{needs.Setup.outputs.Branch}}, commit: ${{needs.Setup.outputs.ShaHash}}, date: ${{needs.Setup.outputs.Date}}, timestamp: ${{needs.Setup.outputs.Timestamp}}"
 
-      - name: Trace | List docker images
+      - name: Debug | List docker images
         run: docker images
 
       # - name: Run Trivy vulnerability scanner
@@ -404,16 +406,26 @@ jobs:
           echo "::set-output name=deploy_organization::$(echo $PIPELINE_SETUP | jq -r '.deploy.organization')"
           echo "::set-output name=deploy_container_registry::$(echo $PIPELINE_SETUP | jq -r '.deploy.containerRegistry')"
           echo "::set-output name=deploy_repository::$(echo $PIPELINE_SETUP | jq -r '.deploy.repository')"
-          echo "::set-output name=deploy_tag::$(echo $PIPELINE_SETUP | jq -r '.deploy.tag')"
+          echo "::set-output name=deploy_tag::$(echo $PIPELINE_SETUP | jq -r '.deploy.commitTag')"
 
       # deploy
       - name: Decrypt Dev Secrets
+        if: steps.deploy_setup.outputs.has_dev_secrets == 'true'
         run: |
           gpg \
             --yes --batch --quiet --decrypt \
             --passphrase="${{ secrets.GPG_DEV_PASSPHRASE }}" \
             --output ./manifests/k8s-secrets.env \
             ./manifests/secrets/dev.gpg
+
+      - name: Delete K8s secrets
+        if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
+        uses: actions-hub/kubectl@master
+        env:
+          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          args: delete secret svc -n ${{steps.deploy_setup.outputs.deploy_repository}} --ignore-not-found
 
       - name: Create K8s secrets
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
@@ -422,7 +434,26 @@ jobs:
           KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          args: create secret generic -n ${{steps.deploy_setup.outputs.deploy_repository}} --from-env-file=./manifests/k8s-secrets.env svc
+          args: |
+            create secret generic \
+              --edit=true \
+              --from-env-file=./manifests/k8s-secrets.env \
+              -n ${{steps.deploy_setup.outputs.deploy_repository}} \
+              svc
+
+      - name: Create K8s secrets versioned
+        if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
+        uses: actions-hub/kubectl@master
+        env:
+          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          args: |
+            create secret generic \
+              --edit=true \
+              --from-env-file=./manifests/k8s-secrets.env \
+              -n ${{steps.deploy_setup.outputs.deploy_repository}} \
+              svc-${{ needs.Release-Node.outputs.Version }}
 
       - name: Install | YTT
         uses: vmware-tanzu/carvel-setup-action@v1

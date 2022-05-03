@@ -23,7 +23,7 @@ module.exports = class Git extends Scrapper {
         repository,
         organization,
         namespace: repository,
-        tag: `c-${commit}`,
+        commitTag: `c-${commit}`,
       })
       .add('git', {
         branch,

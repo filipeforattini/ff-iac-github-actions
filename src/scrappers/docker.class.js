@@ -15,26 +15,28 @@ module.exports = class Docker extends Scrapper {
     const containerRegistry = this.inputs.containerRegistry
     const containerName = this.context.payload.repository.full_name
 
-    const mainImage = `${containerRegistry}/${containerName}:c-${this.output.git.commit}`
+    const imageFullname = `${containerRegistry}/${containerName}`
+    const mainImage = `${imageFullname}:c-${this.output.git.commit}`
 
     let tags = [
-      `${containerRegistry}/${containerName}:latest`,
-      `${containerRegistry}/${containerName}:d-${this.output.run.date}`,
-      `${containerRegistry}/${containerName}:r-${this.output.run.count}`,
-      `${containerRegistry}/${containerName}:t-${this.output.run.startTimestamp}`,
-      `${containerRegistry}/${containerName}:b-${this.output.git.branch}`,
-      `${containerRegistry}/${containerName}:c-${this.output.git.commit}`,
-        // `${containerRegistry}/${containerName}:node-${matrix.node-version}`,
-        // `${containerRegistry}/${containerName}:node-${matrix.node-version}-latest`,
-        // `${containerRegistry}/${containerName}:node-${matrix.node-version}-d-${needs.Setup.outputs.Date}`,
-        // `${containerRegistry}/${containerName}:node-${matrix.node-version}-b-${needs.Setup.outputs.Branch}`,
-        // `${containerRegistry}/${containerName}:node-${matrix.node-version}-c-${needs.Setup.outputs.ShaHash}`,  
+      `${imageFullname}:latest`,
+      `${imageFullname}:d-${this.output.run.date}`,
+      `${imageFullname}:r-${this.output.run.count}`,
+      `${imageFullname}:t-${this.output.run.startTimestamp}`,
+      `${imageFullname}:b-${this.output.git.branch}`,
+      `${imageFullname}:c-${this.output.git.commit}`,
+        // `${imageFullName}:node-${matrix.node-version}`,
+        // `${imageFullName}:node-${matrix.node-version}-latest`,
+        // `${imageFullName}:node-${matrix.node-version}-d-${needs.Setup.outputs.Date}`,
+        // `${imageFullName}:node-${matrix.node-version}-b-${needs.Setup.outputs.Branch}`,
+        // `${imageFullName}:node-${matrix.node-version}-c-${needs.Setup.outputs.ShaHash}`,  
     ]
 
     this
       .add('dockerfile', {
         hasDockerfile,
         hasDockerignore,
+        imageFullname,
         mainImage,
         tags,
         tagsAsString: tags.join(', '),
