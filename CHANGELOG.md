@@ -1,3 +1,10 @@
+## [1.2.3](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.2.2...v1.2.3) (2022-05-03)
+
+
+### Bug Fixes
+
+* envs for trivy ([29effce](https://github.com/filipeforattini/ff-iac-github-actions/commit/29effcee5201988bb2fdec525ec3f454007b3a1f))
+
 ## [1.2.2](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.2.1...v1.2.2) (2022-05-03)
 
 
