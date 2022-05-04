@@ -44,4 +44,4 @@ ingress:
 #! pipeline control
 pipelineControl:
   datetime: 'today'
-  dockertoken: 'token'
+  dockerconfigjson: 'token'
