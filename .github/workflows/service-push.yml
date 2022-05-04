@@ -154,6 +154,18 @@ jobs:
       - run: npm run lint --if-present
       - run: npm run test --if-present
 
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: javascript
+          paths-ignore: "node_modules"
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
+
+      - name: Upload SARIF file
+        uses: github/codeql-action/upload-sarif@v1
+        
 
   #--------------------------------------------------#
   #                  Tests: Python                   # 
