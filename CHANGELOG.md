@@ -1,3 +1,10 @@
+## [1.5.7](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.5.6...v1.5.7) (2022-05-04)
+
+
+### Bug Fixes
+
+* docker token serialized as json ([3f47ba9](https://github.com/filipeforattini/ff-iac-github-actions/commit/3f47ba970369b13f1264dbe02c2cb0d74d53ddfb))
+
 ## [1.5.6](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.5.5...v1.5.6) (2022-05-04)
 
 
