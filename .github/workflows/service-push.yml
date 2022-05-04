@@ -407,7 +407,7 @@ jobs:
           echo "::set-output name=run_started_at::$(echo $PIPELINE_SETUP | jq -r '.run.startedAt')"
 
       # deploy
-      - name: Decrypt [DEV] Secrets
+      - name: Decrypt DEV secrets
         if: steps.deploy_setup.outputs.has_dev_secrets == 'true'
         run: |
           gpg \
