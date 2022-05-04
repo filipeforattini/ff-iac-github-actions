@@ -54,8 +54,27 @@ metadata:
   #@ secretAnnotations.update(globalAnnotations)
   annotations: #@ secretAnnotations
 data:
+  data: #@ data.values
   config-md5: #@ configMD5
   config-sha256: #@ configSHA256
+
+---
+apiVersion: v1
+kind: Secret
+type: kubernetes.io/dockerconfigjson
+metadata:
+  name: registry-token
+  #@ if data.values.namespace.enable:
+  namespace: #@ data.values.repository
+  #@ else:
+  namespace: default
+  #@ end
+
+  #@ secretAnnotations = {}
+  #@ secretAnnotations.update(globalAnnotations)
+  annotations: #@ secretAnnotations
+data:
+  .dockerconfigjson: #@ data.values.pipelineControl.dockerconfigjson
 
 ---
 #@ if data.values.deployment.enable:

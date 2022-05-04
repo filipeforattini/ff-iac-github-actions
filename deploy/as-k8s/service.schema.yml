@@ -10,7 +10,7 @@ tag: latest
 
 #! features
 features:
-  enableLinkerd: true
+  enableLinkerd: false
 
 #! k8s resources
 namespace:
@@ -44,3 +44,4 @@ ingress:
 #! pipeline control
 pipelineControl:
   datetime: 'today'
+  dockertoken: 
