@@ -93,6 +93,9 @@ jobs:
     needs: Setup
     if: needs.Setup.outputs.BuildNode == 'true'
 
+    permissions:
+      security-events: write
+
     strategy:
       matrix:
         node-version: [ 16, 17 ]
