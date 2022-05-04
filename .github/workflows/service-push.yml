@@ -497,7 +497,7 @@ jobs:
             --data-value repository=${{steps.deploy_setup.outputs.deploy_repository}} \
             --data-value tag=${{steps.deploy_setup.outputs.deploy_tag}} \
             --data-value pipelineControl.datetime=${{steps.deploy_setup.outputs.run_started_at}} \
-            --data-value pipelineControl.dockerconfigjson="$(~/.docker/config.json)" \
+            --data-value pipelineControl.dockerconfigjson="$(cat ~/.docker/config.json)" \
               > ./manifests/k8s-to-apply.yml
           cat ./manifests/k8s-to-apply.yml
 
