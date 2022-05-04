@@ -1,3 +1,10 @@
+## [1.5.11](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.5.10...v1.5.11) (2022-05-04)
+
+
+### Bug Fixes
+
+* adding permissions for runner to see the docker config file ([fff4225](https://github.com/filipeforattini/ff-iac-github-actions/commit/fff4225d4993b8dcec56dcdf5a52b83e53b6706c))
+
 ## [1.5.10](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.5.9...v1.5.10) (2022-05-04)
 
 
