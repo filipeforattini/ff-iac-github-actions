@@ -58,6 +58,7 @@ jobs:
           path: .ff
           repository: filipeforattini/ff-iac-github-actions
 
+      # job
       - name: Config | Pipeline config scrapper
         uses: actions/github-script@v6
         id: script_setup
@@ -86,21 +87,57 @@ jobs:
 
 
   #--------------------------------------------------#
-  #                  Static-Analysis                 # 
+  #                  Analysis: Node                  # 
   #--------------------------------------------------#
-  Static-Analysis:
+  Node-Analysis:
     runs-on: ubuntu-latest
     needs: Setup
+    if: needs.Setup.outputs.BuildNode == 'true'
 
     permissions:
       security-events: write
 
     steps:
 
+      # pre-job
+      - name: Setup | Cloning repository
+        uses: actions/checkout@v3
+
+      #job
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v2
         with:
-          languages: javascript, python
+          languages: javascript
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
+
+      - name: Upload SARIF file
+        uses: github/codeql-action/upload-sarif@v1
+
+
+  #--------------------------------------------------#
+  #                 Analysis: Python                 # 
+  #--------------------------------------------------#
+  Python-Analysis:
+    runs-on: ubuntu-latest
+    needs: Setup
+    if: needs.Setup.outputs.BuildPython == 'true'
+
+    permissions:
+      security-events: write
+
+    steps:
+
+      # pre-job
+      - name: Setup | Cloning repository
+        uses: actions/checkout@v3
+
+      #job
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: python
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v2

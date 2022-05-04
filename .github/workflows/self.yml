@@ -3,13 +3,33 @@ on: [ push ]
 
 jobs:
 
+  Analysis:
+    runs-on: ubuntu-latest
+
+    permissions:
+      security-events: write
+
+    steps:
+
+      # pre-job
+      - name: Setup | Cloning repository
+        uses: actions/checkout@v3
+
+      #job
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
+
+      - name: Upload SARIF file
+        uses: github/codeql-action/upload-sarif@v1
 
   Release:
     runs-on: ubuntu-latest
 
     steps:
 
-      # pre-job
       - name: Cloning repository
         uses: actions/checkout@v3
         with:
