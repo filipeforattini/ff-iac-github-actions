@@ -76,7 +76,7 @@ metadata:
   #@ secretAnnotations.update(globalAnnotations)
   annotations: #@ secretAnnotations
 data:
-  .dockerconfigjson: #@ json.encode(data.values.pipelineControl.dockerconfigjson)
+  .dockerconfigjson: #@ data.values.pipelineControl.dockerconfigjson
 
 ---
 #@ if data.values.deployment.enable:
