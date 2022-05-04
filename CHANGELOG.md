@@ -1,3 +1,10 @@
+# [1.7.0](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.6.0...v1.7.0) (2022-05-04)
+
+
+### Features
+
+* added codeql analysis ([064183d](https://github.com/filipeforattini/ff-iac-github-actions/commit/064183d2c78da5b7a6ca10500d57bb2aa3f8ec14))
+
 # [1.6.0](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.5.13...v1.6.0) (2022-05-04)
 
 
