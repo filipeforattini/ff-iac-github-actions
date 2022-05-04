@@ -1,9 +1,11 @@
 #@ load("@ytt:data", "data")
 #@ load("@ytt:md5", "md5")
 #@ load("@ytt:sha256", "sha256")
+#@ load("@ytt:json", "json")
 
 #@ configMD5 = md5.sum("data")
 #@ configSHA256 = sha256.sum("data")
+#@ configAsJson = json.encode(data.values)
 
 #@ globalLabels = {}
 #@ globalLabels.update({ "ecosystem": data.values.ecosystem })
@@ -54,7 +56,7 @@ metadata:
   #@ secretAnnotations.update(globalAnnotations)
   annotations: #@ secretAnnotations
 data:
-  data: #@ data.values
+  data: #@ configAsJson
   config-md5: #@ configMD5
   config-sha256: #@ configSHA256
 
