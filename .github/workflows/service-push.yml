@@ -158,14 +158,18 @@ jobs:
         uses: github/codeql-action/init@v2
         with:
           languages: javascript
-          paths-ignore: "node_modules"
+          category: javascript-${{ matrix.node-version }}
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v2
+        with:
+          category: javascript-${{ matrix.node-version }}
 
       - name: Upload SARIF file
         uses: github/codeql-action/upload-sarif@v1
-        
+        with:
+          category: javascript-${{ matrix.node-version }}
+
 
   #--------------------------------------------------#
   #                  Tests: Python                   # 
