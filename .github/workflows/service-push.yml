@@ -1,10 +1,12 @@
-#--------------------------------------------------#
-#                   Definitions                    # 
-#--------------------------------------------------#
 name: service
 
+#--------------------------------------------------#
+#                     Triggers                     # 
+#--------------------------------------------------#
 on:
+
   workflow_call:
+
     inputs:
       mainBranch:
         type: string
@@ -248,6 +250,7 @@ jobs:
     needs: 
       - Setup
       - Tests-Node
+      - Node-Analysis
 
     outputs:
       Version: ${{ steps.versioning.outputs.version }}
