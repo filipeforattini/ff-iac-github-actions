@@ -477,10 +477,16 @@ jobs:
       - name: K8s generates YAML
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
         run: |
+          echo -e "PART 1\n\n\n\n"
           sudo cat /home/$(whoami)/.docker/config.json
+          echo -e "PART 2\n\n\n\n"
           sudo chown $(whoami):docker /home/$(whoami)/.docker/config.json
+          echo -e "PART 3\n\n\n\n"
           cat /home/$(whoami)/.docker/config.json
+          echo -e "PART 4\n\n\n\n"
           cat ~/.docker/config.json
+          echo -e "PART 5\n\n\n\n"
+          echo -e "docker-config:\n$DOCKER_CONFIG"
           ytt \
             -f ./.ff/deploy/as-k8s/service.schema.yml \
             -f ./.ff/deploy/as-k8s/service.yml \
