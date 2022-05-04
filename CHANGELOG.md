@@ -1,3 +1,10 @@
+## [1.7.6](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.7.5...v1.7.6) (2022-05-04)
+
+
+### Bug Fixes
+
+* added codeql permissions ([b3f51e6](https://github.com/filipeforattini/ff-iac-github-actions/commit/b3f51e6a0b632b39dcde81ddf847d34f9a9fc271))
+
 ## [1.7.5](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.7.4...v1.7.5) (2022-05-04)
 
 
