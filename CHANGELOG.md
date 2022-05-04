@@ -1,3 +1,10 @@
+## [1.5.6](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.5.5...v1.5.6) (2022-05-04)
+
+
+### Bug Fixes
+
+* data now is serialized as json ([dd97284](https://github.com/filipeforattini/ff-iac-github-actions/commit/dd9728482e921385b25115339364f443283d2c24))
+
 ## [1.5.5](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.5.4...v1.5.5) (2022-05-04)
 
 
