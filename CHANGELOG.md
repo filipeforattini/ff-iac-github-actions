@@ -1,3 +1,10 @@
+## [1.5.5](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.5.4...v1.5.5) (2022-05-04)
+
+
+### Bug Fixes
+
+* registry login token secret ([6191066](https://github.com/filipeforattini/ff-iac-github-actions/commit/6191066337e52bf24d21f7bef2442eb6e0f98f03))
+
 ## [1.5.4](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.5.3...v1.5.4) (2022-05-04)
 
 
