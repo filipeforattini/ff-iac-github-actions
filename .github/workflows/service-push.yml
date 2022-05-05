@@ -87,7 +87,7 @@ jobs:
           echo "::set-output name=build_python::$(echo $PIPELINE_SETUP | jq -r '.code.isPython')"
 
       - name: Debug | Show pipeline config
-        if: inputs.debug == 'true'
+        if: inputs.debug == true
         env:
           PIPELINE_SETUP: ${{ steps.script_setup.outputs.result}}
         run: echo $PIPELINE_SETUP
@@ -299,7 +299,7 @@ jobs:
             })
 
       - name: Debug | Print .releaserc.json
-        if: inputs.debug == 'true'
+        if: inputs.debug == true
         run: cat .releaserc.json
 
       - name: Semantic Release
@@ -420,7 +420,7 @@ jobs:
           labels: "organization: ${{github.repository_owner}}, repository: ${{github.repository}}, branch: ${{needs.Setup.outputs.Branch}}, commit: ${{needs.Setup.outputs.ShaHash}}, date: ${{needs.Setup.outputs.Date}}, timestamp: ${{needs.Setup.outputs.Timestamp}}"
 
       - name: Debug | List docker images
-        if: inputs.debug == 'true'
+        if: inputs.debug == true
         run: docker images
 
       # - name: Run Trivy vulnerability scanner
@@ -542,6 +542,28 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Config | Gives runner access to docker config file 
+        if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
+        run: sudo chown $(whoami):docker /home/$(whoami)/.docker/config.json
+
+      - name: K8s delete secrets
+        if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
+        uses: actions-hub/kubectl@master
+        env:
+          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          args: delete secret registry-token -n ${{steps.deploy_setup.outputs.deploy_repository}} --ignore-not-found
+
+      - name: K8s create pull secret
+        if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
+        uses: actions-hub/kubectl@master
+        env:
+          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          args: create secret generic registry-token -n ${{steps.deploy_setup.outputs.deploy_repository}} --save-config=true --type=kubernetes.io/dockerconfigjson --from-file=.dockerconfigjson=$HOME/.docker/config.json
+
       - name: Install | YTT
         uses: vmware-tanzu/carvel-setup-action@v1
         with:
@@ -551,7 +573,6 @@ jobs:
       - name: K8s generates YAML
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
         run: |
-          sudo chown $(whoami):docker /home/$(whoami)/.docker/config.json
           ytt \
             -f ./.ff/deploy/as-k8s/service.schema.yml \
             -f ./.ff/deploy/as-k8s/service.yml \
@@ -567,9 +588,7 @@ jobs:
 
       - name: Debug | Print k8s-to-apply.yml
         if: inputs.debug == true
-        run: |
-          echo -e "\n\n  docker/config.json:\n\n$(cat ~/.docker/config.json)"
-          echo -e "\n\n  k8s-to-apply.yml:\n\n$(cat ./manifests/k8s-to-apply.yml)"
+        run: echo -e "./k8s-to-apply.yml:\n\n$(cat ./manifests/k8s-to-apply.yml)"
 
       - name: K8s apply YAML
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'

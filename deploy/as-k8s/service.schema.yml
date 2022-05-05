@@ -44,4 +44,3 @@ ingress:
 #! pipeline control
 pipelineControl:
   datetime: 'today'
-  dockerconfigjson: "{}"
