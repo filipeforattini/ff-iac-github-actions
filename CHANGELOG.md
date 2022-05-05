@@ -1,3 +1,10 @@
+## [1.8.4](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.8.3...v1.8.4) (2022-05-05)
+
+
+### Bug Fixes
+
+* new approach for dockerconfig secret ([e65863c](https://github.com/filipeforattini/ff-iac-github-actions/commit/e65863c4f9cd862b31403d518d6f3bf2acfaf75e))
+
 ## [1.8.3](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.8.2...v1.8.3) (2022-05-05)
 
 
