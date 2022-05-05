@@ -1,3 +1,10 @@
+## [1.8.1](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.8.0...v1.8.1) (2022-05-05)
+
+
+### Bug Fixes
+
+* ofc dockerconfigjson must be json ([d7be562](https://github.com/filipeforattini/ff-iac-github-actions/commit/d7be562dc8edcb502f32bd72c840083590229f1e))
+
 # [1.8.0](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.7.6...v1.8.0) (2022-05-05)
 
 
