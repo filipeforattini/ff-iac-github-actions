@@ -562,7 +562,7 @@ jobs:
             --data-value repository=${{steps.deploy_setup.outputs.deploy_repository}} \
             --data-value tag=${{steps.deploy_setup.outputs.deploy_tag}} \
             --data-value pipelineControl.datetime=${{steps.deploy_setup.outputs.run_started_at}} \
-            --data-value pipelineControl.dockerconfigjson="$(cat ~/.docker/config.json | jq -cR | base64)" \
+            --data-value pipelineControl.dockerconfigjson="$(cat ~/.docker/config.json | jq -cR)" \
               > ./manifests/k8s-to-apply.yml
 
       - name: Debug | Print k8s-to-apply.yml
