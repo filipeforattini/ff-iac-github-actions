@@ -1,3 +1,10 @@
+## [1.10.1](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.10.0...v1.10.1) (2022-05-05)
+
+
+### Bug Fixes
+
+* using new arm versions ([05a6389](https://github.com/filipeforattini/ff-iac-github-actions/commit/05a63890d55dc1d1a237b54a4ca19e4f77223e09))
+
 # [1.10.0](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.9.0...v1.10.0) (2022-05-05)
 
 
