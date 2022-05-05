@@ -16,6 +16,10 @@ on:
         type: string
         required: false
         default: master
+      platforms:
+        type: string
+        required: false
+        default: ""
       ecosystem:
         type: string
         required: false
@@ -415,6 +419,7 @@ jobs:
         with:
           context: .
           push: true
+          platforms: ${{ inputs.platforms }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
           tags: ${{steps.node_setup.outputs.docker_image_tags}}, ${{steps.node_setup.outputs.docker_image_fullname}}:${{needs.Release-Node.outputs.Version}}
