@@ -131,5 +131,4 @@ gpg -v \
   ./manifests/secrets/dev.env
 ```
 
-kubectl create secret generic svc-auth --save-config=true --type=kubernetes.io/dockerconfigjson --from-file=.dockerconfigjson=$HOME/.docker/config.json
     

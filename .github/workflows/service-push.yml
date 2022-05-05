@@ -397,9 +397,10 @@ jobs:
           dockerfile: Dockerfile
 
       # build
-      - name: Setup | Install QEMU
+      - name: Install | QEMU
         uses: docker/setup-qemu-action@v1
-      - name: Set up Docker Buildx
+
+      - name: Install | Docker Buildx
         uses: docker/setup-buildx-action@v1
 
       - name: Config | Login to GHCR
@@ -530,9 +531,10 @@ jobs:
         with:
           args: create secret generic --from-env-file=./manifests/k8s-secrets.env -n ${{steps.deploy_setup.outputs.deploy_repository}} svc-${{needs.Release-Node.outputs.Version}}
 
-      - name: Setup | Install QEMU
+      - name: Install | QEMU
         uses: docker/setup-qemu-action@v1
-      - name: Set up Docker Buildx
+
+      - name: Install | Docker Buildx
         uses: docker/setup-buildx-action@v1
 
       - name: Config | Login to GHCR
@@ -583,7 +585,6 @@ jobs:
             --data-value repository=${{steps.deploy_setup.outputs.deploy_repository}} \
             --data-value tag=${{steps.deploy_setup.outputs.deploy_tag}} \
             --data-value pipelineControl.datetime=${{steps.deploy_setup.outputs.run_started_at}} \
-            --data-value pipelineControl.dockerconfigjson="$(cat ~/.docker/config.json | jq -cR)" \
               > ./manifests/k8s-to-apply.yml
 
       - name: Debug | Print k8s-to-apply.yml
