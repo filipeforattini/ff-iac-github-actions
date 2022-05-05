@@ -1,3 +1,10 @@
+# [1.10.0](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.9.0...v1.10.0) (2022-05-05)
+
+
+### Features
+
+* added platform support ([744fedb](https://github.com/filipeforattini/ff-iac-github-actions/commit/744fedb938a9005286a46a001ee2a2fd8c926a08))
+
 # [1.9.0](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.8.6...v1.9.0) (2022-05-05)
 
 
