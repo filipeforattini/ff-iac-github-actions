@@ -1,3 +1,10 @@
+## [1.8.2](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.8.1...v1.8.2) (2022-05-05)
+
+
+### Bug Fixes
+
+* testing inputs booleans without quotes ([229a546](https://github.com/filipeforattini/ff-iac-github-actions/commit/229a546a7e32db7795f5e17952403a53ef500be1))
+
 ## [1.8.1](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.8.0...v1.8.1) (2022-05-05)
 
 
