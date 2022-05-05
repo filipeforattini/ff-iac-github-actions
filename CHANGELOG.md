@@ -1,3 +1,10 @@
+# [1.8.0](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.7.6...v1.8.0) (2022-05-05)
+
+
+### Features
+
+* added debug param ([c89ec70](https://github.com/filipeforattini/ff-iac-github-actions/commit/c89ec704ee0c0235625a71117168d4bf6e3ca05f))
+
 ## [1.7.6](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.7.5...v1.7.6) (2022-05-04)
 
 
