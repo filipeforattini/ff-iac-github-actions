@@ -8,6 +8,10 @@ on:
   workflow_call:
 
     inputs:
+      debug:
+        type: boolean
+        required: false
+        default: false
       mainBranch:
         type: string
         required: false
@@ -83,6 +87,7 @@ jobs:
           echo "::set-output name=build_python::$(echo $PIPELINE_SETUP | jq -r '.code.isPython')"
 
       - name: Debug | Show pipeline config
+        if: inputs.debug == 'true'
         env:
           PIPELINE_SETUP: ${{ steps.script_setup.outputs.result}}
         run: echo $PIPELINE_SETUP
@@ -294,6 +299,7 @@ jobs:
             })
 
       - name: Debug | Print .releaserc.json
+        if: inputs.debug == 'true'
         run: cat .releaserc.json
 
       - name: Semantic Release
@@ -414,6 +420,7 @@ jobs:
           labels: "organization: ${{github.repository_owner}}, repository: ${{github.repository}}, branch: ${{needs.Setup.outputs.Branch}}, commit: ${{needs.Setup.outputs.ShaHash}}, date: ${{needs.Setup.outputs.Date}}, timestamp: ${{needs.Setup.outputs.Timestamp}}"
 
       - name: Debug | List docker images
+        if: inputs.debug == 'true'
         run: docker images
 
       # - name: Run Trivy vulnerability scanner
@@ -544,16 +551,7 @@ jobs:
       - name: K8s generates YAML
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
         run: |
-          echo -e "PART 1\n\n\n\n"
-          sudo cat /home/$(whoami)/.docker/config.json
-          echo -e "PART 2\n\n\n\n"
           sudo chown $(whoami):docker /home/$(whoami)/.docker/config.json
-          echo -e "PART 3\n\n\n\n"
-          cat /home/$(whoami)/.docker/config.json
-          echo -e "PART 4\n\n\n\n"
-          cat ~/.docker/config.json
-          echo -e "PART 5\n\n\n\n"
-          echo -e "docker-config:\n$DOCKER_CONFIG"
           ytt \
             -f ./.ff/deploy/as-k8s/service.schema.yml \
             -f ./.ff/deploy/as-k8s/service.yml \
@@ -564,9 +562,12 @@ jobs:
             --data-value repository=${{steps.deploy_setup.outputs.deploy_repository}} \
             --data-value tag=${{steps.deploy_setup.outputs.deploy_tag}} \
             --data-value pipelineControl.datetime=${{steps.deploy_setup.outputs.run_started_at}} \
-            --data-value pipelineControl.dockerconfigjson="$(cat ~/.docker/config.json | jq -cR)" \
+            --data-value pipelineControl.dockerconfigjson="$(cat ~/.docker/config.json | jq -cR | base64)" \
               > ./manifests/k8s-to-apply.yml
-          cat ./manifests/k8s-to-apply.yml
+
+      - name: Debug | Print k8s-to-apply.yml
+        if: inputs.debug == 'true'
+        run: cat ./manifests/k8s-to-apply.yml
 
       - name: K8s apply YAML
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
