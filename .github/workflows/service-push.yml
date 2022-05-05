@@ -562,7 +562,7 @@ jobs:
           KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          args: create secret generic registry-token -n ${{steps.deploy_setup.outputs.deploy_repository}} --save-config=true --type=kubernetes.io/dockerconfigjson --from-file=.dockerconfigjson=$HOME/.docker/config.json
+          args: create secret generic registry-token -n ${{steps.deploy_setup.outputs.deploy_repository}} --type=kubernetes.io/dockerconfigjson --from-file=.dockerconfigjson=$HOME/.docker/config.json
 
       - name: Install | YTT
         uses: vmware-tanzu/carvel-setup-action@v1
