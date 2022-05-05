@@ -566,7 +566,7 @@ jobs:
               > ./manifests/k8s-to-apply.yml
 
       - name: Debug | Print k8s-to-apply.yml
-        if: inputs.debug == 'true'
+        if: inputs.debug == true
         run: cat ./manifests/k8s-to-apply.yml
 
       - name: K8s apply YAML
