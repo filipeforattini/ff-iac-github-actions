@@ -1,3 +1,10 @@
+## [1.10.2](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.10.1...v1.10.2) (2022-05-09)
+
+
+### Bug Fixes
+
+* reorganized steps order by function ([79bb40d](https://github.com/filipeforattini/ff-iac-github-actions/commit/79bb40d1f968284c2f921c33e6c7cc79c677f964))
+
 ## [1.10.1](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.10.0...v1.10.1) (2022-05-05)
 
 
