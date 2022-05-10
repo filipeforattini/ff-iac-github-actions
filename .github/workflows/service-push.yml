@@ -527,12 +527,10 @@ jobs:
       # deploy
       - name: K8s create namespace
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
-        uses: actions-hub/kubectl@master
-        env:
-          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: steebchen/kubectl@v2.0.0
         with:
-          args: create namespace ${{steps.deploy_setup.outputs.deploy_namespace}} --dry-run=client --validate=false --output=yaml | kubectl apply -f -
+          config: ${{ secrets.KUBE_CONFIG }}
+          command: create namespace ${{steps.deploy_setup.outputs.deploy_namespace}} --dry-run=client --validate=false --output=yaml | kubectl apply -f -
 
       - name: Decrypt DEV secrets
         if: steps.deploy_setup.outputs.has_dev_secrets == 'true'
