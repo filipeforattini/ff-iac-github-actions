@@ -1,3 +1,10 @@
+## [1.13.2](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.13.1...v1.13.2) (2022-05-10)
+
+
+### Bug Fixes
+
+* namespaces references ([871218c](https://github.com/filipeforattini/ff-iac-github-actions/commit/871218c7da2077ae40a74759e35f238a56baf8ce))
+
 ## [1.13.1](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.13.0...v1.13.1) (2022-05-10)
 
 
