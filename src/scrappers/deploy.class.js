@@ -6,11 +6,6 @@ module.exports = class Deploy extends Scrapper {
   setup () {
     const repository = this.context.payload.repository.name
     const containerRegistry = this.inputs.containerRegistry
-
-    const namespace = [true, 'true'].includes(this.inputs.environmentsAsNamespaces)
-      ? repository
-      : `${repository}-${this.inputs.environment}`
-
     const podName = repository.includes('-svc-')
       ? 'svc'
       : repository.includes('-app-')
@@ -44,13 +39,13 @@ module.exports = class Deploy extends Scrapper {
       .add('deploy', {
         podName,
         ecosystem,
-        namespace,
+        namespace: repository,
         namespaces: {
-          dev: `${namespace}-dev`,
-          stg: `${namespace}-stg`,
-          prd: `${namespace}-prd`,
-          sbx: `${namespace}-sbx`,
-          dry: `${namespace}-dry`,
+          dev: `${repository}-dev`,
+          stg: `${repository}-stg`,
+          prd: `${repository}-prd`,
+          sbx: `${repository}-sbx`,
+          dry: `${repository}-dry`,
         },
         deployAsK8s,
         hasDevSecrets,

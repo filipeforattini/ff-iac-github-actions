@@ -101,24 +101,6 @@ jobs:
 
 
   #--------------------------------------------------#
-  #                   Base Analysis                  # 
-  #--------------------------------------------------#
-  Base-Analysis:
-    runs-on: ubuntu-latest
-    needs: Setup
-
-    steps:
-
-      # pre-job
-      - name: Setup | Cloning repository
-        uses: actions/checkout@v3
-
-      #job
-      - name: Run GitLeaks
-        uses: zricethezav/gitleaks-action@master
-
-
-  #--------------------------------------------------#
   #                  Analysis: Node                  # 
   #--------------------------------------------------#
   Node-Analysis:
@@ -134,8 +116,14 @@ jobs:
       # pre-job
       - name: Setup | Cloning repository
         uses: actions/checkout@v3
+        with:
+          fetch-depth: '0'
+          persist-credentials: false
 
       #job
+      - name: Run GitLeaks
+        uses: zricethezav/gitleaks-action@master
+
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v2
         with:
@@ -164,8 +152,14 @@ jobs:
       # pre-job
       - name: Setup | Cloning repository
         uses: actions/checkout@v3
+        with:
+          fetch-depth: '0'
+          persist-credentials: false
 
       #job
+      - name: Run GitLeaks
+        uses: zricethezav/gitleaks-action@master
+
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v2
         with:
@@ -282,7 +276,6 @@ jobs:
     needs: 
       - Setup
       - Tests-Node
-      - Base-Analysis
       - Node-Analysis
 
     outputs:

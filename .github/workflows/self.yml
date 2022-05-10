@@ -14,8 +14,14 @@ jobs:
       # pre-job
       - name: Setup | Cloning repository
         uses: actions/checkout@v3
+        with:
+          fetch-depth: '0'
+          persist-credentials: false
 
       #job
+      - name: Run GitLeaks
+        uses: zricethezav/gitleaks-action@master
+
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v2
 
@@ -26,9 +32,6 @@ jobs:
       #   uses: github/codeql-action/upload-sarif@v1
       #   with:
       #     category: ${{ env.GITHUB_SHA }}
-
-      - name: Run GitLeaks
-        uses: zricethezav/gitleaks-action@master
 
 
   Release:
