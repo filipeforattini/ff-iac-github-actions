@@ -107,9 +107,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: Setup
 
-    permissions:
-      security-events: write
-
     steps:
 
       # pre-job
@@ -285,6 +282,7 @@ jobs:
     needs: 
       - Setup
       - Tests-Node
+      - Base-Analysis
       - Node-Analysis
 
     outputs:
@@ -514,6 +512,7 @@ jobs:
 
       - name: Config | Load setup configs
         env:
+          ENVIRONMENTS_AS_NAMESPACES: ${{ inputs.environmentsAsNamespaces }}
           PIPELINE_SETUP: ${{ needs.Setup.outputs.PipelineConfig }}
         id: deploy_setup
         run: |
@@ -526,10 +525,10 @@ jobs:
           echo "::set-output name=deploy_repository::$(echo $PIPELINE_SETUP | jq -r '.deploy.repository')"
           echo "::set-output name=deploy_tag::$(echo $PIPELINE_SETUP | jq -r '.deploy.commitTag')"
           echo "::set-output name=run_started_at::$(echo $PIPELINE_SETUP | jq -r '.run.startedAt')"
-          case ${{inputs.environmentByNamespace}} in
-            (true)  echo "::set-output name=deploy_namespace::$(echo $PIPELINE_SETUP | jq -r '.deploy.namespaces.dev')";;
-            (false) echo "::set-output name=deploy_namespace::$(echo $PIPELINE_SETUP | jq -r '.deploy.namespace')";;
-            (*)     echo "::set-output name=deploy_namespace::$(echo $PIPELINE_SETUP | jq -r '.deploy.namespace')";;
+          case $ENVIRONMENTS_AS_NAMESPACES in
+            true)  echo "::set-output name=deploy_namespace::$(echo $PIPELINE_SETUP | jq -r '.deploy.namespaces.dev')";;
+            false) echo "::set-output name=deploy_namespace::$(echo $PIPELINE_SETUP | jq -r '.deploy.namespace')";;
+            *)     echo "::set-output name=deploy_namespace::$(echo $PIPELINE_SETUP | jq -r '.deploy.namespace')";;
           esac
 
       # deploy
@@ -620,7 +619,7 @@ jobs:
             --data-value repository=${{steps.deploy_setup.outputs.deploy_repository}} \
             --data-value tag=${{steps.deploy_setup.outputs.deploy_tag}} \
             --data-value pipelineControl.datetime=${{steps.deploy_setup.outputs.run_started_at}} \
-            --data-value pipelineControl.environmentsAsNamespaces=${{inputs.environmentByNamespace}} \
+            --data-value pipelineControl.environmentsAsNamespaces=${{inputs.environmentsAsNamespaces}} \
               > ./manifests/k8s-to-apply.yml
 
       - name: Debug | Print k8s-to-apply.yml
