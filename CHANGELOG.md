@@ -1,3 +1,10 @@
+## [1.13.3](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.13.2...v1.13.3) (2022-05-10)
+
+
+### Bug Fixes
+
+* namespace apply as config ([43fd0e6](https://github.com/filipeforattini/ff-iac-github-actions/commit/43fd0e65d5b4bb776d7a6064fdc6143a09e82e5c))
+
 ## [1.13.2](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.13.1...v1.13.2) (2022-05-10)
 
 
