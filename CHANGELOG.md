@@ -1,3 +1,10 @@
+## [1.13.1](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.13.0...v1.13.1) (2022-05-10)
+
+
+### Bug Fixes
+
+* variable was not being read ([e829e09](https://github.com/filipeforattini/ff-iac-github-actions/commit/e829e09041d47685ec48de82ae448a828f07a656))
+
 # [1.13.0](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.12.0...v1.13.0) (2022-05-10)
 
 
