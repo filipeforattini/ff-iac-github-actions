@@ -1,3 +1,10 @@
+# [1.11.0](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.10.2...v1.11.0) (2022-05-10)
+
+
+### Features
+
+* added gitleaks ([b1033c9](https://github.com/filipeforattini/ff-iac-github-actions/commit/b1033c97d2730a1a540af225bc555bfa4435a4f6))
+
 ## [1.10.2](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.10.1...v1.10.2) (2022-05-09)
 
 
