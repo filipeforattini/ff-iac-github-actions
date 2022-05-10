@@ -1,0 +1,255 @@
+name: service
+
+#--------------------------------------------------#
+#                     Triggers                     # 
+#--------------------------------------------------#
+on:
+
+  workflow_call:
+
+    inputs:
+      debug:
+        type: boolean
+        required: false
+        default: false
+
+    outputs:
+      PipelineConfig: 
+        description: "Used pipeline config"
+        value: ${{ jobs.Setup.outputs.PipelineConfig }}
+
+
+#--------------------------------------------------#
+#                  Workflow Jobs                   # 
+#--------------------------------------------------#
+jobs:
+
+  #--------------------------------------------------#
+  #                    Setup Jobs                    # 
+  #--------------------------------------------------#
+  Setup:
+    runs-on: ubuntu-latest
+
+    outputs:
+      PipelineConfig: ${{ steps.script_setup.outputs.result }}
+      BuildNode: ${{ steps.define_builders.outputs.build_node }}
+      BuildPython: ${{ steps.define_builders.outputs.build_python }}
+
+    steps:
+
+      # pre-job
+      - name: Setup | Cloning repository
+        uses: actions/checkout@v3
+
+      - name: Setup | Cloning tools
+        uses: actions/checkout@v3
+        with:
+          ref: main
+          path: .ff
+          repository: filipeforattini/ff-iac-github-actions
+
+      # job
+      - name: Config | Pipeline config scrapper
+        uses: actions/github-script@v6
+        id: script_setup
+        with:
+          result-encoding: string
+          script: |
+            return require('./.ff/src/steps/config-scrapper')({ 
+              context, 
+              inputs: { 
+                containerRegistry: "${{ inputs.containerRegistry }}",
+              },
+            })
+
+      - name: Config | Define pipeline paths
+        env:
+          PIPELINE_SETUP: ${{ steps.script_setup.outputs.result}}
+        id: define_builders
+        run: |
+          echo "::set-output name=build_node::$(echo $PIPELINE_SETUP | jq -r '.code.isNode')"
+          echo "::set-output name=build_python::$(echo $PIPELINE_SETUP | jq -r '.code.isPython')"
+
+      - name: Debug | Show pipeline config
+        if: inputs.debug == true
+        env:
+          PIPELINE_SETUP: ${{ steps.script_setup.outputs.result}}
+        run: echo $PIPELINE_SETUP
+
+
+  #--------------------------------------------------#
+  #                   Base Analysis                  # 
+  #--------------------------------------------------#
+  Base-Analysis:
+    runs-on: ubuntu-latest
+    needs: Setup
+
+    permissions:
+      security-events: write
+
+    steps:
+
+      # pre-job
+      - name: Setup | Cloning repository
+        uses: actions/checkout@v3
+
+      #job
+      - name: Run GitLeaks
+        uses: zricethezav/gitleaks-action@master
+
+
+  #--------------------------------------------------#
+  #                  Analysis: Node                  # 
+  #--------------------------------------------------#
+  Node-Analysis:
+    runs-on: ubuntu-latest
+    needs: Setup
+    if: needs.Setup.outputs.BuildNode == 'true'
+
+    permissions:
+      security-events: write
+
+    steps:
+
+      # pre-job
+      - name: Setup | Cloning repository
+        uses: actions/checkout@v3
+
+      #job
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: javascript
+
+      - name: Run CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
+
+      # - name: Upload SARIF file
+      #   uses: github/codeql-action/upload-sarif@v1
+
+
+  #--------------------------------------------------#
+  #                 Analysis: Python                 # 
+  #--------------------------------------------------#
+  Python-Analysis:
+    runs-on: ubuntu-latest
+    needs: Setup
+    if: needs.Setup.outputs.BuildPython == 'true'
+
+    permissions:
+      security-events: write
+
+    steps:
+
+      # pre-job
+      - name: Setup | Cloning repository
+        uses: actions/checkout@v3
+
+      #job
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: python
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
+
+      - name: Upload SARIF file
+        uses: github/codeql-action/upload-sarif@v1
+
+
+  #--------------------------------------------------#
+  #                  Tests: Node.js                  # 
+  #--------------------------------------------------#
+  Tests-Node:
+    runs-on: ubuntu-latest
+    needs: Setup
+    if: needs.Setup.outputs.BuildNode == 'true'
+
+    permissions:
+      security-events: write
+
+    strategy:
+      matrix:
+        node-version: [ 14, 17 ]
+    
+    steps:
+
+      # pre-job
+      - name: Setup | Cloning repository
+        uses: actions/checkout@v3
+
+      - name: Setup | Cloning tools
+        uses: actions/checkout@v3
+        with:
+          ref: main
+          path: .ff
+          repository: filipeforattini/ff-iac-github-actions
+
+      - name: Install | Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Config | Load setup configs
+        env:
+          PIPELINE_SETUP: ${{ needs.Setup.outputs.PipelineConfig }}
+        id: node_setup
+        run: |
+          echo "::set-output name=cache_key::$(echo $PIPELINE_SETUP | jq -r '.code.cacheKey')"
+          echo "::set-output name=dependency_command::$(echo $PIPELINE_SETUP | jq -r '.code.dependencyCommand')"
+
+      # load caches
+      - name: Load cache from yarn.lock
+        uses: actions/cache@v2
+        if: steps.node_setup.outputs.cache_key == 'yarn.lock'
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+
+      - name: Load cache from package-lock.json
+        uses: actions/cache@v2
+        if: steps.node_setup.outputs.cache_key == 'package-lock.json'
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/package-lock.json') }}
+
+      - name: Load cache from package.json
+        uses: actions/cache@v2
+        if: steps.node_setup.outputs.cache_key == 'package-lock.json'
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/package.json') }}
+
+      # install dependencies
+      - name: Install dependencies
+        run: ${{ steps.node_setup.outputs.dependency_command }}
+
+      # run scripts
+      - name: Run linter
+        run: npm run lint --if-present
+
+      - name: Run tests
+        run: npm run test --if-present
+
+
+  #--------------------------------------------------#
+  #                  Tests: Python                   # 
+  #--------------------------------------------------#
+  Tests-Python:
+    runs-on: ubuntu-latest
+    needs: Setup
+    if: |
+      github.event_name == 'push'
+      && needs.Setup.outputs.BuildPython == 'true'
+
+    strategy:
+      matrix:
+        python: [3.7, 3.8, 3.9]
+    
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Pip install
+        run: pip install -r requirements.txt
+

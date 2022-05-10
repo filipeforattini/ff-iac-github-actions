@@ -27,7 +27,7 @@ jobs:
       #   with:
       #     category: ${{ env.GITHUB_SHA }}
 
-      - name: Run gitleaks
+      - name: Run GitLeaks
         uses: zricethezav/gitleaks-action@master
 
 

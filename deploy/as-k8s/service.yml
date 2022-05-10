@@ -21,11 +21,15 @@
 #@ globalAnnotations.update({ "kubectl.kubernetes.io/last-applied-configuration": data.values.pipelineControl.datetime })
 
 ---
-#@ if data.values.namespace.enable:
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: #@ data.values.repository
+  #@ if data.values.pipelineControl.environmentByNamespace:
+  #@ namespace = "{}-{}".format(data.values.repository, data.values.environment)
+  #@ else:
+  #@ namespace = data.values.repository
+  #@ end
+  name: #@ namespace
 
   #@ namespaceLabels = {}
   #@ namespaceLabels.update(data.values.namespace.labels)
@@ -39,7 +43,6 @@ metadata:
   #@ namespaceAnnotations.update({ "linkerd.io/inject": "enabled" })
   #@ end
   annotations: #@ namespaceAnnotations
-#@ end
 
 ---
 apiVersion: v1
@@ -47,11 +50,7 @@ kind: Secret
 type: Opaque
 metadata:
   name: pipeline-config
-  #@ if data.values.namespace.enable:
-  namespace: #@ data.values.repository
-  #@ else:
-  namespace: default
-  #@ end
+  namespace: #@ namespace
 
   #@ secretAnnotations = {}
   #@ secretAnnotations.update(globalAnnotations)
@@ -67,11 +66,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: #@ data.values.deployment.name
-  #@ if data.values.namespace.enable:
-  namespace: #@ data.values.repository
-  #@ else:
-  namespace: default
-  #@ end
+  namespace: #@ namespace
 
   #@ deploymentLabels = {}
   #@ deploymentLabels.update(globalLabels)
@@ -121,11 +116,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: #@ data.values.ingress.name
-  #@ if data.values.namespace.enable:
-  namespace: #@ data.values.repository
-  #@ else:
-  namespace: default
-  #@ end
+  namespace: #@ namespace
   annotations:
     #@ if data.values.ingress.type == "alb":
     kubernetes.io/ingress.class: alb

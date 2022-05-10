@@ -27,6 +27,10 @@ on:
         type: string
         required: false
         default: ghcr.io
+      environmentsAsNamespaces:
+        type: boolean
+        required: false
+        default: false
       mysqlEnabled:
         type: boolean
         required: false
@@ -95,6 +99,7 @@ jobs:
           PIPELINE_SETUP: ${{ steps.script_setup.outputs.result}}
         run: echo $PIPELINE_SETUP
 
+
   #--------------------------------------------------#
   #                   Base Analysis                  # 
   #--------------------------------------------------#
@@ -112,8 +117,9 @@ jobs:
         uses: actions/checkout@v3
 
       #job
-      - name: Run gitleaks
+      - name: Run GitLeaks
         uses: zricethezav/gitleaks-action@master
+
 
   #--------------------------------------------------#
   #                  Analysis: Node                  # 
@@ -143,6 +149,7 @@ jobs:
 
       # - name: Upload SARIF file
       #   uses: github/codeql-action/upload-sarif@v1
+
 
   #--------------------------------------------------#
   #                 Analysis: Python                 # 
@@ -187,7 +194,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [ 16, 17 ]
+        node-version: [ 14, 17 ]
     
     steps:
 
@@ -354,7 +361,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [ 16, 17 ]
+        node-version: [ 14, 17 ]
 
     steps:
 
@@ -519,6 +526,11 @@ jobs:
           echo "::set-output name=deploy_repository::$(echo $PIPELINE_SETUP | jq -r '.deploy.repository')"
           echo "::set-output name=deploy_tag::$(echo $PIPELINE_SETUP | jq -r '.deploy.commitTag')"
           echo "::set-output name=run_started_at::$(echo $PIPELINE_SETUP | jq -r '.run.startedAt')"
+          case ${{inputs.environmentByNamespace}} in
+            (true)  echo "::set-output name=deploy_namespace::$(echo $PIPELINE_SETUP | jq -r '.deploy.namespaces.dev')";;
+            (false) echo "::set-output name=deploy_namespace::$(echo $PIPELINE_SETUP | jq -r '.deploy.namespace')";;
+            (*)     echo "::set-output name=deploy_namespace::$(echo $PIPELINE_SETUP | jq -r '.deploy.namespace')";;
+          esac
 
       # deploy
       - name: Decrypt DEV secrets
@@ -526,7 +538,7 @@ jobs:
         run: |
           gpg \
             --yes --batch --quiet --decrypt \
-            --passphrase="${{ secrets.GPG_DEV_PASSPHRASE }}" \
+            --passphrase="${{ secrets.GPG_PASSPHRASE }}" \
             --output ./manifests/k8s-secrets.env \
             ./manifests/secrets/dev.gpg
 
@@ -537,7 +549,7 @@ jobs:
           KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          args: delete secret svc -n ${{steps.deploy_setup.outputs.deploy_repository}} --ignore-not-found
+          args: delete secret svc -n ${{steps.deploy_setup.outputs.deploy_namespace}} --ignore-not-found
 
       - name: K8s delete versioned secrets 
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
@@ -546,7 +558,7 @@ jobs:
           KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          args: delete secret svc-${{needs.Release-Node.outputs.Version}} -n ${{steps.deploy_setup.outputs.deploy_repository}} --ignore-not-found
+          args: delete secret svc-${{needs.Release-Node.outputs.Version}} -n ${{steps.deploy_setup.outputs.deploy_namespace}} --ignore-not-found
 
       - name: K8s create secrets
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
@@ -555,7 +567,7 @@ jobs:
           KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          args: create secret generic --from-env-file=./manifests/k8s-secrets.env -n ${{steps.deploy_setup.outputs.deploy_repository}} svc
+          args: create secret generic --from-env-file=./manifests/k8s-secrets.env -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc
 
       - name: K8s create versioned secrets
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
@@ -564,7 +576,7 @@ jobs:
           KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          args: create secret generic --from-env-file=./manifests/k8s-secrets.env -n ${{steps.deploy_setup.outputs.deploy_repository}} svc-${{needs.Release-Node.outputs.Version}}
+          args: create secret generic --from-env-file=./manifests/k8s-secrets.env -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc-${{needs.Release-Node.outputs.Version}}
 
       - name: Config | Login to GHCR
         uses: docker/login-action@v1
@@ -584,7 +596,7 @@ jobs:
           KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          args: delete secret registry-token -n ${{steps.deploy_setup.outputs.deploy_repository}} --ignore-not-found
+          args: delete secret registry-token -n ${{steps.deploy_setup.outputs.deploy_namespace}} --ignore-not-found
 
       - name: K8s create pull secret
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
@@ -593,7 +605,7 @@ jobs:
           KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          args: create secret generic registry-token -n ${{steps.deploy_setup.outputs.deploy_repository}} --type=kubernetes.io/dockerconfigjson --from-file=.dockerconfigjson=$HOME/.docker/config.json
+          args: create secret generic registry-token -n ${{steps.deploy_setup.outputs.deploy_namespace}} --type=kubernetes.io/dockerconfigjson --from-file=.dockerconfigjson=$HOME/.docker/config.json
 
       - name: K8s generates YAML
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
@@ -608,6 +620,7 @@ jobs:
             --data-value repository=${{steps.deploy_setup.outputs.deploy_repository}} \
             --data-value tag=${{steps.deploy_setup.outputs.deploy_tag}} \
             --data-value pipelineControl.datetime=${{steps.deploy_setup.outputs.run_started_at}} \
+            --data-value pipelineControl.environmentsAsNamespaces=${{inputs.environmentByNamespace}} \
               > ./manifests/k8s-to-apply.yml
 
       - name: Debug | Print k8s-to-apply.yml

@@ -14,7 +14,6 @@ features:
 
 #! k8s resources
 namespace:
-  enable: true
   labels: {}
   annotations: {}
 
@@ -44,3 +43,4 @@ ingress:
 #! pipeline control
 pipelineControl:
   datetime: 'today'
+  environmentByNamespace: false
