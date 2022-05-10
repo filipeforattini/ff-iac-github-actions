@@ -1,3 +1,10 @@
+# [1.13.0](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.12.0...v1.13.0) (2022-05-10)
+
+
+### Features
+
+* added envs as namespaces ([c9460e5](https://github.com/filipeforattini/ff-iac-github-actions/commit/c9460e5a87aad4e0beaa5bdb19587c8d11f94e41))
+
 # [1.12.0](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.11.0...v1.12.0) (2022-05-10)
 
 
