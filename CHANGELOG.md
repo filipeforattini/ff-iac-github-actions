@@ -1,3 +1,10 @@
+## [1.13.5](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.13.4...v1.13.5) (2022-05-11)
+
+
+### Bug Fixes
+
+* single step secrets ([bdaa564](https://github.com/filipeforattini/ff-iac-github-actions/commit/bdaa5647fc2a693314b8aa7e0be02f6423521f01))
+
 ## [1.13.4](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.13.3...v1.13.4) (2022-05-10)
 
 
