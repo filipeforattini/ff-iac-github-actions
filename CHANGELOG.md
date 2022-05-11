@@ -1,3 +1,10 @@
+## [1.13.15](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.13.14...v1.13.15) (2022-05-11)
+
+
+### Bug Fixes
+
+* using boolean for param ([aa299b7](https://github.com/filipeforattini/ff-iac-github-actions/commit/aa299b7905a2b63390f5e7fdf0d6d0d434876633))
+
 ## [1.13.14](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.13.13...v1.13.14) (2022-05-11)
 
 
