@@ -564,14 +564,14 @@ jobs:
         uses: steebchen/kubectl@v2.0.0
         with:
           config: ${{ secrets.KUBE_CONFIG }}
-          args: create secret generic --from-env-file=./manifests/k8s-secrets.env -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc-${{needs.Release-Node.outputs.Version}} --dry-run=client --validate=false --output=yaml | kubectl apply -f -
+          command: create secret generic --from-env-file=./manifests/k8s-secrets.env -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc-${{needs.Release-Node.outputs.Version}} --dry-run=client --validate=false --output=yaml | kubectl apply -f -
 
       - name: K8s create pull secret
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
         uses: steebchen/kubectl@v2.0.0
         with:
           config: ${{ secrets.KUBE_CONFIG }}
-          args: create secret generic registry-token -n ${{steps.deploy_setup.outputs.deploy_namespace}} --type=kubernetes.io/dockerconfigjson --from-file=.dockerconfigjson=$HOME/.docker/config.json --dry-run=client --validate=false --output=yaml | kubectl apply -f -
+          command: create secret generic registry-token -n ${{steps.deploy_setup.outputs.deploy_namespace}} --type=kubernetes.io/dockerconfigjson --from-file=.dockerconfigjson=$HOME/.docker/config.json --dry-run=client --validate=false --output=yaml | kubectl apply -f -
 
       - name: K8s generates YAML
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
@@ -598,11 +598,11 @@ jobs:
         uses: steebchen/kubectl@v2.0.0
         with:
           config: ${{ secrets.KUBE_CONFIG }}
-          args: apply -f ./manifests/k8s-to-apply.yml
+          command: apply -f ./manifests/k8s-to-apply.yml
 
       - name: K8s get current state
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
         uses: steebchen/kubectl@v2.0.0
         with:
           config: ${{ secrets.KUBE_CONFIG }}
-          args: get pods -n ${{steps.deploy_setup.outputs.deploy_repository}}
+          command: get pods -n ${{steps.deploy_setup.outputs.deploy_repository}}

@@ -24,7 +24,7 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  #@ if data.values.pipelineControl.environmentByNamespace:
+  #@ if data.values.pipelineControl.environmentsAsNamespaces:
   #@ namespace = "{}-{}".format(data.values.repository, data.values.environment)
   #@ else:
   #@ namespace = data.values.repository
