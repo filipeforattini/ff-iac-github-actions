@@ -120,40 +120,46 @@ jobs:
           persist-credentials: false
 
       #job
-      - name: Run GitLeaks
+      - name: Run GitLeaks scanner
         uses: docker://opendevsecops/gitleaks
         with:
           args: --repo=https://github.com/${{github.repository}}
 
+      - name: Run Trivy scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: fs
+          input: /tmp/image-${{ matrix.node-version }}.tar
+          format: 'sarif'
+          severity: 'CRITICAL,HIGH'
+          output: 'trivy-results.sarif'
+
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: 'trivy-results.sarif'
 
       #node
-      - name: Initialize CodeQL
+      - name: Setup CodeQL for Javascript
         if: needs.Setup.outputs.BuildNode == 'true'
         uses: github/codeql-action/init@v2
         with:
           languages: javascript
 
-      - name: Run CodeQL Analysis for Node
+      - name: Run Javascript CodeQL Analysis
         if: needs.Setup.outputs.BuildNode == 'true'
         uses: github/codeql-action/analyze@v2
 
-      # - name: Upload node SARIF file
-      #   uses: github/codeql-action/upload-sarif@v1
-
       #python
-      - name: Initialize CodeQL
+      - name: Setup CodeQL for Python
         if: needs.Setup.outputs.BuildPython == 'true'
         uses: github/codeql-action/init@v2
         with:
           languages: python
 
-      - name: Perform CodeQL Analysis
+      - name: Run Python CodeQL Analysis
         if: needs.Setup.outputs.BuildPython == 'true'
         uses: github/codeql-action/analyze@v2
-
-      - name: Upload python SARIF file
-        if: needs.Setup.outputs.BuildPython == 'true'
-        uses: github/codeql-action/upload-sarif@v1
 
 
   #--------------------------------------------------#
@@ -422,29 +428,23 @@ jobs:
           platforms: ${{ inputs.platforms }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          outputs: type=docker,dest=/tmp/image-${{ matrix.node-version }}.tar
           tags: ${{steps.node_setup.outputs.docker_image_tags}}, ${{steps.node_setup.outputs.docker_image_fullname}}:${{needs.Release-Node.outputs.Version}}
           labels: "organization: ${{github.repository_owner}}, repository: ${{github.repository}}, branch: ${{needs.Setup.outputs.Branch}}, commit: ${{needs.Setup.outputs.ShaHash}}, date: ${{needs.Setup.outputs.Date}}, timestamp: ${{needs.Setup.outputs.Timestamp}}"
 
-      - name: Debug | List docker images
-        if: inputs.debug == true
-        run: docker images
+      - name: Run Trivy scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: image
+          input: /tmp/image-${{ matrix.node-version }}.tar
+          format: 'sarif'
+          severity: 'CRITICAL,HIGH'
+          output: 'trivy-results.sarif'
 
-      # - name: Run Trivy vulnerability scanner
-      #   uses: aquasecurity/trivy-action@master
-      #   env:
-      #     TRIVY_NON_SSL: true
-      #   with:
-      #     image-ref: '${{ steps.node_setup.outputs.docker_main_image }}'
-      #     format: 'table'
-      #     exit-code: '1'
-      #     ignore-unfixed: true
-      #     vuln-type: 'os,library'
-      #     severity: 'CRITICAL,HIGH'
-
-      # - name: Upload Trivy scan results to GitHub Security tab
-      #   uses: github/codeql-action/upload-sarif@v1
-      #   with:
-      #     sarif_file: 'trivy-results.sarif'
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: 'trivy-results.sarif'
 
 
   #--------------------------------------------------#
