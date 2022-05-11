@@ -16,13 +16,11 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: '0'
-          persist-credentials: false
 
       #job
       - name: Run GitLeaks
         uses: docker://zricethezav/gitleaks:latest
         with:
-          # entrypoint: gitleaks
           args: detect --source="." --report-format sarif -v -l debug
 
       - name: Initialize CodeQL
