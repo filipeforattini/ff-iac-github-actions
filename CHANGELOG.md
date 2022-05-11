@@ -1,3 +1,10 @@
+# [1.18.0](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.17.0...v1.18.0) (2022-05-11)
+
+
+### Features
+
+* generic login for pipeline ([1c0148a](https://github.com/filipeforattini/ff-iac-github-actions/commit/1c0148addb7646e7f175f3c5f75a7bb51783603e))
+
 # [1.17.0](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.16.0...v1.17.0) (2022-05-11)
 
 
