@@ -122,7 +122,9 @@ jobs:
 
       #job
       - name: Run GitLeaks
-        uses: zricethezav/gitleaks-action@master
+        uses: docker://opendevsecops/gitleaks
+        with:
+          args: --repo=https://github.com/${{github.repository}}
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v2
@@ -158,7 +160,9 @@ jobs:
 
       #job
       - name: Run GitLeaks
-        uses: zricethezav/gitleaks-action@master
+        uses: docker://opendevsecops/gitleaks
+        with:
+          args: --repo=https://github.com/${{github.repository}} --report=json -l debug
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v2

@@ -23,8 +23,10 @@ jobs:
       #job
       - name: Run GitLeaks
         uses: docker://opendevsecops/gitleaks
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          args: --repo=https://github.com/${{github.repository}}
+          args: --repo=https://github.com/${{github.repository}} 
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v2
