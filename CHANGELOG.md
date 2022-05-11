@@ -1,3 +1,10 @@
+# [1.14.0](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.13.16...v1.14.0) (2022-05-11)
+
+
+### Features
+
+* added secrets injection ([2a0e8a6](https://github.com/filipeforattini/ff-iac-github-actions/commit/2a0e8a60ead8e37f82824b64c166828d38f1abcf))
+
 ## [1.13.16](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.13.15...v1.13.16) (2022-05-11)
 
 
