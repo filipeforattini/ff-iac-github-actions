@@ -1,3 +1,10 @@
+# [1.21.0](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.20.0...v1.21.0) (2022-05-11)
+
+
+### Features
+
+* added trivy scanner ([57ee42a](https://github.com/filipeforattini/ff-iac-github-actions/commit/57ee42a4c989182258b8c163ef2c0125457e33cd))
+
 # [1.20.0](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.19.0...v1.20.0) (2022-05-11)
 
 
