@@ -559,7 +559,14 @@ jobs:
           config: ${{ secrets.KUBE_CONFIG }}
           command: create secret generic -n ${{steps.deploy_setup.outputs.deploy_namespace}} registry-token --type=kubernetes.io/dockerconfigjson --from-file=.dockerconfigjson=./manifests/docker-config.json --dry-run=client --validate=false --output=yaml | kubectl apply -f -
 
-      - name: K8s generates YAML
+      - name: K8s get secrets keys to inject
+        if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
+        uses: steebchen/kubectl@v2.0.0
+        with:
+          config: ${{ secrets.KUBE_CONFIG }}
+          command: get secret -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc -o jsonpath='{.data}' | jq -r 'keys[]' | sed -z 's/\n/,/g;s/,$/\n/' > ./manifests/k8s-secrets-keys.txt
+
+      - name: K8s generates final yml
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
         run: |
           ytt \
@@ -573,6 +580,7 @@ jobs:
             --data-value tag=${{steps.deploy_setup.outputs.deploy_tag}} \
             --data-value pipelineControl.datetime=${{steps.deploy_setup.outputs.run_started_at}} \
             --data-value-yaml pipelineControl.environmentsAsNamespaces=${{inputs.environmentsAsNamespaces}} \
+            --data-value-yaml envFromSecrets="[$(cat ./manifests/k8s-secrets-keys.txt)]" \
               > ./manifests/k8s-to-apply.yml
 
       - name: Debug | Print k8s-to-apply.yml

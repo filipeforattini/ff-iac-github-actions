@@ -12,6 +12,12 @@ tag: latest
 features:
   enableLinkerd: false
 
+#! environments
+#@schema/type any=True
+env: []
+#@schema/type any=True
+envFromSecrets: []
+
 #! k8s resources
 namespace:
   labels: {}
@@ -21,7 +27,7 @@ deployment:
   enable: true
   replicas: 1
   name: svc
-  port: 80
+  port: 8000
   labels: {}
   annotations: {}
   resources: {}
@@ -35,7 +41,9 @@ ingress:
   enable: false
   name: svc
   type: alb
-  domain: acme.io
+  domain:
+    enable: false
+    name: acme.io
 
   alb:
     certificateArn: secret
