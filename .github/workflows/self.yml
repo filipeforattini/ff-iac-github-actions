@@ -20,7 +20,10 @@ jobs:
 
       #job
       - name: Run GitLeaks
-        uses: zricethezav/gitleaks-action@master
+        uses: docker://zricethezav/gitleaks:latest
+        with:
+          # entrypoint: gitleaks
+          args: detect --source="." --report-format sarif -v -l debug
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v2
