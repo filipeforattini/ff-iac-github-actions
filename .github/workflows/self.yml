@@ -23,8 +23,10 @@ jobs:
       #job
       - name: Run GitLeaks
         uses: docker://opendevsecops/gitleaks
+        env:
+          REPOSITORY_NAME: ${{github.repository}}
         with:
-          args: detect --source="." --report-format sarif -v -l debug
+          args: --repo=https://github.com/$REPOSITORY_NAME
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v2
@@ -40,6 +42,7 @@ jobs:
 
   Release:
     runs-on: ubuntu-latest
+    needs: Analysis
 
     steps:
 
