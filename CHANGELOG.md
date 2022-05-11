@@ -1,3 +1,25 @@
+# [1.20.0](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.19.0...v1.20.0) (2022-05-11)
+
+
+### Bug Fixes
+
+* add security results upload ([c4ddda2](https://github.com/filipeforattini/ff-iac-github-actions/commit/c4ddda24dc925d3e3e97f431c338c8e4aca33bc0))
+* add security results upload ([ccada2c](https://github.com/filipeforattini/ff-iac-github-actions/commit/ccada2c4eb8b1aa4ca580462840ad3f84fefde4d))
+* add security results upload ([43f42e7](https://github.com/filipeforattini/ff-iac-github-actions/commit/43f42e7a0564e42e291a7d48e82099fc38e27080))
+* add security results upload ([955308f](https://github.com/filipeforattini/ff-iac-github-actions/commit/955308f981b1f7793c389cea8cf80502101c7098))
+* add security results upload ([d28049d](https://github.com/filipeforattini/ff-iac-github-actions/commit/d28049d081f2ae7d791f07c98e6b23d3dddcd32d))
+* add security results upload ([5817967](https://github.com/filipeforattini/ff-iac-github-actions/commit/581796787837399f49a10b1a5bc22022dce540a9))
+* add security results upload ([e76873b](https://github.com/filipeforattini/ff-iac-github-actions/commit/e76873bf04cdbc52856b97593e87943721510943))
+* add security results upload ([d75d275](https://github.com/filipeforattini/ff-iac-github-actions/commit/d75d27567e6b68d390be47e41e5b9904b10be886))
+
+
+### Features
+
+* generic login for pipeline ([6737272](https://github.com/filipeforattini/ff-iac-github-actions/commit/6737272d16b8c5fc7a8e14c95fbe237d16f3c9ca))
+* generic login for pipeline ([e59a5fb](https://github.com/filipeforattini/ff-iac-github-actions/commit/e59a5fbded4d6b0015ecc38e8510924bfb468907))
+* generic login for pipeline ([414d3de](https://github.com/filipeforattini/ff-iac-github-actions/commit/414d3de510e6435818e4f22c640d26f4fcb3af11))
+* generic login for pipeline ([2fbabca](https://github.com/filipeforattini/ff-iac-github-actions/commit/2fbabca901b15c0ea0089db3b4dd924bab39a473))
+
 # [1.19.0](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.18.0...v1.19.0) (2022-05-11)
 
 
