@@ -23,6 +23,19 @@ jobs:
         with:
           args: --repo=https://github.com/${{github.repository}} 
 
+      - name: Run Trivy scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: fs
+          format: 'sarif'
+          severity: 'CRITICAL,HIGH'
+          output: 'trivy-results.sarif'
+
+      - name: Upload Trivy results
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: 'trivy-results.sarif'
+
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v2
         with:
