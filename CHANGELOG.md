@@ -1,3 +1,11 @@
+## [1.13.16](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.13.15...v1.13.16) (2022-05-11)
+
+
+### Bug Fixes
+
+* using data value yml for boolean ([59bb3ef](https://github.com/filipeforattini/ff-iac-github-actions/commit/59bb3ef9e7abe713bbea5a3a9822a9e3fcb2f11c))
+* using data value yml for boolean ([0dd9f9f](https://github.com/filipeforattini/ff-iac-github-actions/commit/0dd9f9f03b4a1ae4ed1f1eee9f0da65b20b5c1ae))
+
 ## [1.13.15](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.13.14...v1.13.15) (2022-05-11)
 
 
