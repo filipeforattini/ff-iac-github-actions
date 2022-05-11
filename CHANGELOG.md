@@ -1,3 +1,10 @@
+## [1.13.8](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.13.7...v1.13.8) (2022-05-11)
+
+
+### Bug Fixes
+
+* params for service schema ([72b445e](https://github.com/filipeforattini/ff-iac-github-actions/commit/72b445eaef567f488076f6aa93ff9e4f843be5ae))
+
 ## [1.13.7](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.13.6...v1.13.7) (2022-05-11)
 
 
