@@ -1,3 +1,16 @@
+# [1.22.0](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.21.0...v1.22.0) (2022-05-11)
+
+
+### Bug Fixes
+
+* trivy reference ([04da238](https://github.com/filipeforattini/ff-iac-github-actions/commit/04da2384419607011cf64d096983abf697a77fc2))
+* using new version for sarif upload ([e7e2a46](https://github.com/filipeforattini/ff-iac-github-actions/commit/e7e2a469d2ab2fc4425ff3dde224a7267d3cc272))
+
+
+### Features
+
+* added trivy scanner ([4e73142](https://github.com/filipeforattini/ff-iac-github-actions/commit/4e73142fe5a388e9eac2d787d8aaea0f0e5a6100))
+
 # [1.21.0](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.20.0...v1.21.0) (2022-05-11)
 
 
