@@ -1,3 +1,10 @@
+## [1.13.14](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.13.13...v1.13.14) (2022-05-11)
+
+
+### Bug Fixes
+
+* copies docker config into local repo ([a884637](https://github.com/filipeforattini/ff-iac-github-actions/commit/a884637f561ef0ba44b66006e36113ff3ee7cc14))
+
 ## [1.13.13](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.13.12...v1.13.13) (2022-05-11)
 
 
