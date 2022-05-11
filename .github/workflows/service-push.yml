@@ -519,7 +519,7 @@ jobs:
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
         run: |
           sudo chown $(whoami):docker /home/$(whoami)/.docker/config.json
-          cat /home/$(whoami)/.docker/config.json
+          cp /home/$(whoami)/.docker/config.json ./manifests/docker-config.json
 
       # deploy
       - name: K8s create namespace
@@ -557,7 +557,7 @@ jobs:
         uses: steebchen/kubectl@v2.0.0
         with:
           config: ${{ secrets.KUBE_CONFIG }}
-          command: create secret generic -n ${{steps.deploy_setup.outputs.deploy_namespace}} registry-token --type=kubernetes.io/dockerconfigjson --from-file=.dockerconfigjson=$HOME/.docker/config.json --dry-run=client --validate=false --output=yaml | kubectl apply -f -
+          command: create secret generic -n ${{steps.deploy_setup.outputs.deploy_namespace}} registry-token --type=kubernetes.io/dockerconfigjson --from-file=.dockerconfigjson=./manifests/docker-config.json --dry-run=client --validate=false --output=yaml | kubectl apply -f -
 
       - name: K8s generates YAML
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
