@@ -475,6 +475,11 @@ jobs:
           path: .ff
           repository: filipeforattini/ff-iac-github-actions
 
+      - name: Install | Bash dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq sed
+
       - name: Install | YTT
         uses: vmware-tanzu/carvel-setup-action@v1
         with:
@@ -486,6 +491,7 @@ jobs:
 
       - name: Install | Docker Buildx
         uses: docker/setup-buildx-action@v1
+      
 
       - name: Config | Load setup configs
         env:
