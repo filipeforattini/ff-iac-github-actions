@@ -533,7 +533,9 @@ jobs:
 
       - name: Config | Gives runner access to docker config file 
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
-        run: sudo chown $(whoami):docker /home/$(whoami)/.docker/config.json
+        run: |
+          sudo chown $(whoami):docker /home/$(whoami)/.docker/config.json
+          cat /home/$(whoami)/.docker/config.json
 
       # deploy
       - name: K8s create namespace
@@ -557,21 +559,21 @@ jobs:
         uses: steebchen/kubectl@v2.0.0
         with:
           config: ${{ secrets.KUBE_CONFIG }}
-          command: create secret generic --from-env-file=./manifests/k8s-secrets.env -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc --dry-run=client --validate=false --output=yaml | kubectl apply -f -
+          command: create secret generic -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc --from-env-file=./manifests/k8s-secrets.env --dry-run=client --validate=false --output=yaml | kubectl apply -f -
 
       - name: K8s create versioned secrets
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
         uses: steebchen/kubectl@v2.0.0
         with:
           config: ${{ secrets.KUBE_CONFIG }}
-          command: create secret generic --from-env-file=./manifests/k8s-secrets.env -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc-${{needs.Release-Node.outputs.Version}} --dry-run=client --validate=false --output=yaml | kubectl apply -f -
+          command: create secret generic -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc-${{needs.Release-Node.outputs.Version}} --from-env-file=./manifests/k8s-secrets.env --dry-run=client --validate=false --output=yaml | kubectl apply -f -
 
-      - name: K8s create pull secret
+      - name: K8s create registry-token secret
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
         uses: steebchen/kubectl@v2.0.0
         with:
           config: ${{ secrets.KUBE_CONFIG }}
-          command: create secret generic registry-token -n ${{steps.deploy_setup.outputs.deploy_namespace}} --type=kubernetes.io/dockerconfigjson --from-file=.dockerconfigjson=$HOME/.docker/config.json --dry-run=client --validate=false --output=yaml | kubectl apply -f -
+          command: create secret generic -n ${{steps.deploy_setup.outputs.deploy_namespace}} registry-token --type=kubernetes.io/dockerconfigjson --from-file=.dockerconfigjson=$HOME/.docker/config.json --dry-run=client --validate=false --output=yaml | kubectl apply -f -
 
       - name: K8s generates YAML
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
@@ -582,8 +584,8 @@ jobs:
             -f ./manifests/k8s-values.yml \
             --data-value ecosystem=${{steps.deploy_setup.outputs.deploy_ecosystem}} \
             --data-value organization=${{steps.deploy_setup.outputs.deploy_organization}} \
-            --data-value containerRegistry=${{steps.deploy_setup.outputs.deploy_container_registry}} \
             --data-value repository=${{steps.deploy_setup.outputs.deploy_repository}} \
+            --data-value containerRegistry=${{steps.deploy_setup.outputs.deploy_container_registry}} \
             --data-value tag=${{steps.deploy_setup.outputs.deploy_tag}} \
             --data-value pipelineControl.datetime=${{steps.deploy_setup.outputs.run_started_at}} \
             --data-value pipelineControl.environmentsAsNamespaces=${{inputs.environmentsAsNamespaces}} \
