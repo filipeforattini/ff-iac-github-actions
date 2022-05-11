@@ -1,3 +1,10 @@
+## [1.13.11](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.13.10...v1.13.11) (2022-05-11)
+
+
+### Bug Fixes
+
+* using docker container to run gitleaks ([21260b1](https://github.com/filipeforattini/ff-iac-github-actions/commit/21260b1eb312670a0f89faf17451f6739d23cc04))
+
 ## [1.13.10](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.13.9...v1.13.10) (2022-05-11)
 
 
