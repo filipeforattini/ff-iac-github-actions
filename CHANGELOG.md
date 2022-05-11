@@ -1,3 +1,10 @@
+## [1.13.6](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.13.5...v1.13.6) (2022-05-11)
+
+
+### Bug Fixes
+
+* using correct kubectl action ([25f0e87](https://github.com/filipeforattini/ff-iac-github-actions/commit/25f0e8785c1d547eb7dc30772de2b74becbf68f4))
+
 ## [1.13.5](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.13.4...v1.13.5) (2022-05-11)
 
 
