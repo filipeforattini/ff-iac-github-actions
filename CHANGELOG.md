@@ -1,3 +1,10 @@
+## [1.22.1](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.22.0...v1.22.1) (2022-05-11)
+
+
+### Bug Fixes
+
+* trivy reference ([cee13ed](https://github.com/filipeforattini/ff-iac-github-actions/commit/cee13ed7009e2e1729504578c7b4ee603610b29f))
+
 # [1.22.0](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.21.0...v1.22.0) (2022-05-11)
 
 
