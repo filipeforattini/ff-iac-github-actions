@@ -568,7 +568,9 @@ jobs:
 
       - name: K8s get secrets keys to inject (pt2)
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
-        run: cat ./manifests/k8s-secrets-keys.txt | jq -r 'keys[]' |  tr '\n' '~' | sed 's/~/,/g;s/,$//' > ./manifests/k8s-secrets-keys.txt
+        run: |
+          sudo chown $(whoami) ./manifests/k8s-secrets-keys.txt
+          cat ./manifests/k8s-secrets-keys.txt | jq -r 'keys[]' |  tr '\n' '~' | sed 's/~/,/g;s/,$//' > ./manifests/k8s-secrets-keys.txt
 
       - name: K8s generates final yml
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
