@@ -22,9 +22,9 @@ jobs:
 
       #job
       - name: Run GitLeaks
-        uses: docker://zricethezav/gitleaks:latest
-        with:
-          args: detect --source="." --report-format sarif -v -l debug
+        uses: docker://opendevsecops/gitleaks
+        # with:
+        #   args: detect --source="." --report-format sarif -v -l debug
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v2
