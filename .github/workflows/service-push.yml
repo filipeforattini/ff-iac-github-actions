@@ -101,9 +101,9 @@ jobs:
 
 
   #--------------------------------------------------#
-  #                   Base Analysis                  # 
+  #                  Static Analysis                 # 
   #--------------------------------------------------#
-  Base-Analysis:
+  Static-Analysis:
     runs-on: ubuntu-latest
     needs: Setup
 
@@ -126,73 +126,33 @@ jobs:
           args: --repo=https://github.com/${{github.repository}}
 
 
-  #--------------------------------------------------#
-  #                  Analysis: Node                  # 
-  #--------------------------------------------------#
-  Node-Analysis:
-    runs-on: ubuntu-latest
-    if: needs.Setup.outputs.BuildNode == 'true'
-    needs: 
-      - Setup
-      - Base-Analysis
-
-    permissions:
-      security-events: write
-
-    steps:
-
-      # pre-job
-      - name: Setup | Cloning repository
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: '0'
-          persist-credentials: false
-
-      #job
+      #node
       - name: Initialize CodeQL
+        if: needs.Setup.outputs.BuildNode == 'true'
         uses: github/codeql-action/init@v2
         with:
           languages: javascript
 
-      - name: Run CodeQL Analysis
+      - name: Run CodeQL Analysis for Node
+        if: needs.Setup.outputs.BuildNode == 'true'
         uses: github/codeql-action/analyze@v2
 
-      # - name: Upload SARIF file
+      # - name: Upload node SARIF file
       #   uses: github/codeql-action/upload-sarif@v1
 
-
-  #--------------------------------------------------#
-  #                 Analysis: Python                 # 
-  #--------------------------------------------------#
-  Python-Analysis:
-    runs-on: ubuntu-latest
-    if: needs.Setup.outputs.BuildPython == 'true'
-    needs: 
-      - Setup
-      - Base-Analysis
-
-    permissions:
-      security-events: write
-
-    steps:
-
-      # pre-job
-      - name: Setup | Cloning repository
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: '0'
-          persist-credentials: false
-
-      #job
+      #python
       - name: Initialize CodeQL
+        if: needs.Setup.outputs.BuildPython == 'true'
         uses: github/codeql-action/init@v2
         with:
           languages: python
 
       - name: Perform CodeQL Analysis
+        if: needs.Setup.outputs.BuildPython == 'true'
         uses: github/codeql-action/analyze@v2
 
-      - name: Upload SARIF file
+      - name: Upload python SARIF file
+        if: needs.Setup.outputs.BuildPython == 'true'
         uses: github/codeql-action/upload-sarif@v1
 
 
@@ -300,7 +260,7 @@ jobs:
     needs: 
       - Setup
       - Tests-Node
-      - Node-Analysis
+      - Static-Analysis
 
     outputs:
       Version: ${{ steps.versioning.outputs.version }}
