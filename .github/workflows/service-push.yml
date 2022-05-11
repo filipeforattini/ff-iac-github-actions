@@ -101,12 +101,11 @@ jobs:
 
 
   #--------------------------------------------------#
-  #                  Analysis: Node                  # 
+  #                   Base Analysis                  # 
   #--------------------------------------------------#
-  Node-Analysis:
+  Base-Analysis:
     runs-on: ubuntu-latest
     needs: Setup
-    if: needs.Setup.outputs.BuildNode == 'true'
 
     permissions:
       security-events: write
@@ -126,6 +125,30 @@ jobs:
         with:
           args: --repo=https://github.com/${{github.repository}}
 
+
+  #--------------------------------------------------#
+  #                  Analysis: Node                  # 
+  #--------------------------------------------------#
+  Node-Analysis:
+    runs-on: ubuntu-latest
+    if: needs.Setup.outputs.BuildNode == 'true'
+    needs: 
+      - Setup
+      - Base-Analysis
+
+    permissions:
+      security-events: write
+
+    steps:
+
+      # pre-job
+      - name: Setup | Cloning repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: '0'
+          persist-credentials: false
+
+      #job
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v2
         with:
@@ -143,8 +166,10 @@ jobs:
   #--------------------------------------------------#
   Python-Analysis:
     runs-on: ubuntu-latest
-    needs: Setup
     if: needs.Setup.outputs.BuildPython == 'true'
+    needs: 
+      - Setup
+      - Base-Analysis
 
     permissions:
       security-events: write
@@ -159,11 +184,6 @@ jobs:
           persist-credentials: false
 
       #job
-      - name: Run GitLeaks
-        uses: docker://opendevsecops/gitleaks
-        with:
-          args: --repo=https://github.com/${{github.repository}} --report=json -l debug
-
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v2
         with:
