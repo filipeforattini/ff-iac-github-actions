@@ -440,7 +440,7 @@ jobs:
             
       # build
       - name: Dockerfile lint
-        uses: hadolint/hadolint-action@v2.0.0
+        uses: hadolint/hadolint-action@v2.1.0
         with:
           dockerfile: Dockerfile
 
@@ -448,8 +448,6 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
-          push: true
-          platforms: ${{ inputs.platforms }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
           outputs: dest=/tmp/image-${{ matrix.node-version }}.tar
