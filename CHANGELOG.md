@@ -1,3 +1,10 @@
+## [1.14.1](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.14.0...v1.14.1) (2022-05-11)
+
+
+### Bug Fixes
+
+* installing dependencies for bash ([7004f32](https://github.com/filipeforattini/ff-iac-github-actions/commit/7004f3277b575dcd49e1edf9036f8438c4560d35))
+
 # [1.14.0](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.13.16...v1.14.0) (2022-05-11)
 
 
