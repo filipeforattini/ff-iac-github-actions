@@ -129,6 +129,7 @@ jobs:
         uses: aquasecurity/trivy-action@master
         with:
           scan-type: fs
+          input: .
           format: 'sarif'
           severity: 'CRITICAL,HIGH'
           output: 'trivy-results.sarif'
