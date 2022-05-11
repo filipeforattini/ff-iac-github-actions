@@ -450,13 +450,13 @@ jobs:
           context: .
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          outputs: type=docker,dest=./node-${{ matrix.node-version }}.tar
+          outputs: type=docker,dest=./dockerimage-node-${{ matrix.node-version }}.tar
 
       - name: Run Trivy scanner
         uses: aquasecurity/trivy-action@master
         with:
           scan-type: image
-          input: ./node-${{ matrix.node-version }}.tar
+          input: ./dockerimage-node-${{ matrix.node-version }}.tar
           format: 'sarif'
           severity: 'CRITICAL,HIGH'
           output: 'trivy-results.sarif'
