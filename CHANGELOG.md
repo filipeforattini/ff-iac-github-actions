@@ -1,3 +1,10 @@
+## [1.13.12](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.13.11...v1.13.12) (2022-05-11)
+
+
+### Bug Fixes
+
+* reorganized analysis order ([9efdbb4](https://github.com/filipeforattini/ff-iac-github-actions/commit/9efdbb4d1a37832d2d20854c21ed2e49e01d3998))
+
 ## [1.13.11](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.13.10...v1.13.11) (2022-05-11)
 
 
