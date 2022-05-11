@@ -562,6 +562,13 @@ jobs:
       - name: K8s generates YAML
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
         run: |
+          function boolean() {
+            case $1 in
+              TRUE) echo true ;;
+              FALSE) echo false ;;
+              *) echo "Err: Unknown boolean value \"$1\"" 1>&2; exit 1 ;;
+            esac
+          }
           ytt \
             -f ./.ff/deploy/as-k8s/service.schema.yml \
             -f ./.ff/deploy/as-k8s/service.yml \
@@ -572,7 +579,7 @@ jobs:
             --data-value containerRegistry=${{steps.deploy_setup.outputs.deploy_container_registry}} \
             --data-value tag=${{steps.deploy_setup.outputs.deploy_tag}} \
             --data-value pipelineControl.datetime=${{steps.deploy_setup.outputs.run_started_at}} \
-            --data-value pipelineControl.environmentsAsNamespaces=${{inputs.environmentsAsNamespaces}} \
+            --data-value pipelineControl.environmentsAsNamespaces=$(boolean ${{inputs.environmentsAsNamespaces}}) \
               > ./manifests/k8s-to-apply.yml
 
       - name: Debug | Print k8s-to-apply.yml
