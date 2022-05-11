@@ -572,7 +572,7 @@ jobs:
             --data-value containerRegistry=${{steps.deploy_setup.outputs.deploy_container_registry}} \
             --data-value tag=${{steps.deploy_setup.outputs.deploy_tag}} \
             --data-value pipelineControl.datetime=${{steps.deploy_setup.outputs.run_started_at}} \
-            --data-value-yaml pipelineControl.environmentsAsNamespaces=$(boolean ${{inputs.environmentsAsNamespaces}}) \
+            --data-value-yaml pipelineControl.environmentsAsNamespaces=${{inputs.environmentsAsNamespaces}} \
               > ./manifests/k8s-to-apply.yml
 
       - name: Debug | Print k8s-to-apply.yml
