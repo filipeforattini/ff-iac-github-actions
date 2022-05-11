@@ -1,3 +1,10 @@
+# [1.15.0](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.14.1...v1.15.0) (2022-05-11)
+
+
+### Features
+
+* using tr and sed ([58e3a7d](https://github.com/filipeforattini/ff-iac-github-actions/commit/58e3a7d47e5acd717151b27a643a6f43e93387b3))
+
 ## [1.14.1](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.14.0...v1.14.1) (2022-05-11)
 
 
