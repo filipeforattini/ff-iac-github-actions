@@ -15,9 +15,9 @@ Your repo as an auto-helm upgrade or k8s-apply pipeline.
 - Docerfile analysis:
     - [Trivy](https://aquasecurity.github.io/trivy/)
 - Code analysis: 
+    - [GitLeaks](https://github.com/zricethezav/gitleaks) for repository
+    - [Trivy](https://github.com/aquasecurity/trivy) for repository and image
     - [SonarQube](https://www.sonarqube.org/)
-    - [GitLeaks](https://github.com/zricethezav/gitleaks) for repository
-    - [GitLeaks](https://github.com/zricethezav/gitleaks) for repository
 
 ## Usage
 
