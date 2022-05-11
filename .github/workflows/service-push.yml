@@ -475,11 +475,6 @@ jobs:
           path: .ff
           repository: filipeforattini/ff-iac-github-actions
 
-      - name: Install | Bash dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y jq sed
-
       - name: Install | YTT
         uses: vmware-tanzu/carvel-setup-action@v1
         with:
@@ -491,7 +486,6 @@ jobs:
 
       - name: Install | Docker Buildx
         uses: docker/setup-buildx-action@v1
-      
 
       - name: Config | Load setup configs
         env:
@@ -565,12 +559,16 @@ jobs:
           config: ${{ secrets.KUBE_CONFIG }}
           command: create secret generic -n ${{steps.deploy_setup.outputs.deploy_namespace}} registry-token --type=kubernetes.io/dockerconfigjson --from-file=.dockerconfigjson=./manifests/docker-config.json --dry-run=client --validate=false --output=yaml | kubectl apply -f -
 
-      - name: K8s get secrets keys to inject
+      - name: K8s get secrets keys to inject (pt1)
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
         uses: steebchen/kubectl@v2.0.0
         with:
           config: ${{ secrets.KUBE_CONFIG }}
-          command: get secret -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc -o jsonpath='{.data}' | jq -r 'keys[]' |  tr '\n' '~' | sed 's/~/,/g;s/,$//' > ./manifests/k8s-secrets-keys.txt
+          command: get secret -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc -o jsonpath='{.data}' > ./manifests/k8s-secrets-keys.txt
+
+      - name: K8s get secrets keys to inject (pt2)
+        if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
+        run: cat ./manifests/k8s-secrets-keys.txt | jq -r 'keys[]' |  tr '\n' '~' | sed 's/~/,/g;s/,$//' > ./manifests/k8s-secrets-keys.txt
 
       - name: K8s generates final yml
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
