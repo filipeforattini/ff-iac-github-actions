@@ -1,3 +1,10 @@
+# [1.17.0](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.16.0...v1.17.0) (2022-05-11)
+
+
+### Features
+
+* giving acces to the secrets file ([27cb208](https://github.com/filipeforattini/ff-iac-github-actions/commit/27cb208ea9f7a61e71421eea13faca4a7b83de24))
+
 # [1.16.0](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.15.0...v1.16.0) (2022-05-11)
 
 
