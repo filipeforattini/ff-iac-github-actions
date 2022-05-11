@@ -401,12 +401,12 @@ jobs:
               command: '${{ steps.node_setup.outputs.docker_command }}',
             })
 
-      - name: Config | Login to GHCR
+      - name: Config | Login to Container Registry
         uses: docker/login-action@v1
         with:
-          registry: ghcr.io
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          registry: ${{ inputs.containerRegistry }}
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
             
       # build
       - name: Dockerfile lint
@@ -508,12 +508,12 @@ jobs:
             *)     echo "::set-output name=deploy_namespace::$(echo $PIPELINE_SETUP | jq -r '.deploy.namespace')";;
           esac
 
-      - name: Config | Login to GHCR
+      - name: Config | Login to Container Registry
         uses: docker/login-action@v1
         with:
           registry: ${{ inputs.containerRegistry }}
           username: ${{ secrets.REGISTRY_USERNAME }}
-          password: ${{ secrets.REGISTRY_TOKEN }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
 
       - name: Config | Gives runner access to docker config file 
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
