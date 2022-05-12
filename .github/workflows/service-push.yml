@@ -612,22 +612,24 @@ jobs:
           cat ./manifests/k8s-secrets-keys.txt | jq -r 'keys[]' |  tr '\n' '~' | sed 's/~/,/g;s/,$//' > ./manifests/k8s-secrets-keys.txt
 
       # secrets for registry auth
-      - name: Config | Login to Container Registry
-        uses: docker/login-action@v2
-        with:
-          logout: false
-          registry: ${{ inputs.containerRegistry }}
-          username: ${{ secrets.REGISTRY_USERNAME }}
-          password: ${{ secrets.REGISTRY_PASSWORD }}
+      # - name: Config | Login to Container Registry
+      #   uses: docker/login-action@v2
+      #   with:
+      #     logout: false
+      #     registry: ${{ inputs.containerRegistry }}
+      #     username: ${{ secrets.REGISTRY_USERNAME }}
+      #     password: ${{ secrets.REGISTRY_PASSWORD }}
+
+      # - name: Config | Gives runner access to docker config file 
+      #   if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
+      #   run: |
+      #     sudo chown $(whoami):docker /home/$(whoami)/.docker/config.json
+      #     cp /home/$(whoami)/.docker/config.json ./manifests/docker-config.json
 
       - name: Config | Gives runner access to docker config file 
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
         run: |
-          sudo chown $(whoami):docker /home/$(whoami)/.docker/config.json
-          cp /home/$(whoami)/.docker/config.json ./manifests/docker-config.json
-
-      - name: DEBUG | Login to Container Registry 2
-        run: sudo cat ~/.docker/config.json && sudo cat ./manifests/docker-config.json
+          echo "{"auths": {"${{ inputs.containerRegistry }}": {"username": "${{ secrets.REGISTRY_USERNAME }}","password": "${{ secrets.REGISTRY_PASSWORD }}"}}}" > ./manifests/docker-config.json
 
       - name: K8s create registry-token secret
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
@@ -651,7 +653,7 @@ jobs:
             --data-value tag=${{steps.deploy_setup.outputs.deploy_tag}} \
             --data-value-yaml deployment.imagePullSecrets=true \
             --data-value-yaml envFromSecrets="[$(cat ./manifests/k8s-secrets-keys.txt)]" \
-            --data-value-yaml envFromConfigs="[$(cat ./manifests/k8s-configs-keys.txt)]" \
+            --data-value-yaml envFromConfigMaps="[$(cat ./manifests/k8s-configs-keys.txt)]" \
             --data-value pipelineControl.datetime=${{steps.deploy_setup.outputs.run_started_at}} \
             --data-value-yaml pipelineControl.environmentsAsNamespaces=${{inputs.environmentsAsNamespaces}} \
               > ./manifests/k8s-to-apply.yml
