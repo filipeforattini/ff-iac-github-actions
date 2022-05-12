@@ -633,7 +633,7 @@ jobs:
           REGISTRY_TOKEN: ${{ secrets.REGISTRY_PASSWORD }}
         run: |
           DOCKER_AUTH_TOKEN=$(echo -n "${REGISTRY_USER}:${REGISTRY_TOKEN}" | base64)
-          DOCKER_CONFIG_JSON="{"auths": { "${{ inputs.containerRegistry }}": { "auth": "${DOCKER_AUTH_TOKEN}" }}" > ./manifests/docker-config.json
+          echo "{"auths": { "${{ inputs.containerRegistry }}": { "auth": "${DOCKER_AUTH_TOKEN}" }}" > ./manifests/docker-config.json
           cat ./manifests/docker-config.json
           echo "username=${REGISTRY_USERNAME}"
 
