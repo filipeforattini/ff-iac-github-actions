@@ -1,3 +1,10 @@
+## [1.22.9](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.22.8...v1.22.9) (2022-05-12)
+
+
+### Bug Fixes
+
+* unecessary step params ([f4329fc](https://github.com/filipeforattini/ff-iac-github-actions/commit/f4329fc50ce984a441cd85282370453a1a7dd162))
+
 ## [1.22.8](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.22.7...v1.22.8) (2022-05-12)
 
 
