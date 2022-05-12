@@ -432,7 +432,7 @@ jobs:
             })
 
       - name: Config | Login to Container Registry
-        uses: docker/login-action@v1
+        uses: docker/login-action@v2
         with:
           registry: ${{ inputs.containerRegistry }}
           username: ${{ secrets.REGISTRY_USERNAME }}
@@ -540,7 +540,7 @@ jobs:
           esac
 
       - name: Config | Login to Container Registry
-        uses: docker/login-action@v1
+        uses: docker/login-action@v2
         with:
           logout: false
           registry: ${{ inputs.containerRegistry }}
