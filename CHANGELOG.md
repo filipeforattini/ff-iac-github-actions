@@ -1,3 +1,11 @@
+## [1.22.8](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.22.7...v1.22.8) (2022-05-12)
+
+
+### Bug Fixes
+
+* unecessary step params ([e1b3d1e](https://github.com/filipeforattini/ff-iac-github-actions/commit/e1b3d1e163a9d9cd13c394a7f7058dc93a5d76ac))
+* using newer docker login action ([62eb108](https://github.com/filipeforattini/ff-iac-github-actions/commit/62eb1085102fb4d9ba148a209e3d807137e7ceb2))
+
 ## [1.22.7](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.22.6...v1.22.7) (2022-05-12)
 
 
