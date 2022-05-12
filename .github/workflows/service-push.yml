@@ -628,8 +628,11 @@ jobs:
 
       - name: Workaround to create dockerconfigjson
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
+        env:
+          REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
+          REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
         run: |
-          echo "{"auths": { "${{ inputs.containerRegistry }}": { "username": "${{ secrets.REGISTRY_USERNAME }}", "password": "${{ secrets.REGISTRY_PASSWORD }}" }}}" > ./manifests/docker-config.json
+          echo "{"auths": { "${{ inputs.containerRegistry }}": { "username": "$REGISTRY_USERNAME", "password": "$REGISTRY_PASSWORD" }}}" > ./manifests/docker-config.json
 
       - name: K8s create registry-token secret
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
