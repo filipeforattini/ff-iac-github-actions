@@ -626,10 +626,10 @@ jobs:
       #     sudo chown $(whoami):docker /home/$(whoami)/.docker/config.json
       #     cp /home/$(whoami)/.docker/config.json ./manifests/docker-config.json
 
-      - name: Config | Gives runner access to docker config file 
+      - name: Workaround to create dockerconfigjson
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
         run: |
-          echo "{"auths": {"${{ inputs.containerRegistry }}": {"username": "${{ secrets.REGISTRY_USERNAME }}","password": "${{ secrets.REGISTRY_PASSWORD }}"}}}" > ./manifests/docker-config.json
+          echo "{"auths": { "${{ inputs.containerRegistry }}": { "username": "${{ secrets.REGISTRY_USERNAME }}", "password": "${{ secrets.REGISTRY_PASSWORD }}" }}}" > ./manifests/docker-config.json
 
       - name: K8s create registry-token secret
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
