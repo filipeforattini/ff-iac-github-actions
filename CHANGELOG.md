@@ -1,3 +1,10 @@
+## [1.22.17](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.22.16...v1.22.17) (2022-05-12)
+
+
+### Bug Fixes
+
+* i dont know why i was using DOCKER_CONFIG ([d5b4fc2](https://github.com/filipeforattini/ff-iac-github-actions/commit/d5b4fc2024d7633c41dc706a8b51a1ea9899116e))
+
 ## [1.22.16](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.22.15...v1.22.16) (2022-05-12)
 
 
