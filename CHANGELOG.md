@@ -1,3 +1,11 @@
+## [1.22.10](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.22.9...v1.22.10) (2022-05-12)
+
+
+### Bug Fixes
+
+* docker login bug cannot show correct user token ([245a99c](https://github.com/filipeforattini/ff-iac-github-actions/commit/245a99c0a9000f8fe843957d20179235d0e03dff))
+* docker login bug cannot show correct user token ([c28fc05](https://github.com/filipeforattini/ff-iac-github-actions/commit/c28fc05fb47e873b77100745ff8b0fa53f2f4629))
+
 ## [1.22.9](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.22.8...v1.22.9) (2022-05-12)
 
 
