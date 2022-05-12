@@ -629,10 +629,11 @@ jobs:
       - name: Workaround to create dockerconfigjson
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
         env:
-          REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
-          REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
+          REGISTRY_USER: ${{ secrets.REGISTRY_USERNAME }}
+          REGISTRY_TOKEN: ${{ secrets.REGISTRY_PASSWORD }}
         run: |
-          echo "{"auths": { "${{ inputs.containerRegistry }}": { "username": "${REGISTRY_USERNAME}", "password": "${REGISTRY_PASSWORD}" }}}" > ./manifests/docker-config.json
+          DOCKER_AUTH_TOKEN=$(echo -n "${REGISTRY_USER}:${REGISTRY_TOKEN}" | base64)
+          DOCKER_CONFIG_JSON="{"auths": { "${{ inputs.containerRegistry }}": { "auth": "${DOCKER_AUTH_TOKEN}" }}" > ./manifests/docker-config.json
           cat ./manifests/docker-config.json
           echo "username=${REGISTRY_USERNAME}"
 
