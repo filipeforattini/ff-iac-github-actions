@@ -1,3 +1,10 @@
+## [1.22.13](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.22.12...v1.22.13) (2022-05-12)
+
+
+### Bug Fixes
+
+* docker login with environment vars ([c282ca7](https://github.com/filipeforattini/ff-iac-github-actions/commit/c282ca7d83216b330a897e7e36b0dbaf7e59ee17))
+
 ## [1.22.12](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.22.11...v1.22.12) (2022-05-12)
 
 
