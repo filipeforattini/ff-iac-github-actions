@@ -17,20 +17,23 @@ module.exports = class Deploy extends Scrapper {
     const ecosystem = this.inputs.ecosystem || repository.split('-')[0]
 
     const deployAsK8s = fs.existsSync(path.join(process.cwd(), 'manifests', 'k8s-values.yml'))
-      ? true
-      : false
-
     const deployAsChart = fs.existsSync(path.join(process.cwd(), 'manifests', 'charts-values.yml'))
-      ? true
-      : false
     
-    const hasDevSecrets = fs.existsSync(path.join(process.cwd(), 'manifests', 'secrets', 'dev.gpg'))
-      ? true
-      : false
+    const secrets = {
+      dev: fs.existsSync(path.join(process.cwd(), 'manifests', 'secrets', 'dev.gpg')),
+      stg: fs.existsSync(path.join(process.cwd(), 'manifests', 'secrets', 'stg.gpg')),
+      prd: fs.existsSync(path.join(process.cwd(), 'manifests', 'secrets', 'prd.gpg')),
+      sbx: fs.existsSync(path.join(process.cwd(), 'manifests', 'secrets', 'sbx.gpg')),
+      dry: fs.existsSync(path.join(process.cwd(), 'manifests', 'secrets', 'dry.gpg')),
+    }
 
-    const hasStgSecrets = fs.existsSync(path.join(process.cwd(), 'manifests', 'secrets', 'stg.gpg'))
-      ? true
-      : false
+    const configs = {
+      dev: fs.existsSync(path.join(process.cwd(), 'manifests', 'configs', 'dev.env')),
+      stg: fs.existsSync(path.join(process.cwd(), 'manifests', 'configs', 'stg.env')),
+      prd: fs.existsSync(path.join(process.cwd(), 'manifests', 'configs', 'prd.env')),
+      sbx: fs.existsSync(path.join(process.cwd(), 'manifests', 'configs', 'sbx.env')),
+      dry: fs.existsSync(path.join(process.cwd(), 'manifests', 'configs', 'dry.env')),
+    }
 
     this
       .add('dockerfile', {
@@ -47,9 +50,9 @@ module.exports = class Deploy extends Scrapper {
           sbx: `${repository}-sbx`,
           dry: `${repository}-dry`,
         },
+        secrets,
+        configs,
         deployAsK8s,
-        hasDevSecrets,
-        hasStgSecrets,
         deployAsChart,
         containerRegistry,
       })

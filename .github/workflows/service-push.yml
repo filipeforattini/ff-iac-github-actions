@@ -526,7 +526,8 @@ jobs:
         run: |
           echo "::set-output name=deploy_as_k8s::$(echo $PIPELINE_SETUP | jq -r '.deploy.deployAsK8s')"
           echo "::set-output name=deploy_as_chart::$(echo $PIPELINE_SETUP | jq -r '.deploy.deployAsChart')"
-          echo "::set-output name=has_dev_secrets::$(echo $PIPELINE_SETUP | jq -r '.deploy.hasDevSecrets')"
+          echo "::set-output name=has_dev_secrets::$(echo $PIPELINE_SETUP | jq -r '.deploy.secrets.dev')"
+          echo "::set-output name=has_dev_configs::$(echo $PIPELINE_SETUP | jq -r '.deploy.configs.dev')"
           echo "::set-output name=deploy_ecosystem::$(echo $PIPELINE_SETUP | jq -r '.deploy.ecosystem')"
           echo "::set-output name=deploy_organization::$(echo $PIPELINE_SETUP | jq -r '.deploy.organization')"
           echo "::set-output name=deploy_container_registry::$(echo $PIPELINE_SETUP | jq -r '.deploy.containerRegistry')"
@@ -538,6 +539,83 @@ jobs:
             false) echo "::set-output name=deploy_namespace::$(echo $PIPELINE_SETUP | jq -r '.deploy.namespace')";;
             *)     echo "::set-output name=deploy_namespace::$(echo $PIPELINE_SETUP | jq -r '.deploy.namespace')";;
           esac
+
+      # deploy
+      - name: K8s create namespace
+        uses: steebchen/kubectl@v2.0.0
+        with:
+          config: ${{ secrets.KUBE_CONFIG }}
+          command: create namespace ${{steps.deploy_setup.outputs.deploy_namespace}} --dry-run=client --validate=false --output=yaml | kubectl apply -f -
+
+      # configs
+      - name: K8s create config-map
+        if: steps.deploy_setup.outputs.has_dev_configs == 'true'
+        uses: steebchen/kubectl@v2.0.0
+        with:
+          config: ${{ secrets.KUBE_CONFIG }}
+          command: create configmap -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc --from-env-file=./manifests/configs/dev.env --dry-run=client --validate=false --output=yaml | kubectl apply -f -
+
+      - name: K8s create versioned config-map
+        if: steps.deploy_setup.outputs.has_dev_configs == 'true'
+        uses: steebchen/kubectl@v2.0.0
+        with:
+          config: ${{ secrets.KUBE_CONFIG }}
+          command: create configmap -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc-${{needs.Release-Node.outputs.Version}} --from-env-file=./manifests/configs/dev.env --dry-run=client --validate=false --output=yaml | kubectl apply -f -
+
+      - name: K8s get config-map to inject (pt1)
+        if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
+        uses: steebchen/kubectl@v2.0.0
+        with:
+          config: ${{ secrets.KUBE_CONFIG }}
+          command: get configmap -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc -o jsonpath='{.data}' > ./manifests/k8s-configs-keys.txt
+
+      - name: K8s get config-map to inject (pt2)
+        if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
+        run: |
+          sudo chown $(whoami) ./manifests/k8s-configs-keys.txt
+          cat ./manifests/k8s-configs-keys.txt | jq -r 'keys[]' |  tr '\n' '~' | sed 's/~/,/g;s/,$//' > ./manifests/k8s-configs-keys.txt
+
+      # secrets
+      - name: Decrypt DEV secrets
+        if: steps.deploy_setup.outputs.has_dev_secrets == 'true'
+        run: |
+          gpg \
+            --yes --batch --quiet --decrypt \
+            --passphrase="${{ secrets.GPG_PASSPHRASE }}" \
+            --output ./manifests/k8s-secrets.env \
+            ./manifests/secrets/dev.gpg
+
+      - name: K8s create secrets
+        if: steps.deploy_setup.outputs.has_dev_secrets == 'true'
+        uses: steebchen/kubectl@v2.0.0
+        with:
+          config: ${{ secrets.KUBE_CONFIG }}
+          command: create secret generic -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc --from-env-file=./manifests/k8s-secrets.env --dry-run=client --validate=false --output=yaml | kubectl apply -f -
+
+      - name: K8s create versioned secrets
+        if: steps.deploy_setup.outputs.has_dev_secrets == 'true'
+        uses: steebchen/kubectl@v2.0.0
+        with:
+          config: ${{ secrets.KUBE_CONFIG }}
+          command: create secret generic -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc-${{needs.Release-Node.outputs.Version}} --from-env-file=./manifests/k8s-secrets.env --dry-run=client --validate=false --output=yaml | kubectl apply -f -
+
+      - name: K8s get secrets keys to inject (pt1)
+        if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
+        uses: steebchen/kubectl@v2.0.0
+        with:
+          config: ${{ secrets.KUBE_CONFIG }}
+          command: get secret -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc -o jsonpath='{.data}' > ./manifests/k8s-secrets-keys.txt
+
+      - name: K8s get secrets keys to inject (pt2)
+        if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
+        run: |
+          sudo chown $(whoami) ./manifests/k8s-secrets-keys.txt
+          cat ./manifests/k8s-secrets-keys.txt | jq -r 'keys[]' |  tr '\n' '~' | sed 's/~/,/g;s/,$//' > ./manifests/k8s-secrets-keys.txt
+
+      # secrets for registry auth
+      - name: DEBUG | Login to Container Registry 1
+        uses: docker/login-action@v2
+        run: sudo cat ~/.docker/config
 
       - name: Config | Login to Container Registry
         uses: docker/login-action@v2
@@ -553,36 +631,9 @@ jobs:
           sudo chown $(whoami):docker /home/$(whoami)/.docker/config.json
           cp /home/$(whoami)/.docker/config.json ./manifests/docker-config.json
 
-      # deploy
-      - name: K8s create namespace
-        if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
-        uses: steebchen/kubectl@v2.0.0
-        with:
-          config: ${{ secrets.KUBE_CONFIG }}
-          command: create namespace ${{steps.deploy_setup.outputs.deploy_namespace}} --dry-run=client --validate=false --output=yaml | kubectl apply -f -
-
-      - name: Decrypt DEV secrets
-        if: steps.deploy_setup.outputs.has_dev_secrets == 'true'
-        run: |
-          gpg \
-            --yes --batch --quiet --decrypt \
-            --passphrase="${{ secrets.GPG_PASSPHRASE }}" \
-            --output ./manifests/k8s-secrets.env \
-            ./manifests/secrets/dev.gpg
-
-      - name: K8s create secrets
-        if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
-        uses: steebchen/kubectl@v2.0.0
-        with:
-          config: ${{ secrets.KUBE_CONFIG }}
-          command: create secret generic -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc --from-env-file=./manifests/k8s-secrets.env --dry-run=client --validate=false --output=yaml | kubectl apply -f -
-
-      - name: K8s create versioned secrets
-        if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
-        uses: steebchen/kubectl@v2.0.0
-        with:
-          config: ${{ secrets.KUBE_CONFIG }}
-          command: create secret generic -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc-${{needs.Release-Node.outputs.Version}} --from-env-file=./manifests/k8s-secrets.env --dry-run=client --validate=false --output=yaml | kubectl apply -f -
+      - name: DEBUG | Login to Container Registry 2
+        uses: docker/login-action@v2
+        run: sudo cat ~/.docker/config
 
       - name: K8s create registry-token secret
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
@@ -591,19 +642,7 @@ jobs:
           config: ${{ secrets.KUBE_CONFIG }}
           command: create secret generic -n ${{steps.deploy_setup.outputs.deploy_namespace}} registry-token --type=kubernetes.io/dockerconfigjson --from-file=.dockerconfigjson=./manifests/docker-config.json --dry-run=client --validate=false --output=yaml | kubectl apply -f -
 
-      - name: K8s get secrets keys to inject (pt1)
-        if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
-        uses: steebchen/kubectl@v2.0.0
-        with:
-          config: ${{ secrets.KUBE_CONFIG }}
-          command: get secret -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc -o jsonpath='{.data}' > ./manifests/k8s-secrets-keys.txt
-
-      - name: K8s get secrets keys to inject (pt2)
-        if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
-        run: |
-          sudo chown $(whoami) ./manifests/k8s-secrets-keys.txt
-          cat ./manifests/k8s-secrets-keys.txt | jq -r 'keys[]' |  tr '\n' '~' | sed 's/~/,/g;s/,$//' > ./manifests/k8s-secrets-keys.txt
-
+      # generates
       - name: K8s generates final yml
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
         run: |
@@ -616,9 +655,11 @@ jobs:
             --data-value repository=${{steps.deploy_setup.outputs.deploy_repository}} \
             --data-value containerRegistry=${{steps.deploy_setup.outputs.deploy_container_registry}} \
             --data-value tag=${{steps.deploy_setup.outputs.deploy_tag}} \
+            --data-value-yaml deployment.imagePullSecrets=true \
+            --data-value-yaml envFromSecrets="[$(cat ./manifests/k8s-secrets-keys.txt)]" \
+            --data-value-yaml envFromConfigs="[$(cat ./manifests/k8s-configs-keys.txt)]" \
             --data-value pipelineControl.datetime=${{steps.deploy_setup.outputs.run_started_at}} \
             --data-value-yaml pipelineControl.environmentsAsNamespaces=${{inputs.environmentsAsNamespaces}} \
-            --data-value-yaml envFromSecrets="[$(cat ./manifests/k8s-secrets-keys.txt)]" \
               > ./manifests/k8s-to-apply.yml
 
       - name: Debug | Print k8s-to-apply.yml

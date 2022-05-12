@@ -12,11 +12,13 @@ tag: latest
 features:
   enableLinkerd: false
 
-#! environments
+#! environment
 #@schema/type any=True
 env: []
 #@schema/type any=True
 envFromSecrets: []
+#@schema/type any=True
+envFromConfigMaps: []
 
 #! k8s resources
 namespace:
@@ -31,6 +33,7 @@ deployment:
   labels: {}
   annotations: {}
   resources: {}
+  imagePullSecrets: false
 
   templateLabels: {}
   matchLabels: 
