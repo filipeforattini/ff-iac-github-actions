@@ -626,17 +626,6 @@ jobs:
           sudo chown $(whoami):docker /home/$(whoami)/.docker/config.json
           cp /home/$(whoami)/.docker/config.json ./manifests/docker-config.json
 
-      # - name: Workaround to create dockerconfigjson
-      #   if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
-      #   env:
-      #     REGISTRY_USER: ${{ secrets.REGISTRY_USERNAME }}
-      #     REGISTRY_TOKEN: ${{ secrets.REGISTRY_PASSWORD }}
-      #   run: |
-      #     DOCKER_AUTH_TOKEN=$(echo -n "${REGISTRY_USER}:${REGISTRY_TOKEN}" | base64)
-      #     echo "{"auths": { "${{ inputs.containerRegistry }}": { "auth": "${DOCKER_AUTH_TOKEN}" }}" > ./manifests/docker-config.json
-      #     cat ./manifests/docker-config.json
-      #     echo "username=${REGISTRY_USERNAME}"
-
       - name: K8s create registry-token secret
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
         uses: steebchen/kubectl@v2.0.0
