@@ -1,3 +1,10 @@
+# [1.23.0](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.22.17...v1.23.0) (2022-05-13)
+
+
+### Features
+
+* added build cache for docker ([726e0fc](https://github.com/filipeforattini/ff-iac-github-actions/commit/726e0fc8a8e139ac9a28176f9206885e12e2f5c4))
+
 ## [1.22.17](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.22.16...v1.22.17) (2022-05-12)
 
 
