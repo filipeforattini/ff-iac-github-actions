@@ -593,6 +593,10 @@ jobs:
           sudo chown $(whoami) ./manifests/k8s-configs-keys.txt
           cat ./manifests/k8s-configs-keys.txt | jq -r 'keys[]' |  tr '\n' '~' | sed 's/~/,/g;s/,$//' > ./manifests/k8s-configs-keys.txt
 
+      - name: Debug | Configs injected
+        if: inputs.debug == true
+        run: echo -e "k8s-configs-keys.txt:\n\n$(cat ./manifests/k8s-configs-keys.txt)"
+
       # secrets
       - name: Decrypt DEV secrets
         if: steps.deploy_setup.outputs.has_dev_secrets == 'true'
@@ -629,6 +633,10 @@ jobs:
         run: |
           sudo chown $(whoami) ./manifests/k8s-secrets-keys.txt
           cat ./manifests/k8s-secrets-keys.txt | jq -r 'keys[]' |  tr '\n' '~' | sed 's/~/,/g;s/,$//' > ./manifests/k8s-secrets-keys.txt
+
+      - name: Debug | Keys injected
+        if: inputs.debug == true
+        run: echo -e "k8s-secrets-keys.txt:\n\n$(cat ./manifests/k8s-secrets-keys.txt)"
 
       # secrets for registry auth
       - name: Config | Login to Container Registry
