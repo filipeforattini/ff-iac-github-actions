@@ -161,7 +161,6 @@ metadata:
 
 spec:
   #@ if data.values.ingress.type == "nginx":
-  kubernetes.io/ingress.class: alb
   ingressClassName: nginx
   #@ end
 

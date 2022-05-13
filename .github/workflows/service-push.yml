@@ -385,7 +385,10 @@ jobs:
         uses: docker/setup-qemu-action@v1
 
       - name: Install | Docker Buildx
-        uses: docker/setup-buildx-action@v1
+        id: buildx
+        uses: docker/setup-buildx-action@master
+        with:
+          install: true
 
       - name: Config | Load setup configs
         env:
@@ -466,16 +469,35 @@ jobs:
         with:
           sarif_file: 'trivy-results.sarif'
 
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          # Key is named differently to avoid collision
+          key: ${{ runner.os }}-multi-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-multi-buildx
+
       - name: Build and push
         uses: docker/build-push-action@v2
         with:
           context: .
           push: true
           platforms: ${{ inputs.platforms }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          builder: ${{ steps.buildx.outputs.name }}
           tags: ${{steps.node_setup.outputs.docker_image_tags}}, ${{steps.node_setup.outputs.docker_image_fullname}}:${{needs.Release-Node.outputs.Version}}
           labels: "organization: ${{github.repository_owner}}, repository: ${{github.repository}}, branch: ${{needs.Setup.outputs.Branch}}, commit: ${{needs.Setup.outputs.ShaHash}}, date: ${{needs.Setup.outputs.Date}}, timestamp: ${{needs.Setup.outputs.Timestamp}}"
+          cache-from: type=local,src=/tmp/.buildx-cache
+          # Note the mode=max here
+          # More: https://github.com/moby/buildkit#--export-cache-options
+          # And: https://github.com/docker/buildx#--cache-tonametypetypekeyvalue
+          cache-to: type=local,mode=max,dest=/tmp/.buildx-cache-new
+
+      - name: Move cache
+        run: |
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+
 
   #--------------------------------------------------#
   #                      Deploy                      # 
@@ -488,9 +510,6 @@ jobs:
       - Setup
       - Release-Node
       - Build-Node
-
-    # env:
-    #   DOCKER_CONFIG: $HOME/.docker
 
     steps:
 
