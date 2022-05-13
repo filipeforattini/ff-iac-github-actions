@@ -139,6 +139,15 @@ jobs:
         with:
           sarif_file: 'trivy-results.sarif'
 
+      - name: Run OSSAR
+        uses: github/ossar-action@v1
+        id: ossar
+
+      - name: Upload OSSAR results
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: ${{ steps.ossar.outputs.sarifFile }}
+
       #node
       - name: Setup CodeQL for Javascript
         if: needs.Setup.outputs.BuildNode == 'true'
@@ -160,29 +169,6 @@ jobs:
       - name: Run Python CodeQL Analysis
         if: needs.Setup.outputs.BuildPython == 'true'
         uses: github/codeql-action/analyze@v2
-
-  Ossar-Analysis:
-    runs-on: windows-latest
-    needs: Setup
-
-    permissions:
-      contents: read
-      security-events: write
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: '0'
-
-      - name: Run OSSAR
-        uses: github/ossar-action@v1
-        id: ossar
-
-      - name: Upload OSSAR results
-        uses: github/codeql-action/upload-sarif@v2
-        with:
-          sarif_file: ${{ steps.ossar.outputs.sarifFile }}
 
 
   #--------------------------------------------------#
@@ -290,7 +276,6 @@ jobs:
       - Setup
       - Tests-Node
       - Static-Analysis
-      - Ossar-Analysis
 
     outputs:
       Version: ${{ steps.versioning.outputs.version }}

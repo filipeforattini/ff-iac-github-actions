@@ -2,32 +2,30 @@
 
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 
+This is a personal work in progress. Anyway, suggestions are welcome! :)
 
-This is a personal work in progress.
-
-Your repo as an auto-helm upgrade or k8s-apply pipeline.
+These workflows-repo are auto-helm upgrade or k8s-apply pipelines.
 
 ## Features
 
-- Semantic Versioning: [Semantic-Release](https://semantic-release.gitbook.io/semantic-release/)
+- [Semantic-Release](https://semantic-release.gitbook.io/semantic-release/)
 - Linter:
     - [Hadolint](https://github.com/marketplace/actions/hadolint-action) for Dockerfiles
-- Docerfile analysis:
-    - [Trivy](https://aquasecurity.github.io/trivy/)
-- Code analysis: 
+- Static analysis: 
     - [GitLeaks](https://github.com/zricethezav/gitleaks) for repository
     - [Trivy](https://github.com/aquasecurity/trivy) for repository and image
-    - [SonarQube](https://www.sonarqube.org/)
+    - [OSSAR](https://www.sonarqube.org/)
 
 ## Usage
 
 ### Repository Patterns
 
-This pipeline assumes you have just `3` types of repositories:
+This pipeline assumes you have just `4` types of repositories:
 
 | Name | Short | Description |
 | --- | --- | --- |
-| Application | app | Front-end application with internet-facing ingress |
+| Web Application | app | Front-end application with internet-facing ingress |
+| Mobile Application | mob | Mobile application |
 | Service | svc | Microservice that may - or may not - have ingress |
 | Infrastructure as Code | iac | Code that generates cloud infrastructure |
 
@@ -39,7 +37,8 @@ Examples:
 
 - `ff-svc-clients`: microservice that manages clients' data
 - `ff-app-budget`: application that organizes the company finances
-- `ff-iac-aws`: iac code to manage the aws environment
+- `ff-mob-auth`: 2FA mobile application
+- `ff-iac-aws`: infra as code to manage the aws environment
 
 ### Setup
 
@@ -136,4 +135,3 @@ gpg -v \
   ./manifests/secrets/dev.env
 ```
 
-    
