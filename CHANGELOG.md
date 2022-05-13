@@ -1,3 +1,10 @@
+## [1.23.1](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.23.0...v1.23.1) (2022-05-13)
+
+
+### Bug Fixes
+
+* added debug step to show keys injected ([0ea7d4f](https://github.com/filipeforattini/ff-iac-github-actions/commit/0ea7d4fe563e935e91850e3b762343fef5689bab))
+
 # [1.23.0](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.22.17...v1.23.0) (2022-05-13)
 
 
