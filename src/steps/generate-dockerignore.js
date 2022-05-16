@@ -27,7 +27,7 @@ module.exports = function (params, writeFile = true) {
   console.log(content)
   
   if (writeFile) {
-    fs.writeFileSync(path.join(process.cwd(), 'dockerfile'), content)
+    fs.writeFileSync(path.join(process.cwd(), '.dockerignore'), content)
   }
   
   return content

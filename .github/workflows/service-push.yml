@@ -80,7 +80,7 @@ jobs:
           script: |
             return require('./.ff/src/steps/config-scrapper')({ 
               context, 
-              inputs: { 
+              inputs: {
                 containerRegistry: "${{ inputs.containerRegistry }}",
               },
             })
