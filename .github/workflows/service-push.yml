@@ -104,10 +104,8 @@ jobs:
           PIPELINE_SETUP: ${{ steps.script_setup.outputs.result}}
         run: | 
           echo -e "# $(echo $PIPELINE_SETUP | jq -r '.deploy.podName')" >> $GITHUB_STEP_SUMMARY
-          echo -e "## Summary" >> $GITHUB_STEP_SUMMARY
+          echo -e "<details><summary>Config</summary>\n\n\`\`\`json \n$(echo $PIPELINE_SETUP | jq '.')\n \`\`\`\n </details>" >> $GITHUB_STEP_SUMMARY
           echo -e "Language detected: $(echo $PIPELINE_SETUP | jq -r '.code.language')" >> $GITHUB_STEP_SUMMARY
-          echo -e "## Config" >> $GITHUB_STEP_SUMMARY
-          echo -e "Language detected:\n\n\`\`\`$(echo $PIPELINE_SETUP | jq '.')\`\`\`" >> $GITHUB_STEP_SUMMARY
           echo -e "---" >> $GITHUB_STEP_SUMMARY
           echo -e "Build started at: $(echo $PIPELINE_SETUP | jq -r '.run.startedAt')" >> $GITHUB_STEP_SUMMARY
 
