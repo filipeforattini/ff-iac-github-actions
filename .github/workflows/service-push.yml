@@ -103,9 +103,13 @@ jobs:
         env:
           PIPELINE_SETUP: ${{ steps.script_setup.outputs.result}}
         run: | 
-          echo "### App $(echo $PIPELINE_SETUP | jq -r '.deploy.podName')" >> $GITHUB_STEP_SUMMARY
-          echo "Build started at: $(echo $PIPELINE_SETUP | jq -r '.run.startedAt')" >> $GITHUB_STEP_SUMMARY
-          echo "Language detected: $(echo $PIPELINE_SETUP | jq -r '.code.language')" >> $GITHUB_STEP_SUMMARY
+          echo -e "# $(echo $PIPELINE_SETUP | jq -r '.deploy.podName')" >> $GITHUB_STEP_SUMMARY
+          echo -e "## Summary" >> $GITHUB_STEP_SUMMARY
+          echo -e "Language detected: $(echo $PIPELINE_SETUP | jq -r '.code.language')" >> $GITHUB_STEP_SUMMARY
+          echo -e "## Config" >> $GITHUB_STEP_SUMMARY
+          echo -e "Language detected:\n\n\`\`\`$(echo $PIPELINE_SETUP | jq '.')\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo -e "---" >> $GITHUB_STEP_SUMMARY
+          echo -e "Build started at: $(echo $PIPELINE_SETUP | jq -r '.run.startedAt')" >> $GITHUB_STEP_SUMMARY
 
 
   #--------------------------------------------------#
@@ -443,6 +447,11 @@ jobs:
         uses: hadolint/hadolint-action@v2.1.0
         with:
           dockerfile: Dockerfile
+
+      - name: Docs | Lint result
+        run: | 
+          echo "Hadolint: \`${{ steps.hadolint.outcome }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`$HADOLINT_RESULTS\`\`\`" >> $GITHUB_STEP_SUMMARY
 
       - name: Build image test
         uses: docker/build-push-action@v2
