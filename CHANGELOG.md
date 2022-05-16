@@ -1,3 +1,10 @@
+## [1.23.2](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.23.1...v1.23.2) (2022-05-16)
+
+
+### Bug Fixes
+
+* dockerignore file wont be created ([0e94004](https://github.com/filipeforattini/ff-iac-github-actions/commit/0e940043a62f8fb956fc8f52cd924f1d84e68204))
+
 ## [1.23.1](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.23.0...v1.23.1) (2022-05-13)
 
 
