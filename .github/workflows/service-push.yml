@@ -99,7 +99,7 @@ jobs:
           PIPELINE_SETUP: ${{ steps.script_setup.outputs.result}}
         run: echo $PIPELINE_SETUP
 
-      - name: Docs | Show pipeline config
+      - name: Docs | Summary
         env:
           PIPELINE_SETUP: ${{ steps.script_setup.outputs.result}}
         run: | 
