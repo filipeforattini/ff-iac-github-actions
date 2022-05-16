@@ -55,8 +55,6 @@ Examples:
 | Production | prd | Where the magic happens |
 | Disaster Recovery | dry | Production copy |
 
----
-
 ## Usage
 
 ### Repository Structure
@@ -74,10 +72,9 @@ Examples:
 │  ├─ k8s-values.yml
 │  └─ helm-values.yml
 ├─ dist
-│    // distibuition version of our code
-│
+│     // distibuition version of our code
 └─ src
-    // our code goes here
+      // our code goes here
 ```
 
 
@@ -144,6 +141,8 @@ Organizes the whole workflow jobs' inputs.
         1. Checkout your code and few tools from this repo again.
         1. Define few variables for your build
     1. Team approval
+
+---
 
 ## Daily work
 
