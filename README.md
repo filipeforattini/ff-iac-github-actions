@@ -4,30 +4,34 @@
 
 This is a personal work in progress. Anyway, suggestions are welcome! :)
 
-These workflows-repo are auto-helm upgrade or k8s-apply pipelines.
+These workflows are highly opinionated **auto-helm** upgrade or **k8s-apply** pipelines.
 
-## Features
+---
 
-- [Semantic-Release](https://semantic-release.gitbook.io/semantic-release/)
+## Introduction
+
+### Features
+
+- Versioning with [Semantic-Release](https://semantic-release.gitbook.io/semantic-release/)
 - Linter:
     - [Hadolint](https://github.com/marketplace/actions/hadolint-action) for Dockerfiles
+    - ESLint for Javascript
+    - PyLint for Python
 - Static analysis: 
     - [GitLeaks](https://github.com/zricethezav/gitleaks) for repository
     - [Trivy](https://github.com/aquasecurity/trivy) for repository and image
-    - [OSSAR](https://www.sonarqube.org/)
-
-## Usage
+    - Open Source Static Analysis Runner
 
 ### Repository Patterns
 
 This pipeline assumes you have just `4` types of repositories:
 
-| Name | Short | Description |
-| --- | --- | --- |
-| Web Application | app | Front-end application with internet-facing ingress |
-| Mobile Application | mob | Mobile application |
-| Service | svc | Microservice that may - or may not - have ingress |
-| Infrastructure as Code | iac | Code that generates cloud infrastructure |
+| Name | Short | Description | Result |
+| ---: | :---: | --- | :---: |
+| Web Application | app | Front-end application with internet-facing ingress | pod language-based |
+| Mobile Application | mob | Mobile application | apk |
+| Service | svc | Microservice that may - or may not - have ingress | pod nginx-based |
+| Infrastructure as Code | iac | Code that generates cloud infrastructure | - |
 
 Those repositories must obey a name pattern.
 
@@ -40,7 +44,44 @@ Examples:
 - `ff-mob-auth`: 2FA mobile application
 - `ff-iac-aws`: infra as code to manage the aws environment
 
-### Setup
+### Environments
+
+
+| Name | Short | Description |
+| ---: | :---: | --- |
+| Development | dev | Env for you and your team to test and explore |
+| Staging | stg | Stable env for code shipping |
+| Sandbox | sbx | Production-like env for external developers |
+| Production | prd | Where the magic happens |
+| Disaster Recovery | dry | Production copy |
+
+---
+
+## Usage
+
+### Repository Structure
+
+```
+├─ .github
+│  └─ workflows
+│     ├─ pull-request.yml
+│     └─ service-push.yml
+├─ manifests
+│  ├─ configs
+│  │  └─ dev.env
+│  ├─ secrets
+│  │  └─ dev.gpg
+│  ├─ k8s-values.yml
+│  └─ helm-values.yml
+├─ dist
+│    // distibuition version of our code
+│
+└─ src
+    // our code goes here
+```
+
+
+#### Push
 
 Your repository need to implement:
 
@@ -51,7 +92,7 @@ on: ['push', 'pull_request']
 jobs:
 
   Service:
-    uses: filipeforattini/ff-iac-github-actions/.github/workflows/service.yml@main
+    uses: filipeforattini/ff-iac-github-actions/.github/workflows/service.yml@stable
     with:
       containerRegistry: ghcr.io
 ```
@@ -61,15 +102,13 @@ jobs:
 | Name | Default | Description |
 | --- | --- | --- |
 | containerRegistry | ghcr.io | Container registry host that you will use |
+| environmentsASnamespaces | false |  |
 
 ### Requirements
 
 Configure your 
 
 ### Workflows
-
-
-#### A) Service Push
 
 ##### 1. Setup:
 Organizes the whole workflow jobs' inputs.
@@ -135,3 +174,5 @@ gpg -v \
   ./manifests/secrets/dev.env
 ```
 
+Thanks to:
+- https://evilmartians.com/chronicles/build-images-on-github-actions-with-docker-layer-caching
