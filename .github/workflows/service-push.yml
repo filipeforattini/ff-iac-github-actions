@@ -103,11 +103,10 @@ jobs:
         env:
           PIPELINE_SETUP: ${{ steps.script_setup.outputs.result}}
         run: | 
-          echo -e "# $(echo $PIPELINE_SETUP | jq -r '.deploy.podName')" >> $GITHUB_STEP_SUMMARY
-          echo -e "<details><summary>Config</summary>\n\n\`\`\`json \n$(echo $PIPELINE_SETUP | jq '.')\n \`\`\`\n </details>" >> $GITHUB_STEP_SUMMARY
-          echo -e "Language detected: $(echo $PIPELINE_SETUP | jq -r '.code.language')" >> $GITHUB_STEP_SUMMARY
-          echo -e "---" >> $GITHUB_STEP_SUMMARY
-          echo -e "Build started at: $(echo $PIPELINE_SETUP | jq -r '.run.startedAt')" >> $GITHUB_STEP_SUMMARY
+          echo -e "### $(echo $PIPELINE_SETUP | jq -r '.deploy.podName')\n\n" >> $GITHUB_STEP_SUMMARY
+          echo -e "<details><summary>Config</summary>\n\n\`\`\`json \n$(echo $PIPELINE_SETUP | jq '.')\n \`\`\`\n </details>\n\n" >> $GITHUB_STEP_SUMMARY
+          echo -e "---\n\n" >> $GITHUB_STEP_SUMMARY
+          echo -e "Build started at: $(echo $PIPELINE_SETUP | jq -r '.run.startedAt')\n\n" >> $GITHUB_STEP_SUMMARY
 
 
   #--------------------------------------------------#
