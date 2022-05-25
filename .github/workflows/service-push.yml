@@ -349,7 +349,6 @@ jobs:
 
       - name: Semantic Release
         if: inputs.autoVersioning == true
-        id: versioning
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -363,6 +362,11 @@ jobs:
             @semantic-release/release-notes-generator
           echo -e "\n\nINFO  semantic-release version = $(semantic-release -v)\n\n"
           semantic-release
+
+      - name: Current Version
+        if: inputs.autoVersioning == true
+        id: versioning
+        run: |
           echo "::set-output name=version::$(cat package.json | jq -r '.version')"
           echo -e "\n\nINFO  current version = $(cat package.json | jq -r '.version')\n\n"
 
@@ -503,7 +507,7 @@ jobs:
             ${{ runner.os }}-multi-buildx
 
       - name: Build and push
-        uses: docker/build-push-action@a806b8fe1858aa27c1da44ef4b721a70460b75aa
+        uses: docker/build-push-action@v2
         with:
           context: .
           push: true
