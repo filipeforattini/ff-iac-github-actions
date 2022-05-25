@@ -1,3 +1,10 @@
+## [1.23.3](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.23.2...v1.23.3) (2022-05-25)
+
+
+### Bug Fixes
+
+* adding kubeconfig file ([12580aa](https://github.com/filipeforattini/ff-iac-github-actions/commit/12580aa5ef4593075fe3189de405ea1be980e9d1))
+
 ## [1.23.2](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.23.1...v1.23.2) (2022-05-16)
 
 
