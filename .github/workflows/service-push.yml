@@ -134,6 +134,7 @@ jobs:
 
       #job
       - name: Run GitLeaks scanner
+        if: inputs.staticAnalysis == true
         uses: docker://opendevsecops/gitleaks
         with:
           args: --repo=https://github.com/${{github.repository}}
@@ -577,7 +578,7 @@ jobs:
       - name: Config | Kubectl config file
         env:
           KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
-        run: echo "$KUBE_CONFIG" ~/.kube/config
+        run: echo "$KUBE_CONFIG" | base64 -d | ~/.kube/config
 
       # deploy
       - name: K8s create namespace
@@ -586,23 +587,13 @@ jobs:
       # configs
       - name: K8s create config-map
         if: steps.deploy_setup.outputs.has_dev_configs == 'true'
-        run: kubectl create configmap -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc --from-env-file=./manifests/configs/dev.env --dry-run=client --validate=false --output=yaml | kubectl apply -f -
-
-      - name: K8s create versioned config-map
-        if: steps.deploy_setup.outputs.has_dev_configs == 'true'
-        run: kubectl create configmap -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc-${{needs.Release-Node.outputs.Version}} --from-env-file=./manifests/configs/dev.env --dry-run=client --validate=false --output=yaml | kubectl apply -f -
-
-      - name: K8s get config-map to inject (pt1)
-        if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
-        run: kubectl get configmap -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc -o jsonpath='{.data}' > ./manifests/k8s-configs-keys.txt
-
-      - name: K8s get config-map to inject (pt2)
-        if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
         run: |
-          sudo chown $(whoami) ./manifests/k8s-configs-keys.txt
+          kubectl create configmap -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc --from-env-file=./manifests/configs/dev.env --dry-run=client --validate=false --output=yaml | kubectl apply -f -
+          kubectl create configmap -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc-${{needs.Release-Node.outputs.Version}} --from-env-file=./manifests/configs/dev.env --dry-run=client --validate=false --output=yaml | kubectl apply -f -
+          kubectl get configmap -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc -o jsonpath='{.data}' > ./manifests/k8s-configs-keys.txt
           cat ./manifests/k8s-configs-keys.txt | jq -r 'keys[]' |  tr '\n' '~' | sed 's/~/,/g;s/,$//' > ./manifests/k8s-configs-keys.txt
 
-      - name: Debug | Configs injected
+      - name: Debug | Configs keys injected
         if: inputs.debug == true
         run: echo -e "k8s-configs-keys.txt:\n\n$(cat ./manifests/k8s-configs-keys.txt)"
 
@@ -624,7 +615,7 @@ jobs:
           kubectl get secret -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc -o jsonpath='{.data}' | base64 > ./manifests/k8s-secrets-keys.txt
           cat ./manifests/k8s-secrets-keys.txt | base64 -d | jq -r 'keys[]' |  tr '\n' '~' | sed 's/~/,/g;s/,$//' > ./manifests/k8s-secrets-keys.txt
 
-      - name: Debug | Keys injected
+      - name: Debug | Secret keys injected
         if: inputs.debug == true
         run: echo -e "k8s-secrets-keys.txt:\n\n$(cat ./manifests/k8s-secrets-keys.txt)"
 

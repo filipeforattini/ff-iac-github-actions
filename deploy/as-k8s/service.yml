@@ -110,22 +110,24 @@ spec:
 
           #@ deploymentEnvs = []
           #@ deploymentEnvs.extend(data.values.env)
-          #@ for i in data.values.envFromSecrets:
+          
+          #@ for i in data.values.envFromConfigMaps:
           #@   deploymentEnvs.extend([{ 
           #@    "name": i, 
           #@    "valueFrom": {
-          #@      "secretKeyRef": {
+          #@      "configMapKeyRef": {
           #@        "name": "svc",
           #@        "key": i,
           #@      }
           #@    }
           #@   }])
           #@ end
-          #@ for i in data.values.envFromConfigMaps:
+          
+          #@ for i in data.values.envFromSecrets:
           #@   deploymentEnvs.extend([{ 
           #@    "name": i, 
           #@    "valueFrom": {
-          #@      "configMapKeyRef": {
+          #@      "secretKeyRef": {
           #@        "name": "svc",
           #@        "key": i,
           #@      }
