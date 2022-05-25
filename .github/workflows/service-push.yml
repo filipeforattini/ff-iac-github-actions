@@ -503,7 +503,7 @@ jobs:
             ${{ runner.os }}-multi-buildx
 
       - name: Build and push
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@a806b8fe1858aa27c1da44ef4b721a70460b75aa
         with:
           context: .
           push: true
