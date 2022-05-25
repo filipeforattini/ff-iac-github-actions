@@ -1,3 +1,11 @@
+## [1.23.12](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.23.11...v1.23.12) (2022-05-25)
+
+
+### Bug Fixes
+
+* version output path when auto versioning is off ([815554f](https://github.com/filipeforattini/ff-iac-github-actions/commit/815554f1596ec1d4916944f669a4f39ed4d01e8f))
+* version output path when auto versioning is off ([1c8cd76](https://github.com/filipeforattini/ff-iac-github-actions/commit/1c8cd76db17591ff50a2d64fe9fd159be80a61bc))
+
 ## [1.23.11](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.23.10...v1.23.11) (2022-05-25)
 
 
