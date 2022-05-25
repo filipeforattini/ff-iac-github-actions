@@ -31,6 +31,10 @@ on:
         type: boolean
         required: false
         default: false
+      staticAnalysis:
+        type: boolean
+        required: false
+        default: false
       mysqlEnabled:
         type: boolean
         required: false
@@ -563,6 +567,11 @@ jobs:
             false) echo "::set-output name=deploy_namespace::$(echo $PIPELINE_SETUP | jq -r '.deploy.namespace')";;
             *)     echo "::set-output name=deploy_namespace::$(echo $PIPELINE_SETUP | jq -r '.deploy.namespace')";;
           esac
+
+      - name: Config | Kubectl config file
+        env:
+          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+        run: echo "$KUBE_CONFIG" ~/.kube/config
 
       # deploy
       - name: K8s create namespace
