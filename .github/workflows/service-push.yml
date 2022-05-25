@@ -364,7 +364,6 @@ jobs:
           semantic-release
 
       - name: Current Version
-        if: inputs.autoVersioning == true
         id: versioning
         run: |
           echo "::set-output name=version::$(cat package.json | jq -r '.version')"
