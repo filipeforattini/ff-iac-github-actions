@@ -22,29 +22,31 @@ on:
         type: string
         required: false
         default: "linux/386,linux/amd64,linux/arm/v7,linux/arm/v8,linux/arm64,linux/ppc64le,linux/s390x"
+        description: "Multi plataform container builds"
       ecosystem:
         type: string
         required: false
+        description: "Special prefix that will be added to the image name"
       containerRegistry:
         type: string
         required: false
         default: ghcr.io
+        description: "Container registry to upload container images"
       environmentsAsNamespaces:
         type: boolean
         required: false
         default: false
+        description: "Separate environments as namespaces"
       staticAnalysis:
         type: boolean
         required: false
         default: false
+        description: "Enable static analysis scans"
       autoVersioning:
         type: boolean
         required: false
         default: true
-      mysqlEnabled:
-        type: boolean
-        required: false
-        default: false
+        description: "Enable auto versioning with semantic versioning"
 
     outputs:
       PipelineConfig: 
@@ -458,6 +460,7 @@ jobs:
       # build
       - name: Dockerfile lint
         uses: hadolint/hadolint-action@v2.1.0
+        id: hadolint
         with:
           dockerfile: Dockerfile
 
@@ -574,8 +577,8 @@ jobs:
           echo "::set-output name=deploy_tag::$(echo $PIPELINE_SETUP | jq -r '.deploy.commitTag')"
           echo "::set-output name=run_started_at::$(echo $PIPELINE_SETUP | jq -r '.run.startedAt')"
           case $ENVIRONMENTS_AS_NAMESPACES in
-            true)  echo "::set-output name=deploy_namespace::$(echo $PIPELINE_SETUP | jq -r '.deploy.namespaces.dev')";;
-            false) echo "::set-output name=deploy_namespace::$(echo $PIPELINE_SETUP | jq -r '.deploy.namespace')";;
+            "true")  echo "::set-output name=deploy_namespace::$(echo $PIPELINE_SETUP | jq -r '.deploy.namespaces.dev')";;
+            "false") echo "::set-output name=deploy_namespace::$(echo $PIPELINE_SETUP | jq -r '.deploy.namespace')";;
             *)     echo "::set-output name=deploy_namespace::$(echo $PIPELINE_SETUP | jq -r '.deploy.namespace')";;
           esac
 
