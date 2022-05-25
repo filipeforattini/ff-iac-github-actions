@@ -1,3 +1,10 @@
+## [1.23.5](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.23.4...v1.23.5) (2022-05-25)
+
+
+### Bug Fixes
+
+* decoding kube config file ([f920011](https://github.com/filipeforattini/ff-iac-github-actions/commit/f9200119db04d03461a030574886c040f5dafe39))
+
 ## [1.23.4](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.23.3...v1.23.4) (2022-05-25)
 
 
