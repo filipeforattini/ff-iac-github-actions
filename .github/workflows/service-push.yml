@@ -578,7 +578,9 @@ jobs:
       - name: Config | Kubectl config file
         env:
           KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
-        run: echo "$KUBE_CONFIG" | base64 -d | ~/.kube/config
+        run: |
+          mkdir -p ~/.kube/config
+          echo "$KUBE_CONFIG" | base64 -d | ~/.kube/config
 
       # deploy
       - name: K8s create namespace
