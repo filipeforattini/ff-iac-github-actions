@@ -1,3 +1,10 @@
+## [1.23.4](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.23.3...v1.23.4) (2022-05-25)
+
+
+### Bug Fixes
+
+* made static analysis optional ([33cc49a](https://github.com/filipeforattini/ff-iac-github-actions/commit/33cc49ae4855e9a79cd8c4b10ba6862dd0259afa))
+
 ## [1.23.3](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.23.2...v1.23.3) (2022-05-25)
 
 
