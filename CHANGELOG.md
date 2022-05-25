@@ -1,3 +1,10 @@
+## [1.23.8](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.23.7...v1.23.8) (2022-05-25)
+
+
+### Bug Fixes
+
+* added directory creation step ([f216165](https://github.com/filipeforattini/ff-iac-github-actions/commit/f21616567f69e3c1a70ea86463a0f1da57426789))
+
 ## [1.23.7](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.23.6...v1.23.7) (2022-05-25)
 
 
