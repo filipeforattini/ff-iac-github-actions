@@ -1,3 +1,10 @@
+## [1.23.11](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.23.10...v1.23.11) (2022-05-25)
+
+
+### Bug Fixes
+
+* envs as namespaces and hadolint output ([a5eccf7](https://github.com/filipeforattini/ff-iac-github-actions/commit/a5eccf7f802fd9aef5501dba7f07bdb0906d944c))
+
 ## [1.23.10](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.23.9...v1.23.10) (2022-05-25)
 
 
