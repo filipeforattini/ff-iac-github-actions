@@ -230,6 +230,9 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
+      - name: Install | Dependency managers
+        run: npm -g install yarn npm
+
       - name: Config | Load setup configs
         env:
           PIPELINE_SETUP: ${{ needs.Setup.outputs.PipelineConfig }}
@@ -321,6 +324,14 @@ jobs:
           ref: main
           path: .ff
           repository: filipeforattini/ff-iac-github-actions
+
+      - name: Install | Node.js 17
+        uses: actions/setup-node@v3
+        with:
+          node-version: 17
+
+      - name: Install | Dependency managers
+        run: npm -g install yarn npm
 
       - name: Config | Load setup configs
         env:
@@ -456,6 +467,7 @@ jobs:
       - name: Config | Login to Container Registry
         uses: docker/login-action@v2
         with:
+          logout: false
           registry: ${{ inputs.containerRegistry }}
           username: ${{ secrets.REGISTRY_USERNAME }}
           password: ${{ secrets.REGISTRY_PASSWORD }}
@@ -679,3 +691,7 @@ jobs:
         run: |
           kubectl apply -f ./manifests/k8s-to-apply.yml
           kubectl get pods -n ${{steps.deploy_setup.outputs.deploy_repository}}
+
+      - name: Docs | Summary
+        run: | 
+          echo -e "<details><summary>kube apply</summary>\n\n\`\`\`json \n$(cat ./manifests/k8s-to-apply.yml)\n \`\`\`\n </details>\n\n" >> $GITHUB_STEP_SUMMARY
