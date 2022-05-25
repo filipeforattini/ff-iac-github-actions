@@ -12,10 +12,12 @@ on:
         type: boolean
         required: false
         default: false
+        description: "Enable debug mode"
       mainBranch:
         type: string
         required: false
         default: master
+        description: "Main repository branch may interfere with versioning"
       platforms:
         type: string
         required: false
@@ -35,6 +37,10 @@ on:
         type: boolean
         required: false
         default: false
+      autoVersioning:
+        type: boolean
+        required: false
+        default: true
       mysqlEnabled:
         type: boolean
         required: false
@@ -323,7 +329,7 @@ jobs:
       # release
       - name: Config | Create .releaserc.json
         uses: actions/github-script@v6
-        if: steps.node_setup.outputs.has_releaserc == 'false'
+        if: inputs.autoVersioning == true && steps.node_setup.outputs.has_releaserc == 'false'
         with:
           result-encoding: string
           script: |
@@ -336,10 +342,11 @@ jobs:
             })
 
       - name: Debug | Print .releaserc.json
-        if: inputs.debug == true
+        if: inputs.autoVersioning == true && inputs.debug == true
         run: cat .releaserc.json
 
       - name: Semantic Release
+        if: inputs.autoVersioning == true
         id: versioning
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -581,7 +588,7 @@ jobs:
           KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
         run: |
           mkdir -p ~/.kube
-          echo "$KUBE_CONFIG" | base64 -d | ~/.kube/config
+          echo "$KUBE_CONFIG" | base64 -d > ~/.kube/config
 
       # deploy
       - name: K8s create namespace
