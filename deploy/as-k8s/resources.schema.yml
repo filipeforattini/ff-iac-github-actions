@@ -6,6 +6,24 @@ mysql:
 
   helm:
     architecture: standalone
+    metrics:
+      enabled: false
+      #@schema/type any=True
+      extraEnvVars: []
+    image:
+      debug: false
+      pullPolicy: IfNotPresent
+      tag: 8.0.29-debian-10-r23
+    auth:
+      database:	NAMESPACE
+      username:	NAMESPACE
+      existingSecret: svc-mysql
+    primary:
+      persistence:
+        enabled: true
+        size: 2Gi
+      #@schema/type any=True
+      extraEnvVars: []
 
 #! POSTGRES
 postgres:
