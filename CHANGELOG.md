@@ -1,3 +1,10 @@
+## [1.24.1](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.24.0...v1.24.1) (2022-05-27)
+
+
+### Bug Fixes
+
+* sudo for snap ([e9a1926](https://github.com/filipeforattini/ff-iac-github-actions/commit/e9a192600f9d5e061362e8425406e8191f63df59))
+
 # [1.24.0](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.23.12...v1.24.0) (2022-05-27)
 
 
