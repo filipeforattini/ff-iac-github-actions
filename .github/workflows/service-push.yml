@@ -574,7 +574,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Install | YQ
-        run: snap install yq
+        run: sudo snap install yq
 
       - name: Install | QEMU
         uses: docker/setup-qemu-action@v1
