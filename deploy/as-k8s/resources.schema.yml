@@ -1,0 +1,33 @@
+#@data/values-schema
+---
+#! MYSQL
+mysql:
+  enabled: false
+
+  helm:
+    architecture: standalone
+
+#! POSTGRES
+postgres:
+  enabled: false
+
+  helm:
+    architecture: standalone
+    metrics:
+      enabled: false
+      #@schema/type any=True
+      extraEnvVars: []
+    image:
+      debug: false
+      pullPolicy: IfNotPresent
+      tag: 14.1.0-debian-10-r80
+    auth:
+      database:	NAMESPACE
+      username:	NAMESPACE
+      existingSecret: svc-postgres
+    primary:
+      persistence:
+        enabled: true
+        size: 2Gi
+      #@schema/type any=True
+      extraEnvVars: []

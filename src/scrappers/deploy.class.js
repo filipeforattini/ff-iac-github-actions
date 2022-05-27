@@ -21,6 +21,7 @@ module.exports = class Deploy extends Scrapper {
 
     const deployAsK8s = fs.existsSync(path.join(process.cwd(), 'manifests', 'k8s-values.yml'))
     const deployAsChart = fs.existsSync(path.join(process.cwd(), 'manifests', 'charts-values.yml'))
+    const hasDependencies = fs.existsSync(path.join(process.cwd(), 'manifests', 'resources.yml'))
     
     let envs = [ 'dev', 'stg', 'prd', 'sbx', 'dry' ]
 
@@ -48,6 +49,7 @@ module.exports = class Deploy extends Scrapper {
         configs,
         deployAsK8s,
         deployAsChart,
+        hasDependencies,
         containerRegistry,
       })
   }

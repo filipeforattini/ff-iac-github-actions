@@ -80,7 +80,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           ref: main
-          path: .ff
+          path: .pipeline
           repository: filipeforattini/ff-iac-github-actions
 
       # job
@@ -90,7 +90,7 @@ jobs:
         with:
           result-encoding: string
           script: |
-            return require('./.ff/src/steps/config-scrapper')({ 
+            return require('./.pipeline/src/steps/config-scrapper')({ 
               context, 
               inputs: {
                 containerRegistry: "${{ inputs.containerRegistry }}",
@@ -222,7 +222,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           ref: main
-          path: .ff
+          path: .pipeline
           repository: filipeforattini/ff-iac-github-actions
 
       - name: Install | Node.js ${{ matrix.node-version }}
@@ -322,7 +322,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           ref: main
-          path: .ff
+          path: .pipeline
           repository: filipeforattini/ff-iac-github-actions
 
       - name: Install | Node.js 17
@@ -346,7 +346,7 @@ jobs:
         with:
           result-encoding: string
           script: |
-            return require('./.ff/src/steps/generate-releaserc')({
+            return require('./.pipeline/src/steps/generate-releaserc')({
               defaultBranch: "${{ inputs.mainBranch }}",
               files: [ 
                 'package.json',
@@ -404,7 +404,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           ref: main
-          path: .ff
+          path: .pipeline
           repository: filipeforattini/ff-iac-github-actions
 
       - name: Install | QEMU
@@ -441,7 +441,7 @@ jobs:
         with:
           result-encoding: string
           script: |
-            return require('./.ff/src/steps/generate-dockerignore')({ 
+            return require('./.pipeline/src/steps/generate-dockerignore')({ 
               assetsToIgnore: ['node_modules'],
             })
 
@@ -451,7 +451,7 @@ jobs:
         with:
           result-encoding: string
           script: |
-            return require('./.ff/src/steps/generate-dockerfile')({ 
+            return require('./.pipeline/src/steps/generate-dockerfile')({ 
               image: 'node',
               tag: '${{ matrix.node-version }}-alpine',
               command: '${{ steps.node_setup.outputs.docker_command }}',
@@ -476,6 +476,7 @@ jobs:
       - name: Dockerfile lint
         uses: hadolint/hadolint-action@v2.1.0
         id: hadolint
+        continue-on-error: true
         with:
           dockerfile: Dockerfile
 
@@ -557,17 +558,23 @@ jobs:
         uses: actions/checkout@v3
         with:
           ref: main
-          path: .ff
+          path: .pipeline
           repository: filipeforattini/ff-iac-github-actions
 
-      - name: Setup | Kubectl
+      - name: Install | Kubectl
         uses: azure/setup-kubectl@v2.0
-
+      
+      - name: Install | Helm
+        uses: azure/setup-helm@v1
+        
       - name: Install | YTT
         uses: vmware-tanzu/carvel-setup-action@v1
         with:
           only: ytt
           token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install | YQ
+        run: snap install yq
 
       - name: Install | QEMU
         uses: docker/setup-qemu-action@v1
@@ -585,6 +592,7 @@ jobs:
           echo "::set-output name=deploy_as_chart::$(echo $PIPELINE_SETUP | jq -r '.deploy.deployAsChart')"
           echo "::set-output name=has_dev_secrets::$(echo $PIPELINE_SETUP | jq -r '.deploy.secrets.dev')"
           echo "::set-output name=has_dev_configs::$(echo $PIPELINE_SETUP | jq -r '.deploy.configs.dev')"
+          echo "::set-output name=has_dependencies::$(echo $PIPELINE_SETUP | jq -r '.deploy.hasDependencies')"
           echo "::set-output name=deploy_ecosystem::$(echo $PIPELINE_SETUP | jq -r '.deploy.ecosystem')"
           echo "::set-output name=deploy_organization::$(echo $PIPELINE_SETUP | jq -r '.deploy.organization')"
           echo "::set-output name=deploy_container_registry::$(echo $PIPELINE_SETUP | jq -r '.deploy.containerRegistry')"
@@ -608,17 +616,52 @@ jobs:
       - name: K8s create namespace
         run: kubectl create namespace ${{steps.deploy_setup.outputs.deploy_namespace}} --dry-run=client --validate=false --output=yaml | kubectl apply -f -
 
+      # dependencies
+      - name: Dependencies | Resources render
+        if: steps.deploy_setup.outputs.has_dependencies == 'true'
+        run: |
+          ytt \
+            -f ./.pipeline/deploy/as-k8s/resources.schema.yml \
+            -f ./.pipeline/deploy/as-k8s/resources.yml \
+            -f ./manifests/resources.yml \
+            --data-value postgres.helm.auth.database=${{steps.deploy_setup.outputs.deploy_repository}} \
+            --data-value postgres.helm.auth.username=${{steps.deploy_setup.outputs.deploy_repository}} \
+              > ./manifests/k8s-resources.yml
+
+      - name: Dependencies | Postgres
+        if: steps.deploy_setup.outputs.has_dependencies == 'true'
+        run: |
+          if [ $(cat ./manifests/k8s-resources.yml | yq -P '.postgres.enabled') = true ]; then
+            POSTGRES_PASSWORD=$(openssl rand -hex 16)
+            kubectl get secret -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc-postgres
+            if [ $? -gt 0 ]; then
+              kubectl create secret generic -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc-postgres --from-literal="hash=$(cat ./manifests/k8s-resources.yml | yq -P '.postgres.hash')" --from-literal="password=$POSTGRES_PASSWORD" --from-literal="postgres-password=$(openssl rand -hex 16)" --from-literal="replication-password=$(openssl rand -hex 16)" --from-literal="connection-string=postgres://${{steps.deploy_setup.outputs.deploy_repository}}:$POSTGRES_PASSWORD@svc-postgres-postgresql:5432/${{steps.deploy_setup.outputs.deploy_repository}}"
+              cat ./manifests/k8s-resources.yml | yq -P '.postgres.helm' | helm upgrade --install -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc-postgres bitnami/postgresql --values -
+            fi
+          fi
+
+      - name: Dependencies | Mysql
+        if: steps.deploy_setup.outputs.has_dependencies == 'true'
+        run: |
+          if [ $(cat ./manifests/k8s-resources.yml | yq -P '.mysql.enabled') = true ]; then
+            MYSQL_PASSWORD=$(openssl rand -hex 16)
+            kubectl get secret -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc-mysql
+            if [ $? -gt 0 ]; then
+              kubectl create secret generic -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc-mysql --from-literal="hash=$(cat ./manifests/k8s-resources.yml | yq -P '.mysql.hash')" --from-literal="password=$MYSQL_PASSWORD" --from-literal="mysql-password=$(openssl rand -hex 16)" --from-literal="replication-password=$(openssl rand -hex 16)" --from-literal="connection-string=mysql://${{steps.deploy_setup.outputs.deploy_repository}}:$MYSQL_PASSWORD@svc-mysql-mysqlql:3306/${{steps.deploy_setup.outputs.deploy_repository}}"
+              cat ./manifests/k8s-resources.yml | yq -P '.mysql.helm' | helm upgrade --install -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc-postgres bitnami/mysql --values -
+            fi
+          fi
+
       # configs
       - name: K8s create config-map
         if: steps.deploy_setup.outputs.has_dev_configs == 'true'
         run: |
           kubectl create configmap -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc --from-env-file=./manifests/configs/dev.env --dry-run=client --validate=false --output=yaml | kubectl apply -f -
           kubectl create configmap -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc-${{needs.Release-Node.outputs.Version}} --from-env-file=./manifests/configs/dev.env --dry-run=client --validate=false --output=yaml | kubectl apply -f -
-          kubectl get configmap -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc -o jsonpath='{.data}' > ./manifests/k8s-configs-keys.txt
-          cat ./manifests/k8s-configs-keys.txt | jq -r 'keys[]' |  tr '\n' '~' | sed 's/~/,/g;s/,$//' > ./manifests/k8s-configs-keys.txt
+          kubectl get configmap -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc -o jsonpath='{.data}' | jq -r 'keys[]' |  tr '\n' '~' | sed 's/~/,/g;s/,$//' > ./manifests/k8s-configs-keys.txt
 
       - name: Debug | Configs keys injected
-        if: inputs.debug == true
+        if: inputs.debug == true && steps.deploy_setup.outputs.has_dev_configs == 'true'
         run: echo -e "k8s-configs-keys.txt:\n\n$(cat ./manifests/k8s-configs-keys.txt)"
 
       # secrets
@@ -636,11 +679,10 @@ jobs:
         run: |
           kubectl create secret generic -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc --from-env-file=./manifests/k8s-secrets.env --dry-run=client --validate=false --output=yaml | kubectl apply -f -
           kubectl create secret generic -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc-${{needs.Release-Node.outputs.Version}} --from-env-file=./manifests/k8s-secrets.env --dry-run=client --validate=false --output=yaml | kubectl apply -f -
-          kubectl get secret -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc -o jsonpath='{.data}' | base64 > ./manifests/k8s-secrets-keys.txt
-          cat ./manifests/k8s-secrets-keys.txt | base64 -d | jq -r 'keys[]' |  tr '\n' '~' | sed 's/~/,/g;s/,$//' > ./manifests/k8s-secrets-keys.txt
+          kubectl get secret -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc -o jsonpath='{.data}' | jq -r 'keys[]' |  tr '\n' '~' | sed 's/~/,/g;s/,$//' > ./manifests/k8s-secrets-keys.txt
 
       - name: Debug | Secret keys injected
-        if: inputs.debug == true
+        if: inputs.debug == true && steps.deploy_setup.outputs.has_dev_secrets == 'true'
         run: echo -e "k8s-secrets-keys.txt:\n\n$(cat ./manifests/k8s-secrets-keys.txt)"
 
       # secrets for registry auth
@@ -667,8 +709,8 @@ jobs:
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
         run: |
           ytt \
-            -f ./.ff/deploy/as-k8s/service.schema.yml \
-            -f ./.ff/deploy/as-k8s/service.yml \
+            -f ./.pipeline/deploy/as-k8s/service.schema.yml \
+            -f ./.pipeline/deploy/as-k8s/service.yml \
             -f ./manifests/k8s-values.yml \
             --data-value ecosystem=${{steps.deploy_setup.outputs.deploy_ecosystem}} \
             --data-value organization=${{steps.deploy_setup.outputs.deploy_organization}} \
@@ -678,6 +720,7 @@ jobs:
             --data-value-yaml deployment.imagePullSecrets=true \
             --data-value-yaml envFromSecrets="[$(cat ./manifests/k8s-secrets-keys.txt)]" \
             --data-value-yaml envFromConfigMaps="[$(cat ./manifests/k8s-configs-keys.txt)]" \
+            --data-value-yaml envFromDependencies="[$(cat ./manifests/k8s-resources.yml | yq -P '.dependencies')]" \
             --data-value pipelineControl.datetime=${{steps.deploy_setup.outputs.run_started_at}} \
             --data-value-yaml pipelineControl.environmentsAsNamespaces=${{inputs.environmentsAsNamespaces}} \
               > ./manifests/k8s-to-apply.yml

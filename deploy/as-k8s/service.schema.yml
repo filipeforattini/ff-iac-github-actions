@@ -19,6 +19,8 @@ env: []
 envFromSecrets: []
 #@schema/type any=True
 envFromConfigMaps: []
+#@schema/type any=True
+envFromDependencies: []
 
 #! k8s resources
 namespace:

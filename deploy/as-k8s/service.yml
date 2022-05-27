@@ -4,8 +4,8 @@
 #@ load("@ytt:sha256", "sha256")
 #@ load("@ytt:base64", "base64")
 
-#@ configMD5 = md5.sum("data")
-#@ configSHA256 = sha256.sum("data")
+#@ configMD5 = md5.sum(json.encode(data.values))
+#@ configSHA256 = sha256.sum(json.encode(data.values))
 #@ configEncoded = base64.encode(json.encode(data.values))
 
 #@ globalLabels = {}
@@ -130,6 +130,18 @@ spec:
           #@      "secretKeyRef": {
           #@        "name": "svc",
           #@        "key": i,
+          #@      }
+          #@    }
+          #@   }])
+          #@ end
+          
+          #@ for i in data.values.envFromDependencies:
+          #@   deploymentEnvs.extend([{ 
+          #@    "name": (i + "_connection_string").upper(),
+          #@    "valueFrom": {
+          #@      "configMapKeyRef": {
+          #@        "name": "svc-" + i,
+          #@        "key": "connection-string",
           #@      }
           #@    }
           #@   }])

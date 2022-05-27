@@ -1,0 +1,6 @@
+#@ load("clone.lib.yml", clone="render")
+
+jobs:
+  #@ steps = []
+  #@ steps.extend(clone().steps)
+  steps: #@ steps

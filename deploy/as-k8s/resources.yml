@@ -1,0 +1,25 @@
+#@ load("@ytt:data", "data")
+#@ load("@ytt:json", "json")
+#@ load("@ytt:base64", "base64")
+#@ load("@ytt:sha256", "sha256")
+---
+#@ dependencies = []
+#@ if data.values.mysql.enabled:
+#@ dependencies.extend(["mysql"])
+#@ end
+#@ if data.values.postgres.enabled:
+#@ dependencies.extend(["postgres"])
+#@ end
+dependencies: #@ ",".join(dependencies)
+
+mysql:
+  enabled: #@ data.values.mysql.enabled
+  hash: #@ sha256.sum(json.encode(data.values.mysql))
+  config: #@ base64.encode(json.encode(data.values.mysql))
+  helm: #@ data.values.mysql.helm
+
+postgres:
+  enabled: #@ data.values.postgres.enabled
+  hash: #@ sha256.sum(json.encode(data.values.postgres))
+  config: #@ base64.encode(json.encode(data.values.postgres))
+  helm: #@ data.values.postgres.helm
