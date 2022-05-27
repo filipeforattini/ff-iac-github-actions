@@ -1,3 +1,10 @@
+# [1.24.0](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.23.12...v1.24.0) (2022-05-27)
+
+
+### Features
+
+* added dependencies management ([48d955f](https://github.com/filipeforattini/ff-iac-github-actions/commit/48d955f77b7abe8e142c53e279c42418b73806a3))
+
 ## [1.23.12](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.23.11...v1.23.12) (2022-05-25)
 
 
