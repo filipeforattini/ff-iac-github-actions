@@ -1,3 +1,10 @@
+## [1.24.2](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.24.1...v1.24.2) (2022-05-27)
+
+
+### Bug Fixes
+
+* mysql schema ([c940cf6](https://github.com/filipeforattini/ff-iac-github-actions/commit/c940cf6cbff9f1a44cdad2e3a28dc526083528ec))
+
 ## [1.24.1](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.24.0...v1.24.1) (2022-05-27)
 
 
