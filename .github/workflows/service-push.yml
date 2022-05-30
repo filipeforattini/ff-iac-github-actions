@@ -626,29 +626,46 @@ jobs:
             -f ./manifests/resources.yml \
             --data-value postgres.helm.auth.database=${{steps.deploy_setup.outputs.deploy_repository}} \
             --data-value postgres.helm.auth.username=${{steps.deploy_setup.outputs.deploy_repository}} \
-              > ./manifests/k8s-resources.yml
+              > ./manifests/k8s-dependencies.yml
+
+      - name: Docs | Dependencies 
+        if: steps.deploy_setup.outputs.has_dependencies == 'true'
+        run: | 
+          echo -e "### Dependencies\n\n" >> $GITHUB_STEP_SUMMARY
+          echo -e "| name | chart version | app version |" >> $GITHUB_STEP_SUMMARY
+          echo -e "| --- | :---: | :---: |" >> $GITHUB_STEP_SUMMARY
+          if [ $(cat ./manifests/k8s-dependencies.yml | yq -P '.postgres.enabled') = true ]; then
+            echo -e "| postgres | $(cat ./manifests/k8s-dependencies.yml | yq -P '.postgres.version') | $(cat ./manifests/k8s-dependencies.yml | yq -P '.postgres.image.tag') | \n\n" >> $GITHUB_STEP_SUMMARY
+          fi
+          if [ $(cat ./manifests/k8s-dependencies.yml | yq -P '.mysql.enabled') = true ]; then
+            echo -e "| mysql | $(cat ./manifests/k8s-dependencies.yml | yq -P '.mysql.version') | $(cat ./manifests/k8s-dependencies.yml | yq -P '.mysql.image.tag') | \n\n" >> $GITHUB_STEP_SUMMARY
+          fi
 
       - name: Dependencies | Postgres
         if: steps.deploy_setup.outputs.has_dependencies == 'true'
         run: |
-          if [ $(cat ./manifests/k8s-resources.yml | yq -P '.postgres.enabled') = true ]; then
+          if [ $(cat ./manifests/k8s-dependencies.yml | yq -P '.postgres.enabled') = true ]; then
             POSTGRES_PASSWORD=$(openssl rand -hex 16)
-            kubectl get secret -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc-postgres
+            kubectl get secret -n ${deploy_namespace} svc-postgres 2> /dev/null
             if [ $? -gt 0 ]; then
-              kubectl create secret generic -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc-postgres --from-literal="hash=$(cat ./manifests/k8s-resources.yml | yq -P '.postgres.hash')" --from-literal="password=$POSTGRES_PASSWORD" --from-literal="postgres-password=$(openssl rand -hex 16)" --from-literal="replication-password=$(openssl rand -hex 16)" --from-literal="connection-string=postgres://${{steps.deploy_setup.outputs.deploy_repository}}:$POSTGRES_PASSWORD@svc-postgres-postgresql:5432/${{steps.deploy_setup.outputs.deploy_repository}}"
-              cat ./manifests/k8s-resources.yml | yq -P '.postgres.helm' | helm upgrade --install -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc-postgres bitnami/postgresql --values -
+              kubectl create secret generic -n ${deploy_namespace} svc-postgres --from-literal="hash=$(cat ./manifests/k8s-dependencies.yml | yq -P '.postgres.hash')" --from-literal="password=$POSTGRES_PASSWORD" --from-literal="postgres-password=$(openssl rand -hex 16)" --from-literal="replication-password=$(openssl rand -hex 16)" --from-literal="connection-string=postgres://${deploy_repository}:$POSTGRES_PASSWORD@svc-postgres-postgresql:5432/${deploy_repository}"
+              kubectl create secret generic -n ${deploy_namespace} svc-postgres-${deploy_version} --from-literal="hash=$(cat ./manifests/k8s-dependencies.yml | yq -P '.postgres.hash')" --from-literal="password=$POSTGRES_PASSWORD" --from-literal="postgres-password=$(openssl rand -hex 16)" --from-literal="replication-password=$(openssl rand -hex 16)" --from-literal="connection-string=postgres://${deploy_repository}:$POSTGRES_PASSWORD@svc-postgres-postgresql:5432/${deploy_repository}"
+              cat ./manifests/k8s-dependencies.yml | yq -P '.postgres.helm' | helm install -n ${deploy_namespace} svc-postgres bitnami/postgresql --version $(cat ./manifests/k8s-dependencies.yml | yq -P '.postgres.version') --values -
             fi
+          else 
+            helm delete -n ${deploy_namespace} svc-postgres 2> /dev/null
           fi
 
       - name: Dependencies | Mysql
         if: steps.deploy_setup.outputs.has_dependencies == 'true'
+        continue-on-error: true
         run: |
-          if [ $(cat ./manifests/k8s-resources.yml | yq -P '.mysql.enabled') = true ]; then
+          if [ $(cat ./manifests/k8s-dependencies.yml | yq -P '.mysql.enabled') = true ]; then
             MYSQL_PASSWORD=$(openssl rand -hex 16)
             kubectl get secret -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc-mysql
             if [ $? -gt 0 ]; then
-              kubectl create secret generic -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc-mysql --from-literal="hash=$(cat ./manifests/k8s-resources.yml | yq -P '.mysql.hash')" --from-literal="password=$MYSQL_PASSWORD" --from-literal="mysql-password=$(openssl rand -hex 16)" --from-literal="replication-password=$(openssl rand -hex 16)" --from-literal="connection-string=mysql://${{steps.deploy_setup.outputs.deploy_repository}}:$MYSQL_PASSWORD@svc-mysql-mysqlql:3306/${{steps.deploy_setup.outputs.deploy_repository}}"
-              cat ./manifests/k8s-resources.yml | yq -P '.mysql.helm' | helm upgrade --install -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc-postgres bitnami/mysql --values -
+              kubectl create secret generic -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc-mysql --from-literal="hash=$(cat ./manifests/k8s-dependencies.yml | yq -P '.mysql.hash')" --from-literal="password=$MYSQL_PASSWORD" --from-literal="mysql-password=$(openssl rand -hex 16)" --from-literal="replication-password=$(openssl rand -hex 16)" --from-literal="connection-string=mysql://${{steps.deploy_setup.outputs.deploy_repository}}:$MYSQL_PASSWORD@svc-mysql-mysqlql:3306/${{steps.deploy_setup.outputs.deploy_repository}}"
+              cat ./manifests/k8s-dependencies.yml | yq -P '.mysql.helm' | helm upgrade --install -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc-postgres bitnami/mysql --values -
             fi
           fi
 
@@ -720,7 +737,7 @@ jobs:
             --data-value-yaml deployment.imagePullSecrets=true \
             --data-value-yaml envFromSecrets="[$(cat ./manifests/k8s-secrets-keys.txt)]" \
             --data-value-yaml envFromConfigMaps="[$(cat ./manifests/k8s-configs-keys.txt)]" \
-            --data-value-yaml envFromDependencies="[$(cat ./manifests/k8s-resources.yml | yq -P '.dependencies')]" \
+            --data-value-yaml envFromDependencies="[$(cat ./manifests/k8s-dependencies.yml | yq -P '.dependencies')]" \
             --data-value pipelineControl.datetime=${{steps.deploy_setup.outputs.run_started_at}} \
             --data-value-yaml pipelineControl.environmentsAsNamespaces=${{inputs.environmentsAsNamespaces}} \
               > ./manifests/k8s-to-apply.yml

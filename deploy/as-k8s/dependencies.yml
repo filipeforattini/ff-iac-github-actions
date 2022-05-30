@@ -16,10 +16,12 @@ mysql:
   enabled: #@ data.values.mysql.enabled
   hash: #@ sha256.sum(json.encode(data.values.mysql))
   config: #@ base64.encode(json.encode(data.values.mysql))
+  version: #@ data.values.mysql.version
   helm: #@ data.values.mysql.helm
 
 postgres:
   enabled: #@ data.values.postgres.enabled
   hash: #@ sha256.sum(json.encode(data.values.postgres))
   config: #@ base64.encode(json.encode(data.values.postgres))
+  version: #@ data.values.postgres.version
   helm: #@ data.values.postgres.helm

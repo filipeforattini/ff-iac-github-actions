@@ -3,6 +3,7 @@
 #! MYSQL
 mysql:
   enabled: false
+  version: 9.1.1
 
   helm:
     architecture: standalone
@@ -15,19 +16,20 @@ mysql:
       pullPolicy: IfNotPresent
       tag: 8.0.29-debian-10-r23
     auth:
-      database:	NAMESPACE
-      username:	NAMESPACE
+      database:	svc
+      username:	svc
       existingSecret: svc-mysql
     primary:
       persistence:
         enabled: true
-        size: 2Gi
+        size: 4Gi
       #@schema/type any=True
       extraEnvVars: []
 
 #! POSTGRES
 postgres:
   enabled: false
+  version: 11.5.0
 
   helm:
     architecture: standalone
@@ -40,12 +42,12 @@ postgres:
       pullPolicy: IfNotPresent
       tag: 14.1.0-debian-10-r80
     auth:
-      database:	NAMESPACE
-      username:	NAMESPACE
+      database:	svc
+      username:	svc
       existingSecret: svc-postgres
     primary:
       persistence:
         enabled: true
-        size: 2Gi
+        size: 4Gi
       #@schema/type any=True
       extraEnvVars: []
