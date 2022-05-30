@@ -646,14 +646,14 @@ jobs:
         run: |
           if [ $(cat ./manifests/k8s-dependencies.yml | yq -P '.postgres.enabled') = true ]; then
             POSTGRES_PASSWORD=$(openssl rand -hex 16)
-            kubectl get secret -n ${deploy_namespace} svc-postgres 2> /dev/null
+            kubectl get secret -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc-postgres 2> /dev/null
             if [ $? -gt 0 ]; then
-              kubectl create secret generic -n ${deploy_namespace} svc-postgres --from-literal="hash=$(cat ./manifests/k8s-dependencies.yml | yq -P '.postgres.hash')" --from-literal="password=$POSTGRES_PASSWORD" --from-literal="postgres-password=$(openssl rand -hex 16)" --from-literal="replication-password=$(openssl rand -hex 16)" --from-literal="connection-string=postgres://${deploy_repository}:$POSTGRES_PASSWORD@svc-postgres-postgresql:5432/${deploy_repository}"
-              kubectl create secret generic -n ${deploy_namespace} svc-postgres-${deploy_version} --from-literal="hash=$(cat ./manifests/k8s-dependencies.yml | yq -P '.postgres.hash')" --from-literal="password=$POSTGRES_PASSWORD" --from-literal="postgres-password=$(openssl rand -hex 16)" --from-literal="replication-password=$(openssl rand -hex 16)" --from-literal="connection-string=postgres://${deploy_repository}:$POSTGRES_PASSWORD@svc-postgres-postgresql:5432/${deploy_repository}"
-              cat ./manifests/k8s-dependencies.yml | yq -P '.postgres.helm' | helm install -n ${deploy_namespace} svc-postgres bitnami/postgresql --version $(cat ./manifests/k8s-dependencies.yml | yq -P '.postgres.version') --values -
+              kubectl create secret generic -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc-postgres --from-literal="hash=$(cat ./manifests/k8s-dependencies.yml | yq -P '.postgres.hash')" --from-literal="password=$POSTGRES_PASSWORD" --from-literal="postgres-password=$(openssl rand -hex 16)" --from-literal="replication-password=$(openssl rand -hex 16)" --from-literal="connection-string=postgres://${{steps.deploy_setup.outputs.deploy_repository}}:$POSTGRES_PASSWORD@svc-postgres-postgresql:5432/${{steps.deploy_setup.outputs.deploy_repository}}"
+              kubectl create secret generic -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc-postgres-${deploy_version} --from-literal="hash=$(cat ./manifests/k8s-dependencies.yml | yq -P '.postgres.hash')" --from-literal="password=$POSTGRES_PASSWORD" --from-literal="postgres-password=$(openssl rand -hex 16)" --from-literal="replication-password=$(openssl rand -hex 16)" --from-literal="connection-string=postgres://${{steps.deploy_setup.outputs.deploy_repository}}:$POSTGRES_PASSWORD@svc-postgres-postgresql:5432/${{steps.deploy_setup.outputs.deploy_repository}}"
+              cat ./manifests/k8s-dependencies.yml | yq -P '.postgres.helm' | helm install -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc-postgres bitnami/postgresql --version $(cat ./manifests/k8s-dependencies.yml | yq -P '.postgres.version') --values -
             fi
           else 
-            helm delete -n ${deploy_namespace} svc-postgres 2> /dev/null
+            helm delete -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc-postgres 2> /dev/null
           fi
 
       - name: Dependencies | Mysql
