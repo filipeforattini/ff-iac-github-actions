@@ -1,5 +1,9 @@
 name: service-push
 
+concurrency:
+  group: ${{github.workflow}}
+  cancel-in-progress: true
+
 #--------------------------------------------------#
 #                     Triggers                     # 
 #--------------------------------------------------#
@@ -761,7 +765,7 @@ jobs:
           CONFIGS_LIST=$([[ -f ./manifests/k8s-configs-keys.txt ]] && cat ./manifests/k8s-configs-keys.txt || echo '')
           DEPENDENCIES_LIST=$(([[ -f ./manifests/k8s-dependencies.yml ]] && cat ./manifests/k8s-dependencies.yml || echo '') | yq -P '.dependencies')
           echo -e "### k8s\n\n" >> $GITHUB_STEP_SUMMARY
-          echo -e "| name | chart version | app version |" >> $GITHUB_STEP_SUMMARY
+          echo -e "| param | value |" >> $GITHUB_STEP_SUMMARY
           echo -e "| --- | :---: |" >> $GITHUB_STEP_SUMMARY
           echo -e "| secrets | $SECRETS_LIST |" >> $GITHUB_STEP_SUMMARY
           echo -e "| configs | $CONFIGS_LIST |" >> $GITHUB_STEP_SUMMARY
