@@ -469,7 +469,7 @@ jobs:
         if: steps.node_setup.outputs.has_dockerfile == 'false'
         run: |
           echo "Dockerfile: \`${{ steps.dockerfile.outcome }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "\`\`\`dockerfile\n$(cat ./Dockerfile)\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`dockerfile\n$(cat ./Dockerfile)\n\`\`\`" >> $GITHUB_STEP_SUMMARY
 
       - name: Config | Login to Container Registry
         uses: docker/login-action@v2
@@ -744,7 +744,7 @@ jobs:
             --data-value-yaml deployment.imagePullSecrets=true \
             --data-value-yaml envFromSecrets="[$(cat ./manifests/k8s-secrets-keys.txt)]" \
             --data-value-yaml envFromConfigMaps="[$(cat ./manifests/k8s-configs-keys.txt)]" \
-            --data-value-yaml envFromDependencies="[$(cat ./manifests/k8s-dependencies.yml | yq -P '.dependencies')]" \
+            --data-value-yaml envFromDependencies="[$( ([[ -f ./manifests/k8s-dependencies.yml ]] && cat ./manifests/k8s-dependencies.yml || echo '') | yq -P '.dependencies')]" \
             --data-value pipelineControl.datetime=${{steps.deploy_setup.outputs.run_started_at}} \
             --data-value-yaml pipelineControl.environmentsAsNamespaces=${{inputs.environmentsAsNamespaces}} \
               > ./manifests/k8s-to-apply.yml

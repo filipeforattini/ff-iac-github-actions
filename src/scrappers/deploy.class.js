@@ -21,13 +21,14 @@ module.exports = class Deploy extends Scrapper {
 
     const deployAsK8s = fs.existsSync(path.join(process.cwd(), 'manifests', 'k8s-values.yml'))
     const deployAsChart = fs.existsSync(path.join(process.cwd(), 'manifests', 'charts-values.yml'))
-    const hasDependencies = fs.existsSync(path.join(process.cwd(), 'manifests', 'resources.yml'))
+    const hasDependencies = fs.existsSync(path.join(process.cwd(), 'manifests', 'dependencies.yml'))
     
     let envs = [ 'dev', 'stg', 'prd', 'sbx', 'dry' ]
 
-    const { namespaces, secrets, configs } = envs.reduce((acc, env) => {
+    const { namespaces, secrets, configs, dependencies } = envs.reduce((acc, env) => {
       acc.configs[env] = fs.existsSync(path.join(process.cwd(), 'manifests', 'configs', env + '.env'))
       acc.secrets[env] = fs.existsSync(path.join(process.cwd(), 'manifests', 'secrets', env + '.gpg'))
+      acc.dependencies[env] = fs.existsSync(path.join(process.cwd(), 'manifests', 'dependencies', env + '.yml'))
       acc.namespaces[env] = `${repository}-${env}`
       return acc
     }, { 
@@ -48,6 +49,7 @@ module.exports = class Deploy extends Scrapper {
         secrets,
         configs,
         deployAsK8s,
+        dependencies,
         deployAsChart,
         hasDependencies,
         containerRegistry,
