@@ -639,18 +639,19 @@ jobs:
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
         run: | 
           echo -e "### Dependencies\n\n" >> $GITHUB_STEP_SUMMARY
-          echo -e "<details><summary>dependencies</summary>\n\n\`\`\`json \n$(cat ./manifests/k8s-dependencies.yml)\n \`\`\`\n </details>\n\n" >> $GITHUB_STEP_SUMMARY
+          echo -e "<details><summary>dependencies</summary>\n\n\`\`\`yml \n$(cat ./manifests/k8s-dependencies.yml)\n \`\`\`\n </details>\n\n" >> $GITHUB_STEP_SUMMARY
           echo -e "| name | chart version | app version |" >> $GITHUB_STEP_SUMMARY
           echo -e "| --- | :---: | :---: |" >> $GITHUB_STEP_SUMMARY
           if [ $(cat ./manifests/k8s-dependencies.yml | yq -P '.postgres.enabled') = true ]; then
-            echo -e "| postgres | $(cat ./manifests/k8s-dependencies.yml | yq -P '.postgres.version') | $(cat ./manifests/k8s-dependencies.yml | yq -P '.postgres.helm.image.tag') | \n" >> $GITHUB_STEP_SUMMARY
+            echo -e "| postgres | $(cat ./manifests/k8s-dependencies.yml | yq -P '.postgres.version') | $(cat ./manifests/k8s-dependencies.yml | yq -P '.postgres.helm.image.tag') |" >> $GITHUB_STEP_SUMMARY
           fi
           if [ $(cat ./manifests/k8s-dependencies.yml | yq -P '.mysql.enabled') = true ]; then
-            echo -e "| mysql | $(cat ./manifests/k8s-dependencies.yml | yq -P '.mysql.version') | $(cat ./manifests/k8s-dependencies.yml | yq -P '.mysql.helm.image.tag') | \n" >> $GITHUB_STEP_SUMMARY
+            echo -e "| mysql | $(cat ./manifests/k8s-dependencies.yml | yq -P '.mysql.version') | $(cat ./manifests/k8s-dependencies.yml | yq -P '.mysql.helm.image.tag') |\n" >> $GITHUB_STEP_SUMMARY
           fi
           
       - name: Dependencies | Postgres
         if: steps.deploy_setup.outputs.has_dependencies == 'true'
+        continue-on-error: true
         run: |
           if [ $(cat ./manifests/k8s-dependencies.yml | yq -P '.postgres.enabled') = true ]; then
             POSTGRES_PASSWORD=$(openssl rand -hex 16)
