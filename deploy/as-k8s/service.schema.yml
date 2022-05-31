@@ -29,7 +29,7 @@ namespace:
 
 deployment:
   enable: true
-  replicas: 1
+  replicas: 2
   name: svc
   port: 8000
   labels: {}
@@ -38,9 +38,24 @@ deployment:
   imagePullSecrets: false
 
   templateLabels: {}
-  matchLabels: 
+  matchLabels:
     overwrite: false
     labels: {}
+
+service:
+  enable: true
+  name: svc
+  labels: {}
+  annotations: {}
+  selector:
+    overwrite: false
+    labels: {}
+  #@schema/type any=True
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8000
+      protocol: TCP
 
 ingress:
   enable: false

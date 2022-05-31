@@ -150,6 +150,39 @@ spec:
 #@ end
 
 ---
+
+---
+#@ if data.values.service.enable:
+apiVersion: apps/v1
+kind: Service
+metadata:
+  name: #@ data.values.service.name
+  namespace: #@ namespace
+
+  #@ serviceLabels = {}
+  #@ serviceLabels.update(globalLabels)
+  #@ serviceLabels.update(data.values.service.labels)
+  labels: #@ serviceLabels
+
+  #@ serviceAnnotations = {}
+  #@ serviceAnnotations.update(globalAnnotations)
+  #@ serviceAnnotations.update(data.values.service.annotations)
+  annotations: #@ serviceAnnotations
+spec:
+  #@ if data.values.service.selector.overwrite:
+  selector: #@ data.values.service.selector.labels
+  #@ else:
+  #@ serviceMatchLabels = {}
+  #@ serviceMatchLabels.update({ "pipe/selector": data.values.repository + "." + data.values.deployment.name })
+  selector: #@ serviceMatchLabels
+  #@ end
+
+  #@ servicePorts = []
+  #@ servicePorts.extend(data.values.service.ports)
+  ports: #@ servicePorts
+#@ end
+
+---
 #@ if data.values.ingress.enable:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
