@@ -732,6 +732,9 @@ jobs:
       - name: K8s generates final yml
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
         run: |
+          SECRETS_LIST=$([[ -f ./manifests/k8s-secrets-keys.txt ]] && cat ./manifests/k8s-secrets-keys.txt || echo '')
+          CONFIGS_LIST=$([[ -f ./manifests/k8s-configs-keys.txt ]] && cat ./manifests/k8s-configs-keys.txt || echo '')
+          DEPENDENCIES_LIST=$(([[ -f ./manifests/k8s-dependencies.yml ]] && cat ./manifests/k8s-dependencies.yml || echo '') | yq -P '.dependencies')
           ytt \
             -f ./.pipeline/deploy/as-k8s/service.schema.yml \
             -f ./.pipeline/deploy/as-k8s/service.yml \
@@ -742,12 +745,18 @@ jobs:
             --data-value containerRegistry=${{steps.deploy_setup.outputs.deploy_container_registry}} \
             --data-value tag=${{steps.deploy_setup.outputs.deploy_tag}} \
             --data-value-yaml deployment.imagePullSecrets=true \
-            --data-value-yaml envFromSecrets="[$(cat ./manifests/k8s-secrets-keys.txt)]" \
-            --data-value-yaml envFromConfigMaps="[$(cat ./manifests/k8s-configs-keys.txt)]" \
-            --data-value-yaml envFromDependencies="[$( ([[ -f ./manifests/k8s-dependencies.yml ]] && cat ./manifests/k8s-dependencies.yml || echo '') | yq -P '.dependencies')]" \
+            --data-value-yaml envFromSecrets="[$SECRETS_LIST]" \
+            --data-value-yaml envFromConfigMaps="[$CONFIGS_LIST]" \
+            --data-value-yaml envFromDependencies="[$DEPENDENCIES_LIST]" \
             --data-value pipelineControl.datetime=${{steps.deploy_setup.outputs.run_started_at}} \
             --data-value-yaml pipelineControl.environmentsAsNamespaces=${{inputs.environmentsAsNamespaces}} \
               > ./manifests/k8s-to-apply.yml
+
+      - name: Docs | K8s summary
+        if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
+        run: | 
+          echo -e "### k8s\n\n" >> $GITHUB_STEP_SUMMARY
+          echo -e "<details><summary>kubefile</summary>\n\n\`\`\`json \n$(cat ./manifests/k8s-to-apply.yml)\n \`\`\`\n </details>\n\n" >> $GITHUB_STEP_SUMMARY
 
       - name: Debug | Print k8s-to-apply.yml
         if: inputs.debug == true
