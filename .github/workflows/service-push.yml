@@ -111,11 +111,11 @@ jobs:
           PIPELINE_SETUP: ${{ steps.script_setup.outputs.result}}
         run: echo $PIPELINE_SETUP
 
-      - name: Docs | Summary
+      - name: Docs | Configs summary
         env:
           PIPELINE_SETUP: ${{ steps.script_setup.outputs.result}}
         run: | 
-          echo -e "### $(echo $PIPELINE_SETUP | jq -r '.deploy.podName')\n\n" >> $GITHUB_STEP_SUMMARY
+          echo -e "### $(echo $PIPELINE_SETUP | jq -r '.deploy.podName') pipeline\n\n" >> $GITHUB_STEP_SUMMARY
           echo -e "<details><summary>Config</summary>\n\n\`\`\`json \n$(echo $PIPELINE_SETUP | jq '.')\n \`\`\`\n </details>\n\n" >> $GITHUB_STEP_SUMMARY
           echo -e "---\n\n" >> $GITHUB_STEP_SUMMARY
           echo -e "Build started at: $(echo $PIPELINE_SETUP | jq -r '.run.startedAt')\n\n" >> $GITHUB_STEP_SUMMARY
@@ -469,7 +469,7 @@ jobs:
         if: steps.node_setup.outputs.has_dockerfile == 'false'
         run: |
           echo "Dockerfile: \`${{ steps.dockerfile.outcome }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "\`\`\`dockerfile\n$(cat ./Dockerfile)\n\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo -e "<details><summary>dockerfile</summary>\n\n\`\`\`json \n$(cat ./Dockerfile)\n \`\`\`\n </details>\n\n" >> $GITHUB_STEP_SUMMARY
 
       - name: Config | Login to Container Registry
         uses: docker/login-action@v2
