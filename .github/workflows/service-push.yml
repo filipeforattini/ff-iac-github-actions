@@ -757,19 +757,19 @@ jobs:
       - name: Docs | K8s summary
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
         run: | 
+          SECRETS_LIST=$([[ -f ./manifests/k8s-secrets-keys.txt ]] && cat ./manifests/k8s-secrets-keys.txt || echo '')
+          CONFIGS_LIST=$([[ -f ./manifests/k8s-configs-keys.txt ]] && cat ./manifests/k8s-configs-keys.txt || echo '')
+          DEPENDENCIES_LIST=$(([[ -f ./manifests/k8s-dependencies.yml ]] && cat ./manifests/k8s-dependencies.yml || echo '') | yq -P '.dependencies')
           echo -e "### k8s\n\n" >> $GITHUB_STEP_SUMMARY
-          echo -e "<details><summary>kubefile</summary>\n\n\`\`\`json \n$(cat ./manifests/k8s-to-apply.yml)\n \`\`\`\n </details>\n\n" >> $GITHUB_STEP_SUMMARY
-
-      - name: Debug | Print k8s-to-apply.yml
-        if: inputs.debug == true
-        run: echo -e "./k8s-to-apply.yml:\n\n$(cat ./manifests/k8s-to-apply.yml)"
+          echo -e "| name | chart version | app version |" >> $GITHUB_STEP_SUMMARY
+          echo -e "| --- | :---: |" >> $GITHUB_STEP_SUMMARY
+          echo -e "| secrets | $SECRETS_LIST |" >> $GITHUB_STEP_SUMMARY
+          echo -e "| configs | $CONFIGS_LIST |" >> $GITHUB_STEP_SUMMARY
+          echo -e "| dependencies | $DEPENDENCIES_LIST |" >> $GITHUB_STEP_SUMMARY
+          echo -e "<details><summary>kubefile</summary>\n\n\`\`\`yml \n$(cat ./manifests/k8s-to-apply.yml)\n \`\`\`\n </details>\n\n" >> $GITHUB_STEP_SUMMARY
 
       - name: K8s apply yml
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
         run: |
           kubectl apply -f ./manifests/k8s-to-apply.yml
           kubectl get pods -n ${{steps.deploy_setup.outputs.deploy_repository}}
-
-      - name: Docs | Summary
-        run: | 
-          echo -e "<details><summary>kube apply</summary>\n\n\`\`\`json \n$(cat ./manifests/k8s-to-apply.yml)\n \`\`\`\n </details>\n\n" >> $GITHUB_STEP_SUMMARY
