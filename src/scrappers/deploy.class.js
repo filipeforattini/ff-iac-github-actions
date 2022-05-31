@@ -35,6 +35,7 @@ module.exports = class Deploy extends Scrapper {
       configs: {},
       secrets: {}, 
       namespaces: {}, 
+      dependencies: {}
     })
 
     this
