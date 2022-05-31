@@ -628,9 +628,9 @@ jobs:
         if: steps.deploy_setup.outputs.has_dependencies == 'true'
         run: |
           ytt \
-            -f ./.pipeline/deploy/as-k8s/resources.schema.yml \
-            -f ./.pipeline/deploy/as-k8s/resources.yml \
-            -f ./manifests/resources.yml \
+            -f ./.pipeline/deploy/as-k8s/dependencies.schema.yml \
+            -f ./.pipeline/deploy/as-k8s/dependencies.yml \
+            -f ./manifests/dependencies.yml \
             --data-value postgres.helm.auth.database=${{steps.deploy_setup.outputs.deploy_repository}} \
             --data-value postgres.helm.auth.username=${{steps.deploy_setup.outputs.deploy_repository}} \
               > ./manifests/k8s-dependencies.yml
