@@ -603,7 +603,7 @@ jobs:
           echo "::set-output name=deploy_as_chart::$(echo $PIPELINE_SETUP | jq -r '.deploy.deployAsChart')"
           echo "::set-output name=has_dev_secrets::$(echo $PIPELINE_SETUP | jq -r '.deploy.secrets.dev')"
           echo "::set-output name=has_dev_configs::$(echo $PIPELINE_SETUP | jq -r '.deploy.configs.dev')"
-          echo "::set-output name=has_dependencies::$(echo $PIPELINE_SETUP | jq -r '.deploy.hasDependencies')"
+          echo "::set-output name=has_dev_dependencies::$(echo $PIPELINE_SETUP | jq -r '.deploy.dependencies.dev')"
           echo "::set-output name=deploy_ecosystem::$(echo $PIPELINE_SETUP | jq -r '.deploy.ecosystem')"
           echo "::set-output name=deploy_organization::$(echo $PIPELINE_SETUP | jq -r '.deploy.organization')"
           echo "::set-output name=deploy_container_registry::$(echo $PIPELINE_SETUP | jq -r '.deploy.containerRegistry')"
@@ -629,7 +629,7 @@ jobs:
 
       # dependencies
       - name: Dependencies | Resources render
-        if: steps.deploy_setup.outputs.has_dependencies == 'true'
+        if: steps.deploy_setup.outputs.has_dev_dependencies == 'true'
         run: |
           ytt \
             -f ./.pipeline/deploy/as-k8s/dependencies.schema.yml \
@@ -654,7 +654,7 @@ jobs:
           fi
           
       - name: Dependencies | Postgres
-        if: steps.deploy_setup.outputs.has_dependencies == 'true'
+        if: steps.deploy_setup.outputs.has_dev_dependencies == 'true'
         continue-on-error: true
         run: |
           echo "#info   :: start"
@@ -679,7 +679,7 @@ jobs:
           fi
 
       - name: Dependencies | Mysql
-        if: steps.deploy_setup.outputs.has_dependencies == 'true'
+        if: steps.deploy_setup.outputs.has_dev_dependencies == 'true'
         continue-on-error: true
         run: |
           if [ $(cat ./manifests/k8s-dependencies.yml | yq -P '.mysql.enabled') = true ]; then
