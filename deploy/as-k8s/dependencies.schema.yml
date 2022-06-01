@@ -7,24 +7,27 @@ mysql:
 
   helm:
     architecture: standalone
-    metrics:
-      enabled: false
-      #@schema/type any=True
-      extraEnvVars: []
+    auth:
+      database:	svc
+      existingSecret: svc-mysql
+      username:	svc
     image:
       debug: false
       pullPolicy: IfNotPresent
       tag: 8.0.29-debian-10-r23
-    auth:
-      database:	svc
-      username:	svc
-      existingSecret: svc-mysql
+    metrics:
+      enabled: false
+      #@schema/type any=True
+      extraEnvVars: []
     primary:
+      #@schema/type any=True
+      extraEnvVars: []
       persistence:
         enabled: true
         size: 4Gi
-      #@schema/type any=True
-      extraEnvVars: []
+      resources:
+        limits: {}
+        requests: {}
 
 #! POSTGRES
 postgres:
@@ -33,21 +36,53 @@ postgres:
 
   helm:
     architecture: standalone
-    metrics:
-      enabled: false
-      #@schema/type any=True
-      extraEnvVars: []
+    auth:
+      database:	svc
+      existingSecret: svc-postgres
+      username:	svc
     image:
       debug: false
       pullPolicy: IfNotPresent
       tag: 14.1.0-debian-10-r80
-    auth:
-      database:	svc
-      username:	svc
-      existingSecret: svc-postgres
+    metrics:
+      enabled: false
+      #@schema/type any=True
+      extraEnvVars: []
     primary:
+      #@schema/type any=True
+      extraEnvVars: []
       persistence:
         enabled: true
         size: 4Gi
-      #@schema/type any=True
-      extraEnvVars: []
+      resources:
+        limits: {}
+        requests: {}
+
+#! RABBITMQ
+rabbitmq:
+  enabled: false
+  version: 10.1.1
+
+  helm:
+    auth:
+      username:	svc
+      existingSecret: svc-rabbitmq
+    clustering:
+      enabled: false
+    #@schema/type any=True
+    extraEnvVars: []
+    image:
+      debug: false
+      pullPolicy: IfNotPresent
+      tag: 3.10.2-debian-10-r7
+    ingress:
+      enabled: false
+    metrics:
+      enabled: false
+    persistence:
+      enabled: true
+      storageClass: ""
+      size: 4Gi
+    resources:
+      limits: {}
+      requests: {}

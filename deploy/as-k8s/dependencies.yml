@@ -2,13 +2,17 @@
 #@ load("@ytt:json", "json")
 #@ load("@ytt:base64", "base64")
 #@ load("@ytt:sha256", "sha256")
+
 ---
 #@ dependencies = []
 #@ if data.values.mysql.enabled:
-#@ dependencies.extend(["mysql"])
+#@  dependencies.extend(["mysql"])
 #@ end
 #@ if data.values.postgres.enabled:
-#@ dependencies.extend(["postgres"])
+#@  dependencies.extend(["postgres"])
+#@ end
+#@ if data.values.rabbitmq.enabled:
+#@  dependencies.extend(["rabbitmq"])
 #@ end
 dependencies: #@ ",".join(dependencies)
 
@@ -25,3 +29,10 @@ postgres:
   config: #@ base64.encode(json.encode(data.values.postgres))
   version: #@ data.values.postgres.version
   helm: #@ data.values.postgres.helm
+
+rabbitmq:
+  enabled: #@ data.values.rabbitmq.enabled
+  hash: #@ sha256.sum(json.encode(data.values.rabbitmq))
+  config: #@ base64.encode(json.encode(data.values.rabbitmq))
+  version: #@ data.values.rabbitmq.version
+  helm: #@ data.values.rabbitmq.helm

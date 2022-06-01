@@ -25,9 +25,9 @@ apiVersion: v1
 kind: Namespace
 metadata:
   #@ if data.values.pipelineControl.environmentsAsNamespaces:
-  #@ namespace = "{}-{}".format(data.values.repository, data.values.environment)
+  #@  namespace = "{}-{}".format(data.values.repository, data.values.environment)
   #@ else:
-  #@ namespace = data.values.repository
+  #@  namespace = data.values.repository
   #@ end
   name: #@ namespace
 
@@ -40,7 +40,7 @@ metadata:
   #@ namespaceAnnotations.update(data.values.namespace.annotations)
   #@ namespaceAnnotations.update(globalAnnotations)
   #@ if data.values.features.enableLinkerd:
-  #@ namespaceAnnotations.update({ "linkerd.io/inject": "enabled" })
+  #@  namespaceAnnotations.update({ "linkerd.io/inject": "enabled" })
   #@ end
   annotations: #@ namespaceAnnotations
 

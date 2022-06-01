@@ -13,3 +13,9 @@ postgres:
     primary:
       persistence:
         size: 1Gi	
+
+rabbitmq:
+  enabled: true  
+  helm:
+    persistence:
+      size: 1Gi

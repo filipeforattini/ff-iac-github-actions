@@ -657,16 +657,25 @@ jobs:
         if: steps.deploy_setup.outputs.has_dependencies == 'true'
         continue-on-error: true
         run: |
+          echo "#info   :: start"
           if [ $(cat ./manifests/k8s-dependencies.yml | yq -P '.postgres.enabled') = true ]; then
             POSTGRES_PASSWORD=$(openssl rand -hex 16)
             kubectl get secret -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc-postgres 2> /dev/null
             if [ $? -gt 0 ]; then
+              echo "#info   :: secret does not exists!"
+              echo "#info   :: creating secret..."
               kubectl create secret generic -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc-postgres --from-literal="hash=$(cat ./manifests/k8s-dependencies.yml | yq -P '.postgres.hash')" --from-literal="password=$POSTGRES_PASSWORD" --from-literal="postgres-password=$(openssl rand -hex 16)" --from-literal="replication-password=$(openssl rand -hex 16)" --from-literal="connection-string=postgres://${{steps.deploy_setup.outputs.deploy_repository}}:$POSTGRES_PASSWORD@svc-postgres-postgresql:5432/${{steps.deploy_setup.outputs.deploy_repository}}"
               kubectl create secret generic -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc-postgres-${deploy_version} --from-literal="hash=$(cat ./manifests/k8s-dependencies.yml | yq -P '.postgres.hash')" --from-literal="password=$POSTGRES_PASSWORD" --from-literal="postgres-password=$(openssl rand -hex 16)" --from-literal="replication-password=$(openssl rand -hex 16)" --from-literal="connection-string=postgres://${{steps.deploy_setup.outputs.deploy_repository}}:$POSTGRES_PASSWORD@svc-postgres-postgresql:5432/${{steps.deploy_setup.outputs.deploy_repository}}"
+              echo "#info   :: secret created."
+              echo "#info   :: helm version:"
               cat ./manifests/k8s-dependencies.yml | yq -P '.postgres.helm' | helm install -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc-postgres bitnami/postgresql --version $(cat ./manifests/k8s-dependencies.yml | yq -P '.postgres.version') --values -
+            else
+              echo "#info   :: secret exists"
             fi
           else 
+            echo "#info   :: helm deleting..."
             helm delete -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc-postgres 2> /dev/null
+            echo "#info   :: helm deleted."
           fi
 
       - name: Dependencies | Mysql
