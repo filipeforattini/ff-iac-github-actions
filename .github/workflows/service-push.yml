@@ -634,7 +634,7 @@ jobs:
           ytt \
             -f ./.pipeline/deploy/as-k8s/dependencies.schema.yml \
             -f ./.pipeline/deploy/as-k8s/dependencies.yml \
-            -f ./manifests/dependencies.yml \
+            -f ./manifests/dependencies/dev.yml \
             --data-value postgres.helm.auth.database=${{steps.deploy_setup.outputs.deploy_repository}} \
             --data-value postgres.helm.auth.username=${{steps.deploy_setup.outputs.deploy_repository}} \
               > ./manifests/k8s-dependencies.yml
@@ -770,9 +770,9 @@ jobs:
       - name: Docs | K8s summary
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
         run: | 
-          SECRETS_LIST=$([[ -f ./manifests/k8s-secrets-keys.txt ]] && cat ./manifests/k8s-secrets-keys.txt || echo '')
-          CONFIGS_LIST=$([[ -f ./manifests/k8s-configs-keys.txt ]] && cat ./manifests/k8s-configs-keys.txt || echo '')
-          DEPENDENCIES_LIST=$(([[ -f ./manifests/k8s-dependencies.yml ]] && cat ./manifests/k8s-dependencies.yml || echo '') | yq -P '.dependencies')
+          CONFIGS_LIST=$(if test -f ./manifests/k8s-configs-keys.txt; then cat ./manifests/k8s-configs-keys.txt; else echo ''; fi)
+          SECRETS_LIST=$(if test -f ./manifests/k8s-secrets-keys.txt; then cat ./manifests/k8s-secrets-keys.txt; else echo ''; fi)
+          DEPENDENCIES_LIST=$(if test -f ./manifests/k8s-dependencies.yml; then cat ./manifests/k8s-dependencies.yml; else echo ''; fi)
           echo -e "### k8s\n\n" >> $GITHUB_STEP_SUMMARY
           echo -e "| param | value |" >> $GITHUB_STEP_SUMMARY
           echo -e "| --- | :---: |" >> $GITHUB_STEP_SUMMARY
