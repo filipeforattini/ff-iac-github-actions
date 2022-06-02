@@ -42,16 +42,16 @@ module.exports = class Deploy extends Scrapper {
         containerRegistry,
       })
       .add('deploy', {
-        podName,
+        configs,
+        containerRegistry,
+        dependencies,
+        deployAsChart,
+        deployAsK8s,
         ecosystem,
         namespace: repository,
         namespaces,
+        podName,
         secrets,
-        configs,
-        deployAsK8s,
-        dependencies,
-        deployAsChart,
-        containerRegistry,
       })
   }
 }

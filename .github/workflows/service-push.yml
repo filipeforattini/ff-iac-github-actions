@@ -747,9 +747,9 @@ jobs:
       - name: K8s generates final yml
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
         run: |
-          SECRETS_LIST=$([[ -f ./manifests/k8s-secrets-keys.txt ]] && cat ./manifests/k8s-secrets-keys.txt || echo '')
-          CONFIGS_LIST=$([[ -f ./manifests/k8s-configs-keys.txt ]] && cat ./manifests/k8s-configs-keys.txt || echo '')
-          DEPENDENCIES_LIST=$(([[ -f ./manifests/k8s-dependencies.yml ]] && cat ./manifests/k8s-dependencies.yml || echo '') | yq -P '.dependencies')
+          CONFIGS_LIST=$(if test -f ./manifests/k8s-configs-keys.txt; then cat ./manifests/k8s-configs-keys.txt; else echo ''; fi)
+          SECRETS_LIST=$(if test -f ./manifests/k8s-secrets-keys.txt; then cat ./manifests/k8s-secrets-keys.txt; else echo ''; fi)
+          DEPENDENCIES_LIST=$(if test -f ./manifests/k8s-dependencies.yml; then cat ./manifests/k8s-dependencies.yml; else echo ''; fi)
           ytt \
             -f ./.pipeline/deploy/as-k8s/service.schema.yml \
             -f ./.pipeline/deploy/as-k8s/service.yml \
