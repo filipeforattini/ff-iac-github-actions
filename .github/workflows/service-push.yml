@@ -749,10 +749,7 @@ jobs:
         run: |
           CONFIGS_LIST=$(if test -f ./manifests/k8s-configs-keys.txt; then cat ./manifests/k8s-configs-keys.txt; else echo ''; fi)
           SECRETS_LIST=$(if test -f ./manifests/k8s-secrets-keys.txt; then cat ./manifests/k8s-secrets-keys.txt; else echo ''; fi)
-          DEPENDENCIES_LIST=$(if test -f ./manifests/k8s-dependencies.yml; then cat ./manifests/k8s-dependencies.yml; else echo ''; fi)
-          echo -e "> $CONFIGS_LIST"
-          echo -e "> $SECRETS_LIST"
-          echo -e "> $DEPENDENCIES_LIST"
+          DEPENDENCIES_LIST=$(if test -f ./manifests/k8s-dependencies.yml; then cat ./manifests/k8s-dependencies.yml; else echo ''; fi) | yq -P '.dependencies'
           ytt \
             -f ./.pipeline/deploy/as-k8s/service.schema.yml \
             -f ./.pipeline/deploy/as-k8s/service.yml \
