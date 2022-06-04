@@ -772,7 +772,7 @@ jobs:
         run: | 
           CONFIGS_LIST=$(if test -f ./manifests/k8s-configs-keys.txt; then cat ./manifests/k8s-configs-keys.txt; else echo ''; fi)
           SECRETS_LIST=$(if test -f ./manifests/k8s-secrets-keys.txt; then cat ./manifests/k8s-secrets-keys.txt; else echo ''; fi)
-          DEPENDENCIES_LIST=$(if test -f ./manifests/k8s-dependencies.yml; then cat ./manifests/k8s-dependencies.yml; else echo ''; fi)
+          DEPENDENCIES_LIST=$(if test -f ./manifests/k8s-dependencies.yml; then cat ./manifests/k8s-dependencies.yml; else echo ''; fi) | yq -P '.dependencies'
           echo -e "### k8s\n\n" >> $GITHUB_STEP_SUMMARY
           echo -e "| param | value |" >> $GITHUB_STEP_SUMMARY
           echo -e "| --- | :---: |" >> $GITHUB_STEP_SUMMARY
