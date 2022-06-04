@@ -62,7 +62,7 @@ ingress:
   name: svc
   type: alb
   domain:
-    enable: false
+    enable: true
     name: acme.io
 
   alb:

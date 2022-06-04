@@ -222,7 +222,7 @@ spec:
             port:
               number: #@ data.values.deployment.port
     #@ if data.values.ingress.domain.enable:
-    host: #@ "{}.{}.{}".format(data.values.repository, data.values.environment, data.values.ingress.domain)
+    host: #@ "{}.{}.{}".format(data.values.repository, data.values.environment, data.values.ingress.domain.name)
     #@ end
     
 #@ end
