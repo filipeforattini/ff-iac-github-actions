@@ -1,0 +1,12 @@
+#@ load("steps/clone.lib.yml", clone="render")
+---
+#@ def renderSetup():
+inputs:
+  a: 1
+  b: 2
+job:
+  #@ steps = []
+  #@ x = clone()
+  #@ steps.extend(x[0])
+  test: #@ steps
+#@ end

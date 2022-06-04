@@ -191,10 +191,6 @@ metadata:
   namespace: #@ namespace
   annotations:
 
-    #@ if data.values.ingress.type == "nginx":
-    kubernetes.io/ingress.class: nginx
-    #@ end
-
     #@ if data.values.ingress.type == "alb":
     kubernetes.io/ingress.class: alb
     alb.ingress.kubernetes.io/ssl-redirect: "443"

@@ -1,0 +1,15 @@
+#@ load("@ytt:data", "data")
+#@ load("@ytt:json", "json")
+#@ load("@ytt:base64", "base64")
+#@ load("@ytt:sha256", "sha256")
+#@ load("@ytt:library", "library")
+
+#@ load("jobs/setup.lib.yml", setup="renderSetup")
+---
+name: service-push
+
+on:
+  workflow_call:
+    #@ inputs = {}
+    inputs: #@ setup()
+jobs:

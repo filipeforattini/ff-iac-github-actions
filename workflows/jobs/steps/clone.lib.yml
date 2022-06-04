@@ -1,0 +1,15 @@
+---
+#@ def render():
+inputs: {}
+
+steps:
+  - name: Setup | Cloning repository
+    uses: actions/checkout@v3
+
+  - name: Setup | Cloning tools
+    uses: actions/checkout@v3
+    with:
+      ref: main
+      path: .pipeline
+      repository: filipeforattini/ff-iac-github-actions
+#@ end
