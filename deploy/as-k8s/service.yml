@@ -177,7 +177,7 @@ spec:
 
   #@ servicePorts = []
   #@ servicePorts.extend(data.values.service.ports)
-  #@ servicePorts.extend([{ "name": "http", "port": 443, "protocol": "TCP", "targetPort": data.values.deployment.port }])
+  #@ servicePorts.extend([{ "name": "https", "port": 443, "protocol": "TCP", "targetPort": data.values.deployment.port }])
   ports: #@ servicePorts
 #@ end
 
