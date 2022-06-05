@@ -60,6 +60,7 @@ ingress:
   domain:
     enable: true
     name: acme.io
+    email: security@acme.io
 
   alb:
     certificateArn: secret

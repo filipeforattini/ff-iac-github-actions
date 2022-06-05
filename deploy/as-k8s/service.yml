@@ -181,8 +181,25 @@ spec:
   ports: #@ servicePorts
 #@ end
 
----
 #@ if data.values.ingress.enable:
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: letsencrypt
+  namespace: #@ namespace
+spec:
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: #@ data.values.ingress.domain.email
+    privateKeySecretRef:
+      name: letsencrypt
+    solvers:
+      - http01:
+          ingress:
+            class: nginx
+
+---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -209,7 +226,7 @@ spec:
 
   #@ if data.values.ingress.domain.enable:
   tls:
-    - secretName: #@ data.values.repository + "-" + data.values.deployment.name
+    - secretName: #@ "cert-" + data.values.repository
       hosts:
       - #@ "{}.{}.{}".format(data.values.repository, data.values.environment, data.values.ingress.domain.name)
   #@ end
