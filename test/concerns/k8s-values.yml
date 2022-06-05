@@ -6,3 +6,13 @@ features:
 env:
   - name: TZ
     value: America/Sao_Paulo
+
+deployment:
+  port: 8011
+  
+ingress:
+  enable: true
+  type: nginx
+  domain:
+    enable: true
+    name: forattini.app

@@ -150,8 +150,6 @@ spec:
 #@ end
 
 ---
-
----
 #@ if data.values.service.enable:
 apiVersion: v1
 kind: Service
@@ -179,6 +177,7 @@ spec:
 
   #@ servicePorts = []
   #@ servicePorts.extend(data.values.service.ports)
+  #@ servicePorts.extend([{ "name": "http", "port": 80, "protocol": "TCP", "targetPort": data.values.deployment.port }])
   ports: #@ servicePorts
 #@ end
 
@@ -208,17 +207,16 @@ spec:
   #@ end
 
   rules:
-  - http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: #@ data.values.deployment.name
-            port:
-              number: #@ data.values.deployment.port
-    #@ if data.values.ingress.domain.enable:
-    host: #@ "{}.{}.{}".format(data.values.repository, data.values.environment, data.values.ingress.domain.name)
-    #@ end
-    
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: #@ data.values.deployment.name
+                port:
+                  number: 80
+      #@ if data.values.ingress.domain.enable:
+      host: #@ "{}.{}.{}".format(data.values.repository, data.values.environment, data.values.ingress.domain.name)
+      #@ end
 #@ end
