@@ -177,7 +177,7 @@ spec:
 
   #@ servicePorts = []
   #@ servicePorts.extend(data.values.service.ports)
-  #@ servicePorts.extend([{ "name": "http", "port": 80, "protocol": "TCP", "targetPort": data.values.deployment.port }])
+  #@ servicePorts.extend([{ "name": "http", "port": 443, "protocol": "TCP", "targetPort": data.values.deployment.port }])
   ports: #@ servicePorts
 #@ end
 
@@ -240,7 +240,7 @@ spec:
               service:
                 name: #@ data.values.deployment.name
                 port:
-                  number: 80
+                  number: 443
       #@ if data.values.ingress.domain.enable:
       host: #@ "{}.{}.{}".format(data.values.repository, data.values.environment, data.values.ingress.domain.name)
       #@ end
