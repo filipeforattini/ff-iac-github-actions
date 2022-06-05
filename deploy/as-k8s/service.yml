@@ -189,6 +189,7 @@ metadata:
   name: #@ data.values.ingress.name
   namespace: #@ namespace
   annotations:
+    cert-manager.io/issuer: "letsencrypt"
 
     #@ if data.values.ingress.type == "alb":
     kubernetes.io/ingress.class: alb
@@ -204,6 +205,13 @@ metadata:
 spec:
   #@ if data.values.ingress.type == "nginx":
   ingressClassName: nginx
+  #@ end
+
+  #@ if data.values.ingress.domain.enable:
+  tls:
+    - secretName: #@ data.values.repository + "-" + data.values.deployment.name
+      hosts:
+      - #@ "{}.{}.{}".format(data.values.repository, data.values.environment, data.values.ingress.domain.name)
   #@ end
 
   rules:
