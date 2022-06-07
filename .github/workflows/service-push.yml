@@ -363,8 +363,8 @@ jobs:
               defaultBranch: "${{ inputs.mainBranch }}",
               files: [ 
                 'package.json',
-                'dist/**/*.{js,css,py}',
-              ]
+                'dist/**/*.{js,css}',
+              ],
               npmPlugin: true,
             })
 
@@ -450,7 +450,7 @@ jobs:
             return require('./.pipeline/src/steps/generate-releaserc')({
               defaultBranch: "${{ inputs.mainBranch }}",
               files: [ 
-                'dist/**/*.{js,css,py}',
+                'dist/**/*.{py}',
               ]
             })
 
