@@ -12,21 +12,6 @@ on:
   workflow_call:
 
     inputs:
-      debug:
-        type: boolean
-        required: false
-        default: false
-        description: "Enable debug mode"
-      mainBranch:
-        type: string
-        required: false
-        default: master
-        description: "Main repository branch may interfere with versioning"
-      platforms:
-        type: string
-        required: false
-        default: "linux/386,linux/amd64,linux/arm/v7,linux/arm/v8,linux/arm64,linux/ppc64le,linux/s390x"
-        description: "Multi plataform container builds"
       ecosystem:
         type: string
         required: false
@@ -41,16 +26,6 @@ on:
         required: false
         default: false
         description: "Separate environments as namespaces"
-      staticAnalysis:
-        type: boolean
-        required: false
-        default: false
-        description: "Enable static analysis scans"
-      autoVersioning:
-        type: boolean
-        required: false
-        default: true
-        description: "Enable auto versioning with semantic versioning"
 
     outputs:
       PipelineConfig: 
