@@ -51,6 +51,14 @@ on:
         required: false
         default: true
         description: "Enable auto versioning with semantic versioning"
+      nodeMatrix:
+        type: string
+        required: false
+        default: "[14, 16, 17]"
+      pythonMatrix:
+        type: string
+        required: false
+        default: "[2.7, 3.6, 3.8, 3.10]"
 
     outputs:
       PipelineConfig: 
@@ -214,7 +222,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [ 14, 17 ]
+        node-version: ${{ fromJSON(inputs.nodeMatrix) }}
     
     steps:
 
@@ -291,7 +299,7 @@ jobs:
 
     strategy:
       matrix:
-        python-version: [3.8, 3.9]
+        python-version: ${{ fromJSON(inputs.pythonMatrix) }}
     
     steps:
 
@@ -501,7 +509,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [ 14, 17 ]
+        node-version: ${{ fromJSON(inputs.nodeMatrix) }}
 
     steps:
 
@@ -663,7 +671,7 @@ jobs:
 
     strategy:
       matrix:
-        python-version: [ 3.8 ]
+        python-version: ${{ fromJSON(inputs.pythonMatrix) }}
 
     steps:
 
