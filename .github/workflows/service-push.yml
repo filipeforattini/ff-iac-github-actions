@@ -368,12 +368,8 @@ jobs:
               npmPlugin: true,
             })
 
-      - name: Debug | Print .releaserc.json
-        if: inputs.autoVersioning == true && inputs.debug == true
-        run: cat .releaserc.json
-
       - name: Docs | releaserc.json
-        if: steps.node_setup.outputs.has_dockerfile == 'false'
+        if: inputs.autoVersioning == true && steps.node_setup.outputs.has_releaserc == 'false'
         run: |
           echo "releaserc.json: \`${{ steps.releaserc-creation.outcome }}\`" >> $GITHUB_STEP_SUMMARY
           echo -e "<details><summary>releaserc.json</summary>\n\n\`\`\`json \n$(cat ./releaserc.json)\n \`\`\`\n </details>\n\n" >> $GITHUB_STEP_SUMMARY
@@ -459,7 +455,7 @@ jobs:
             })
 
       - name: Docs | releaserc.json
-        if: steps.node_setup.outputs.has_dockerfile == 'false'
+        if: inputs.autoVersioning == true && steps.node_setup.outputs.has_releaserc == 'false'
         run: |
           echo "releaserc.json: \`${{ steps.releaserc-creation.outcome }}\`" >> $GITHUB_STEP_SUMMARY
           echo -e "<details><summary>releaserc.json</summary>\n\n\`\`\`json \n$(cat ./releaserc.json)\n \`\`\`\n </details>\n\n" >> $GITHUB_STEP_SUMMARY
