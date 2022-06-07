@@ -4,6 +4,8 @@ const Scrapper = require('./scrapper.class')
 
 module.exports = class Nodejs extends Scrapper {
   setup () {
+    const { version } = require('package.json')
+
     const hasYarnLock = fs.existsSync(path.join(process.cwd(), 'yarn.lock'))
     const hasPackageLock = fs.existsSync(path.join(process.cwd(), 'package-lock.json'))
 
@@ -28,6 +30,7 @@ module.exports = class Nodejs extends Scrapper {
 
     this
       .add('code', {
+        version,
         cacheKey,
         dependencyCommand,
       })
@@ -42,6 +45,9 @@ module.exports = class Nodejs extends Scrapper {
         entrypoint: JSON.stringify(entrypoint),
         command: JSON.stringify(command),
         dependencyCommand: JSON.stringify(dockerDependency),
+      })
+      .add('nodejs', {
+        version,
       })
   }
 }

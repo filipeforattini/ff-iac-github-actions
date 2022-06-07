@@ -2,10 +2,10 @@ const Scrapper = require('./scrapper.class')
 
 module.exports = class Python extends Scrapper {
   setup () {
-    const entrypoint = '[ "python" ]'
-    const command = '[ "app.py" ]'
+    const entrypoint = [ "python" ]
+    const command = [ "app.py" ]
     const dockerignore = ['']
-    const dependencyCommand = 'pip install -r requirements.txt'
+    const dependencyCommand = ['pip install -r requirements.txt']
 
     this
       .add('code', {
@@ -19,6 +19,9 @@ module.exports = class Python extends Scrapper {
         command,
         dockerignore,
         dependencyCommand,
+      })
+      .add('python', {
+        version: '0.0.1',
       })
   }
 }

@@ -1,0 +1,366 @@
+name: deploy-k8s
+
+concurrency:
+  group: ${{github.workflow}}
+  cancel-in-progress: true
+
+#--------------------------------------------------#
+#                     Triggers                     # 
+#--------------------------------------------------#
+on:
+
+  workflow_call:
+
+    inputs:
+      debug:
+        type: boolean
+        required: false
+        default: false
+        description: "Enable debug mode"
+      mainBranch:
+        type: string
+        required: false
+        default: master
+        description: "Main repository branch may interfere with versioning"
+      platforms:
+        type: string
+        required: false
+        default: "linux/386,linux/amd64,linux/arm/v7,linux/arm/v8,linux/arm64,linux/ppc64le,linux/s390x"
+        description: "Multi plataform container builds"
+      ecosystem:
+        type: string
+        required: false
+        description: "Special prefix that will be added to the image name"
+      containerRegistry:
+        type: string
+        required: false
+        default: ghcr.io
+        description: "Container registry to upload container images"
+      environmentsAsNamespaces:
+        type: boolean
+        required: false
+        default: false
+        description: "Separate environments as namespaces"
+      staticAnalysis:
+        type: boolean
+        required: false
+        default: false
+        description: "Enable static analysis scans"
+      autoVersioning:
+        type: boolean
+        required: false
+        default: true
+        description: "Enable auto versioning with semantic versioning"
+
+    outputs:
+      PipelineConfig: 
+        description: "Used pipeline config"
+        value: ${{ jobs.Setup.outputs.PipelineConfig }}
+
+
+#--------------------------------------------------#
+#                  Workflow Jobs                   # 
+#--------------------------------------------------#
+jobs:
+
+  #--------------------------------------------------#
+  #                    Setup Jobs                    # 
+  #--------------------------------------------------#
+  Setup:
+    runs-on: ubuntu-latest
+
+    outputs:
+      PipelineConfig: ${{ steps.script_setup.outputs.result }}
+      BuildNode: ${{ steps.define_builders.outputs.build_node }}
+      BuildPython: ${{ steps.define_builders.outputs.build_python }}
+
+    steps:
+
+      # pre-job
+      - name: Setup | Cloning repository
+        uses: actions/checkout@v3
+
+      - name: Setup | Cloning tools
+        uses: actions/checkout@v3
+        with:
+          ref: main
+          path: .pipeline
+          repository: filipeforattini/ff-iac-github-actions
+
+      # job
+      - name: Config | Pipeline config scrapper
+        uses: actions/github-script@v6
+        id: script_setup
+        with:
+          result-encoding: string
+          script: |
+            return require('./.pipeline/src/steps/config-scrapper')({ 
+              context, 
+              inputs: {
+                containerRegistry: "${{ inputs.containerRegistry }}",
+              },
+            })
+
+      - name: Config | Define pipeline paths
+        env:
+          PIPELINE_SETUP: ${{ steps.script_setup.outputs.result}}
+        id: define_builders
+        run: |
+          echo "::set-output name=build_node::$(echo $PIPELINE_SETUP | jq -r '.code.isNode')"
+          echo "::set-output name=build_python::$(echo $PIPELINE_SETUP | jq -r '.code.isPython')"
+
+      - name: Debug | Show pipeline config
+        if: inputs.debug == true
+        env:
+          PIPELINE_SETUP: ${{ steps.script_setup.outputs.result}}
+        run: echo $PIPELINE_SETUP
+
+      - name: Docs | Configs summary
+        env:
+          PIPELINE_SETUP: ${{ steps.script_setup.outputs.result}}
+        run: | 
+          echo -e "### $(echo $PIPELINE_SETUP | jq -r '.deploy.podName') pipeline\n\n" >> $GITHUB_STEP_SUMMARY
+          echo -e "<details><summary>Config</summary>\n\n\`\`\`json \n$(echo $PIPELINE_SETUP | jq '.')\n \`\`\`\n </details>\n\n" >> $GITHUB_STEP_SUMMARY
+          echo -e "---\n\n" >> $GITHUB_STEP_SUMMARY
+          echo -e "Build started at: $(echo $PIPELINE_SETUP | jq -r '.run.startedAt')\n\n" >> $GITHUB_STEP_SUMMARY
+
+
+  #--------------------------------------------------#
+  #                      Deploy                      # 
+  #--------------------------------------------------#
+  Deploy:
+    environment: dev
+    runs-on: ubuntu-latest
+
+    needs:
+      - Setup
+      - Release-Node
+
+    steps:
+
+      # pre-job
+      - name: Setup | Cloning repository
+        uses: actions/checkout@v3
+
+      - name: Setup | Cloning tools
+        uses: actions/checkout@v3
+        with:
+          ref: main
+          path: .pipeline
+          repository: filipeforattini/ff-iac-github-actions
+
+      - name: Install | Kubectl
+        uses: azure/setup-kubectl@v2.0
+      
+      - name: Install | Helm
+        uses: azure/setup-helm@v1
+        
+      - name: Install | YTT
+        uses: vmware-tanzu/carvel-setup-action@v1
+        with:
+          only: ytt
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install | YQ
+        run: sudo snap install yq
+
+      - name: Install | QEMU
+        uses: docker/setup-qemu-action@v1
+
+      - name: Install | Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Config | Load setup configs
+        env:
+          ENVIRONMENTS_AS_NAMESPACES: ${{ inputs.environmentsAsNamespaces }}
+          PIPELINE_SETUP: ${{ needs.Setup.outputs.PipelineConfig }}
+        id: deploy_setup
+        run: |
+          echo "::set-output name=version::$(echo $PIPELINE_SETUP | jq -r '.deploy.version')"
+          echo "::set-output name=deploy_as_k8s::$(echo $PIPELINE_SETUP | jq -r '.deploy.deployAsK8s')"
+          echo "::set-output name=deploy_as_chart::$(echo $PIPELINE_SETUP | jq -r '.deploy.deployAsChart')"
+          echo "::set-output name=has_dev_secrets::$(echo $PIPELINE_SETUP | jq -r '.deploy.secrets.dev')"
+          echo "::set-output name=has_dev_configs::$(echo $PIPELINE_SETUP | jq -r '.deploy.configs.dev')"
+          echo "::set-output name=has_dev_dependencies::$(echo $PIPELINE_SETUP | jq -r '.deploy.dependencies.dev')"
+          echo "::set-output name=deploy_ecosystem::$(echo $PIPELINE_SETUP | jq -r '.deploy.ecosystem')"
+          echo "::set-output name=deploy_organization::$(echo $PIPELINE_SETUP | jq -r '.deploy.organization')"
+          echo "::set-output name=deploy_container_registry::$(echo $PIPELINE_SETUP | jq -r '.deploy.containerRegistry')"
+          echo "::set-output name=deploy_repository::$(echo $PIPELINE_SETUP | jq -r '.deploy.repository')"
+          echo "::set-output name=deploy_tag::$(echo $PIPELINE_SETUP | jq -r '.deploy.commitTag')"
+          echo "::set-output name=run_started_at::$(echo $PIPELINE_SETUP | jq -r '.run.startedAt')"
+          case $ENVIRONMENTS_AS_NAMESPACES in
+            "true")  echo "::set-output name=deploy_namespace::$(echo $PIPELINE_SETUP | jq -r '.deploy.namespaces.dev')";;
+            "false") echo "::set-output name=deploy_namespace::$(echo $PIPELINE_SETUP | jq -r '.deploy.namespace')";;
+            *)     echo "::set-output name=deploy_namespace::$(echo $PIPELINE_SETUP | jq -r '.deploy.namespace')";;
+          esac
+
+      - name: Config | Kubectl config file
+        env:
+          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+        run: |
+          mkdir -p ~/.kube
+          echo "$KUBE_CONFIG" | base64 -d > ~/.kube/config
+
+      # deploy
+      - name: K8s create namespace
+        run: kubectl create namespace ${{steps.deploy_setup.outputs.deploy_namespace}} --dry-run=client --validate=false --output=yaml | kubectl apply -f -
+
+      # dependencies
+      - name: Dependencies | Resources render
+        if: steps.deploy_setup.outputs.has_dev_dependencies == 'true'
+        run: |
+          ytt \
+            -f ./.pipeline/deploy/as-k8s/dependencies.schema.yml \
+            -f ./.pipeline/deploy/as-k8s/dependencies.yml \
+            -f ./manifests/dependencies/dev.yml \
+            --data-value postgres.helm.auth.database=${{steps.deploy_setup.outputs.deploy_repository}} \
+            --data-value postgres.helm.auth.username=${{steps.deploy_setup.outputs.deploy_repository}} \
+              > ./manifests/k8s-dependencies.yml
+
+      - name: Docs | Dependencies
+        if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
+        run: | 
+          echo -e "### Dependencies\n\n" >> $GITHUB_STEP_SUMMARY
+          echo -e "<details><summary>dependencies</summary>\n\n\`\`\`yml \n$(cat ./manifests/k8s-dependencies.yml)\n \`\`\`\n </details>\n\n" >> $GITHUB_STEP_SUMMARY
+          echo -e "| name | chart version | app version |" >> $GITHUB_STEP_SUMMARY
+          echo -e "| --- | :---: | :---: |" >> $GITHUB_STEP_SUMMARY
+          if [ $(cat ./manifests/k8s-dependencies.yml | yq -P '.postgres.enabled') = true ]; then
+            echo -e "| postgres | $(cat ./manifests/k8s-dependencies.yml | yq -P '.postgres.version') | $(cat ./manifests/k8s-dependencies.yml | yq -P '.postgres.helm.image.tag') |" >> $GITHUB_STEP_SUMMARY
+          fi
+          if [ $(cat ./manifests/k8s-dependencies.yml | yq -P '.mysql.enabled') = true ]; then
+            echo -e "| mysql | $(cat ./manifests/k8s-dependencies.yml | yq -P '.mysql.version') | $(cat ./manifests/k8s-dependencies.yml | yq -P '.mysql.helm.image.tag') |\n" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+      - name: Dependencies | Postgres
+        if: steps.deploy_setup.outputs.has_dev_dependencies == 'true'
+        continue-on-error: true
+        run: |
+          echo "#info   :: start"
+          if [ $(cat ./manifests/k8s-dependencies.yml | yq -P '.postgres.enabled') = true ]; then
+            POSTGRES_PASSWORD=$(openssl rand -hex 16)
+            kubectl get secret -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc-postgres 2> /dev/null
+            if [ $? -gt 0 ]; then
+              echo "#info   :: secret does not exists!"
+              echo "#info   :: creating secret..."
+              kubectl create secret generic -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc-postgres --from-literal="hash=$(cat ./manifests/k8s-dependencies.yml | yq -P '.postgres.hash')" --from-literal="password=$POSTGRES_PASSWORD" --from-literal="postgres-password=$(openssl rand -hex 16)" --from-literal="replication-password=$(openssl rand -hex 16)" --from-literal="connection-string=postgres://${{steps.deploy_setup.outputs.deploy_repository}}:$POSTGRES_PASSWORD@svc-postgres-postgresql:5432/${{steps.deploy_setup.outputs.deploy_repository}}"
+              kubectl create secret generic -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc-postgres-${deploy_version} --from-literal="hash=$(cat ./manifests/k8s-dependencies.yml | yq -P '.postgres.hash')" --from-literal="password=$POSTGRES_PASSWORD" --from-literal="postgres-password=$(openssl rand -hex 16)" --from-literal="replication-password=$(openssl rand -hex 16)" --from-literal="connection-string=postgres://${{steps.deploy_setup.outputs.deploy_repository}}:$POSTGRES_PASSWORD@svc-postgres-postgresql:5432/${{steps.deploy_setup.outputs.deploy_repository}}"
+              echo "#info   :: secret created."
+              echo "#info   :: helm version:"
+              cat ./manifests/k8s-dependencies.yml | yq -P '.postgres.helm' | helm install -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc-postgres bitnami/postgresql --version $(cat ./manifests/k8s-dependencies.yml | yq -P '.postgres.version') --values -
+            else
+              echo "#info   :: secret exists"
+            fi
+          else 
+            echo "#info   :: helm deleting..."
+            helm delete -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc-postgres 2> /dev/null
+            echo "#info   :: helm deleted."
+          fi
+
+      - name: Dependencies | Mysql
+        if: steps.deploy_setup.outputs.has_dev_dependencies == 'true'
+        continue-on-error: true
+        run: |
+          if [ $(cat ./manifests/k8s-dependencies.yml | yq -P '.mysql.enabled') = true ]; then
+            MYSQL_PASSWORD=$(openssl rand -hex 16)
+            kubectl get secret -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc-mysql
+            if [ $? -gt 0 ]; then
+              kubectl create secret generic -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc-mysql --from-literal="hash=$(cat ./manifests/k8s-dependencies.yml | yq -P '.mysql.hash')" --from-literal="password=$MYSQL_PASSWORD" --from-literal="mysql-password=$(openssl rand -hex 16)" --from-literal="replication-password=$(openssl rand -hex 16)" --from-literal="connection-string=mysql://${{steps.deploy_setup.outputs.deploy_repository}}:$MYSQL_PASSWORD@svc-mysql-mysqlql:3306/${{steps.deploy_setup.outputs.deploy_repository}}"
+              cat ./manifests/k8s-dependencies.yml | yq -P '.mysql.helm' | helm upgrade --install -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc-postgres bitnami/mysql --values -
+            fi
+          fi
+
+      # configs
+      - name: K8s create config-map
+        if: steps.deploy_setup.outputs.has_dev_configs == 'true'
+        run: |
+          kubectl create configmap -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc --from-env-file=./manifests/configs/dev.env --dry-run=client --validate=false --output=yaml | kubectl apply -f -
+          kubectl create configmap -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc-${{steps.deploy_setup.outputs.version}} --from-env-file=./manifests/configs/dev.env --dry-run=client --validate=false --output=yaml | kubectl apply -f -
+          kubectl get configmap -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc -o jsonpath='{.data}' | jq -r 'keys[]' |  tr '\n' '~' | sed 's/~/,/g;s/,$//' > ./manifests/k8s-configs-keys.txt
+
+      - name: Debug | Configs keys injected
+        if: inputs.debug == true && steps.deploy_setup.outputs.has_dev_configs == 'true'
+        run: echo -e "k8s-configs-keys.txt:\n\n$(cat ./manifests/k8s-configs-keys.txt)"
+
+      # secrets
+      - name: Decrypt DEV secrets
+        if: steps.deploy_setup.outputs.has_dev_secrets == 'true'
+        run: |
+          gpg \
+            --yes --batch --quiet --decrypt \
+            --passphrase="${{ secrets.GPG_PASSPHRASE }}" \
+            --output ./manifests/k8s-secrets.env \
+            ./manifests/secrets/dev.gpg
+
+      - name: K8s create secrets
+        if: steps.deploy_setup.outputs.has_dev_secrets == 'true'
+        run: |
+          kubectl create secret generic -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc --from-env-file=./manifests/k8s-secrets.env --dry-run=client --validate=false --output=yaml | kubectl apply -f -
+          kubectl create secret generic -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc-${{steps.deploy_setup.outputs.version}} --from-env-file=./manifests/k8s-secrets.env --dry-run=client --validate=false --output=yaml | kubectl apply -f -
+          kubectl get secret -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc -o jsonpath='{.data}' | jq -r 'keys[]' |  tr '\n' '~' | sed 's/~/,/g;s/,$//' > ./manifests/k8s-secrets-keys.txt
+
+      - name: Debug | Secret keys injected
+        if: inputs.debug == true && steps.deploy_setup.outputs.has_dev_secrets == 'true'
+        run: echo -e "k8s-secrets-keys.txt:\n\n$(cat ./manifests/k8s-secrets-keys.txt)"
+
+      # secrets for registry auth
+      - name: Config | Login to Container Registry
+        uses: docker/login-action@v2
+        with:
+          logout: false
+          registry: ${{ inputs.containerRegistry }}
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+
+      - name: Config | Gives runner access to docker config file 
+        if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
+        run: |
+          sudo chown $(whoami):docker /home/$(whoami)/.docker/config.json
+          cp /home/$(whoami)/.docker/config.json ./manifests/docker-config.json
+
+      - name: K8s create registry-token secret
+        if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
+        run: kubectl create secret generic -n ${{steps.deploy_setup.outputs.deploy_namespace}} registry-token --type=kubernetes.io/dockerconfigjson --from-file=.dockerconfigjson=./manifests/docker-config.json --dry-run=client --validate=false --output=yaml | kubectl apply -f -
+
+      # generate k8s manifests
+      - name: K8s generates final yml
+        if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
+        run: |
+          CONFIGS_LIST=$(if test -f ./manifests/k8s-configs-keys.txt; then cat ./manifests/k8s-configs-keys.txt; else echo ''; fi)
+          SECRETS_LIST=$(if test -f ./manifests/k8s-secrets-keys.txt; then cat ./manifests/k8s-secrets-keys.txt; else echo ''; fi)
+          DEPENDENCIES_LIST=$(if test -f ./manifests/k8s-dependencies.yml; then cat ./manifests/k8s-dependencies.yml; else echo ''; fi) | yq -P '.dependencies'
+          ytt \
+            -f ./.pipeline/deploy/as-k8s/service.schema.yml \
+            -f ./.pipeline/deploy/as-k8s/service.yml \
+            -f ./manifests/k8s-values.yml \
+            --data-value ecosystem=${{steps.deploy_setup.outputs.deploy_ecosystem}} \
+            --data-value organization=${{steps.deploy_setup.outputs.deploy_organization}} \
+            --data-value repository=${{steps.deploy_setup.outputs.deploy_repository}} \
+            --data-value containerRegistry=${{steps.deploy_setup.outputs.deploy_container_registry}} \
+            --data-value tag=${{steps.deploy_setup.outputs.deploy_tag}} \
+            --data-value-yaml deployment.imagePullSecrets=true \
+            --data-value-yaml envFromSecrets="[$SECRETS_LIST]" \
+            --data-value-yaml envFromConfigMaps="[$CONFIGS_LIST]" \
+            --data-value-yaml envFromDependencies="[$DEPENDENCIES_LIST]" \
+            --data-value pipelineControl.datetime=${{steps.deploy_setup.outputs.run_started_at}} \
+            --data-value-yaml pipelineControl.environmentsAsNamespaces=${{inputs.environmentsAsNamespaces}} \
+              > ./manifests/k8s-to-apply.yml
+
+      - name: Docs | K8s summary
+        if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
+        run: | 
+          CONFIGS_LIST=$(if test -f ./manifests/k8s-configs-keys.txt; then cat ./manifests/k8s-configs-keys.txt; else echo ''; fi)
+          SECRETS_LIST=$(if test -f ./manifests/k8s-secrets-keys.txt; then cat ./manifests/k8s-secrets-keys.txt; else echo ''; fi)
+          DEPENDENCIES_LIST=$(if test -f ./manifests/k8s-dependencies.yml; then cat ./manifests/k8s-dependencies.yml; else echo ''; fi) | yq -P '.dependencies'
+          echo -e "### k8s\n\n" >> $GITHUB_STEP_SUMMARY
+          echo -e "| param | value |" >> $GITHUB_STEP_SUMMARY
+          echo -e "| --- | :---: |" >> $GITHUB_STEP_SUMMARY
+          echo -e "| secrets | $SECRETS_LIST |" >> $GITHUB_STEP_SUMMARY
+          echo -e "| configs | $CONFIGS_LIST |" >> $GITHUB_STEP_SUMMARY
+          echo -e "| dependencies | $DEPENDENCIES_LIST |" >> $GITHUB_STEP_SUMMARY
+          echo -e "<details><summary>kubefile</summary>\n\n\`\`\`yml \n$(cat ./manifests/k8s-to-apply.yml)\n \`\`\`\n </details>\n\n" >> $GITHUB_STEP_SUMMARY
+
+      - name: K8s apply yml
+        if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
+        run: |
+          kubectl apply -f ./manifests/k8s-to-apply.yml
+          kubectl get pods -n ${{steps.deploy_setup.outputs.deploy_namespace}}
