@@ -150,7 +150,7 @@ jobs:
           repository: filipeforattini/ff-iac-github-actions
 
       - name: Install | Kubectl
-        uses: azure/setup-kubectl@v2.0
+        uses: azure/setup-kubectl@v2.1
       
       - name: Install | Helm
         uses: azure/setup-helm@v1
