@@ -14,13 +14,12 @@ module.exports = function ({
     "@semantic-release/changelog",
   ]);
 
-  if (npmPlugin)
-    plugins = plugins.concat([
-      "@semantic-release/npm",
-      {
-        npmPublish: false,
-      },
-    ]);
+  if (npmPlugin) plugins = plugins.concat([[
+    "@semantic-release/npm",
+    {
+      npmPublish: false,
+    },
+  ]]);
 
   plugins = plugins.concat([
     [
