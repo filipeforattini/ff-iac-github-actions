@@ -5,7 +5,7 @@ module.exports = class Python extends Scrapper {
     const entrypoint = [ "python" ]
     const command = [ "app.py" ]
     const dockerignore = ['']
-    const dependencyCommand = ['pip install -r requirements.txt']
+    const dependencyCommand = ['pip install --no-cache-dir -r requirements.txt']
     const dockerDependency = [ dependencyCommand ]
     
     this

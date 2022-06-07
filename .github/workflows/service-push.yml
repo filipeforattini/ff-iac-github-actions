@@ -599,7 +599,7 @@ jobs:
       - name: Docs | Lint result
         run: | 
           echo "Hadolint: \`${{ steps.hadolint.outcome }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "\`\`\`$HADOLINT_RESULTS\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`\n $HADOLINT_RESULTS \n \`\`\`" >> $GITHUB_STEP_SUMMARY
 
       - name: Build image test
         if: inputs.staticAnalysis == true
@@ -761,7 +761,7 @@ jobs:
       - name: Docs | Lint result
         run: | 
           echo "Hadolint: \`${{ steps.hadolint.outcome }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "\`\`\`$HADOLINT_RESULTS\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`\n $HADOLINT_RESULTS \n \`\`\`" >> $GITHUB_STEP_SUMMARY
 
       - name: Build image test
         if: inputs.staticAnalysis == true
