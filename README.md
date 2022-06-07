@@ -6,8 +6,6 @@ This is a personal work in progress. Anyway, suggestions are welcome! :)
 
 These workflows are highly opinionated **auto-helm** upgrade or **k8s-apply** pipelines.
 
----
-
 ## Introduction
 
 ### Features
