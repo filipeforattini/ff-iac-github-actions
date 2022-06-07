@@ -1,18 +1,17 @@
 const fs = require("fs");
 const path = require("path");
 
-module.exports = function ({
-  defaultBranch = "master",
-  files = [],
-  npmPlugin = false,
-}) {
+module.exports = function ({ defaultBranch = "master", files = [], npmPlugin = false }) {
   let plugins = [];
+  console.log({plugins})
 
   plugins = plugins.concat([
     "@semantic-release/commit-analyzer",
     "@semantic-release/release-notes-generator",
     "@semantic-release/changelog",
   ]);
+  
+  console.log({plugins})
 
   if (npmPlugin) plugins = plugins.concat([[
     "@semantic-release/npm",
@@ -21,6 +20,7 @@ module.exports = function ({
     },
   ]]);
 
+  console.log({plugins})
   plugins = plugins.concat([
     [
       "@semantic-release/git",
@@ -37,6 +37,8 @@ module.exports = function ({
       },
     ],
   ]);
+
+  console.log({plugins})
 
   let releaseFile = {
     defaultBranch,
