@@ -517,7 +517,7 @@ jobs:
           repository: filipeforattini/ff-iac-github-actions
 
       - name: Install | QEMU
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v1
 
       - name: Install | Docker Buildx
         id: buildx
@@ -599,11 +599,11 @@ jobs:
       - name: Docs | Lint result
         run: | 
           echo "Hadolint: \`${{ steps.hadolint.outcome }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "\`\`\`\n $HADOLINT_RESULTS \n \`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`txt \n $HADOLINT_RESULTS \n \`\`\`" >> $GITHUB_STEP_SUMMARY
 
       - name: Build image test
         if: inputs.staticAnalysis == true
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v2
         with:
           context: .
           cache-from: type=gha
@@ -635,7 +635,7 @@ jobs:
             ${{ runner.os }}-multi-buildx
 
       - name: Build and push
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v2
         with:
           context: .
           push: true
@@ -679,7 +679,7 @@ jobs:
           repository: filipeforattini/ff-iac-github-actions
 
       - name: Install | QEMU
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v1
 
       - name: Install | Docker Buildx
         id: buildx
@@ -761,11 +761,11 @@ jobs:
       - name: Docs | Lint result
         run: | 
           echo "Hadolint: \`${{ steps.hadolint.outcome }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "\`\`\`\n $HADOLINT_RESULTS \n \`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`txt \n $HADOLINT_RESULTS \n \`\`\`" >> $GITHUB_STEP_SUMMARY
 
       - name: Build image test
         if: inputs.staticAnalysis == true
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v2
         with:
           context: .
           cache-from: type=gha
@@ -797,13 +797,13 @@ jobs:
             ${{ runner.os }}-multi-buildx
 
       - name: Build and push
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v2
         with:
           context: .
           push: true
           platforms: ${{ inputs.platforms }}
           builder: ${{ steps.buildx.outputs.name }}
-          tags: ${{steps.node_setup.outputs.docker_image_tags}}, ${{steps.node_setup.outputs.docker_image_fullname}}:${{needs.Release-Python.outputs.Version}}
+          tags: ${{steps.node_setup.outputs.docker_image_tags}}, ${{steps.node_setup.outputs.docker_image_fullname}}:${{needs.Release-Node.outputs.Version}}
           labels: "organization: ${{github.repository_owner}}, repository: ${{github.repository}}, branch: ${{needs.Setup.outputs.Branch}}, commit: ${{needs.Setup.outputs.ShaHash}}, date: ${{needs.Setup.outputs.Date}}, timestamp: ${{needs.Setup.outputs.Timestamp}}"
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,mode=max,dest=/tmp/.buildx-cache-new
