@@ -201,21 +201,21 @@ jobs:
 
       # load caches
       - name: Load cache from yarn.lock
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         if: steps.node_setup.outputs.cache_key == 'yarn.lock'
         with:
           path: '**/node_modules'
           key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
 
       - name: Load cache from package-lock.json
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         if: steps.node_setup.outputs.cache_key == 'package-lock.json'
         with:
           path: '**/node_modules'
           key: ${{ runner.os }}-modules-${{ hashFiles('**/package-lock.json') }}
 
       - name: Load cache from package.json
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         if: steps.node_setup.outputs.cache_key == 'package-lock.json'
         with:
           path: '**/node_modules'
