@@ -3,15 +3,12 @@ const path = require("path");
 
 module.exports = function ({ defaultBranch = "master", files = [], npmPlugin = false }) {
   let plugins = [];
-  console.log({plugins})
 
   plugins = plugins.concat([
     "@semantic-release/commit-analyzer",
     "@semantic-release/release-notes-generator",
     "@semantic-release/changelog",
   ]);
-  
-  console.log({plugins})
 
   if (npmPlugin) plugins = plugins.concat([[
     "@semantic-release/npm",
@@ -20,7 +17,6 @@ module.exports = function ({ defaultBranch = "master", files = [], npmPlugin = f
     },
   ]]);
 
-  console.log({plugins})
   plugins = plugins.concat([
     [
       "@semantic-release/git",
@@ -33,12 +29,10 @@ module.exports = function ({ defaultBranch = "master", files = [], npmPlugin = f
     [
       "@semantic-release/github",
       {
-        assets: ["dist/**/*.{js,css,py}", ...files],
+        assets: [...files],
       },
     ],
   ]);
-
-  console.log({plugins})
 
   let releaseFile = {
     defaultBranch,
@@ -65,8 +59,6 @@ module.exports = function ({ defaultBranch = "master", files = [], npmPlugin = f
   };
 
   releaseFile = JSON.stringify(releaseFile, null, 2);
-
-  console.log(releaseFile)
 
   fs.writeFileSync(path.join(process.cwd(), ".releaserc.json"), releaseFile);
 

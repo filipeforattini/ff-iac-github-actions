@@ -433,9 +433,6 @@ jobs:
       - name: Install | Dependency managers
         run: npm -g install yarn npm
 
-      - name: Install | Dependencies
-        run: sudo apt update && sudo apt-get install coreutils sed && sudo apt upgrade
-
       - name: Config | Load setup configs
         env:
           PIPELINE_SETUP: ${{ needs.Setup.outputs.PipelineConfig }}
@@ -466,6 +463,7 @@ jobs:
       - name: Current Version
         run: |
           CURRENT_VERSION=$(git for-each-ref --sort=authordate --format '%(refname)' refs/tags | tail -n 1 | sed -n -e 's/^.*refs\/tags\/v//p')
+          echo "current version = $CURRENT_VERSION"
           echo "::set-output name=current_version::$CURRENT_VERSION"
 
       - name: Semantic Release
@@ -487,8 +485,9 @@ jobs:
       - name: Next Version
         id: versioning
         run: |
-          CURRENT_VERSION=$(git for-each-ref --sort=authordate --format '%(refname)' refs/tags | tail -n 1 | sed -n -e 's/^.*refs\/tags\/v//p')
-          echo "::set-output name=version::$CURRENT_VERSION"
+          NEXT_VERSION=$(git for-each-ref --sort=authordate --format '%(refname)' refs/tags | tail -n 1 | sed -n -e 's/^.*refs\/tags\/v//p')
+          echo "next version = $NEXT_VERSION"
+          echo "::set-output name=version::$NEXT_VERSION"
 
 
   #--------------------------------------------------#

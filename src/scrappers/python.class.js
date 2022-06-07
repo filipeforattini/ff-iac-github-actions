@@ -6,7 +6,8 @@ module.exports = class Python extends Scrapper {
     const command = [ "app.py" ]
     const dockerignore = ['']
     const dependencyCommand = ['pip install -r requirements.txt']
-
+    const dockerDependency = [ dependencyCommand ]
+    
     this
       .add('code', {
         dependencyCommand,
@@ -15,10 +16,10 @@ module.exports = class Python extends Scrapper {
         dependencyCommand,
       })
       .add('dockerfile', {
-        entrypoint,
-        command,
         dockerignore,
-        dependencyCommand,
+        entrypoint: JSON.stringify(entrypoint),
+        command: JSON.stringify(command),
+        dependencyCommand: JSON.stringify(dockerDependency),
       })
       .add('python', {
         version: '0.0.1',
