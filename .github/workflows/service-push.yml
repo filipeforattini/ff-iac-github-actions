@@ -434,7 +434,7 @@ jobs:
         run: npm -g install yarn npm
 
       - name: Install | Dependencies
-        run: apt-get install tail sed 
+        run: sudo apt-get install tail sed 
 
       - name: Config | Load setup configs
         env:
