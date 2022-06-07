@@ -594,7 +594,7 @@ jobs:
 
       - name: Build image test
         if: inputs.staticAnalysis == true
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v3
         with:
           context: .
           cache-from: type=gha
@@ -626,7 +626,7 @@ jobs:
             ${{ runner.os }}-multi-buildx
 
       - name: Build and push
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v3
         with:
           context: .
           push: true
@@ -756,7 +756,7 @@ jobs:
 
       - name: Build image test
         if: inputs.staticAnalysis == true
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v3
         with:
           context: .
           cache-from: type=gha
@@ -788,7 +788,7 @@ jobs:
             ${{ runner.os }}-multi-buildx
 
       - name: Build and push
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v3
         with:
           context: .
           push: true
