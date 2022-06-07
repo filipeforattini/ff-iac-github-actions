@@ -364,6 +364,7 @@ jobs:
                 'package.json',
                 'dist/**/*.{js,css,py}',
               ]
+              npmPlugin: true,
             })
 
       - name: Debug | Print .releaserc.json
@@ -450,7 +451,6 @@ jobs:
             return require('./.pipeline/src/steps/generate-releaserc')({
               defaultBranch: "${{ inputs.mainBranch }}",
               files: [ 
-                'package.json',
                 'dist/**/*.{js,css,py}',
               ]
             })

@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 
-module.exports = function ({ defaultBranch = "master", files = [] }) {
+module.exports = function ({ defaultBranch = "master", files = [], npmPlugin = false }) {
   let releaseFile = {
     defaultBranch,
     branches: [
@@ -27,12 +27,12 @@ module.exports = function ({ defaultBranch = "master", files = [] }) {
       "@semantic-release/commit-analyzer",
       "@semantic-release/release-notes-generator",
       "@semantic-release/changelog",
-      [
+      npmPlugin ? [
         "@semantic-release/npm",
         {
           npmPublish: false,
         },
-      ],
+      ] : [],
       [
         "@semantic-release/git",
         {
