@@ -88,6 +88,7 @@ spec:
     #@ deploymentMatchLabels.update({ "pipe/selector": data.values.repository + "." + data.values.deployment.name })
     matchLabels: #@ deploymentMatchLabels
     #@ end
+  
   template:
     metadata:
       #@ deploymentTemplateLabels = {}
@@ -178,7 +179,7 @@ spec:
   #@ servicePorts = []
   #@ servicePorts.extend(data.values.service.ports)
   #@ servicePorts.extend([
-  #@   { "name": "http", "protocol": "TCP", "port": data.values.deployment.port, "targetPort": data.values.deployment.port }
+  #@   { "name": "http", "protocol": "TCP", "port": data.values.port, "targetPort": data.values.port }
   #@ ])
   ports: #@ servicePorts
 #@ end
@@ -237,7 +238,7 @@ spec:
     service:
       name: #@ data.values.deployment.name
       port:
-        number: #@ data.values.deployment.port
+        number: #@ data.values.port
   
   rules:
     - http:
@@ -248,7 +249,7 @@ spec:
               service:
                 name: #@ data.values.deployment.name
                 port:
-                  number: #@ data.values.deployment.port
+                  number: #@ data.values.port
       #@ if data.values.ingress.domain.enable:
       host: #@ "{}.{}.{}".format(data.values.repository, data.values.environment, data.values.ingress.domain.name)
       #@ end

@@ -19,3 +19,10 @@ rabbitmq:
   helm:
     persistence:
       size: 1Gi
+
+elasticsearch:
+  enabled: true  
+  helm:
+    master:
+      persistence:
+        size: 1Gi

@@ -1,5 +1,7 @@
 #@data/values
 ---
+port: 8011
+
 features:
   enableLinkerd: true
 
@@ -7,9 +9,6 @@ env:
   - name: TZ
     value: America/Sao_Paulo
 
-deployment:
-  port: 8011
-  
 ingress:
   enable: true
   type: nginx
