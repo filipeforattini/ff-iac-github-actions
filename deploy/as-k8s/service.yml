@@ -177,7 +177,9 @@ spec:
 
   #@ servicePorts = []
   #@ servicePorts.extend(data.values.service.ports)
-  #@ servicePorts.extend([{ "name": "https", "port": data.values.deployment.port, "protocol": "TCP", "targetPort": data.values.deployment.port }])
+  #@ servicePorts.extend([
+  #@   { "name": "http", "protocol": "TCP", "port": data.values.deployment.port, "targetPort": data.values.deployment.port }
+  #@ ])
   ports: #@ servicePorts
 #@ end
 
@@ -231,6 +233,12 @@ spec:
       - #@ "{}.{}.{}".format(data.values.repository, data.values.environment, data.values.ingress.domain.name)
   #@ end
 
+  defaultBackend:
+    service:
+      name: #@ data.values.deployment.name
+      port:
+        number: #@ data.values.deployment.port
+  
   rules:
     - http:
         paths:

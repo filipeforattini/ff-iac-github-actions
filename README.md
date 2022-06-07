@@ -22,6 +22,14 @@ These workflows are highly opinionated **auto-helm** upgrade or **k8s-apply** pi
     - [Trivy](https://github.com/aquasecurity/trivy) for repository and image
     - Open Source Static Analysis Runner
 
+Checkout the test repositories:
+
+| Language | Repository |
+| :---: | :---: |
+| JavaScript | https://github.com/filipeforattini/ff-svc-nodejs |
+| Python | https://github.com/filipeforattini/ff-svc-python |
+
+
 ### Repository Patterns
 
 This pipeline assumes you have just `4` types of repositories:

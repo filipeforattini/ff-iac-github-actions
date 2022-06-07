@@ -1,2 +1,3 @@
 test/tmp/*
 !test/tmp/.gitkeep
+.vscode
