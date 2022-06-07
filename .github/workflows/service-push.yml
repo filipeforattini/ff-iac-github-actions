@@ -355,6 +355,7 @@ jobs:
       - name: Config | Create .releaserc.json
         uses: actions/github-script@v6
         if: inputs.autoVersioning == true && steps.node_setup.outputs.has_releaserc == 'false'
+        id: releaserc-creation
         with:
           result-encoding: string
           script: |
@@ -370,6 +371,12 @@ jobs:
       - name: Debug | Print .releaserc.json
         if: inputs.autoVersioning == true && inputs.debug == true
         run: cat .releaserc.json
+
+      - name: Docs | releaserc.json
+        if: steps.node_setup.outputs.has_dockerfile == 'false'
+        run: |
+          echo "releaserc.json: \`${{ steps.releaserc-creation.outcome }}\`" >> $GITHUB_STEP_SUMMARY
+          echo -e "<details><summary>releaserc.json</summary>\n\n\`\`\`json \n$(cat ./releaserc.json)\n \`\`\`\n </details>\n\n" >> $GITHUB_STEP_SUMMARY
 
       - name: Semantic Release
         if: inputs.autoVersioning == true
@@ -439,6 +446,7 @@ jobs:
       # release
       - name: Config | Create .releaserc.json
         uses: actions/github-script@v6
+        id: releaserc-creation
         if: inputs.autoVersioning == true && steps.node_setup.outputs.has_releaserc == 'false'
         with:
           result-encoding: string
@@ -450,9 +458,11 @@ jobs:
               ]
             })
 
-      - name: Debug | Print .releaserc.json
-        if: inputs.autoVersioning == true && inputs.debug == true
-        run: cat .releaserc.json
+      - name: Docs | releaserc.json
+        if: steps.node_setup.outputs.has_dockerfile == 'false'
+        run: |
+          echo "releaserc.json: \`${{ steps.releaserc-creation.outcome }}\`" >> $GITHUB_STEP_SUMMARY
+          echo -e "<details><summary>releaserc.json</summary>\n\n\`\`\`json \n$(cat ./releaserc.json)\n \`\`\`\n </details>\n\n" >> $GITHUB_STEP_SUMMARY
 
       - name: Semantic Release
         if: inputs.autoVersioning == true
