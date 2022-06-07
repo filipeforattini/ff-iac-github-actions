@@ -64,6 +64,8 @@ module.exports = function ({
 
   releaseFile = JSON.stringify(releaseFile, null, 2);
 
+  console.log(releaseFile)
+
   fs.writeFileSync(path.join(process.cwd(), ".releaserc.json"), releaseFile);
 
   return releaseFile;
