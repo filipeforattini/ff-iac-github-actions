@@ -86,3 +86,28 @@ rabbitmq:
     resources:
       limits: {}
       requests: {}
+
+#! ELASTICSEARCH
+elasticsearch:
+  enabled: false
+  version: 18.2.9
+
+  helm:
+    #@schema/type any=True
+    extraEnvVars: []
+    image:
+      debug: false
+      pullPolicy: IfNotPresent
+      tag: 8.2.2-debian-10-r0
+    ingress:
+      enabled: false
+    metrics:
+      enabled: false
+    master:
+      persistence:
+        enabled: true
+        storageClass: ""
+        size: 4Gi
+      resources:
+        limits: {}
+        requests: {}

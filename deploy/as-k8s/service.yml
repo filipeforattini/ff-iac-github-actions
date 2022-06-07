@@ -230,7 +230,7 @@ spec:
   tls:
     - secretName: #@ "cert-" + data.values.repository
       hosts:
-      - #@ "{}.{}.{}".format(data.values.repository, data.values.environment, data.values.ingress.domain.name)
+       - #@ "{}.{}.{}".format(data.values.repository, data.values.environment, data.values.ingress.domain.name)
   #@ end
 
   defaultBackend:

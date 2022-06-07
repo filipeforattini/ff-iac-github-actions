@@ -36,3 +36,10 @@ rabbitmq:
   config: #@ base64.encode(json.encode(data.values.rabbitmq))
   version: #@ data.values.rabbitmq.version
   helm: #@ data.values.rabbitmq.helm
+
+elasticsearch:
+  enabled: #@ data.values.elasticsearch.enabled
+  hash: #@ sha256.sum(json.encode(data.values.elasticsearch))
+  config: #@ base64.encode(json.encode(data.values.elasticsearch))
+  version: #@ data.values.elasticsearch.version
+  helm: #@ data.values.elasticsearch.helm
