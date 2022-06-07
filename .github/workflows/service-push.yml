@@ -12,11 +12,6 @@ on:
   workflow_call:
 
     inputs:
-      debug:
-        type: boolean
-        required: false
-        default: false
-        description: "Enable debug mode"
       mainBranch:
         type: string
         required: false
@@ -116,12 +111,6 @@ jobs:
         run: |
           echo "::set-output name=build_node::$(echo $PIPELINE_SETUP | jq -r '.code.isNode')"
           echo "::set-output name=build_python::$(echo $PIPELINE_SETUP | jq -r '.code.isPython')"
-
-      - name: Debug | Show pipeline config
-        if: inputs.debug == true
-        env:
-          PIPELINE_SETUP: ${{ steps.script_setup.outputs.result}}
-        run: echo $PIPELINE_SETUP
 
       - name: Docs | Configs summary
         env:
