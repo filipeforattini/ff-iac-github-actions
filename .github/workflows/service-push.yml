@@ -433,6 +433,9 @@ jobs:
       - name: Install | Dependency managers
         run: npm -g install yarn npm
 
+      - name: Install | Dependencies
+        run: apt-get install tail sed 
+
       - name: Config | Load setup configs
         env:
           PIPELINE_SETUP: ${{ needs.Setup.outputs.PipelineConfig }}
