@@ -422,11 +422,6 @@ jobs:
           path: .pipeline
           repository: filipeforattini/ff-iac-github-actions
 
-      - name: Setup | Python 3.x
-        uses: actions/setup-python@v3
-        with:
-          python-version: 3.x
-
       - name: Install | Node.js 17
         uses: actions/setup-node@v3
         with:
@@ -654,7 +649,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [ 14, 17 ]
+        python-version: [ 3.8 ]
 
     steps:
 
@@ -715,15 +710,15 @@ jobs:
           result-encoding: string
           script: |
             return require('./.pipeline/src/steps/generate-dockerfile')({ 
-              image: 'node',
-              tag: '${{ matrix.node-version }}-alpine',
+              image: 'python',
+              tag: '${{ matrix.python-version }}-alpine',
               command: '${{ steps.node_setup.outputs.docker_command }}',
               entrypoint: '${{ steps.node_setup.outputs.docker_entrypoint }}',
               dependencyCommand: '${{ steps.node_setup.outputs.docker_dependency_command }}',
               labels: [ 
                 'archtecture=alpine', 
-                'node-version=${{ matrix.node-version }}', 
-                'version=${{ needs.Release-Node.outputs.Version }}', 
+                'python-version=${{ matrix.python-version }}', 
+                'version=${{ needs.Release-Python.outputs.Version }}', 
               ],
             })
 
@@ -761,14 +756,14 @@ jobs:
           context: .
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          outputs: type=docker,dest=./dockerimage-node-${{ matrix.node-version }}.tar
+          outputs: type=docker,dest=./dockerimage-python-${{ matrix.python-version }}.tar
 
       - name: Run Trivy scanner
         if: inputs.staticAnalysis == true
         uses: aquasecurity/trivy-action@master
         with:
           scan-type: image
-          input: ./dockerimage-node-${{ matrix.node-version }}.tar
+          input: ./dockerimage-python-${{ matrix.python-version }}.tar
           format: 'sarif'
           severity: 'CRITICAL,HIGH'
           output: 'trivy-results.sarif'
