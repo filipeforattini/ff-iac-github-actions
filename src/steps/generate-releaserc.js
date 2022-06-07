@@ -1,7 +1,44 @@
 const fs = require("fs");
 const path = require("path");
 
-module.exports = function ({ defaultBranch = "master", files = [], npmPlugin = false }) {
+module.exports = function ({
+  defaultBranch = "master",
+  files = [],
+  npmPlugin = false,
+}) {
+  let plugins = [];
+
+  plugins = plugins.concat([
+    "@semantic-release/commit-analyzer",
+    "@semantic-release/release-notes-generator",
+    "@semantic-release/changelog",
+  ]);
+
+  if (npmPlugin)
+    plugins = plugins.concat([
+      "@semantic-release/npm",
+      {
+        npmPublish: false,
+      },
+    ]);
+
+  plugins = plugins.concat([
+    [
+      "@semantic-release/git",
+      {
+        assets: ["docs", "README.md", "CHANGELOG.md", ...files],
+        message:
+          "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}",
+      },
+    ],
+    [
+      "@semantic-release/github",
+      {
+        assets: ["dist/**/*.{js,css,py}", ...files],
+      },
+    ],
+  ]);
+
   let releaseFile = {
     defaultBranch,
     branches: [
@@ -23,31 +60,7 @@ module.exports = function ({ defaultBranch = "master", files = [], npmPlugin = f
       "release/*",
       "feature/*",
     ],
-    plugins: [
-      "@semantic-release/commit-analyzer",
-      "@semantic-release/release-notes-generator",
-      "@semantic-release/changelog",
-      npmPlugin ? [
-        "@semantic-release/npm",
-        {
-          npmPublish: false,
-        },
-      ] : [],
-      [
-        "@semantic-release/git",
-        {
-          assets: ["docs", "README.md", "CHANGELOG.md", ...files],
-          message:
-            "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}",
-        },
-      ],
-      [
-        "@semantic-release/github",
-        {
-          assets: ["dist/**/*.{js,css,py}", ...files],
-        },
-      ],
-    ],
+    plugins,
   };
 
   releaseFile = JSON.stringify(releaseFile, null, 2);
