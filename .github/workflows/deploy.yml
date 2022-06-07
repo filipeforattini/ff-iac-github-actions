@@ -134,7 +134,6 @@ jobs:
 
     needs:
       - Setup
-      - Release-Node
 
     steps:
 
