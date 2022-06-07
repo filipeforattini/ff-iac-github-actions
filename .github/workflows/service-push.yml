@@ -465,7 +465,7 @@ jobs:
 
       - name: Current Version
         run: |
-          $CURRENT_VERSION=$(git for-each-ref --sort=authordate --format '%(refname)' refs/tags | tail -n 1 | sed -n -e 's/^.*refs\/tags\/v//p')
+          CURRENT_VERSION=$(git for-each-ref --sort=authordate --format '%(refname)' refs/tags | tail -n 1 | sed -n -e 's/^.*refs\/tags\/v//p')
           echo "::set-output name=current_version::$CURRENT_VERSION"
 
       - name: Semantic Release
@@ -487,7 +487,7 @@ jobs:
       - name: Next Version
         id: versioning
         run: |
-          $CURRENT_VERSION=$(git for-each-ref --sort=authordate --format '%(refname)' refs/tags | tail -n 1 | sed -n -e 's/^.*refs\/tags\/v//p')
+          CURRENT_VERSION=$(git for-each-ref --sort=authordate --format '%(refname)' refs/tags | tail -n 1 | sed -n -e 's/^.*refs\/tags\/v//p')
           echo "::set-output name=version::$CURRENT_VERSION"
 
 
