@@ -460,6 +460,11 @@ jobs:
           echo ".releaserc.json: \`${{ steps.releaserc-creation.outcome }}\`" >> $GITHUB_STEP_SUMMARY
           echo -e "<details><summary>.releaserc.json</summary>\n\n\`\`\`json \n$(cat ./.releaserc.json)\n \`\`\`\n </details>\n\n" >> $GITHUB_STEP_SUMMARY
 
+      - name: Current Version
+        run: |
+          $CURRENT_VERSION=$(git for-each-ref --sort=authordate --format '%(refname)' refs/tags | tail -n 1 | sed -n -e 's/^.*refs\/tags\/v//p')
+          echo "::set-output name=current_version::$CURRENT_VERSION"
+
       - name: Semantic Release
         if: inputs.autoVersioning == true
         env:
@@ -476,11 +481,12 @@ jobs:
           echo -e "\n\nINFO  semantic-release version = $(semantic-release -v)\n\n"
           semantic-release
 
-      - name: Current Version
+      - name: Next Version
         id: versioning
         run: |
-          echo "::set-output name=version::$(cat package.json | jq -r '.version')"
-          echo -e "\n\nINFO  current version = $(cat package.json | jq -r '.version')\n\n"
+          $CURRENT_VERSION=$(git for-each-ref --sort=authordate --format '%(refname)' refs/tags | tail -n 1 | sed -n -e 's/^.*refs\/tags\/v//p')
+          echo "::set-output name=version::$CURRENT_VERSION"
+
 
   #--------------------------------------------------#
   #                  Build: Node.js                  # 
