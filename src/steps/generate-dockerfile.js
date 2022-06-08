@@ -20,8 +20,6 @@ CMD {{command}}
 `;
 
 module.exports = function (params, writeFile = true) {
-  console.log({ params })
-
   let {
     image,
     tag,
@@ -54,8 +52,6 @@ module.exports = function (params, writeFile = true) {
     command: `["${[].concat(command).join('", "')}"]`,
   })
 
-  console.log(content)
-  
   if (writeFile) {
     fs.writeFileSync(path.join(process.cwd(), 'Dockerfile'), content)
   }

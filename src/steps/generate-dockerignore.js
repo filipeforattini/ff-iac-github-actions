@@ -24,8 +24,6 @@ module.exports = function (params, writeFile = true) {
     ].concat(pathsToIgnore).join('\n'),
   })
 
-  console.log(content)
-  
   if (writeFile) {
     fs.writeFileSync(path.join(process.cwd(), '.dockerignore'), content)
   }
