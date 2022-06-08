@@ -20,14 +20,6 @@ These workflows are highly opinionated **auto-helm** upgrade or **k8s-apply** pi
     - [Trivy](https://github.com/aquasecurity/trivy) for repository and image
     - Open Source Static Analysis Runner
 
-Checkout the test repositories:
-
-| Language | Repository | Status |
-| :---: | :---: | :---: |
-| JavaScript | https://github.com/filipeforattini/ff-svc-nodejs | ![](https://github.com/filipeforattini/ff-svc-nodejs/actions/workflows/push.yml/badge.svg) |
-| Python | https://github.com/filipeforattini/ff-svc-python | ![](https://github.com/filipeforattini/ff-svc-nodejs/actions/workflows/push.yml/badge.svg) |
-
-
 ### Repository Patterns
 
 This pipeline assumes you have just `4` types of repositories:
@@ -49,6 +41,13 @@ Examples:
 - `ff-app-budget`: application that organizes the company finances
 - `ff-mob-auth`: 2FA mobile application
 - `ff-iac-aws`: infra as code to manage the aws environment
+
+Checkout the test repositories:
+
+| Language | Repository | Status |
+| :---: | :---: | :---: |
+| JavaScript | https://github.com/filipeforattini/ff-svc-nodejs | ![](https://github.com/filipeforattini/ff-svc-nodejs/actions/workflows/push.yml/badge.svg) |
+| Python | https://github.com/filipeforattini/ff-svc-python | ![](https://github.com/filipeforattini/ff-svc-nodejs/actions/workflows/push.yml/badge.svg) |
 
 ### Environments
 
@@ -73,6 +72,8 @@ Examples:
 ├─ manifests
 │  ├─ configs
 │  │  └─ dev.env
+│  ├─ dependencies
+│  │  └─ dev.yml
 │  ├─ secrets
 │  │  └─ dev.gpg
 │  ├─ k8s-values.yml
