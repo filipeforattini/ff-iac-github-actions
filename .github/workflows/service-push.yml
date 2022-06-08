@@ -17,11 +17,6 @@ on:
         required: false
         default: master
         description: "Main repository branch may interfere with versioning"
-      platforms:
-        type: string
-        required: false
-        default: "linux/386,linux/amd64,linux/arm/v7,linux/arm/v8,linux/arm64,linux/ppc64le,linux/s390x"
-        description: "Multi plataform container builds"
       ecosystem:
         type: string
         required: false
@@ -54,6 +49,11 @@ on:
         type: string
         required: false
         default: '["2.7", "3.6", "3.8", "3.10"]'
+      platforms:
+        type: string
+        required: false
+        default: "linux/386,linux/amd64,linux/arm/v7,linux/arm/v8,linux/arm64,linux/ppc64le,linux/s390x"
+        description: "Multi plataform container builds"
 
     outputs:
       PipelineConfig: 
@@ -392,6 +392,7 @@ jobs:
         run: |
           echo "::set-output name=version::$(cat package.json | jq -r '.version')"
           echo -e "\n\nINFO  current version = $(cat package.json | jq -r '.version')\n\n"
+
 
   #--------------------------------------------------#
   #                 Release: Python                  # 

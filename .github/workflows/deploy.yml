@@ -317,7 +317,7 @@ jobs:
 
       - name: Docs | K8s summary
         if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
-        run: | 
+        run: |
           CONFIGS_LIST=$(if test -f ./manifests/k8s-configs-keys.txt; then cat ./manifests/k8s-configs-keys.txt; else echo ''; fi)
           SECRETS_LIST=$(if test -f ./manifests/k8s-secrets-keys.txt; then cat ./manifests/k8s-secrets-keys.txt; else echo ''; fi)
           DEPENDENCIES_LIST=$(if test -f ./manifests/k8s-dependencies.yml; then cat ./manifests/k8s-dependencies.yml; else echo ''; fi) | yq -P '.dependencies'
