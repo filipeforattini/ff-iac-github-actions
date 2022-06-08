@@ -3,4 +3,3 @@ repos:
     rev: v8.8.7
     hooks:
       - id: gitleaks
-        args: [--verbose]

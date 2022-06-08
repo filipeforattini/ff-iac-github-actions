@@ -134,7 +134,12 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Install | YQ
-        run: sudo snap install yq
+        env:
+          VERSION: v4.25.2
+          BINARY: yq_linux_amd64
+        run: |
+          wget https://github.com/mikefarah/yq/releases/download/${VERSION}/${BINARY}.tar.gz -O - | tar xz && sudo mv ${BINARY} /usr/bin/yq
+          yq --version
 
       - name: Install | QEMU
         uses: docker/setup-qemu-action@v2

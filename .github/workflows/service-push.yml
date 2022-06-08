@@ -578,6 +578,7 @@ jobs:
           echo "Dockerfile: \`${{ steps.dockerfile.outcome }}\`" >> $GITHUB_STEP_SUMMARY
           echo -e "<details><summary>dockerfile</summary>\n\n\`\`\`dockerfile \n$(cat ./Dockerfile)\n \`\`\`\n </details>\n\n" >> $GITHUB_STEP_SUMMARY
 
+      # login
       - name: Config | Login to Container Registry
         uses: docker/login-action@v2
         with:
