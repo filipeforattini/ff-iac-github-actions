@@ -110,6 +110,9 @@ jobs:
       # pre-job
       - name: Setup | Cloning repository
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          persist-credentials: false
 
       - name: Setup | Cloning tools
         uses: actions/checkout@v3
