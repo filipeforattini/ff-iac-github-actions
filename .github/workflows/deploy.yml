@@ -1,4 +1,4 @@
-name: deploy-k8s
+name: deploy
 
 concurrency:
   group: ${{github.workflow}}
@@ -12,10 +12,11 @@ on:
   workflow_call:
 
     inputs:
-      ecosystem:
+      environment:
         type: string
         required: false
-        description: "Special prefix that will be added to the image name"
+        default: "dev"
+        description: "Environment target"
       containerRegistry:
         type: string
         required: false
@@ -98,7 +99,7 @@ jobs:
   #                      Deploy                      # 
   #--------------------------------------------------#
   Deploy:
-    environment: dev
+    environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
 
     needs:
