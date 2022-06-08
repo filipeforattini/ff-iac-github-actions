@@ -21,8 +21,5 @@ module.exports = class Python extends Scrapper {
         command: JSON.stringify(command),
         dependencyCommand: JSON.stringify(dockerDependency),
       })
-      .add('python', {
-        version: '0.0.1',
-      })
   }
 }
