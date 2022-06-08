@@ -3,4 +3,4 @@ repos:
     rev: v7.6.1
     hooks:
       - id: gitleaks
-        args: ["--verbose"]
+        args: ["--verbose --repo-url ."]
