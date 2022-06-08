@@ -7,7 +7,7 @@ containerRegistry: ghcr.io
 repository: acm-svc-repository
 environment: dev
 tag: latest
-port: "8000"
+port: 3333
 
 #! features
 features:
