@@ -22,10 +22,10 @@ These workflows are highly opinionated **auto-helm** upgrade or **k8s-apply** pi
 
 Checkout the test repositories:
 
-| Language | Repository |
-| :---: | :---: |
-| JavaScript | https://github.com/filipeforattini/ff-svc-nodejs |
-| Python | https://github.com/filipeforattini/ff-svc-python |
+| Language | Repository | Status |
+| :---: | :---: | :---: |
+| JavaScript | https://github.com/filipeforattini/ff-svc-nodejs | ![](https://github.com/filipeforattini/ff-svc-nodejs/actions/workflows/push.yml/badge.svg) |
+| Python | https://github.com/filipeforattini/ff-svc-python | ![](https://github.com/filipeforattini/ff-svc-nodejs/actions/workflows/push.yml/badge.svg) |
 
 
 ### Repository Patterns
