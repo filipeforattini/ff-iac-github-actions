@@ -216,7 +216,7 @@ jobs:
           K8S_NAMESPACE=${{steps.deploy_setup.outputs.deploy_namespace}} \
           DEPENDENCY_NAME=mysql \
           DEPENDENCY_FILE=./manifests/k8s-dependencies.yml \
-            ./src/dependency-install.sh
+            ./.pipeline/src/dependency-install.sh
           
       - name: Dependencies | Postgres
         if: steps.deploy_setup.outputs.has_dev_dependencies == 'true'
@@ -225,7 +225,7 @@ jobs:
           K8S_NAMESPACE=${{steps.deploy_setup.outputs.deploy_namespace}} \
           DEPENDENCY_NAME=postgres \
           DEPENDENCY_FILE=./manifests/k8s-dependencies.yml \
-            ./src/dependency-install.sh
+            ./.pipeline/src/dependency-install.sh
 
       - name: Dependencies | Rabbitmq
         if: steps.deploy_setup.outputs.has_dev_dependencies == 'true'
@@ -234,7 +234,7 @@ jobs:
           K8S_NAMESPACE=${{steps.deploy_setup.outputs.deploy_namespace}} \
           DEPENDENCY_NAME=rabbitmq \
           DEPENDENCY_FILE=./manifests/k8s-dependencies.yml \
-            ./src/dependency-install.sh
+            ./.pipeline/src/dependency-install.sh
 
       - name: Dependencies | Elasticsearch
         if: steps.deploy_setup.outputs.has_dev_dependencies == 'true'
@@ -243,7 +243,7 @@ jobs:
           K8S_NAMESPACE=${{steps.deploy_setup.outputs.deploy_namespace}} \
           DEPENDENCY_NAME=elasticsearch \
           DEPENDENCY_FILE=./manifests/k8s-dependencies.yml \
-            ./src/dependency-install.sh
+            ./.pipeline/src/dependency-install.sh
 
       - name: Dependencies | Redis
         if: steps.deploy_setup.outputs.has_dev_dependencies == 'true'
@@ -252,7 +252,7 @@ jobs:
           K8S_NAMESPACE=${{steps.deploy_setup.outputs.deploy_namespace}} \
           DEPENDENCY_NAME=redis \
           DEPENDENCY_FILE=./manifests/k8s-dependencies.yml \
-            ./src/dependency-install.sh
+            ./.pipeline/src/dependency-install.sh
 
       # configs
       - name: K8s create config-map
