@@ -14,6 +14,12 @@
 #@ if data.values.rabbitmq.enabled:
 #@  dependencies.extend(["rabbitmq"])
 #@ end
+#@ if data.values.elasticsearch.enabled:
+#@  dependencies.extend(["elasticsearch"])
+#@ end
+#@ if data.values.redis.enabled:
+#@  dependencies.extend(["redis"])
+#@ end
 dependencies: #@ ",".join(dependencies)
 
 mysql:
@@ -21,25 +27,47 @@ mysql:
   hash: #@ sha256.sum(json.encode(data.values.mysql))
   config: #@ base64.encode(json.encode(data.values.mysql))
   version: #@ data.values.mysql.version
-  helm: #@ data.values.mysql.helm
+  chart: #@ data.values.mysql.chart
+  hasPassword: #@ data.values.mysql.hasPassword
+  port: #@ data.values.mysql.port
+  values: #@ data.values.mysql.values
 
 postgres:
   enabled: #@ data.values.postgres.enabled
   hash: #@ sha256.sum(json.encode(data.values.postgres))
   config: #@ base64.encode(json.encode(data.values.postgres))
   version: #@ data.values.postgres.version
-  helm: #@ data.values.postgres.helm
+  chart: #@ data.values.postgres.chart
+  hasPassword: #@ data.values.postgres.hasPassword
+  port: #@ data.values.postgres.port
+  values: #@ data.values.postgres.values
 
 rabbitmq:
   enabled: #@ data.values.rabbitmq.enabled
   hash: #@ sha256.sum(json.encode(data.values.rabbitmq))
   config: #@ base64.encode(json.encode(data.values.rabbitmq))
   version: #@ data.values.rabbitmq.version
-  helm: #@ data.values.rabbitmq.helm
+  chart: #@ data.values.rabbitmq.chart
+  hasPassword: #@ data.values.rabbitmq.hasPassword
+  port: #@ data.values.rabbitmq.port
+  values: #@ data.values.rabbitmq.values
 
 elasticsearch:
   enabled: #@ data.values.elasticsearch.enabled
   hash: #@ sha256.sum(json.encode(data.values.elasticsearch))
   config: #@ base64.encode(json.encode(data.values.elasticsearch))
   version: #@ data.values.elasticsearch.version
-  helm: #@ data.values.elasticsearch.helm
+  chart: #@ data.values.elasticsearch.chart
+  hasPassword: #@ data.values.elasticsearch.hasPassword
+  port: #@ data.values.elasticsearch.port
+  values: #@ data.values.elasticsearch.values
+
+redis:
+  enabled: #@ data.values.redis.enabled
+  hash: #@ sha256.sum(json.encode(data.values.redis))
+  config: #@ base64.encode(json.encode(data.values.redis))
+  version: #@ data.values.redis.version
+  chart: #@ data.values.redis.chart
+  hasPassword: #@ data.values.redis.hasPassword
+  port: #@ data.values.redis.port
+  values: #@ data.values.redis.values

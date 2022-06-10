@@ -205,44 +205,51 @@ jobs:
           if [ $(cat ./manifests/k8s-dependencies.yml | yq -P '.mysql.enabled') = true ]; then
             echo -e "| mysql | $(cat ./manifests/k8s-dependencies.yml | yq -P '.mysql.version') | $(cat ./manifests/k8s-dependencies.yml | yq -P '.mysql.helm.image.tag') |\n" >> $GITHUB_STEP_SUMMARY
           fi
-          
-      - name: Dependencies | Postgres
-        if: steps.deploy_setup.outputs.has_dev_dependencies == 'true'
-        continue-on-error: true
-        run: |
-          echo "#info   :: start"
-          if [ $(cat ./manifests/k8s-dependencies.yml | yq -P '.postgres.enabled') = true ]; then
-            POSTGRES_PASSWORD=$(openssl rand -hex 16)
-            kubectl get secret -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc-postgres 2> /dev/null
-            if [ $? -gt 0 ]; then
-              echo "#info   :: secret does not exists!"
-              echo "#info   :: creating secret..."
-              kubectl create secret generic -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc-postgres --from-literal="hash=$(cat ./manifests/k8s-dependencies.yml | yq -P '.postgres.hash')" --from-literal="password=$POSTGRES_PASSWORD" --from-literal="postgres-password=$(openssl rand -hex 16)" --from-literal="replication-password=$(openssl rand -hex 16)" --from-literal="connection-string=postgres://${{steps.deploy_setup.outputs.deploy_repository}}:$POSTGRES_PASSWORD@svc-postgres-postgresql:5432/${{steps.deploy_setup.outputs.deploy_repository}}"
-              kubectl create secret generic -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc-postgres-${deploy_version} --from-literal="hash=$(cat ./manifests/k8s-dependencies.yml | yq -P '.postgres.hash')" --from-literal="password=$POSTGRES_PASSWORD" --from-literal="postgres-password=$(openssl rand -hex 16)" --from-literal="replication-password=$(openssl rand -hex 16)" --from-literal="connection-string=postgres://${{steps.deploy_setup.outputs.deploy_repository}}:$POSTGRES_PASSWORD@svc-postgres-postgresql:5432/${{steps.deploy_setup.outputs.deploy_repository}}"
-              echo "#info   :: secret created."
-              echo "#info   :: helm version:"
-              cat ./manifests/k8s-dependencies.yml | yq -P '.postgres.helm' | helm install -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc-postgres bitnami/postgresql --version $(cat ./manifests/k8s-dependencies.yml | yq -P '.postgres.version') --values -
-            else
-              echo "#info   :: secret exists"
-            fi
-          else 
-            echo "#info   :: helm deleting..."
-            helm delete -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc-postgres 2> /dev/null
-            echo "#info   :: helm deleted."
-          fi
 
       - name: Dependencies | Mysql
         if: steps.deploy_setup.outputs.has_dev_dependencies == 'true'
         continue-on-error: true
-        run: |
-          if [ $(cat ./manifests/k8s-dependencies.yml | yq -P '.mysql.enabled') = true ]; then
-            MYSQL_PASSWORD=$(openssl rand -hex 16)
-            kubectl get secret -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc-mysql
-            if [ $? -gt 0 ]; then
-              kubectl create secret generic -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc-mysql --from-literal="hash=$(cat ./manifests/k8s-dependencies.yml | yq -P '.mysql.hash')" --from-literal="password=$MYSQL_PASSWORD" --from-literal="mysql-password=$(openssl rand -hex 16)" --from-literal="replication-password=$(openssl rand -hex 16)" --from-literal="connection-string=mysql://${{steps.deploy_setup.outputs.deploy_repository}}:$MYSQL_PASSWORD@svc-mysql-mysqlql:3306/${{steps.deploy_setup.outputs.deploy_repository}}"
-              cat ./manifests/k8s-dependencies.yml | yq -P '.mysql.helm' | helm upgrade --install -n ${{steps.deploy_setup.outputs.deploy_namespace}} svc-postgres bitnami/mysql --values -
-            fi
-          fi
+        run: |	
+          K8S_NAMESPACE=${{steps.deploy_setup.outputs.deploy_namespace}} \
+          DEPENDENCY_NAME=mysql \
+          DEPENDENCY_FILE=./manifests/k8s-dependencies.yml \
+            ./src/dependency-install.sh
+          
+      - name: Dependencies | Postgres
+        if: steps.deploy_setup.outputs.has_dev_dependencies == 'true'
+        continue-on-error: true
+        run: |	
+          K8S_NAMESPACE=${{steps.deploy_setup.outputs.deploy_namespace}} \
+          DEPENDENCY_NAME=postgres \
+          DEPENDENCY_FILE=./manifests/k8s-dependencies.yml \
+            ./src/dependency-install.sh
+
+      - name: Dependencies | Rabbitmq
+        if: steps.deploy_setup.outputs.has_dev_dependencies == 'true'
+        continue-on-error: true
+        run: |	
+          K8S_NAMESPACE=${{steps.deploy_setup.outputs.deploy_namespace}} \
+          DEPENDENCY_NAME=rabbitmq \
+          DEPENDENCY_FILE=./manifests/k8s-dependencies.yml \
+            ./src/dependency-install.sh
+
+      - name: Dependencies | Elasticsearch
+        if: steps.deploy_setup.outputs.has_dev_dependencies == 'true'
+        continue-on-error: true
+        run: |	
+          K8S_NAMESPACE=${{steps.deploy_setup.outputs.deploy_namespace}} \
+          DEPENDENCY_NAME=elasticsearch \
+          DEPENDENCY_FILE=./manifests/k8s-dependencies.yml \
+            ./src/dependency-install.sh
+
+      - name: Dependencies | Redis
+        if: steps.deploy_setup.outputs.has_dev_dependencies == 'true'
+        continue-on-error: true
+        run: |	
+          K8S_NAMESPACE=${{steps.deploy_setup.outputs.deploy_namespace}} \
+          DEPENDENCY_NAME=redis \
+          DEPENDENCY_FILE=./manifests/k8s-dependencies.yml \
+            ./src/dependency-install.sh
 
       # configs
       - name: K8s create config-map
@@ -294,7 +301,7 @@ jobs:
         run: |
           CONFIGS_LIST=$(if test -f ./manifests/k8s-configs-keys.txt; then cat ./manifests/k8s-configs-keys.txt; else echo ''; fi)
           SECRETS_LIST=$(if test -f ./manifests/k8s-secrets-keys.txt; then cat ./manifests/k8s-secrets-keys.txt; else echo ''; fi)
-          DEPENDENCIES_LIST=$(if test -f ./manifests/k8s-dependencies.yml; then (cat ./manifests/k8s-dependencies.yml; else echo '' | yq -P '.dependencies'); fi)
+          DEPENDENCIES_LIST=$(if test -f ./manifests/k8s-dependencies.yml; then (cat ./manifests/k8s-dependencies.yml | yq -P '.dependencies'); else echo '' ; fi)
           ytt \
             -f ./.pipeline/deploy/as-k8s/service.schema.yml \
             -f ./.pipeline/deploy/as-k8s/service.yml \

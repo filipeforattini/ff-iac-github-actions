@@ -1,0 +1,12 @@
+#@data/values
+---
+mysql:
+  enabled: false
+postgres:
+  enabled: false  
+rabbitmq:
+  enabled: false  
+elasticsearch:
+  enabled: false  
+redis:
+  enabled: false

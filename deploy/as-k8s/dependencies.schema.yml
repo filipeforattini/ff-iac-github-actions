@@ -4,12 +4,13 @@
 mysql:
   enabled: false
   version: 9.1.1
-
-  helm:
+  chart: bitnami/mysql
+  hasPassword: true
+  port: 3306 
+  values:
     architecture: standalone
     auth:
       database:	svc
-      existingSecret: svc-mysql
       username:	svc
     image:
       debug: false
@@ -33,12 +34,13 @@ mysql:
 postgres:
   enabled: false
   version: 11.5.0
-
-  helm:
+  chart: bitnami/postgresql
+  hasPassword: true
+  port: 5432 
+  values:
     architecture: standalone
     auth:
       database:	svc
-      existingSecret: svc-postgres
       username:	svc
     image:
       debug: false
@@ -62,11 +64,12 @@ postgres:
 rabbitmq:
   enabled: false
   version: 10.1.1
-
-  helm:
+  chart: bitnami/postgresql
+  hasPassword: true
+  port: 5672 
+  values:
     auth:
       username:	svc
-      existingSecret: svc-rabbitmq
     clustering:
       enabled: false
     #@schema/type any=True
@@ -91,8 +94,10 @@ rabbitmq:
 elasticsearch:
   enabled: false
   version: 18.2.9
-
-  helm:
+  chart: bitnami/elasticsearch
+  hasPassword: false
+  port: 9200
+  values:
     #@schema/type any=True
     extraEnvVars: []
     image:
@@ -108,6 +113,34 @@ elasticsearch:
         enabled: true
         storageClass: ""
         size: 4Gi
+      resources:
+        limits: {}
+        requests: {}
+
+#! REDIS
+redis:
+  enabled: false
+  version: 16.12.1
+  chart: bitnami/redis
+  hasPassword: false
+  port: 6379
+  values:
+    architecture: standalone
+    auth:
+      enabled: false
+    #@schema/type any=True
+    extraEnvVars: []
+    image:
+      debug: false
+      pullPolicy: IfNotPresent
+      tag: 6.2.7-debian-11-r0
+    ingress:
+      enabled: false
+    metrics:
+      enabled: false
+    master:
+      persistence:
+        enabled: false
       resources:
         limits: {}
         requests: {}
