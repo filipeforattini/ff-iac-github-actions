@@ -44,10 +44,10 @@ Examples:
 
 Checkout the test repositories:
 
-| Language | Repository | Status |
-| :---: | :---: | :---: |
-| JavaScript | https://github.com/filipeforattini/ff-svc-nodejs | ![](https://github.com/filipeforattini/ff-svc-nodejs/actions/workflows/push.yml/badge.svg) |
-| Python | https://github.com/filipeforattini/ff-svc-python | ![](https://github.com/filipeforattini/ff-svc-nodejs/actions/workflows/push.yml/badge.svg) |
+| Type| Language | Repository | Status |
+| :---: | :---: | :---: | :---: |
+| svc | JavaScript | https://github.com/filipeforattini/ff-svc-nodejs | ![](https://github.com/filipeforattini/ff-svc-nodejs/actions/workflows/push.yml/badge.svg) |
+| svc | Python | https://github.com/filipeforattini/ff-svc-python | ![](https://github.com/filipeforattini/ff-svc-nodejs/actions/workflows/push.yml/badge.svg) |
 
 ### Environments
 

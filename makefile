@@ -10,4 +10,7 @@ help:
 	ytt website
 
 test:
-	cd ./test; sh generate-dependencies.sh; sh generate-kubefile.sh;
+	cd ./test; \
+		sh generate-dependencies.sh; \
+		sh generate-kubefile.sh; \
+		sh generate-kubefile-ingress.sh;

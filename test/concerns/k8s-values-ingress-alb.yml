@@ -11,7 +11,8 @@ env:
 
 ingress:
   enable: true
-  type: nginx
+  type: alb
   domain:
     enable: true
     name: forattini.app
+    removeEnvironmentPrefix: true

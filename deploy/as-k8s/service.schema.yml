@@ -56,14 +56,19 @@ service:
 ingress:
   enable: false
   name: svc
-  type: alb
+  type: nginx
+  
   domain:
     enable: true
     name: acme.io
     email: security@acme.io
+    removeEnvironmentPrefix: false
 
+  #! types specifics
   alb:
     certificateArn: secret
+  nginx:
+    certmanager: true
 
 #! pipeline control
 pipelineControl:
