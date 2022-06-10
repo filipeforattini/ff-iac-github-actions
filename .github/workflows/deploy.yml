@@ -209,6 +209,12 @@ jobs:
             echo -e "| mysql | $(cat ./manifests/k8s-dependencies.yml | yq -P '.mysql.version') | $(cat ./manifests/k8s-dependencies.yml | yq -P '.mysql.helm.image.tag') |\n" >> $GITHUB_STEP_SUMMARY
           fi
 
+      - name: Dependencies | Helm update
+        if: steps.deploy_setup.outputs.has_dev_dependencies == 'true'
+        run: |	
+          helm repo add bitnami https://charts.bitnami.com/bitnami
+          helm repo update
+
       - name: Dependencies | Mysql
         if: steps.deploy_setup.outputs.has_dev_dependencies == 'true'
         continue-on-error: true
