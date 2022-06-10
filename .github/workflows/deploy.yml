@@ -188,8 +188,11 @@ jobs:
             -f ./.pipeline/deploy/as-k8s/dependencies.schema.yml \
             -f ./.pipeline/deploy/as-k8s/dependencies.yml \
             -f ./manifests/dependencies/dev.yml \
-            --data-value postgres.helm.auth.database=${{steps.deploy_setup.outputs.deploy_repository}} \
-            --data-value postgres.helm.auth.username=${{steps.deploy_setup.outputs.deploy_repository}} \
+            --data-value mysql.values.auth.database=${{steps.deploy_setup.outputs.deploy_repository}} \
+            --data-value mysql.values.auth.username=${{steps.deploy_setup.outputs.deploy_repository}} \
+            --data-value postgres.values.auth.database=${{steps.deploy_setup.outputs.deploy_repository}} \
+            --data-value postgres.values.auth.username=${{steps.deploy_setup.outputs.deploy_repository}} \
+            --data-value rabbitmq.values.auth.username=${{steps.deploy_setup.outputs.deploy_repository}} \
               > ./manifests/k8s-dependencies.yml
 
       - name: Docs | Dependencies

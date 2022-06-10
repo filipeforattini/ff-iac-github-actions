@@ -5,27 +5,27 @@ mysql:
   values:
     primary:
       persistence:
-        size: 1Gi	
+        size: 12Gi	
 
 postgres:
   enabled: true  
   values:
     primary:
       persistence:
-        size: 1Gi	
+        size: 23Gi	
 
 rabbitmq:
   enabled: true  
   values:
     persistence:
-      size: 1Gi
+      size: 34Gi
 
 elasticsearch:
   enabled: true  
   values:
     master:
       persistence:
-        size: 1Gi
+        size: 45Gi
 
 redis:
   enabled: true
