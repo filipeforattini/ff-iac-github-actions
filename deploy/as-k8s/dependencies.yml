@@ -36,6 +36,7 @@ mysql:
     config: #@ base64.encode(json.encode(data.values.mysql))
     version: #@ data.values.mysql.version
     chart: #@ data.values.mysql.chart
+    hasDatabase: true
     hasPassword: true
     protocol: "mysql://"
     port: 3306 
@@ -58,6 +59,7 @@ postgres:
     config: #@ base64.encode(json.encode(data.values.postgres))
     version: #@ data.values.postgres.version
     chart: #@ data.values.postgres.chart
+    hasDatabase: true
     hasPassword: true
     protocol: "postgresql://"
     port: 5432 
@@ -80,6 +82,7 @@ rabbitmq:
     config: #@ base64.encode(json.encode(data.values.rabbitmq))
     version: #@ data.values.rabbitmq.version
     chart: #@ data.values.rabbitmq.chart
+    hasDatabase: false
     hasPassword: true
     protocol: "amqp://"
     port: 5672 
@@ -101,6 +104,7 @@ elasticsearch:
     config: #@ base64.encode(json.encode(data.values.elasticsearch))
     version: #@ data.values.elasticsearch.version
     chart: #@ data.values.elasticsearch.chart
+    hasDatabase: false
     hasPassword: false
     protocol: ""
     port: 9200
@@ -116,6 +120,7 @@ redis:
     config: #@ base64.encode(json.encode(data.values.redis))
     version: #@ data.values.redis.version
     chart: #@ data.values.redis.chart
+    hasDatabase: false
     hasPassword: false
     protocol: "redis://"
     port: 6379
@@ -130,6 +135,7 @@ nats:
     config: #@ base64.encode(json.encode(data.values.nats))
     version: #@ data.values.nats.version
     chart: #@ data.values.nats.chart
+    hasDatabase: false
     hasPassword: false
     protocol: "nats://"
     port: 4222
@@ -144,8 +150,9 @@ etcd:
     config: #@ base64.encode(json.encode(data.values.etcd))
     version: #@ data.values.etcd.version
     chart: #@ data.values.etcd.chart
+    hasDatabase: false
     hasPassword: false
-    protocol: "etcd://"
+    protocol: "etcd3://"
     port: 2379
     secretKey: ""
     serviceName: dep-etcd

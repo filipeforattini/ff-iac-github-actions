@@ -32,6 +32,7 @@ if [ $(cat $DEPENDENCY_FILE | yq -P ".$DEPENDENCY_NAME.enabled") = true ]; then
 
     DEPENDENCY_PROTOCOL=$(cat $DEPENDENCY_FILE | yq -P ".$DEPENDENCY_NAME.control.protocol")
     DEPENDENCY_HAS_PASSWORD=$(cat $DEPENDENCY_FILE | yq -P ".$DEPENDENCY_NAME.control.hasPassword")
+    DEPENDENCY_HAS_DATABASE=$(cat $DEPENDENCY_FILE | yq -P ".$DEPENDENCY_NAME.control.hasDatabase")
     DEPENDENCY_SERVICE_NAME=$(cat $DEPENDENCY_FILE | yq -P ".$DEPENDENCY_NAME.control.serviceName")
 
     if [ "$DEPENDENCY_HAS_PASSWORD" = "true" ]; then
@@ -40,7 +41,11 @@ if [ $(cat $DEPENDENCY_FILE | yq -P ".$DEPENDENCY_NAME.enabled") = true ]; then
       info generating password
       DEPENDENCY_PASSWORD=$(openssl rand -hex 16)
       DEPENDENCY_ROOT_PASSWORD=$(openssl rand -hex 16)
-      DEPENDENCY_CONNECTION_STRING="connection-string=$DEPENDENCY_PROTOCOL$K8S_REPOSITORY:$DEPENDENCY_PASSWORD@$DEPENDENCY_SERVICE_NAME:$DEPENDENCY_PORT/$K8S_REPOSITORY"
+
+      DEPENDENCY_CONNECTION_STRING="connection-string=$DEPENDENCY_PROTOCOL$K8S_REPOSITORY:$DEPENDENCY_PASSWORD@$DEPENDENCY_SERVICE_NAME:$DEPENDENCY_PORT"
+      if [ "$DEPENDENCY_HAS_PASSWORD" = "true" ]; then
+        DEPENDENCY_CONNECTION_STRING="$DEPENDENCY_CONNECTION_STRING/$K8S_REPOSITORY"
+      fi
 
       kubectl $K8S_LABELS create secret generic \
         -n $K8S_NAMESPACE \
@@ -59,7 +64,11 @@ if [ $(cat $DEPENDENCY_FILE | yq -P ".$DEPENDENCY_NAME.enabled") = true ]; then
           --from-literal="$DEPENDENCY_CONNECTION_STRING"
     else
       info this dependency does not have password
-      DEPENDENCY_CONNECTION_STRING="connection-string=${DEPENDENCY_PROTOCOL}dep-$DEPENDENCY_NAME-$DEPENDENCY_NAME:$DEPENDENCY_PORT/$K8S_REPOSITORY"
+
+      DEPENDENCY_CONNECTION_STRING="connection-string=${DEPENDENCY_PROTOCOL}$DEPENDENCY_SERVICE_NAME:$DEPENDENCY_PORT"
+      if [ "$DEPENDENCY_HAS_PASSWORD" = "true" ]; then
+        DEPENDENCY_CONNECTION_STRING="$DEPENDENCY_CONNECTION_STRING/$K8S_REPOSITORY"
+      fi
 
       kubectl $K8S_LABELS create secret generic \
         -n $K8S_NAMESPACE \
