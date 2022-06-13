@@ -3,10 +3,14 @@
 mysql:
   enabled: false
 postgres:
-  enabled: false  
+  enabled: false
 rabbitmq:
-  enabled: false  
+  enabled: false
 elasticsearch:
-  enabled: false  
+  enabled: false
 redis:
+  enabled: false
+nats:
+  enabled: false
+etcd:
   enabled: false

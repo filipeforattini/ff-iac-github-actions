@@ -148,3 +148,44 @@ redis:
       resources:
         limits: {}
         requests: {}
+
+#! NATS
+nats:
+  enabled: false
+  version: 7.3.5
+  chart: bitnami/nats
+  values:
+    auth:
+      enabled: false
+    #@schema/type any=True
+    extraEnvVars: []
+    image:
+      debug: false
+      pullPolicy: IfNotPresent
+      tag: 2.8.3-debian-10-r0
+    metrics:
+      enabled: false
+    resources:
+      limits: {}
+      requests: {}
+
+#! ETCD
+etcd:
+  enabled: false
+  version: 8.3.0
+  chart: bitnami/etcd
+  values:
+    auth:
+      rbac:
+        create: false
+    #@schema/type any=True
+    extraEnvVars: []
+    image:
+      debug: false
+      pullPolicy: IfNotPresent
+      tag: 3.5.4-debian-11-r3
+    metrics:
+      enabled: false
+    resources:
+      limits: {}
+      requests: {}

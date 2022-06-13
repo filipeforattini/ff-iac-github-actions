@@ -32,3 +32,9 @@ elasticsearch:
 
 redis:
   enabled: true
+
+nats:
+  enabled: true
+
+etcd:
+  enabled: true

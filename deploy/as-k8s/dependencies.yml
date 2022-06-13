@@ -20,6 +20,12 @@
 #@ if data.values.redis.enabled:
 #@  dependencies.extend(["redis"])
 #@ end
+#@ if data.values.nats.enabled:
+#@  dependencies.extend(["nats"])
+#@ end
+#@ if data.values.etcd.enabled:
+#@  dependencies.extend(["etcd"])
+#@ end
 dependencies: #@ ",".join(dependencies)
 dependenciesAsJson: #@ json.encode(dependencies)
 
@@ -116,3 +122,31 @@ redis:
     secretKey: ""
     serviceName: dep-redis-master
   values: #@ data.values.redis.values
+
+nats:
+  enabled: #@ data.values.nats.enabled
+  control:
+    hash: #@ sha256.sum(json.encode(data.values.nats))
+    config: #@ base64.encode(json.encode(data.values.nats))
+    version: #@ data.values.nats.version
+    chart: #@ data.values.nats.chart
+    hasPassword: false
+    protocol: "nats://"
+    port: 4222
+    secretKey: ""
+    serviceName: dep-nats
+  values: #@ data.values.nats.values
+
+etcd:
+  enabled: #@ data.values.etcd.enabled
+  control:
+    hash: #@ sha256.sum(json.encode(data.values.etcd))
+    config: #@ base64.encode(json.encode(data.values.etcd))
+    version: #@ data.values.etcd.version
+    chart: #@ data.values.etcd.chart
+    hasPassword: false
+    protocol: "etcd://"
+    port: 2379
+    secretKey: ""
+    serviceName: dep-etcd
+  values: #@ data.values.etcd.values
