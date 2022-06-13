@@ -140,7 +140,7 @@ spec:
           #@   deploymentEnvs.extend([{ 
           #@    "name": (i + "_connection_string").upper(),
           #@    "valueFrom": {
-          #@      "configMapKeyRef": {
+          #@      "secretKeyRef": {
           #@        "name": "dep-secret-" + i,
           #@        "key": "connection-string",
           #@      }
