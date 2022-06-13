@@ -34,7 +34,7 @@ on:
       staticAnalysis:
         type: boolean
         required: false
-        default: false
+        default: true
         description: "Enable static analysis scans"
       autoVersioning:
         type: boolean
