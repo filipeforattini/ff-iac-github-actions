@@ -21,53 +21,98 @@
 #@  dependencies.extend(["redis"])
 #@ end
 dependencies: #@ ",".join(dependencies)
+dependenciesAsJson: #@ json.encode(dependencies)
 
 mysql:
   enabled: #@ data.values.mysql.enabled
-  hash: #@ sha256.sum(json.encode(data.values.mysql))
-  config: #@ base64.encode(json.encode(data.values.mysql))
-  version: #@ data.values.mysql.version
-  chart: #@ data.values.mysql.chart
-  hasPassword: #@ data.values.mysql.hasPassword
-  port: #@ data.values.mysql.port
-  values: #@ data.values.mysql.values
+  control:
+    hash: #@ sha256.sum(json.encode(data.values.mysql))
+    config: #@ base64.encode(json.encode(data.values.mysql))
+    version: #@ data.values.mysql.version
+    chart: #@ data.values.mysql.chart
+    hasPassword: true
+    protocol: "mysql://"
+    port: 3306 
+    secretKey: auth.existingSecret
+    serviceName: dep-mysql
+  #@ mysqlValues = {}
+  #@ mysqlValues.update(data.values.mysql.values)
+  #@ mysqlValues.update({ 
+  #@    "auth": {
+  #@      "database": data.values.repository,
+  #@      "username": data.values.repository
+  #@    }
+  #@ })
+  values: #@ mysqlValues
 
 postgres:
   enabled: #@ data.values.postgres.enabled
-  hash: #@ sha256.sum(json.encode(data.values.postgres))
-  config: #@ base64.encode(json.encode(data.values.postgres))
-  version: #@ data.values.postgres.version
-  chart: #@ data.values.postgres.chart
-  hasPassword: #@ data.values.postgres.hasPassword
-  port: #@ data.values.postgres.port
-  values: #@ data.values.postgres.values
+  control:
+    hash: #@ sha256.sum(json.encode(data.values.postgres))
+    config: #@ base64.encode(json.encode(data.values.postgres))
+    version: #@ data.values.postgres.version
+    chart: #@ data.values.postgres.chart
+    hasPassword: true
+    protocol: "postgresql://"
+    port: 5432 
+    secretKey: auth.existingSecret
+    serviceName: dep-postgres-postgresql
+  #@ postgresValues = {}
+  #@ postgresValues.update(data.values.mysql.values)
+  #@ postgresValues.update({ 
+  #@    "auth": {
+  #@      "database": data.values.repository,
+  #@      "username": data.values.repository
+  #@    }
+  #@ })
+  values: #@ postgresValues
 
 rabbitmq:
   enabled: #@ data.values.rabbitmq.enabled
-  hash: #@ sha256.sum(json.encode(data.values.rabbitmq))
-  config: #@ base64.encode(json.encode(data.values.rabbitmq))
-  version: #@ data.values.rabbitmq.version
-  chart: #@ data.values.rabbitmq.chart
-  hasPassword: #@ data.values.rabbitmq.hasPassword
-  port: #@ data.values.rabbitmq.port
-  values: #@ data.values.rabbitmq.values
+  control:
+    hash: #@ sha256.sum(json.encode(data.values.rabbitmq))
+    config: #@ base64.encode(json.encode(data.values.rabbitmq))
+    version: #@ data.values.rabbitmq.version
+    chart: #@ data.values.rabbitmq.chart
+    hasPassword: true
+    protocol: "amqp://"
+    port: 5672 
+    secretKey: auth.existingPasswordSecret
+    serviceName: dep-rabbitmq
+  #@ rabbitmqValues = {}
+  #@ rabbitmqValues.update(data.values.mysql.values)
+  #@ rabbitmqValues.update({ 
+  #@    "auth": {
+  #@      "username": data.values.repository
+  #@    }
+  #@ })
+  values: #@ rabbitmqValues
 
 elasticsearch:
   enabled: #@ data.values.elasticsearch.enabled
-  hash: #@ sha256.sum(json.encode(data.values.elasticsearch))
-  config: #@ base64.encode(json.encode(data.values.elasticsearch))
-  version: #@ data.values.elasticsearch.version
-  chart: #@ data.values.elasticsearch.chart
-  hasPassword: #@ data.values.elasticsearch.hasPassword
-  port: #@ data.values.elasticsearch.port
+  control:
+    hash: #@ sha256.sum(json.encode(data.values.elasticsearch))
+    config: #@ base64.encode(json.encode(data.values.elasticsearch))
+    version: #@ data.values.elasticsearch.version
+    chart: #@ data.values.elasticsearch.chart
+    hasPassword: false
+    protocol: ""
+    port: 9200
+    #! secretKey: "security.existingSecret"
+    secretKey: ""
+    serviceName: dep-elasticsearch
   values: #@ data.values.elasticsearch.values
 
 redis:
   enabled: #@ data.values.redis.enabled
-  hash: #@ sha256.sum(json.encode(data.values.redis))
-  config: #@ base64.encode(json.encode(data.values.redis))
-  version: #@ data.values.redis.version
-  chart: #@ data.values.redis.chart
-  hasPassword: #@ data.values.redis.hasPassword
-  port: #@ data.values.redis.port
+  control:
+    hash: #@ sha256.sum(json.encode(data.values.redis))
+    config: #@ base64.encode(json.encode(data.values.redis))
+    version: #@ data.values.redis.version
+    chart: #@ data.values.redis.chart
+    hasPassword: false
+    protocol: "redis://"
+    port: 6379
+    secretKey: ""
+    serviceName: dep-redis-master
   values: #@ data.values.redis.values

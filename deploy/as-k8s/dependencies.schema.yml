@@ -1,12 +1,12 @@
 #@data/values-schema
 ---
+repository: acm-svc-acme
+
 #! MYSQL
 mysql:
   enabled: false
   version: 9.1.1
   chart: bitnami/mysql
-  hasPassword: true
-  port: 3306 
   values:
     architecture: standalone
     auth:
@@ -35,8 +35,6 @@ postgres:
   enabled: false
   version: 11.5.0
   chart: bitnami/postgresql
-  hasPassword: true
-  port: 5432 
   values:
     architecture: standalone
     auth:
@@ -63,10 +61,8 @@ postgres:
 #! RABBITMQ
 rabbitmq:
   enabled: false
-  version: 10.1.1
-  chart: bitnami/postgresql
-  hasPassword: true
-  port: 5672 
+  version: 10.1.7
+  chart: bitnami/rabbitmq
   values:
     auth:
       username:	svc
@@ -89,21 +85,31 @@ rabbitmq:
     resources:
       limits: {}
       requests: {}
+    serviceAccount:
+      create: false
 
 #! ELASTICSEARCH
 elasticsearch:
   enabled: false
   version: 18.2.9
   chart: bitnami/elasticsearch
-  hasPassword: false
-  port: 9200
   values:
+    coordinating:
+      replicaCount: 1
+    data:
+      replicaCount: 1
+      persistence:
+        enabled: true
+        storageClass: ""
+        size: 4Gi
     #@schema/type any=True
     extraEnvVars: []
     image:
       debug: false
       pullPolicy: IfNotPresent
       tag: 8.2.2-debian-10-r0
+    ingest:
+      replicaCount: 1
     ingress:
       enabled: false
     metrics:
@@ -122,8 +128,6 @@ redis:
   enabled: false
   version: 16.12.1
   chart: bitnami/redis
-  hasPassword: false
-  port: 6379
   values:
     architecture: standalone
     auth:

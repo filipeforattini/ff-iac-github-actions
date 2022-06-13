@@ -31,7 +31,7 @@ ytt \
 
 CONFIGS_LIST=$(if test -f ./concerns/k8s-configs-keys.txt; then cat ./concerns/k8s-configs-keys.txt; else echo ''; fi)
 SECRETS_LIST=$(if test -f ./concerns/k8s-secrets-keys.txt; then cat ./concerns/k8s-secrets-keys.txt; else echo ''; fi)
-DEPENDENCIES_LIST=$(if test -f ./concerns/k8s-dependencies.yml; then cat ./concerns/k8s-dependencies.yml; else echo ''; fi)
+DEPENDENCIES_LIST=$(if test -f ./tmp/k8s-dependencies-full.yml; then cat ./tmp/k8s-dependencies-full.yml | yq -P '.dependencies'; fi)
 
 ytt \
   -f ../deploy/as-k8s/service.schema.yml \

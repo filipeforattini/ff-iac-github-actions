@@ -141,7 +141,7 @@ spec:
           #@    "name": (i + "_connection_string").upper(),
           #@    "valueFrom": {
           #@      "configMapKeyRef": {
-          #@        "name": "dep-" + i,
+          #@        "name": "dep-secret-" + i,
           #@        "key": "connection-string",
           #@      }
           #@    }
