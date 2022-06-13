@@ -176,7 +176,7 @@ jobs:
           mkdir -p ~/.kube
           echo "$KUBE_CONFIG" | base64 -d > ~/.kube/config
 
-      # deploy
+      # namespace
       - name: K8s create namespace
         run: kubectl create namespace ${{steps.deploy_setup.outputs.deploy_namespace}} --dry-run=client --validate=false --output=yaml | kubectl apply -f -
 
