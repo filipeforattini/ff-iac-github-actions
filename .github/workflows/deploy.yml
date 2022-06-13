@@ -217,6 +217,7 @@ jobs:
         run: |	
           K8S_NAMESPACE=${{steps.deploy_setup.outputs.deploy_namespace}} \
           DEPENDENCY_NAME=mysql \
+          REPOSITORY_TAG_VERSION=${{steps.versioning.outputs.version}} \
           DEPENDENCY_FILE=./manifests/k8s-dependencies.yml \
             ./.pipeline/src/dependency-install.sh
           
@@ -226,6 +227,7 @@ jobs:
         run: |	
           K8S_NAMESPACE=${{steps.deploy_setup.outputs.deploy_namespace}} \
           DEPENDENCY_NAME=postgres \
+          REPOSITORY_TAG_VERSION=${{steps.versioning.outputs.version}} \
           DEPENDENCY_FILE=./manifests/k8s-dependencies.yml \
             ./.pipeline/src/dependency-install.sh
 
@@ -235,6 +237,7 @@ jobs:
         run: |	
           K8S_NAMESPACE=${{steps.deploy_setup.outputs.deploy_namespace}} \
           DEPENDENCY_NAME=rabbitmq \
+          REPOSITORY_TAG_VERSION=${{steps.versioning.outputs.version}} \
           DEPENDENCY_FILE=./manifests/k8s-dependencies.yml \
             ./.pipeline/src/dependency-install.sh
 
@@ -244,6 +247,7 @@ jobs:
         run: |	
           K8S_NAMESPACE=${{steps.deploy_setup.outputs.deploy_namespace}} \
           DEPENDENCY_NAME=elasticsearch \
+          REPOSITORY_TAG_VERSION=${{steps.versioning.outputs.version}} \
           DEPENDENCY_FILE=./manifests/k8s-dependencies.yml \
             ./.pipeline/src/dependency-install.sh
 
@@ -253,6 +257,27 @@ jobs:
         run: |	
           K8S_NAMESPACE=${{steps.deploy_setup.outputs.deploy_namespace}} \
           DEPENDENCY_NAME=redis \
+          REPOSITORY_TAG_VERSION=${{steps.versioning.outputs.version}} \
+          DEPENDENCY_FILE=./manifests/k8s-dependencies.yml \
+            ./.pipeline/src/dependency-install.sh
+
+      - name: Dependencies | Nats
+        if: steps.deploy_setup.outputs.has_dev_dependencies == 'true'
+        continue-on-error: true
+        run: |	
+          K8S_NAMESPACE=${{steps.deploy_setup.outputs.deploy_namespace}} \
+          DEPENDENCY_NAME=nats \
+          REPOSITORY_TAG_VERSION=${{steps.versioning.outputs.version}} \
+          DEPENDENCY_FILE=./manifests/k8s-dependencies.yml \
+            ./.pipeline/src/dependency-install.sh
+
+      - name: Dependencies | Etcd
+        if: steps.deploy_setup.outputs.has_dev_dependencies == 'true'
+        continue-on-error: true
+        run: |	
+          K8S_NAMESPACE=${{steps.deploy_setup.outputs.deploy_namespace}} \
+          DEPENDENCY_NAME=etcd \
+          REPOSITORY_TAG_VERSION=${{steps.versioning.outputs.version}} \
           DEPENDENCY_FILE=./manifests/k8s-dependencies.yml \
             ./.pipeline/src/dependency-install.sh
 
