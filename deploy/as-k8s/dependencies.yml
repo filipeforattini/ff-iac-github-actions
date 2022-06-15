@@ -36,12 +36,19 @@ mysql:
     config: #@ base64.encode(json.encode(data.values.mysql))
     version: #@ data.values.mysql.version
     chart: #@ data.values.mysql.chart
-    hasDatabase: true
-    hasPassword: true
-    protocol: "mysql://"
-    port: 3306 
-    secretKey: auth.existingSecret
-    serviceName: dep-mysql
+    secrets:
+      - auth.existingSecret
+    secretKeys:
+      - mysql-password
+      - mysql-root-password
+      - mysql-replication-password
+    connection:
+      protocol: "mysql://"
+      port: 3306 
+      serviceName: dep-mysql
+      username: #@ data.values.repository
+      database: #@ "/{}".format(data.values.repository)
+      secret: mysql-password
   #@ mysqlValues = {}
   #@ mysqlValues.update(data.values.mysql.values)
   #@ mysqlValues.update({ 
@@ -59,12 +66,19 @@ postgres:
     config: #@ base64.encode(json.encode(data.values.postgres))
     version: #@ data.values.postgres.version
     chart: #@ data.values.postgres.chart
-    hasDatabase: true
-    hasPassword: true
-    protocol: "postgresql://"
-    port: 5432 
-    secretKey: auth.existingSecret
-    serviceName: dep-postgres-postgresql
+    secrets: 
+      - global.postgresql.auth.existingSecret
+    secretKeys:
+      - password
+      - postgres-password
+      - replication-password
+    connection:
+      protocol: "postgresql://"
+      port: 5432 
+      serviceName: dep-postgres-postgresql
+      username: #@ data.values.repository
+      database: #@ "/{}".format(data.values.repository)
+      secret: password
   #@ postgresValues = {}
   #@ postgresValues.update(data.values.mysql.values)
   #@ postgresValues.update({ 
@@ -82,12 +96,19 @@ rabbitmq:
     config: #@ base64.encode(json.encode(data.values.rabbitmq))
     version: #@ data.values.rabbitmq.version
     chart: #@ data.values.rabbitmq.chart
-    hasDatabase: false
-    hasPassword: true
-    protocol: "amqp://"
-    port: 5672 
-    secretKey: auth.existingPasswordSecret
-    serviceName: dep-rabbitmq
+    secrets: 
+      - auth.existingPasswordSecret
+      - auth.existingErlangSecret
+    secretKeys:
+      - rabbitmq-password
+      - rabbitmq-erlang-cookie
+    connection:
+      protocol: "amqp://"
+      port: 5672 
+      serviceName: dep-rabbitmq
+      username: #@ data.values.repository
+      database: ""
+      secret: rabbitmq-password
   #@ rabbitmqValues = {}
   #@ rabbitmqValues.update(data.values.mysql.values)
   #@ rabbitmqValues.update({ 
@@ -104,13 +125,15 @@ elasticsearch:
     config: #@ base64.encode(json.encode(data.values.elasticsearch))
     version: #@ data.values.elasticsearch.version
     chart: #@ data.values.elasticsearch.chart
-    hasDatabase: false
-    hasPassword: false
-    protocol: ""
-    port: 9200
-    #! secretKey: "security.existingSecret"
-    secretKey: ""
-    serviceName: dep-elasticsearch
+    secrets: []
+    secretKeys: []
+    connection:
+      protocol: ""
+      port: 9200
+      serviceName: dep-elasticsearch
+      username: ""
+      database: ""
+      secret: ""
   values: #@ data.values.elasticsearch.values
 
 redis:
@@ -120,12 +143,15 @@ redis:
     config: #@ base64.encode(json.encode(data.values.redis))
     version: #@ data.values.redis.version
     chart: #@ data.values.redis.chart
-    hasDatabase: false
-    hasPassword: false
-    protocol: "redis://"
-    port: 6379
-    secretKey: ""
-    serviceName: dep-redis-master
+    secrets: []
+    secretKeys: []
+    connection:
+      protocol: "redis://"
+      port: 6379
+      serviceName: dep-redis-master
+      username: ""
+      database: ""
+      secret: ""
   values: #@ data.values.redis.values
 
 nats:
@@ -135,12 +161,15 @@ nats:
     config: #@ base64.encode(json.encode(data.values.nats))
     version: #@ data.values.nats.version
     chart: #@ data.values.nats.chart
-    hasDatabase: false
-    hasPassword: false
-    protocol: "nats://"
-    port: 4222
-    secretKey: ""
-    serviceName: dep-nats
+    secrets: []
+    secretKeys: []
+    connection:
+      protocol: "nats://"
+      port: 4222
+      serviceName: dep-nats
+      username: ""
+      database: ""
+      secret: ""
   values: #@ data.values.nats.values
 
 etcd:
@@ -150,10 +179,13 @@ etcd:
     config: #@ base64.encode(json.encode(data.values.etcd))
     version: #@ data.values.etcd.version
     chart: #@ data.values.etcd.chart
-    hasDatabase: false
-    hasPassword: false
-    protocol: "etcd3://"
-    port: 2379
-    secretKey: ""
-    serviceName: dep-etcd
+    secrets: []
+    secretKeys: []
+    connection:
+      protocol: "etcd3://"
+      port: 2379
+      serviceName: dep-etcd
+      username: ""
+      database: ""
+      secret: ""
   values: #@ data.values.etcd.values

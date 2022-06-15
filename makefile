@@ -15,8 +15,6 @@ test:
 		sh generate-kubefile.sh; \
 		sh generate-kubefile-ingress.sh;
 
-
-
 K8S_NAMESPACE ?= ff-svc-nodejs-dev
 K8S_LABELS ?= "--kubeconfig $(HOME)/.kube/ff-mini.yml"
 DEPENDENCY_FILE ?= "$(PWD)/test/tmp/k8s-dependencies-full.yml"
@@ -97,3 +95,4 @@ dep-redis-del:
 	DEPENDENCY_NAME=redis \
 	DEPENDENCY_FILE=$(DEPENDENCY_FILE_EMPTY) \
 		./src/dependency-install.sh
+

@@ -5,7 +5,7 @@ repository: acm-svc-acme
 #! MYSQL
 mysql:
   enabled: false
-  version: 9.1.1
+  version: 9.1.7
   chart: bitnami/mysql
   values:
     architecture: standalone
@@ -15,7 +15,6 @@ mysql:
     image:
       debug: false
       pullPolicy: IfNotPresent
-      tag: 8.0.29-debian-10-r23
     metrics:
       enabled: false
       #@schema/type any=True
@@ -33,7 +32,7 @@ mysql:
 #! POSTGRES
 postgres:
   enabled: false
-  version: 11.5.0
+  version: 11.6.6
   chart: bitnami/postgresql
   values:
     architecture: standalone
@@ -43,7 +42,6 @@ postgres:
     image:
       debug: false
       pullPolicy: IfNotPresent
-      tag: 14.1.0-debian-10-r80
     metrics:
       enabled: false
       #@schema/type any=True
@@ -73,7 +71,6 @@ rabbitmq:
     image:
       debug: false
       pullPolicy: IfNotPresent
-      tag: 3.10.2-debian-10-r7
     ingress:
       enabled: false
     metrics:
@@ -91,7 +88,7 @@ rabbitmq:
 #! ELASTICSEARCH
 elasticsearch:
   enabled: false
-  version: 18.2.9
+  version: 18.2.12
   chart: bitnami/elasticsearch
   values:
     coordinating:
@@ -107,7 +104,6 @@ elasticsearch:
     image:
       debug: false
       pullPolicy: IfNotPresent
-      tag: 8.2.2-debian-10-r0
     ingest:
       replicaCount: 1
     ingress:
@@ -137,7 +133,6 @@ redis:
     image:
       debug: false
       pullPolicy: IfNotPresent
-      tag: 6.2.7-debian-11-r0
     ingress:
       enabled: false
     metrics:
@@ -162,7 +157,6 @@ nats:
     image:
       debug: false
       pullPolicy: IfNotPresent
-      tag: 2.8.3-debian-10-r0
     metrics:
       enabled: false
     resources:
@@ -183,7 +177,6 @@ etcd:
     image:
       debug: false
       pullPolicy: IfNotPresent
-      tag: 3.5.4-debian-11-r3
     metrics:
       enabled: false
     resources:

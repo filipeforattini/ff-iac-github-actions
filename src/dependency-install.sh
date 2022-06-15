@@ -12,101 +12,97 @@ DEPENDENCY_SECRET_NAME="dep-secret-$DEPENDENCY_NAME"
 REPOSITORY_TAG_VERSION="${REPOSITORY_TAG_VERSION:-"0.0.1"}"
 
 # utils
+debug () {
+  echo " [$DEPENDENCY_NAME] debug  | $*"
+}
+
 info () {
-  echo "[$DEPENDENCY_NAME] info  | $*"
+  echo " [$DEPENDENCY_NAME]  info  | $*"
+}
+
+error () {
+  echo " [$DEPENDENCY_NAME]  error  | $*"
+  exit 1
 }
 
 # execution
+debug K8S_LABELS=$K8S_LABELS
+debug K8S_NAMESPACE=$K8S_NAMESPACE
+debug K8S_REPOSITORY=$K8S_REPOSITORY
 info checking $DEPENDENCY_NAME dependency
 
 if [ $(cat $DEPENDENCY_FILE | yq -P ".$DEPENDENCY_NAME.enabled") = true ]; then
   info $DEPENDENCY_NAME is enabled
-  info getting secret
-  K8S_SECRET=$(kubectl $K8S_LABELS get secret -n $K8S_NAMESPACE dep-$DEPENDENCY_NAME --ignore-not-found)
+
+  info getting secret...
+  debug kubectl $K8S_LABELS get secret -n $K8S_NAMESPACE $DEPENDENCY_SECRET_NAME --ignore-not-found
+  K8S_SECRET=$(kubectl $K8S_LABELS get secret -n $K8S_NAMESPACE $DEPENDENCY_SECRET_NAME --ignore-not-found)
+  if [ $? -eq 0 ]; then
+    debug response = $K8S_SECRET
+  else
+    error cannot connect
+  fi
 
   if [ "${#K8S_SECRET}" -lt 1 ]; then
     info secret does not exists!
 
-    DEPENDENCY_PORT=$(cat $DEPENDENCY_FILE | yq -P ".$DEPENDENCY_NAME.control.port")
-    info dependency will use port $DEPENDENCY_PORT
+    CONTROL_HASH=$(cat $DEPENDENCY_FILE | yq -P ".$DEPENDENCY_NAME.control.hash")
+    CONTROL_CHART=$(cat $DEPENDENCY_FILE | yq -P ".$DEPENDENCY_NAME.control.chart")
+    CONTROL_VERSION=$(cat $DEPENDENCY_FILE | yq -P ".$DEPENDENCY_NAME.control.version")
+    CONTROL_SECRETS=$(cat $DEPENDENCY_FILE | yq -P ".$DEPENDENCY_NAME.control.secrets[]")
+    CONTROL_SECRETS_KEYS=$(cat $DEPENDENCY_FILE | yq -P ".$DEPENDENCY_NAME.control.secretKeys[]")
+    CONNECTION_PORT=$(cat $DEPENDENCY_FILE | yq -P ".$DEPENDENCY_NAME.control.connection.port")
+    CONNECTION_SECRET=$(cat $DEPENDENCY_FILE | yq -P ".$DEPENDENCY_NAME.control.connection.secret")
+    CONNECTION_PROTOCOL=$(cat $DEPENDENCY_FILE | yq -P ".$DEPENDENCY_NAME.control.connection.protocol")
+    CONNECTION_USERNAME=$(cat $DEPENDENCY_FILE | yq -P ".$DEPENDENCY_NAME.control.connection.username")
+    CONNECTION_DATABASE=$(cat $DEPENDENCY_FILE | yq -P ".$DEPENDENCY_NAME.control.connection.database")
+    CONNECTION_HOSTNAME=$(cat $DEPENDENCY_FILE | yq -P ".$DEPENDENCY_NAME.control.connection.serviceName")
 
-    DEPENDENCY_PROTOCOL=$(cat $DEPENDENCY_FILE | yq -P ".$DEPENDENCY_NAME.control.protocol")
-    DEPENDENCY_HAS_PASSWORD=$(cat $DEPENDENCY_FILE | yq -P ".$DEPENDENCY_NAME.control.hasPassword")
-    DEPENDENCY_HAS_DATABASE=$(cat $DEPENDENCY_FILE | yq -P ".$DEPENDENCY_NAME.control.hasDatabase")
-    DEPENDENCY_SERVICE_NAME=$(cat $DEPENDENCY_FILE | yq -P ".$DEPENDENCY_NAME.control.serviceName")
-
-    if [ "$DEPENDENCY_HAS_PASSWORD" = "true" ]; then
-      info this dependency has password
-
-      info generating password
-      DEPENDENCY_PASSWORD=$(openssl rand -hex 16)
-      DEPENDENCY_ROOT_PASSWORD=$(openssl rand -hex 16)
-
-      DEPENDENCY_CONNECTION_STRING="connection-string=$DEPENDENCY_PROTOCOL$K8S_REPOSITORY:$DEPENDENCY_PASSWORD@$DEPENDENCY_SERVICE_NAME:$DEPENDENCY_PORT"
-      if [ "$DEPENDENCY_HAS_PASSWORD" = "true" ]; then
-        DEPENDENCY_CONNECTION_STRING="$DEPENDENCY_CONNECTION_STRING/$K8S_REPOSITORY"
+    CMD_SECRET_CREATE=" --from-literal=hash=$CONTROL_HASH "
+    SECRET_CONNECTION="$CONNECTION_PROTOCOL"
+    
+    for SECRET_KEY_ITEM in $CONTROL_SECRETS_KEYS; do
+      if [ "$SECRET_KEY_ITEM" != "$CONNECTION_SECRET" ]; then
+        debug generating [$SECRET_KEY_ITEM] secret
+        CMD_SECRET_CREATE="$CMD_SECRET_CREATE --from-literal=$SECRET_KEY_ITEM=$(openssl rand -hex 16) "
       fi
+    done
 
-      kubectl $K8S_LABELS create secret generic \
-        -n $K8S_NAMESPACE \
-        $DEPENDENCY_SECRET_NAME \
-          --from-literal="hash=$(cat $DEPENDENCY_FILE | yq -P ".$DEPENDENCY_NAME.control.hash")" \
-          --from-literal="password=$DEPENDENCY_PASSWORD" \
-          --from-literal="$DEPENDENCY_NAME-password=$DEPENDENCY_ROOT_PASSWORD" \
-          --from-literal="$DEPENDENCY_CONNECTION_STRING"
-          
-      kubectl $K8S_LABELS create secret generic \
-        -n $K8S_NAMESPACE \
-        $DEPENDENCY_SECRET_NAME-$REPOSITORY_TAG_VERSION \
-          --from-literal="hash=$(cat $DEPENDENCY_FILE | yq -P ".$DEPENDENCY_NAME.control.hash")" \
-          --from-literal="password=$DEPENDENCY_PASSWORD" \
-          --from-literal="$DEPENDENCY_NAME-password=$DEPENDENCY_ROOT_PASSWORD" \
-          --from-literal="$DEPENDENCY_CONNECTION_STRING"
-    else
-      info this dependency does not have password
-
-      DEPENDENCY_CONNECTION_STRING="connection-string=${DEPENDENCY_PROTOCOL}$DEPENDENCY_SERVICE_NAME:$DEPENDENCY_PORT"
-      if [ "$DEPENDENCY_HAS_PASSWORD" = "true" ]; then
-        DEPENDENCY_CONNECTION_STRING="$DEPENDENCY_CONNECTION_STRING/$K8S_REPOSITORY"
-      fi
-
-      kubectl $K8S_LABELS create secret generic \
-        -n $K8S_NAMESPACE \
-        $DEPENDENCY_SECRET_NAME \
-          --from-literal="hash=$(cat $DEPENDENCY_FILE | yq -P ".$DEPENDENCY_NAME.control.hash")" \
-          --from-literal="$DEPENDENCY_CONNECTION_STRING" 
-
-      kubectl $K8S_LABELS create secret generic \
-        -n $K8S_NAMESPACE \
-        $DEPENDENCY_SECRET_NAME-$REPOSITORY_TAG_VERSION \
-          --from-literal="hash=$(cat $DEPENDENCY_FILE | yq -P ".$DEPENDENCY_NAME.control.hash")" \
-          --from-literal="$DEPENDENCY_CONNECTION_STRING" 
+    if [ "${#CONNECTION_SECRET}" -gt 0 ]; then
+      debug generating [$CONNECTION_SECRET] secret
+      info dependency needs credentials to connect
+      TEMP_SECRET=$(openssl rand -hex 16)
+      CMD_SECRET_CREATE="$CMD_SECRET_CREATE --from-literal=$CONNECTION_SECRET=$TEMP_SECRET "
+      SECRET_CONNECTION="${SECRET_CONNECTION}${CONNECTION_USERNAME}:$TEMP_SECRET@"
     fi
 
-    if [ "$DEPENDENCY_NAME" = "rabbitmq" ]; then
-      info extra secrets created for rabbitmq!
-      RABBITMQ_EARLANG_COOKIE=$(openssl rand -hex 16 | base64)
+    SECRET_CONNECTION="${SECRET_CONNECTION}${CONNECTION_HOSTNAME}:$CONNECTION_PORT$CONNECTION_DATABASE"
+    CMD_SECRET_CREATE="$CMD_SECRET_CREATE --from-literal=connection-string=$SECRET_CONNECTION "
 
-      kubectl $K8S_LABELS patch secret \
-        -n $K8S_NAMESPACE \
-        $DEPENDENCY_SECRET_NAME \
-          -p="{\"data\":{\"rabbitmq-erlang-cookie\": \"$RABBITMQ_EARLANG_COOKIE\"}}" -v=1
+    info create $DEPENDENCY_SECRET_NAME...
+    kubectl $K8S_LABELS create secret generic -n $K8S_NAMESPACE \
+      $DEPENDENCY_SECRET_NAME $CMD_SECRET_CREATE
+    info $DEPENDENCY_SECRET_NAME created!
+    
+    info create $DEPENDENCY_SECRET_NAME-$REPOSITORY_TAG_VERSION...
+    kubectl $K8S_LABELS create secret generic -n $K8S_NAMESPACE \
+      $DEPENDENCY_SECRET_NAME-$REPOSITORY_TAG_VERSION $CMD_SECRET_CREATE
+    info $DEPENDENCY_SECRET_NAME-$REPOSITORY_TAG_VERSION created!
 
-      kubectl $K8S_LABELS patch secret \
-        -n $K8S_NAMESPACE \
-        $DEPENDENCY_SECRET_NAME-$REPOSITORY_TAG_VERSION \
-          -p="{\"data\":{\"rabbitmq-erlang-cookie\": \"$RABBITMQ_EARLANG_COOKIE\"}}" -v=1
-    fi
-    info secrets created!
+    SECRET_OPTION=""
+    for SECRET_ITEM in $CONTROL_SECRETS; do
+      debug added options to [$SECRET_ITEM] secret
+      SECRET_OPTION="$SECRET_OPTION --set $SECRET_ITEM=$DEPENDENCY_SECRET_NAME"
+    done
+    debug secret option = $SECRET_OPTION
 
     info applying helm...
-    SECRET_OPTION="--set \"$(cat $DEPENDENCY_FILE | yq -P ".$DEPENDENCY_NAME.control.secretKey")=$DEPENDENCY_SECRET_NAME\""
-
     cat $DEPENDENCY_FILE | yq -P ".$DEPENDENCY_NAME.values" | helm install $K8S_LABELS \
       -n $K8S_NAMESPACE \
       dep-$DEPENDENCY_NAME \
-        $(cat $DEPENDENCY_FILE | yq -P ".$DEPENDENCY_NAME.control.chart") $SECRET_OPTION \
-        --version $(cat $DEPENDENCY_FILE | yq -P ".$DEPENDENCY_NAME.control.version") \
+        $CONTROL_CHART \
+        --version $CONTROL_VERSION \
+        $SECRET_OPTION \
         --values -
 
     info helm applied!
@@ -123,12 +119,12 @@ if [ $(cat $DEPENDENCY_FILE | yq -P ".$DEPENDENCY_NAME.enabled") = true ]; then
     #     --set "auth.password=$(echo $K8S_SECRET | jq ".password" | base64 -d)" \
     #     --set "auth.${DEPENDENCY_NAME}Password=$(echo $K8S_SECRET | jq ".$DEPENDENCY_NAME-password" | base64 -d)" \
     #     --values -
+  
+    info helm status
+    helm status $K8S_LABELS \
+      -n $K8S_NAMESPACE \
+      dep-$DEPENDENCY_NAME
   fi
-
-  info helm status
-  helm status $K8S_LABELS \
-    -n $K8S_NAMESPACE \
-    dep-$DEPENDENCY_NAME
 else 
   info $DEPENDENCY_NAME is disabled
 
