@@ -24,7 +24,7 @@ mysql:
       extraEnvVars: []
       persistence:
         enabled: true
-        size: 4Gi
+        size: 2Gi
       resources:
         limits: {}
         requests: {}
@@ -51,7 +51,7 @@ postgres:
       extraEnvVars: []
       persistence:
         enabled: true
-        size: 4Gi
+        size: 2Gi
       resources:
         limits: {}
         requests: {}
@@ -78,7 +78,7 @@ rabbitmq:
     persistence:
       enabled: true
       storageClass: ""
-      size: 4Gi
+      size: 2Gi
     resources:
       limits: {}
       requests: {}
@@ -98,7 +98,7 @@ elasticsearch:
       persistence:
         enabled: true
         storageClass: ""
-        size: 4Gi
+        size: 2Gi
     #@schema/type any=True
     extraEnvVars: []
     image:
@@ -111,10 +111,11 @@ elasticsearch:
     metrics:
       enabled: false
     master:
+      replicaCount: 1
       persistence:
         enabled: true
         storageClass: ""
-        size: 4Gi
+        size: 2Gi
       resources:
         limits: {}
         requests: {}
@@ -140,6 +141,7 @@ redis:
     master:
       persistence:
         enabled: false
+        size: 2Gi
       resources:
         limits: {}
         requests: {}
@@ -179,6 +181,9 @@ etcd:
       pullPolicy: IfNotPresent
     metrics:
       enabled: false
+    persistence:
+      enabled: false
+      size: 2Gi	
     resources:
       limits: {}
       requests: {}
