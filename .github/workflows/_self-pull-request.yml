@@ -45,7 +45,7 @@ jobs:
         uses: github/codeql-action/analyze@v2
 
       - name: 'Dependency Review'
-        uses: actions/dependency-review-action@v1
+        uses: actions/dependency-review-action@v2
 
   Ossar-Analysis:
     runs-on: windows-latest
