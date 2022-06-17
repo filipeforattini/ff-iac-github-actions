@@ -20,11 +20,14 @@ mysql:
       #@schema/type any=True
       extraEnvVars: []
     primary:
+      affinity: {}
+      nodeSelector: {}
       #@schema/type any=True
       extraEnvVars: []
       persistence:
         enabled: true
         size: 2Gi
+        storageClass: ""
       resources:
         limits: {}
         requests: {}
@@ -47,11 +50,14 @@ postgres:
       #@schema/type any=True
       extraEnvVars: []
     primary:
+      affinity: {}
+      nodeSelector: {}
       #@schema/type any=True
       extraEnvVars: []
       persistence:
         enabled: true
         size: 2Gi
+        storageClass: ""
       resources:
         limits: {}
         requests: {}
@@ -62,6 +68,7 @@ rabbitmq:
   version: 10.1.7
   chart: bitnami/rabbitmq
   values:
+    affinity: {}
     auth:
       username:	svc
     clustering:
@@ -75,10 +82,11 @@ rabbitmq:
       enabled: false
     metrics:
       enabled: false
+    nodeSelector: {}
     persistence:
       enabled: true
-      storageClass: ""
       size: 2Gi
+      storageClass: ""
     resources:
       limits: {}
       requests: {}
@@ -92,30 +100,43 @@ elasticsearch:
   chart: bitnami/elasticsearch
   values:
     coordinating:
+      affinity: {}
+      nodeSelector: {}
+      replicaCount: 1
+    curator:
+      enabled: false
+      affinity: {}
+      nodeSelector: {}
       replicaCount: 1
     data:
+      affinity: {}
+      nodeSelector: {}
       replicaCount: 1
       persistence:
         enabled: true
-        storageClass: ""
         size: 2Gi
+        storageClass: ""
     #@schema/type any=True
     extraEnvVars: []
     image:
       debug: false
       pullPolicy: IfNotPresent
     ingest:
+      affinity: {}
+      nodeSelector: {}
       replicaCount: 1
     ingress:
       enabled: false
     metrics:
       enabled: false
     master:
+      affinity: {}
+      nodeSelector: {}
       replicaCount: 1
       persistence:
         enabled: true
-        storageClass: ""
         size: 2Gi
+        storageClass: ""
       resources:
         limits: {}
         requests: {}
@@ -139,9 +160,12 @@ redis:
     metrics:
       enabled: false
     master:
+      affinity: {}
+      nodeSelector: {}
       persistence:
         enabled: false
         size: 2Gi
+        storageClass: ""
       resources:
         limits: {}
         requests: {}
@@ -152,6 +176,8 @@ nats:
   version: 7.3.5
   chart: bitnami/nats
   values:
+    affinity: {}
+    nodeSelector: {}
     auth:
       enabled: false
     #@schema/type any=True
@@ -171,6 +197,8 @@ etcd:
   version: 8.3.0
   chart: bitnami/etcd
   values:
+    affinity: {}
+    nodeSelector: {}
     auth:
       rbac:
         create: false
@@ -184,6 +212,7 @@ etcd:
     persistence:
       enabled: false
       size: 2Gi	
+      storageClass: ""
     resources:
       limits: {}
       requests: {}

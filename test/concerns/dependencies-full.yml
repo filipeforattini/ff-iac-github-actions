@@ -5,7 +5,8 @@ mysql:
   values:
     primary:
       persistence:
-        size: 2Gi	
+        size: 2Gi
+        storageClass: longhorn
 
 postgres:
   enabled: true  
@@ -13,12 +14,14 @@ postgres:
     primary:
       persistence:
         size: 2Gi	
+        storageClass: longhorn
 
 rabbitmq:
   enabled: true  
   values:
     persistence:
       size: 2Gi
+      storageClass: longhorn
 
 elasticsearch:
   enabled: true  
@@ -26,9 +29,11 @@ elasticsearch:
     master:
       persistence:
         size: 2Gi
+        storageClass: longhorn
     data:
       persistence:
         size: 2Gi
+        storageClass: longhorn
 
 redis:
   enabled: true
