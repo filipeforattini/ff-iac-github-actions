@@ -14,6 +14,13 @@ mysql:
         requests:
           - name: cpu
             value: 0.2
+          - name: memory
+            value: 64Mi
+        limits:
+          - name: cpu
+            value: 1
+          - name: memory
+            value: 1024Mi
 
 postgres:
   enabled: true  
