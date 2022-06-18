@@ -3,6 +3,14 @@
 #@ load("@ytt:base64", "base64")
 #@ load("@ytt:sha256", "sha256")
 
+#@ def ListToMap (listOfMaps):
+#@    newMap = {}
+#@    for i in range(len(listOfMaps)):
+#@        newMap.update({ listOfMaps[i].name: listOfMaps[i].value })
+#@    end
+#@    return newMap
+#@ end
+
 ---
 #@ dependencies = []
 #@ if data.values.mysql.enabled:
@@ -49,13 +57,21 @@ mysql:
       username: #@ data.values.repository
       database: #@ "/{}".format(data.values.repository)
       secret: mysql-password
+      
   #@ mysqlValues = {}
   #@ mysqlValues.update(data.values.mysql.values)
   #@ mysqlValues.update({ 
   #@    "auth": {
   #@      "database": data.values.repository,
   #@      "username": data.values.repository
-  #@    }
+  #@    },
+  #@    "primary": {
+  #@      "nodeSelector": ListToMap(data.values.mysql.values.primary.nodeSelector),
+  #@      "resources": {
+  #@        "limits": ListToMap(data.values.mysql.values.primary.resources.limits),
+  #@        "requests": ListToMap(data.values.mysql.values.primary.resources.requests),
+  #@      }
+  #@     }
   #@ })
   values: #@ mysqlValues
 

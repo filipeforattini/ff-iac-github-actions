@@ -20,8 +20,8 @@ mysql:
       #@schema/type any=True
       extraEnvVars: []
     primary:
-      affinity: {}
-      nodeSelector: {}
+      #@schema/type any=True
+      nodeSelector: []
       #@schema/type any=True
       extraEnvVars: []
       persistence:
@@ -29,8 +29,10 @@ mysql:
         size: 2Gi
         storageClass: ""
       resources:
-        limits: {}
-        requests: {}
+        #@schema/type any=True
+        limits: []
+        #@schema/type any=True
+        requests: []
 
 #! POSTGRES
 postgres:
@@ -50,8 +52,8 @@ postgres:
       #@schema/type any=True
       extraEnvVars: []
     primary:
-      affinity: {}
-      nodeSelector: {}
+      #@schema/type any=True
+      nodeSelector: []
       #@schema/type any=True
       extraEnvVars: []
       persistence:

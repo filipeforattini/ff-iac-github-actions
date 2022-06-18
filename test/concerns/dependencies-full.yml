@@ -4,14 +4,24 @@ mysql:
   enabled: true
   values:
     primary:
+      nodeSelector:
+        - name: arch
+          value: amd64
       persistence:
         size: 2Gi
         storageClass: longhorn
+      resources:
+        requests:
+          - name: cpu
+            value: 0.2
 
 postgres:
   enabled: true  
   values:
     primary:
+      nodeSelector:
+        - name: arch
+          value: amd64
       persistence:
         size: 2Gi	
         storageClass: longhorn
