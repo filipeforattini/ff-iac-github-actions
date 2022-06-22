@@ -13,15 +13,15 @@ REPOSITORY_TAG_VERSION="${REPOSITORY_TAG_VERSION:-"0.0.1"}"
 
 # utils
 debug () {
-  echo " [$DEPENDENCY_NAME] debug  | $*"
+  echo "[$DEPENDENCY_NAME] debug  | $*"
 }
 
 info () {
-  echo " [$DEPENDENCY_NAME]  info  | $*"
+  echo "[$DEPENDENCY_NAME]  info  | $*"
 }
 
 error () {
-  echo " [$DEPENDENCY_NAME]  error  | $*"
+  echo "[$DEPENDENCY_NAME]  error  | $*"
   exit 1
 }
 

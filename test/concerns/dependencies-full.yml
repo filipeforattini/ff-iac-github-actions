@@ -10,17 +10,6 @@ mysql:
       persistence:
         size: 2Gi
         storageClass: longhorn
-      resources:
-        requests:
-          - name: cpu
-            value: 0.2
-          - name: memory
-            value: 64Mi
-        limits:
-          - name: cpu
-            value: 1
-          - name: memory
-            value: 1024Mi
 
 postgres:
   enabled: true  
@@ -34,8 +23,11 @@ postgres:
         storageClass: longhorn
 
 rabbitmq:
-  enabled: true  
+  enabled: true 
   values:
+    nodeSelector:
+      - name: arch
+        value: amd64
     persistence:
       size: 2Gi
       storageClass: longhorn
@@ -44,19 +36,40 @@ elasticsearch:
   enabled: true  
   values:
     master:
+      nodeSelector:
+        - name: arch
+          value: amd64
       persistence:
         size: 2Gi
         storageClass: longhorn
     data:
+      nodeSelector:
+        - name: arch
+          value: amd64
       persistence:
         size: 2Gi
         storageClass: longhorn
 
 redis:
   enabled: true
+  values:
+    master:
+      nodeSelector:
+        - name: arch
+          value: amd64
+      persistence:
+        enabled: false
 
 nats:
   enabled: true
+  values:
+    nodeSelector:
+      - name: arch
+        value: amd64
 
 etcd:
   enabled: true
+  values:
+    nodeSelector:
+      - name: arch
+        value: amd64

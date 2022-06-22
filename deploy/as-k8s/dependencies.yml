@@ -2,6 +2,7 @@
 #@ load("@ytt:json", "json")
 #@ load("@ytt:base64", "base64")
 #@ load("@ytt:sha256", "sha256")
+#@ load("@ytt:struct", "struct")
 
 #@ def ListToMap (listOfMaps):
 #@    newMap = {}
@@ -12,28 +13,13 @@
 #@ end
 
 ---
-#@ dependencies = []
-#@ if data.values.mysql.enabled:
-#@  dependencies.extend(["mysql"])
-#@ end
-#@ if data.values.postgres.enabled:
-#@  dependencies.extend(["postgres"])
-#@ end
-#@ if data.values.rabbitmq.enabled:
-#@  dependencies.extend(["rabbitmq"])
-#@ end
-#@ if data.values.elasticsearch.enabled:
-#@  dependencies.extend(["elasticsearch"])
-#@ end
-#@ if data.values.redis.enabled:
-#@  dependencies.extend(["redis"])
-#@ end
-#@ if data.values.nats.enabled:
-#@  dependencies.extend(["nats"])
-#@ end
-#@ if data.values.etcd.enabled:
-#@  dependencies.extend(["etcd"])
-#@ end
+#@  dependencies = []
+#@  depNames = ["mysql", "postgres", "rabbitmq", "elasticsearch", "redis", "nats", "etcd"]
+#@  for i in range(len(depNames)):
+#@    if data.values[depNames[i]].enabled:
+#@      dependencies.extend([depNames[i]])
+#@    end
+#@  end
 dependencies: #@ ",".join(dependencies)
 dependenciesAsJson: #@ json.encode(dependencies)
 
@@ -57,22 +43,25 @@ mysql:
       username: #@ data.values.repository
       database: #@ "/{}".format(data.values.repository)
       secret: mysql-password
-      
-  #@ mysqlValues = {}
-  #@ mysqlValues.update(data.values.mysql.values)
-  #@ mysqlValues.update({ 
-  #@    "auth": {
-  #@      "database": data.values.repository,
-  #@      "username": data.values.repository
+  
+  #@  mysqlValues = {}
+  #@  mysqlValues.update(data.values.mysql.values)
+  #@  mysqlValues = struct.encode(mysqlValues)
+  #@  mysqlValues = struct.decode(mysqlValues)
+
+  #@  mysqAuth = mysqlValues.get("auth")
+  #@  mysqAuth.update({ 
+  #@    "database": data.values.repository,
+  #@    "username": data.values.repository,
+  #@  })
+  #@  mysqPrimary = mysqlValues.get("primary")
+  #@  mysqPrimary.update({
+  #@    "nodeSelector": ListToMap(data.values.mysql.values.primary.nodeSelector),
+  #@    "resources": {
+  #@      "limits": ListToMap(data.values.mysql.values.primary.resources.limits),
+  #@      "requests": ListToMap(data.values.mysql.values.primary.resources.requests),
   #@    },
-  #@    "primary": {
-  #@      "nodeSelector": ListToMap(data.values.mysql.values.primary.nodeSelector),
-  #@      "resources": {
-  #@        "limits": ListToMap(data.values.mysql.values.primary.resources.limits),
-  #@        "requests": ListToMap(data.values.mysql.values.primary.resources.requests),
-  #@      }
-  #@     }
-  #@ })
+  #@  })
   values: #@ mysqlValues
 
 postgres:
@@ -95,13 +84,24 @@ postgres:
       username: #@ data.values.repository
       database: #@ "/{}".format(data.values.repository)
       secret: password
-  #@ postgresValues = {}
-  #@ postgresValues.update(data.values.mysql.values)
-  #@ postgresValues.update({ 
-  #@    "auth": {
-  #@      "database": data.values.repository,
-  #@      "username": data.values.repository
-  #@    }
+  
+  #@  postgresValues = {}
+  #@  postgresValues.update(data.values.postgres.values)
+  #@  postgresValues = struct.encode(postgresValues)
+  #@  postgresValues = struct.decode(postgresValues)
+
+  #@  postgresAuth = postgresValues.get("auth")
+  #@  postgresAuth.update({
+  #@    "database": data.values.repository,
+  #@    "username": data.values.repository
+  #@  })
+  #@  postgresPrimary = postgresValues.get("primary")
+  #@  postgresPrimary.update({
+  #@    "nodeSelector": ListToMap(data.values.postgres.values.primary.nodeSelector),
+  #@    "resources": {
+  #@      "limits": ListToMap(data.values.postgres.values.primary.resources.limits),
+  #@      "requests": ListToMap(data.values.postgres.values.primary.resources.requests),
+  #@    },
   #@ })
   values: #@ postgresValues
 
@@ -125,12 +125,23 @@ rabbitmq:
       username: #@ data.values.repository
       database: ""
       secret: rabbitmq-password
-  #@ rabbitmqValues = {}
-  #@ rabbitmqValues.update(data.values.mysql.values)
-  #@ rabbitmqValues.update({ 
-  #@    "auth": {
-  #@      "username": data.values.repository
-  #@    }
+
+  #@  rabbitmqValues = {}
+  #@  rabbitmqValues.update(data.values.rabbitmq.values)
+  #@  rabbitmqValues = struct.encode(rabbitmqValues)
+  #@  rabbitmqValues = struct.decode(rabbitmqValues)
+
+  #@  rabbitmqAuth = rabbitmqValues.get("auth")
+  #@  rabbitmqAuth.update({
+  #@    "username": data.values.repository
+  #@  })
+
+  #@  rabbitmqValues.update({ 
+  #@    "nodeSelector": ListToMap(data.values.rabbitmq.values.nodeSelector),
+  #@    "resources": {
+  #@      "limits": ListToMap(data.values.rabbitmq.values.resources.limits),
+  #@      "requests": ListToMap(data.values.rabbitmq.values.resources.requests),
+  #@    },
   #@ })
   values: #@ rabbitmqValues
 
@@ -150,7 +161,53 @@ elasticsearch:
       username: ""
       database: ""
       secret: ""
-  values: #@ data.values.elasticsearch.values
+
+  #@  elasticsearchValues = {}
+  #@  elasticsearchValues.update(data.values.elasticsearch.values)
+  #@  elasticsearchValues = struct.encode(elasticsearchValues)
+  #@  elasticsearchValues = struct.decode(elasticsearchValues)
+
+  #@  elasticsearchCoordinating = elasticsearchValues.get("coordinating")
+  #@  elasticsearchCoordinating.update({
+  #@    "nodeSelector": ListToMap(data.values.elasticsearch.values.coordinating.nodeSelector),
+  #@    "resources": {
+  #@      "limits": ListToMap(data.values.elasticsearch.values.coordinating.resources.limits),
+  #@      "requests": ListToMap(data.values.elasticsearch.values.coordinating.resources.requests),
+  #@    },
+  #@  })
+  #@  elasticsearchCurator = elasticsearchValues.get("curator")
+  #@  elasticsearchCurator.update({
+  #@    "nodeSelector": ListToMap(data.values.elasticsearch.values.curator.nodeSelector),
+  #@    "resources": {
+  #@      "limits": ListToMap(data.values.elasticsearch.values.curator.resources.limits),
+  #@      "requests": ListToMap(data.values.elasticsearch.values.curator.resources.requests),
+  #@    },
+  #@  })
+  #@  elasticsearchData = elasticsearchValues.get("data")
+  #@  elasticsearchData.update({
+  #@    "nodeSelector": ListToMap(data.values.elasticsearch.values.data.nodeSelector),
+  #@    "resources": {
+  #@      "limits": ListToMap(data.values.elasticsearch.values.data.resources.limits),
+  #@      "requests": ListToMap(data.values.elasticsearch.values.data.resources.requests),
+  #@    },
+  #@  })
+  #@  elasticsearchIngest = elasticsearchValues.get("ingest")
+  #@  elasticsearchIngest.update({
+  #@    "nodeSelector": ListToMap(data.values.elasticsearch.values.ingest.nodeSelector),
+  #@    "resources": {
+  #@      "limits": ListToMap(data.values.elasticsearch.values.ingest.resources.limits),
+  #@      "requests": ListToMap(data.values.elasticsearch.values.ingest.resources.requests),
+  #@    },
+  #@  })
+  #@  elasticsearchMaster = elasticsearchValues.get("master")
+  #@  elasticsearchMaster.update({
+  #@    "nodeSelector": ListToMap(data.values.elasticsearch.values.master.nodeSelector),
+  #@    "resources": {
+  #@      "limits": ListToMap(data.values.elasticsearch.values.master.resources.limits),
+  #@      "requests": ListToMap(data.values.elasticsearch.values.master.resources.requests),
+  #@    },
+  #@  })
+  values: #@ elasticsearchValues
 
 redis:
   enabled: #@ data.values.redis.enabled
@@ -168,7 +225,21 @@ redis:
       username: ""
       database: ""
       secret: ""
-  values: #@ data.values.redis.values
+
+  #@  redisValues = {}
+  #@  redisValues.update(data.values.redis.values)
+  #@  redisValues = struct.encode(redisValues)
+  #@  redisValues = struct.decode(redisValues)
+
+  #@  redisMaster = redisValues.get("master")
+  #@  redisMaster.update({
+  #@    "nodeSelector": ListToMap(data.values.redis.values.master.nodeSelector),
+  #@    "resources": {
+  #@      "limits": ListToMap(data.values.redis.values.master.resources.limits),
+  #@      "requests": ListToMap(data.values.redis.values.master.resources.requests),
+  #@    },
+  #@  })
+  values: #@ redisValues
 
 nats:
   enabled: #@ data.values.nats.enabled
@@ -186,7 +257,20 @@ nats:
       username: ""
       database: ""
       secret: ""
-  values: #@ data.values.nats.values
+
+  #@  natsValues = {}
+  #@  natsValues.update(data.values.nats.values)
+  #@  natsValues = struct.encode(natsValues)
+  #@  natsValues = struct.decode(natsValues)
+
+  #@  natsValues.update({
+  #@    "nodeSelector": ListToMap(data.values.nats.values.nodeSelector),
+  #@    "resources": {
+  #@      "limits": ListToMap(data.values.nats.values.resources.limits),
+  #@      "requests": ListToMap(data.values.nats.values.resources.requests),
+  #@    },
+  #@  })
+  values: #@ natsValues
 
 etcd:
   enabled: #@ data.values.etcd.enabled
@@ -204,4 +288,17 @@ etcd:
       username: ""
       database: ""
       secret: ""
-  values: #@ data.values.etcd.values
+
+  #@  etcdValues = {}
+  #@  etcdValues.update(data.values.etcd.values)
+  #@  etcdValues = struct.encode(etcdValues)
+  #@  etcdValues = struct.decode(etcdValues)
+
+  #@  etcdValues.update({
+  #@    "nodeSelector": ListToMap(data.values.etcd.values.nodeSelector),
+  #@    "resources": {
+  #@      "limits": ListToMap(data.values.etcd.values.resources.limits),
+  #@      "requests": ListToMap(data.values.etcd.values.resources.requests),
+  #@    },
+  #@  })
+  values: #@ etcdValues

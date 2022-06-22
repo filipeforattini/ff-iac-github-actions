@@ -1,3 +1,225 @@
+#@ def defaultMysql():
+  architecture: standalone
+  auth:
+    database:	svc
+    username:	svc
+  image:
+    debug: false
+    pullPolicy: IfNotPresent
+  metrics:
+    enabled: false
+    #@schema/type any=True
+    extraEnvVars: []
+  primary:
+    #@schema/type any=True
+    nodeSelector: []
+    #@schema/type any=True
+    extraEnvVars: []
+    persistence:
+      enabled: true
+      size: 2Gi
+      storageClass: ""
+    resources:
+      #@schema/type any=True
+      limits: []
+      #@schema/type any=True
+      requests: []
+#@ end
+
+#@ def defaultPostgres():
+  architecture: standalone
+  auth:
+    database:	svc
+    username:	svc
+  image:
+    debug: false
+    pullPolicy: IfNotPresent
+  metrics:
+    enabled: false
+    #@schema/type any=True
+    extraEnvVars: []
+  primary:
+    #@schema/type any=True
+    nodeSelector: []
+    #@schema/type any=True
+    extraEnvVars: []
+    persistence:
+      enabled: true
+      size: 2Gi
+      storageClass: ""
+    resources:
+      #@schema/type any=True
+      limits: []
+      #@schema/type any=True
+      requests: []
+#@ end
+
+#@ def defaultRabbitmq():
+  auth:
+    username:	svc
+  clustering:
+    enabled: false
+  #@schema/type any=True
+  extraEnvVars: []
+  image:
+    debug: false
+    pullPolicy: IfNotPresent
+  ingress:
+    enabled: false
+  metrics:
+    enabled: false
+  #@schema/type any=True
+  nodeSelector: []
+  persistence:
+    enabled: true
+    size: 2Gi
+    storageClass: ""
+  resources:
+    #@schema/type any=True
+    limits: []
+    #@schema/type any=True
+    requests: []
+  serviceAccount:
+    create: false
+#@ end
+
+#@ def defaultElasticsearch():
+  coordinating:
+    #@schema/type any=True
+    nodeSelector: []
+    replicaCount: 1
+    resources:
+      #@schema/type any=True
+      limits: []
+      #@schema/type any=True
+      requests: []
+  curator:
+    enabled: false
+    #@schema/type any=True
+    nodeSelector: []
+    replicaCount: 1
+    resources:
+      #@schema/type any=True
+      limits: []
+      #@schema/type any=True
+      requests: []
+  data:
+    #@schema/type any=True
+    nodeSelector: []
+    persistence:
+      enabled: true
+      size: 2Gi
+      storageClass: ""
+    replicaCount: 1
+    resources:
+      #@schema/type any=True
+      limits: []
+      #@schema/type any=True
+      requests: []
+  #@schema/type any=True
+  extraEnvVars: []
+  image:
+    debug: false
+    pullPolicy: IfNotPresent
+  ingest:
+    #@schema/type any=True
+    nodeSelector: []
+    replicaCount: 1
+    resources:
+      #@schema/type any=True
+      limits: []
+      #@schema/type any=True
+      requests: []
+  ingress:
+    enabled: false
+  metrics:
+    enabled: false
+  master:
+    #@schema/type any=True
+    nodeSelector: []
+    replicaCount: 1
+    persistence:
+      enabled: true
+      size: 2Gi
+      storageClass: ""
+    resources:
+      #@schema/type any=True
+      limits: []
+      #@schema/type any=True
+      requests: []
+#@ end
+
+#@ def defaultRedis():
+  architecture: standalone
+  auth:
+    enabled: false
+  #@schema/type any=True
+  extraEnvVars: []
+  image:
+    debug: false
+    pullPolicy: IfNotPresent
+  ingress:
+    enabled: false
+  metrics:
+    enabled: false
+  master:
+    #@schema/type any=True
+    nodeSelector: []
+    persistence:
+      enabled: false
+      size: 2Gi
+      storageClass: ""
+    resources:
+      #@schema/type any=True
+      limits: []
+      #@schema/type any=True
+      requests: []
+#@ end
+
+#@ def defaultNats():
+  auth:
+    enabled: false
+  #@schema/type any=True
+  nodeSelector: []
+  #@schema/type any=True
+  extraEnvVars: []
+  image:
+    debug: false
+    pullPolicy: IfNotPresent
+  metrics:
+    enabled: false
+  resources:
+    #@schema/type any=True
+    limits: []
+    #@schema/type any=True
+    requests: []
+#@ end
+
+#@ def defaultEtcd():
+  auth:
+    rbac:
+      create: false
+  #@schema/type any=True
+  extraEnvVars: []
+  image:
+    debug: false
+    pullPolicy: IfNotPresent
+  metrics:
+    enabled: false
+  #@schema/type any=True
+  nodeSelector: []
+  persistence:
+    enabled: false
+    size: 2Gi	
+    storageClass: ""
+  resources:
+    #@schema/type any=True
+    limits: []
+    #@schema/type any=True
+    requests: []
+
+#@ end
+
 #@data/values-schema
 ---
 repository: acm-svc-acme
@@ -7,214 +229,60 @@ mysql:
   enabled: false
   version: 9.1.7
   chart: bitnami/mysql
-  values:
-    architecture: standalone
-    auth:
-      database:	svc
-      username:	svc
-    image:
-      debug: false
-      pullPolicy: IfNotPresent
-    metrics:
-      enabled: false
-      #@schema/type any=True
-      extraEnvVars: []
-    primary:
-      #@schema/type any=True
-      nodeSelector: []
-      #@schema/type any=True
-      extraEnvVars: []
-      persistence:
-        enabled: true
-        size: 2Gi
-        storageClass: ""
-      resources:
-        #@schema/type any=True
-        limits: []
-        #@schema/type any=True
-        requests: []
+  #@schema/default defaultMysql()
+  #@schema/type any=True
+  values: {}
 
 #! POSTGRES
 postgres:
   enabled: false
   version: 11.6.6
   chart: bitnami/postgresql
-  values:
-    architecture: standalone
-    auth:
-      database:	svc
-      username:	svc
-    image:
-      debug: false
-      pullPolicy: IfNotPresent
-    metrics:
-      enabled: false
-      #@schema/type any=True
-      extraEnvVars: []
-    primary:
-      #@schema/type any=True
-      nodeSelector: []
-      #@schema/type any=True
-      extraEnvVars: []
-      persistence:
-        enabled: true
-        size: 2Gi
-        storageClass: ""
-      resources:
-        limits: {}
-        requests: {}
+  #@schema/default defaultPostgres()
+  #@schema/type any=True
+  values: {}
 
 #! RABBITMQ
 rabbitmq:
   enabled: false
   version: 10.1.7
   chart: bitnami/rabbitmq
-  values:
-    affinity: {}
-    auth:
-      username:	svc
-    clustering:
-      enabled: false
-    #@schema/type any=True
-    extraEnvVars: []
-    image:
-      debug: false
-      pullPolicy: IfNotPresent
-    ingress:
-      enabled: false
-    metrics:
-      enabled: false
-    nodeSelector: {}
-    persistence:
-      enabled: true
-      size: 2Gi
-      storageClass: ""
-    resources:
-      limits: {}
-      requests: {}
-    serviceAccount:
-      create: false
+  #@schema/default defaultRabbitmq()
+  #@schema/type any=True
+  values: {}
 
 #! ELASTICSEARCH
 elasticsearch:
   enabled: false
   version: 18.2.12
   chart: bitnami/elasticsearch
-  values:
-    coordinating:
-      affinity: {}
-      nodeSelector: {}
-      replicaCount: 1
-    curator:
-      enabled: false
-      affinity: {}
-      nodeSelector: {}
-      replicaCount: 1
-    data:
-      affinity: {}
-      nodeSelector: {}
-      replicaCount: 1
-      persistence:
-        enabled: true
-        size: 2Gi
-        storageClass: ""
-    #@schema/type any=True
-    extraEnvVars: []
-    image:
-      debug: false
-      pullPolicy: IfNotPresent
-    ingest:
-      affinity: {}
-      nodeSelector: {}
-      replicaCount: 1
-    ingress:
-      enabled: false
-    metrics:
-      enabled: false
-    master:
-      affinity: {}
-      nodeSelector: {}
-      replicaCount: 1
-      persistence:
-        enabled: true
-        size: 2Gi
-        storageClass: ""
-      resources:
-        limits: {}
-        requests: {}
+  #@schema/default defaultElasticsearch()
+  #@schema/type any=True
+  values: {}
 
 #! REDIS
 redis:
   enabled: false
   version: 16.12.1
   chart: bitnami/redis
-  values:
-    architecture: standalone
-    auth:
-      enabled: false
-    #@schema/type any=True
-    extraEnvVars: []
-    image:
-      debug: false
-      pullPolicy: IfNotPresent
-    ingress:
-      enabled: false
-    metrics:
-      enabled: false
-    master:
-      affinity: {}
-      nodeSelector: {}
-      persistence:
-        enabled: false
-        size: 2Gi
-        storageClass: ""
-      resources:
-        limits: {}
-        requests: {}
+  #@schema/default defaultRedis()
+  #@schema/type any=True
+  values: {}
 
 #! NATS
 nats:
   enabled: false
   version: 7.3.5
   chart: bitnami/nats
-  values:
-    affinity: {}
-    nodeSelector: {}
-    auth:
-      enabled: false
-    #@schema/type any=True
-    extraEnvVars: []
-    image:
-      debug: false
-      pullPolicy: IfNotPresent
-    metrics:
-      enabled: false
-    resources:
-      limits: {}
-      requests: {}
+  #@schema/default defaultNats()
+  #@schema/type any=True
+  values: {}
 
 #! ETCD
 etcd:
   enabled: false
   version: 8.3.0
   chart: bitnami/etcd
-  values:
-    affinity: {}
-    nodeSelector: {}
-    auth:
-      rbac:
-        create: false
-    #@schema/type any=True
-    extraEnvVars: []
-    image:
-      debug: false
-      pullPolicy: IfNotPresent
-    metrics:
-      enabled: false
-    persistence:
-      enabled: false
-      size: 2Gi	
-      storageClass: ""
-    resources:
-      limits: {}
-      requests: {}
+  #@schema/default defaultEtcd()
+  #@schema/type any=True
+  values: {}

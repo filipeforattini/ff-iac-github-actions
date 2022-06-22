@@ -1,4 +1,4 @@
-REPOSITORY=ff-iac-github-actions
+REPOSITORY=${REPOSITORY:-"ff-iac-github-actions"}
 
 ytt \
   -f ../deploy/as-k8s/dependencies.schema.yml \
