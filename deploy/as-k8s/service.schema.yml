@@ -1,3 +1,48 @@
+#@ def defaultDeployment():
+  enable: true
+  replicas: 2
+  name: svc
+  labels: {}
+  annotations: {}
+  resources: {}
+  imagePullSecrets: false
+
+  templateLabels: {}
+  matchLabels:
+    overwrite: false
+    labels: {}
+#@ end
+
+#@ def defaultService():
+  enable: true
+  name: svc
+  labels: {}
+  annotations: {}
+  selector:
+    overwrite: false
+    labels: {}
+  #@schema/type any=True
+  ports: []
+#@ end
+
+#@ def defaultIngress():
+  enable: false
+  name: svc
+  type: nginx
+  
+  domain:
+    enable: true
+    name: acme.io
+    email: security@acme.io
+    removeEnvironmentPrefix: false
+
+  #! types specifics
+  alb:
+    certificateArn: secret
+  nginx:
+    certmanager: true
+#@ end
+
 #@data/values-schema
 ---
 #! global
@@ -28,47 +73,17 @@ namespace:
   labels: {}
   annotations: {}
 
-deployment:
-  enable: true
-  replicas: 2
-  name: svc
-  labels: {}
-  annotations: {}
-  resources: {}
-  imagePullSecrets: false
+#@schema/default defaultDeployment()
+#@schema/type any=True
+deployment: {}
 
-  templateLabels: {}
-  matchLabels:
-    overwrite: false
-    labels: {}
+#@schema/default defaultService()
+#@schema/type any=True
+service: {}
 
-service:
-  enable: true
-  name: svc
-  labels: {}
-  annotations: {}
-  selector:
-    overwrite: false
-    labels: {}
-  #@schema/type any=True
-  ports: []
-
-ingress:
-  enable: false
-  name: svc
-  type: nginx
-  
-  domain:
-    enable: true
-    name: acme.io
-    email: security@acme.io
-    removeEnvironmentPrefix: false
-
-  #! types specifics
-  alb:
-    certificateArn: secret
-  nginx:
-    certmanager: true
+#@schema/default defaultIngress()
+#@schema/type any=True
+ingress: {}
 
 #! pipeline control
 pipelineControl:
