@@ -19,7 +19,7 @@ test:
 		sh generate-kubefile-ingress.sh;
 
 K8S_NAMESPACE ?= ff-svc-moleculerjs-dev
-K8S_LABELS ?= "--kubeconfig $(HOME)/.kube/ff-mini.yml"
+K8S_LABELS ?= ""
 DEPENDENCY_FILE ?= "$(PWD)/test/tmp/k8s-dependencies-full.yml"
 DEPENDENCY_FILE_EMPTY ?= "$(PWD)/test/tmp/k8s-dependencies-empty.yml"
 

@@ -2,9 +2,6 @@
 ---
 port: 1234
 
-features:
-  enableLinkerd: true
-
 env:
   - name: TZ
     value: America/Sao_Paulo
@@ -12,7 +9,10 @@ env:
 ingress:
   enable: true
   type: nginx
-  domain:
+
+  tls:
     enable: true
-    name: forattini.app
+    domain: forattini.app
     removeEnvironmentPrefix: true
+    letsencrypt:
+      enable: true

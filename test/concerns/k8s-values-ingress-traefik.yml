@@ -2,9 +2,6 @@
 ---
 port: 1234
 
-features:
-  enableLinkerd: true
-
 env:
   - name: TZ
     value: America/Sao_Paulo
@@ -12,9 +9,10 @@ env:
 ingress:
   enable: true
   type: traefik
-
+  
   tls:
     enable: true
     domain: forattini.app
+    removeEnvironmentPrefix: true
     letsencrypt:
       enable: true

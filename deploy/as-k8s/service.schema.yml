@@ -28,19 +28,26 @@
 #@ def defaultIngress():
   enable: false
   name: svc
-  type: nginx
+  type: traefik
   
-  domain:
+  tls:
     enable: true
-    name: acme.io
+    domain: acme.io
     email: security@acme.io
     removeEnvironmentPrefix: false
+  
+    letsencrypt:
+      enable: false
+      type: cluster-issuer
 
   #! types specifics
   alb:
     certificateArn: secret
   nginx:
     certmanager: true
+  traefik:
+    x: true
+
 #@ end
 
 #@data/values-schema
