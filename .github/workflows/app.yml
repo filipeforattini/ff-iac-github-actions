@@ -384,6 +384,10 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-multi-buildx
 
+      - name: Copy config
+        run: |
+          if test -f ./manifests/configs/dev.env; then cp ./manifests/configs/dev.env ./.env; fi)
+
       - name: Build and push
         uses: docker/build-push-action@v2
         with:

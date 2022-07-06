@@ -30,7 +30,10 @@ module.exports = class Deploy extends Scrapper {
       acc.namespaces[env] = `${repository}-${env}`
       acc.secrets[env] = fs.existsSync(path.join(process.cwd(), 'manifests', 'secrets', env + '.gpg'))
 
-      acc.buildArgs[env] = fs.readFileSync(path.join(process.cwd(), 'manifests', 'configs', env + '.env')).toString().split('\n').join(', ')
+      acc.buildArgs[env] = acc.configs[env]
+        ? fs.readFileSync(path.join(process.cwd(), 'manifests', 'configs', env + '.env')).toString().trim().split('\n').join(', ')
+        : ''
+
       return acc
     }, { 
       configs: {},
