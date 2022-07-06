@@ -1,4 +1,4 @@
-name: service-push
+name: push-app
 
 concurrency:
   group: ${{github.workflow}}
@@ -98,19 +98,11 @@ jobs:
           result-encoding: string
           script: |
             return require('./.pipeline/src/steps/config-scrapper')({ 
-              context, 
+              context,
               inputs: {
                 containerRegistry: "${{ inputs.containerRegistry }}",
               },
             })
-
-      - name: Config | Define pipeline paths
-        env:
-          PIPELINE_SETUP: ${{ steps.script_setup.outputs.result}}
-        id: define_builders
-        run: |
-          echo "::set-output name=build_node::$(echo $PIPELINE_SETUP | jq -r '.code.isNode')"
-          echo "::set-output name=build_python::$(echo $PIPELINE_SETUP | jq -r '.code.isPython')"
 
       - name: Docs | Configs summary
         env:
@@ -199,120 +191,12 @@ jobs:
 
 
   #--------------------------------------------------#
-  #                  Tests: Node.js                  # 
+  #                      Release                     # 
   #--------------------------------------------------#
-  Tests-Node:
-    runs-on: ubuntu-latest
-    needs: Setup
-    if: needs.Setup.outputs.BuildNode == 'true'
-
-    permissions:
-      security-events: write
-
-    strategy:
-      matrix:
-        node-version: ${{ fromJSON(inputs.nodeMatrix) }}
-    
-    steps:
-
-      # pre-job
-      - name: Setup | Cloning repository
-        uses: actions/checkout@v3
-
-      - name: Setup | Cloning tools
-        uses: actions/checkout@v3
-        with:
-          ref: main
-          path: .pipeline
-          repository: filipeforattini/ff-iac-github-actions
-
-      - name: Install | Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
-
-      - name: Install | Dependency managers
-        run: npm -g install yarn npm
-
-      - name: Config | Load setup configs
-        env:
-          PIPELINE_SETUP: ${{ needs.Setup.outputs.PipelineConfig }}
-        id: node_setup
-        run: |
-          echo "::set-output name=cache_key::$(echo $PIPELINE_SETUP | jq -r '.code.cacheKey')"
-          echo "::set-output name=dependency_command::$(echo $PIPELINE_SETUP | jq -r '.code.dependencyCommand')"
-
-      # load caches
-      - name: Load cache from yarn.lock
-        uses: actions/cache@v2
-        if: steps.node_setup.outputs.cache_key == 'yarn.lock'
-        with:
-          path: '**/node_modules'
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
-
-      - name: Load cache from package-lock.json
-        uses: actions/cache@v2
-        if: steps.node_setup.outputs.cache_key == 'package-lock.json'
-        with:
-          path: '**/node_modules'
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/package-lock.json') }}
-
-      - name: Load cache from package.json
-        uses: actions/cache@v2
-        if: steps.node_setup.outputs.cache_key == 'package-lock.json'
-        with:
-          path: '**/node_modules'
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/package.json') }}
-
-      # install dependencies
-      - name: Install dependencies
-        run: ${{ steps.node_setup.outputs.dependency_command }}
-
-      # run scripts
-      - name: Run linter
-        run: npm run lint --if-present
-
-      - name: Run tests
-        run: npm run test --if-present
-
-
-  #--------------------------------------------------#
-  #                  Tests: Python                   # 
-  #--------------------------------------------------#
-  Tests-Python:
-    runs-on: ubuntu-latest
-    needs: Setup
-    if: |
-      github.event_name == 'push'
-      && needs.Setup.outputs.BuildPython == 'true'
-
-    strategy:
-      matrix:
-        python-version: ${{ fromJSON(inputs.pythonMatrix) }}
-    
-    steps:
-
-      # pre-job
-      - name: Setup | Cloning repository
-        uses: actions/checkout@v3
-
-      - name: Setup | Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v3
-        with:
-          python-version: ${{ matrix.python-version }}
-
-      - name: Pip install
-        run: pip install -r requirements.txt
-
-
-  #--------------------------------------------------#
-  #                 Release: Node.js                 # 
-  #--------------------------------------------------#
-  Release-Node:
+  Release:
     runs-on: ubuntu-latest
     needs: 
       - Setup
-      - Tests-Node
       - Static-Analysis
 
     outputs:
@@ -395,107 +279,13 @@ jobs:
 
 
   #--------------------------------------------------#
-  #                 Release: Python                  # 
+  #                       Build                      # 
   #--------------------------------------------------#
-  Release-Python:
+  Build:
     runs-on: ubuntu-latest
     needs: 
       - Setup
-      - Tests-Python
-      - Static-Analysis
-
-    outputs:
-      Version: ${{ steps.versioning.outputs.version }}
-
-    steps:
-
-      # pre-job
-      - name: Setup | Cloning repository
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-          persist-credentials: false
-
-      - name: Setup | Cloning tools
-        uses: actions/checkout@v3
-        with:
-          ref: main
-          path: .pipeline
-          repository: filipeforattini/ff-iac-github-actions
-
-      - name: Install | Node.js 17
-        uses: actions/setup-node@v3
-        with:
-          node-version: 17
-
-      - name: Install | Dependency managers
-        run: npm -g install yarn npm
-
-      - name: Config | Load setup configs
-        env:
-          PIPELINE_SETUP: ${{ needs.Setup.outputs.PipelineConfig }}
-        id: node_setup
-        run: echo "::set-output name=has_releaserc::$(echo $PIPELINE_SETUP | jq -r '.git.hasReleaserc')"
-
-      # release
-      - name: Config | Create .releaserc.json
-        uses: actions/github-script@v6
-        id: releaserc-creation
-        if: inputs.autoVersioning == true && steps.node_setup.outputs.has_releaserc == 'false'
-        with:
-          result-encoding: string
-          script: |
-            return require('./.pipeline/src/steps/generate-releaserc')({
-              defaultBranch: "${{ inputs.mainBranch }}",
-              files: [ 
-                'dist/**/*.{py}',
-              ]
-            })
-
-      - name: Docs | .releaserc.json
-        if: inputs.autoVersioning == true && steps.node_setup.outputs.has_releaserc == 'false'
-        run: |
-          echo ".releaserc.json: \`${{ steps.releaserc-creation.outcome }}\`" >> $GITHUB_STEP_SUMMARY
-          echo -e "<details><summary>.releaserc.json</summary>\n\n\`\`\`json \n$(cat ./.releaserc.json)\n \`\`\`\n </details>\n\n" >> $GITHUB_STEP_SUMMARY
-
-      - name: Current Version
-        run: |
-          CURRENT_VERSION=$(git for-each-ref --sort=authordate --format '%(refname)' refs/tags | tail -n 1 | sed -n -e 's/^.*refs\/tags\/v//p')
-          echo "current version = $CURRENT_VERSION"
-          echo "::set-output name=current_version::$CURRENT_VERSION"
-
-      - name: Semantic Release
-        if: inputs.autoVersioning == true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          npm i -g -D \
-            semantic-release \
-            @semantic-release/git \
-            @semantic-release/npm \
-            @semantic-release/github \
-            @semantic-release/changelog \
-            @semantic-release/commit-analyzer \
-            @semantic-release/release-notes-generator
-          echo -e "\n\nINFO  semantic-release version = $(semantic-release -v)\n\n"
-          semantic-release
-
-      - name: Next Version
-        id: versioning
-        run: |
-          NEXT_VERSION=$(git for-each-ref --sort=authordate --format '%(refname)' refs/tags | tail -n 1 | sed -n -e 's/^.*refs\/tags\/v//p')
-          echo "next version = $NEXT_VERSION"
-          echo "::set-output name=version::$NEXT_VERSION"
-
-
-  #--------------------------------------------------#
-  #                  Build: Node.js                  # 
-  #--------------------------------------------------#
-  Build-Node:
-    runs-on: ubuntu-latest
-    needs: 
-      - Setup
-      - Release-Node
+      - Release
 
     strategy:
       matrix:
@@ -650,164 +440,3 @@ jobs:
           rm -rf /tmp/.buildx-cache
           mv /tmp/.buildx-cache-new /tmp/.buildx-cache
 
-
-  #--------------------------------------------------#
-  #                  Build: Python                   # 
-  #--------------------------------------------------#
-  Build-Python:
-    runs-on: ubuntu-latest
-    needs: 
-      - Setup
-      - Release-Python
-
-    strategy:
-      matrix:
-        python-version: ${{ fromJSON(inputs.pythonMatrix) }}
-
-    steps:
-
-      # pre-job
-      - name: Setup | Cloning repository
-        uses: actions/checkout@v3
-
-      - name: Setup | Cloning tools
-        uses: actions/checkout@v3
-        with:
-          ref: main
-          path: .pipeline
-          repository: filipeforattini/ff-iac-github-actions
-
-      - name: Install | QEMU
-        uses: docker/setup-qemu-action@v1
-
-      - name: Install | Docker Buildx
-        id: buildx
-        uses: docker/setup-buildx-action@master
-        with:
-          install: true
-
-      - name: Config | Load setup configs
-        env:
-          PIPELINE_SETUP: ${{ needs.Setup.outputs.PipelineConfig }}
-        id: node_setup
-        run: |
-          echo "::set-output name=cache_key::$(echo $PIPELINE_SETUP | jq -r '.code.cacheKey')"
-          echo "::set-output name=dependency_command::$(echo $PIPELINE_SETUP | jq -r '.code.dependencyCommand')"
-          echo "::set-output name=has_releaserc::$(echo $PIPELINE_SETUP | jq -r '.git.hasReleaserc')"
-          echo "::set-output name=has_dockerfile::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.hasDockerfile')"
-          echo "::set-output name=has_dockerignore::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.hasDockerignore')"
-          echo "::set-output name=docker_command::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.command')"
-          echo "::set-output name=docker_entrypoint::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.entrypoint')"
-          echo "::set-output name=docker_dependency_command::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.dependencyCommand')"
-          echo "::set-output name=docker_image_fullname::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.imageFullname')"
-          echo "::set-output name=docker_image_tags::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.tagsAsString')"
-          echo "::set-output name=docker_main_image::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.mainImage')"
-          echo "::set-output name=deploy_repository::$(echo $PIPELINE_SETUP | jq -r '.deploy.repository')"
-
-      # pre-build
-      - name: Config | Create .dockerignore
-        uses: actions/github-script@v6
-        if: steps.node_setup.outputs.has_dockerignore == 'false'
-        with:
-          result-encoding: string
-          script: |
-            return require('./.pipeline/src/steps/generate-dockerignore')({ 
-              assetsToIgnore: ['node_modules'],
-            })
-
-      - name: Config | Create Dockerfile
-        if: steps.node_setup.outputs.has_dockerfile == 'false'
-        uses: actions/github-script@v6
-        id: dockerfile
-        with:
-          result-encoding: string
-          script: |
-            return require('./.pipeline/src/steps/generate-dockerfile')({ 
-              image: 'python',
-              tag: '${{ matrix.python-version }}-alpine',
-              command: '${{ steps.node_setup.outputs.docker_command }}',
-              entrypoint: '${{ steps.node_setup.outputs.docker_entrypoint }}',
-              dependencyCommand: '${{ steps.node_setup.outputs.docker_dependency_command }}',
-              labels: [ 
-                'archtecture=alpine', 
-                'python-version=${{ matrix.python-version }}', 
-                'version=${{ needs.Release-Python.outputs.Version }}', 
-              ],
-            })
-
-      - name: Docs | Dockerfile
-        if: steps.node_setup.outputs.has_dockerfile == 'false'
-        run: |
-          echo "Dockerfile: \`${{ steps.dockerfile.outcome }}\`" >> $GITHUB_STEP_SUMMARY
-          echo -e "<details><summary>dockerfile</summary>\n\n\`\`\`dockerfile \n$(cat ./Dockerfile)\n \`\`\`\n </details>\n\n" >> $GITHUB_STEP_SUMMARY
-
-      - name: Config | Login to Container Registry
-        uses: docker/login-action@v2
-        with:
-          logout: false
-          registry: ${{ inputs.containerRegistry }}
-          username: ${{ secrets.REGISTRY_USERNAME }}
-          password: ${{ secrets.REGISTRY_PASSWORD }}
-            
-      # build
-      - name: Dockerfile lint
-        uses: hadolint/hadolint-action@v2.1.0
-        id: hadolint
-        continue-on-error: true
-        with:
-          dockerfile: Dockerfile
-
-      - name: Docs | Lint result
-        run: | 
-          echo "Hadolint: \`${{ steps.hadolint.outcome }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "\`\`\`txt \n $HADOLINT_RESULTS \n \`\`\`" >> $GITHUB_STEP_SUMMARY
-
-      - name: Build image test
-        if: inputs.staticAnalysis == true
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-          outputs: type=docker,dest=./dockerimage-python-${{ matrix.python-version }}.tar
-
-      - name: Run Trivy scanner
-        if: inputs.staticAnalysis == true
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: image
-          input: ./dockerimage-python-${{ matrix.python-version }}.tar
-          format: 'sarif'
-          severity: 'CRITICAL,HIGH'
-          output: 'trivy-results.sarif'
-
-      - name: Upload Trivy results
-        if: inputs.staticAnalysis == true
-        uses: github/codeql-action/upload-sarif@v2
-        with:
-          sarif_file: 'trivy-results.sarif'
-
-      - name: Cache Docker layers
-        uses: actions/cache@v2
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-multi-buildx-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-multi-buildx
-
-      - name: Build and push
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          push: true
-          platforms: ${{ inputs.platforms }}
-          builder: ${{ steps.buildx.outputs.name }}
-          tags: ${{steps.node_setup.outputs.docker_image_tags}}, ${{steps.node_setup.outputs.docker_image_fullname}}:${{needs.Release-Python.outputs.Version}}
-          labels: "organization: ${{github.repository_owner}}, repository: ${{github.repository}}, branch: ${{needs.Setup.outputs.Branch}}, commit: ${{needs.Setup.outputs.ShaHash}}, date: ${{needs.Setup.outputs.Date}}, timestamp: ${{needs.Setup.outputs.Timestamp}}"
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,mode=max,dest=/tmp/.buildx-cache-new
-
-      - name: Move cache
-        run: |
-          rm -rf /tmp/.buildx-cache
-          mv /tmp/.buildx-cache-new /tmp/.buildx-cache

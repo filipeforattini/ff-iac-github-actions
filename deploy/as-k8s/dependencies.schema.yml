@@ -228,7 +228,7 @@ repository: acm-svc-acme
 #! MYSQL
 mysql:
   enabled: false
-  version: 9.1.7
+  version: 9.2.0
   chart: bitnami/mysql
   #@schema/default defaultMysql()
   #@schema/type any=True
