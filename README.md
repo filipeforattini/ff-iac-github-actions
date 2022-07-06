@@ -44,11 +44,12 @@ Examples:
 
 Checkout the test repositories:
 
-| Type| Language | Repository | Status |
+| Type| Language / Framework | Repository | Status |
 | :---: | :---: | :---: | :---: |
-| svc | JavaScript | https://github.com/filipeforattini/ff-svc-nodejs | ![](https://github.com/filipeforattini/ff-svc-nodejs/actions/workflows/push.yml/badge.svg) |
-| svc | JavaScript | https://github.com/filipeforattini/ff-svc-moleculerjs | ![](https://github.com/filipeforattini/ff-svc-moleculerjs/actions/workflows/push.yml/badge.svg) |
-| svc | Python | https://github.com/filipeforattini/ff-svc-python | ![](https://github.com/filipeforattini/ff-svc-nodejs/actions/workflows/push.yml/badge.svg) |
+| svc | JavaScript | https://github.com/filipeforattini/ff-svc-nodejs | ![](https://github.com/filipeforattini/ff-svc-nodejs/actions/workflows/svc-push.yml/badge.svg) |
+| svc | JavaScript | https://github.com/filipeforattini/ff-svc-moleculerjs | ![](https://github.com/filipeforattini/ff-svc-moleculerjs/actions/workflows/svc-push.yml/badge.svg) |
+| svc | Python | https://github.com/filipeforattini/ff-svc-python | ![](https://github.com/filipeforattini/ff-svc-python/actions/workflows/svc-push.yml/badge.svg) |
+| app | React | https://github.com/filipeforattini/ff-app-react | ![](https://github.com/filipeforattini/ff-app-react/actions/workflows/app-push.yml/badge.svg) |
 
 ### Environments
 
