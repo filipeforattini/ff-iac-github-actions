@@ -174,17 +174,6 @@ jobs:
         if: inputs.staticAnalysis == true && needs.Setup.outputs.BuildNode == 'true'
         uses: github/codeql-action/analyze@v2
 
-      #python
-      - name: Setup CodeQL for Python
-        if: inputs.staticAnalysis == true && needs.Setup.outputs.BuildPython == 'true'
-        uses: github/codeql-action/init@v2
-        with:
-          languages: python
-
-      - name: Run Python CodeQL Analysis
-        if: inputs.staticAnalysis == true && needs.Setup.outputs.BuildPython == 'true'
-        uses: github/codeql-action/analyze@v2
-
 
   #--------------------------------------------------#
   #                      Release                     # 
@@ -354,7 +343,7 @@ jobs:
               labels: [ 
                 'archtecture=alpine', 
                 'node-version=${{ matrix.node-version }}', 
-                'version=${{ needs.Release-Node.outputs.Version }}', 
+                'version=${{ needs.Release.outputs.Version }}', 
               ],
             })
 
@@ -426,7 +415,7 @@ jobs:
           push: true
           platforms: ${{ inputs.platforms }}
           builder: ${{ steps.buildx.outputs.name }}
-          tags: ${{steps.node_setup.outputs.docker_image_tags}}, ${{steps.node_setup.outputs.docker_image_fullname}}:${{needs.Release-Node.outputs.Version}}
+          tags: ${{steps.node_setup.outputs.docker_image_tags}}, ${{steps.node_setup.outputs.docker_image_fullname}}:${{needs.Release.outputs.Version}}
           labels: "organization: ${{github.repository_owner}}, repository: ${{github.repository}}, branch: ${{needs.Setup.outputs.Branch}}, commit: ${{needs.Setup.outputs.ShaHash}}, date: ${{needs.Setup.outputs.Date}}, timestamp: ${{needs.Setup.outputs.Timestamp}}"
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,mode=max,dest=/tmp/.buildx-cache-new
