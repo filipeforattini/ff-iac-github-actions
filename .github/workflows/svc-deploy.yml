@@ -117,7 +117,7 @@ jobs:
         uses: azure/setup-kubectl@v2.1
       
       - name: Install | Helm
-        uses: azure/setup-helm@v2.1
+        uses: azure/setup-helm@v3.0
         
       - name: Install | YTT
         uses: vmware-tanzu/carvel-setup-action@v1
