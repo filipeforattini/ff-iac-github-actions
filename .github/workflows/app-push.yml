@@ -45,10 +45,6 @@ on:
         type: string
         required: false
         default: '[14, 16, 17]'
-      pythonMatrix:
-        type: string
-        required: false
-        default: '["2.7", "3.6", "3.8", "3.10"]'
       platforms:
         type: string
         required: false
