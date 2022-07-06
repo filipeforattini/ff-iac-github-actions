@@ -24,21 +24,25 @@ module.exports = class Deploy extends Scrapper {
     
     let envs = [ 'dev', 'stg', 'prd', 'sbx', 'dry' ]
 
-    const { namespaces, secrets, configs, dependencies } = envs.reduce((acc, env) => {
+    const { namespaces, secrets, configs, dependencies, buildArgs } = envs.reduce((acc, env) => {
       acc.configs[env] = fs.existsSync(path.join(process.cwd(), 'manifests', 'configs', env + '.env'))
       acc.dependencies[env] = fs.existsSync(path.join(process.cwd(), 'manifests', 'dependencies', env + '.yml'))
       acc.namespaces[env] = `${repository}-${env}`
       acc.secrets[env] = fs.existsSync(path.join(process.cwd(), 'manifests', 'secrets', env + '.gpg'))
+
+      acc.buildArgs[env] = fs.readFileSync(path.join(process.cwd(), 'manifests', 'configs', env + '.env')).toString().split('\n').join(', ')
       return acc
     }, { 
       configs: {},
       dependencies: {},
       namespaces: {}, 
       secrets: {},
+      buildArgs: {},
     })
 
     this
       .add('dockerfile', {
+        buildArgs,
         containerRegistry,
       })
       .add('deploy', {

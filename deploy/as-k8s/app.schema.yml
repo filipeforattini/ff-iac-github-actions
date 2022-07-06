@@ -1,0 +1,98 @@
+#@ def defaultDeployment():
+  enable: true
+  replicas: 2
+  name: app
+  labels: {}
+  annotations: {}
+  resources: {}
+  imagePullSecrets: false
+
+  templateLabels: {}
+  matchLabels:
+    overwrite: false
+    labels: {}
+#@ end
+
+#@ def defaultService():
+  enable: true
+  name: app
+  labels: {}
+  annotations: {}
+  selector:
+    overwrite: false
+    labels: {}
+  #@schema/type any=True
+  ports: []
+#@ end
+
+#@ def defaultIngress():
+  enable: false
+  name: app
+  type: traefik
+  
+  tls:
+    enable: true
+    domain: acme.io
+    email: security@acme.io
+    removeEnvironmentPrefix: false
+  
+    letsencrypt:
+      enable: false
+      type: cluster-issuer
+
+  #! types specifics
+  alb:
+    certificateArn: secret
+  nginx:
+    certmanager: true
+  traefik:
+    x: true
+
+#@ end
+
+#@data/values-schema
+---
+#! global
+ecosystem: acm
+organization: acme
+containerRegistry: ghcr.io
+repository: acm-app-repository
+environment: dev
+tag: latest
+port: 3333
+
+#! features
+features:
+  enableLinkerd: false
+
+#! environment
+#@schema/type any=True
+env: []
+#@schema/type any=True
+envFromSecrets: []
+#@schema/type any=True
+envFromConfigMaps: []
+#@schema/type any=True
+envFromDependencies: []
+
+#! k8s resources
+namespace:
+  labels: {}
+  annotations: {}
+
+#@schema/default defaultDeployment()
+#@schema/type any=True
+deployment: {}
+
+#@schema/default defaultService()
+#@schema/type any=True
+service: {}
+
+#@schema/default defaultIngress()
+#@schema/type any=True
+ingress: {}
+
+#! pipeline control
+pipelineControl:
+  datetime: 'today'
+  environmentsAsNamespaces: false

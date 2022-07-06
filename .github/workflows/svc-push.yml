@@ -559,7 +559,7 @@ jobs:
         with:
           result-encoding: string
           script: |
-            return require('./.pipeline/src/steps/generate-dockerfile')({ 
+            return require('./.pipeline/src/steps/generate-svc-dockerfile')({ 
               image: 'node',
               tag: '${{ matrix.node-version }}-alpine',
               command: '${{ steps.node_setup.outputs.docker_command }}',
@@ -722,7 +722,7 @@ jobs:
         with:
           result-encoding: string
           script: |
-            return require('./.pipeline/src/steps/generate-dockerfile')({ 
+            return require('./.pipeline/src/steps/generate-svc-dockerfile')({ 
               image: 'python',
               tag: '${{ matrix.python-version }}-alpine',
               command: '${{ steps.node_setup.outputs.docker_command }}',

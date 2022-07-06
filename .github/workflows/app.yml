@@ -312,6 +312,7 @@ jobs:
           echo "::set-output name=docker_entrypoint::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.entrypoint')"
           echo "::set-output name=docker_dependency_command::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.dependencyCommand')"
           echo "::set-output name=docker_image_fullname::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.imageFullname')"
+          echo "::set-output name=docker_image_args::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.buildArgs.dev')"
           echo "::set-output name=docker_image_tags::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.tagsAsString')"
           echo "::set-output name=docker_main_image::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.mainImage')"
           echo "::set-output name=deploy_repository::$(echo $PIPELINE_SETUP | jq -r '.deploy.repository')"
@@ -334,7 +335,7 @@ jobs:
         with:
           result-encoding: string
           script: |
-            return require('./.pipeline/src/steps/generate-dockerfile')({ 
+            return require('./.pipeline/src/steps/generate-app-dockerfile')({ 
               image: 'node',
               tag: '${{ matrix.node-version }}-alpine',
               command: '${{ steps.node_setup.outputs.docker_command }}',
@@ -375,31 +376,6 @@ jobs:
           echo "Hadolint: \`${{ steps.hadolint.outcome }}\`" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`txt \n $HADOLINT_RESULTS \n \`\`\`" >> $GITHUB_STEP_SUMMARY
 
-      - name: Build image test
-        if: inputs.staticAnalysis == true
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-          outputs: type=docker,dest=./dockerimage-node-${{ matrix.node-version }}.tar
-
-      - name: Run Trivy scanner
-        if: inputs.staticAnalysis == true
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: image
-          input: ./dockerimage-node-${{ matrix.node-version }}.tar
-          format: 'sarif'
-          severity: 'CRITICAL,HIGH'
-          output: 'trivy-results.sarif'
-
-      - name: Upload Trivy results
-        if: inputs.staticAnalysis == true
-        uses: github/codeql-action/upload-sarif@v2
-        with:
-          sarif_file: 'trivy-results.sarif'
-
       - name: Cache Docker layers
         uses: actions/cache@v2
         with:
@@ -415,6 +391,7 @@ jobs:
           push: true
           platforms: ${{ inputs.platforms }}
           builder: ${{ steps.buildx.outputs.name }}
+          build-args: ${{steps.node_setup.outputs.docker_image_args}}
           tags: ${{steps.node_setup.outputs.docker_image_tags}}, ${{steps.node_setup.outputs.docker_image_fullname}}:${{needs.Release.outputs.Version}}
           labels: "organization: ${{github.repository_owner}}, repository: ${{github.repository}}, branch: ${{needs.Setup.outputs.Branch}}, commit: ${{needs.Setup.outputs.ShaHash}}, date: ${{needs.Setup.outputs.Date}}, timestamp: ${{needs.Setup.outputs.Timestamp}}"
           cache-from: type=local,src=/tmp/.buildx-cache
@@ -425,3 +402,153 @@ jobs:
           rm -rf /tmp/.buildx-cache
           mv /tmp/.buildx-cache-new /tmp/.buildx-cache
 
+
+  #--------------------------------------------------#
+  #                      Deploy                      # 
+  #--------------------------------------------------#
+  Deploy:
+    environment: ${{ inputs.environment }}
+    runs-on: ubuntu-latest
+
+    needs:
+      - Setup
+
+    steps:
+
+      # pre-job
+      - name: Setup | Cloning repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Setup | Cloning tools
+        uses: actions/checkout@v3
+        with:
+          ref: main
+          path: .pipeline
+          repository: filipeforattini/ff-iac-github-actions
+
+      - name: Install | Kubectl
+        uses: azure/setup-kubectl@v2.1
+      
+      - name: Install | YTT
+        uses: vmware-tanzu/carvel-setup-action@v1
+        with:
+          only: ytt
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install | YQ
+        env:
+          VERSION: v4.25.2
+          BINARY: yq_linux_amd64
+        run: |
+          wget https://github.com/mikefarah/yq/releases/download/${VERSION}/${BINARY}.tar.gz -O - | tar xz && sudo mv ${BINARY} /usr/bin/yq
+          yq --version
+
+      - name: Install | QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Install | Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Config | Version
+        id: versioning
+        run: |
+          NEXT_VERSION=$(git for-each-ref --sort=authordate --format '%(refname)' refs/tags | tail -n 1 | sed -n -e 's/^.*refs\/tags\/v//p')
+          echo "next version = $NEXT_VERSION"
+          echo "::set-output name=version::$NEXT_VERSION"
+
+      - name: Config | Load setup configs
+        env:
+          ENVIRONMENTS_AS_NAMESPACES: ${{ inputs.environmentsAsNamespaces }}
+          PIPELINE_SETUP: ${{ needs.Setup.outputs.PipelineConfig }}
+        id: deploy_setup
+        run: |
+          echo "::set-output name=deploy_as_k8s::$(echo $PIPELINE_SETUP | jq -r '.deploy.deployAsK8s')"
+          echo "::set-output name=deploy_as_chart::$(echo $PIPELINE_SETUP | jq -r '.deploy.deployAsChart')"
+          echo "::set-output name=has_dev_secrets::$(echo $PIPELINE_SETUP | jq -r '.deploy.secrets.dev')"
+          echo "::set-output name=has_dev_configs::$(echo $PIPELINE_SETUP | jq -r '.deploy.configs.dev')"
+          echo "::set-output name=has_dev_dependencies::$(echo $PIPELINE_SETUP | jq -r '.deploy.dependencies.dev')"
+          echo "::set-output name=deploy_ecosystem::$(echo $PIPELINE_SETUP | jq -r '.deploy.ecosystem')"
+          echo "::set-output name=deploy_organization::$(echo $PIPELINE_SETUP | jq -r '.deploy.organization')"
+          echo "::set-output name=deploy_container_registry::$(echo $PIPELINE_SETUP | jq -r '.deploy.containerRegistry')"
+          echo "::set-output name=deploy_repository::$(echo $PIPELINE_SETUP | jq -r '.deploy.repository')"
+          echo "::set-output name=deploy_tag::$(echo $PIPELINE_SETUP | jq -r '.deploy.commitTag')"
+          echo "::set-output name=run_started_at::$(echo $PIPELINE_SETUP | jq -r '.run.startedAt')"
+          case $ENVIRONMENTS_AS_NAMESPACES in
+            "true")  echo "::set-output name=deploy_namespace::$(echo $PIPELINE_SETUP | jq -r '.deploy.namespaces.dev')";;
+            "false") echo "::set-output name=deploy_namespace::$(echo $PIPELINE_SETUP | jq -r '.deploy.namespace')";;
+            *)     echo "::set-output name=deploy_namespace::$(echo $PIPELINE_SETUP | jq -r '.deploy.namespace')";;
+          esac
+
+      - name: Config | Kubectl config file
+        env:
+          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+        run: |
+          mkdir -p ~/.kube
+          echo "$KUBE_CONFIG" | base64 -d > ~/.kube/config
+
+      # namespace
+      - name: K8s create namespace
+        run: kubectl create namespace ${{steps.deploy_setup.outputs.deploy_namespace}} --dry-run=client --validate=false --output=yaml | kubectl apply -f -
+
+      # secrets for registry auth
+      - name: Config | Login to Container Registry
+        uses: docker/login-action@v2
+        with:
+          logout: false
+          registry: ${{ inputs.containerRegistry }}
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+
+      - name: Config | Gives runner access to docker config file 
+        if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
+        run: |
+          sudo chown $(whoami):docker /home/$(whoami)/.docker/config.json
+          cp /home/$(whoami)/.docker/config.json ./manifests/docker-config.json
+
+      - name: K8s create registry-token secret
+        if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
+        run: kubectl create secret generic -n ${{steps.deploy_setup.outputs.deploy_namespace}} registry-token --type=kubernetes.io/dockerconfigjson --from-file=.dockerconfigjson=./manifests/docker-config.json --dry-run=client --validate=false --output=yaml | kubectl apply -f -
+
+      # generate k8s manifests
+      - name: K8s generates final yml
+        if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
+        run: |
+          CONFIGS_LIST=$(if test -f ./manifests/k8s-configs-keys.txt; then cat ./manifests/k8s-configs-keys.txt; else echo ''; fi)
+          SECRETS_LIST=$(if test -f ./manifests/k8s-secrets-keys.txt; then cat ./manifests/k8s-secrets-keys.txt; else echo ''; fi)
+          DEPENDENCIES_LIST=$(if test -f ./manifests/k8s-dependencies.yml; then (cat ./manifests/k8s-dependencies.yml | yq -P '.dependencies'); else echo '' ; fi)
+          ytt \
+            -f ./.pipeline/deploy/as-k8s/app.schema.yml \
+            -f ./.pipeline/deploy/as-k8s/app.yml \
+            -f ./manifests/k8s-values.yml \
+            --data-value ecosystem=${{steps.deploy_setup.outputs.deploy_ecosystem}} \
+            --data-value organization=${{steps.deploy_setup.outputs.deploy_organization}} \
+            --data-value repository=${{steps.deploy_setup.outputs.deploy_repository}} \
+            --data-value containerRegistry=${{steps.deploy_setup.outputs.deploy_container_registry}} \
+            --data-value tag=${{steps.deploy_setup.outputs.deploy_tag}} \
+            --data-value-yaml deployment.imagePullSecrets=true \
+            --data-value pipelineControl.datetime=${{steps.deploy_setup.outputs.run_started_at}} \
+            --data-value-yaml pipelineControl.environmentsAsNamespaces=${{inputs.environmentsAsNamespaces}} \
+              > ./manifests/k8s-to-apply.yml
+
+      - name: Docs | K8s summary
+        if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
+        run: |
+          CONFIGS_LIST=$(if test -f ./manifests/k8s-configs-keys.txt; then cat ./manifests/k8s-configs-keys.txt; else echo ''; fi)
+          SECRETS_LIST=$(if test -f ./manifests/k8s-secrets-keys.txt; then cat ./manifests/k8s-secrets-keys.txt; else echo ''; fi)
+          DEPENDENCIES_LIST=$(if test -f ./manifests/k8s-dependencies.yml; then (cat ./manifests/k8s-dependencies.yml | yq -P '.dependencies'); else echo ''; fi)
+          echo -e "### k8s\n\n" >> $GITHUB_STEP_SUMMARY
+          echo -e "| param | value |" >> $GITHUB_STEP_SUMMARY
+          echo -e "| --- | :---: |" >> $GITHUB_STEP_SUMMARY
+          echo -e "| secrets | $SECRETS_LIST |" >> $GITHUB_STEP_SUMMARY
+          echo -e "| configs | $CONFIGS_LIST |" >> $GITHUB_STEP_SUMMARY
+          echo -e "| dependencies | $DEPENDENCIES_LIST |" >> $GITHUB_STEP_SUMMARY
+          echo -e "<details><summary>kubefile</summary>\n\n\`\`\`yml \n$(cat ./manifests/k8s-to-apply.yml)\n \`\`\`\n </details>\n\n" >> $GITHUB_STEP_SUMMARY
+
+      - name: K8s apply yml
+        if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
+        run: |
+          kubectl apply -f ./manifests/k8s-to-apply.yml
+          kubectl get pods -n ${{steps.deploy_setup.outputs.deploy_namespace}}
