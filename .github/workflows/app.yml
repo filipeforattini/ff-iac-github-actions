@@ -272,6 +272,7 @@ jobs:
   Trigger:
     runs-on: ubuntu-latest
     if: ${{ !startsWith(github.head_ref, 'env/') }}
+    environment: dev
 
     needs: 
       - Setup
@@ -283,14 +284,16 @@ jobs:
       - name: Setup | Cloning repository
         uses: actions/checkout@v3
         with:
-          ref: env/dev
+          persist-credentials: false
 
       # pre-job
       - name: Setup | Cloning repository
         run: |
+          git fetch
+          git checkout -b env/dev
           git pull
-          git commit --allow-empty -am "fix: empty commit for testing"
-          git push
+          git commit --allow-empty -am "deploy: c-${{github.sha}} to env-dev"
+          git push -f origin env/dev
 
 
   #--------------------------------------------------#
@@ -303,11 +306,6 @@ jobs:
     needs: 
       - Setup
       - Release
-      - Trigger
-
-    strategy:
-      matrix:
-        node-version: ${{ fromJSON(inputs.nodeMatrix) }}
 
     steps:
 
@@ -370,13 +368,13 @@ jobs:
           script: |
             return require('./.pipeline/src/steps/generate-app-dockerfile')({ 
               image: 'node',
-              tag: '${{ matrix.node-version }}-alpine',
+              tag: '17-alpine',
               command: '${{ steps.node_setup.outputs.docker_command }}',
               entrypoint: '${{ steps.node_setup.outputs.docker_entrypoint }}',
               dependencyCommand: '${{ steps.node_setup.outputs.docker_dependency_command }}',
               labels: [ 
                 'archtecture=alpine', 
-                'node-version=${{ matrix.node-version }}', 
+                'node-version=17', 
                 'version=${{ needs.Release.outputs.Version }}', 
               ],
             })
