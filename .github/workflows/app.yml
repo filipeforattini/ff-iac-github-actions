@@ -281,11 +281,18 @@ jobs:
       - name: Setup | Cloning repository
         uses: actions/checkout@v3
 
-      # pre-job
-      # git config --global user.email "you@example.com"
-      # git config --global user.name "Your Name"
-      - name: Setup | Cloning repository
+      - name: Config | Load setup configs
+        env:
+          PIPELINE_SETUP: ${{ needs.Setup.outputs.PipelineConfig }}
+        id: setup
         run: |
+          echo "::set-output name=user_name::$(echo $PIPELINE_SETUP | jq -r '.git.actor.name')"
+          echo "::set-output name=user_email::$(echo $PIPELINE_SETUP | jq -r '.git.actor.email')"
+
+      - name: Trigger
+        run: |
+          git config --global user.name "${{steps.setup.outputs.user_name}}"
+          git config --global user.email "${{steps.setup.outputs.user_email}}"
           git fetch
           git checkout -b env/dev
           git commit --allow-empty -am "deploy: to env-dev the v${{needs.Release.outputs.Version}} at cmt-${{github.sha}} "
