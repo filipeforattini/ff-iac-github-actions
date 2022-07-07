@@ -15,6 +15,11 @@ test:
 	export REPOSITORY=${REPOSITORY} \
 	&& cd ./test; sh ./tests.sh;
 
+commit:
+	git pull \
+		&& git commit --allow-empty -am "fix: empty commit for testing" \
+		&& git push
+
 K8S_NAMESPACE ?= ff-svc-moleculerjs-dev
 K8S_LABELS ?= ""
 DEPENDENCY_FILE ?= "$(PWD)/test/tmp/k8s-dependencies-full.yml"
