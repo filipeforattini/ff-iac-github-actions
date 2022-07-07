@@ -7,7 +7,7 @@ env:
     value: America/Sao_Paulo
 
 service:
-  type: nlb
+  controller: aws
   annotations:
     A: "1"
     B: "2"
@@ -15,6 +15,6 @@ service:
   externalDns:
     enable: true
     domain: acme.io
-  nlb:
+  aws:
     internal: true
     sslCert: secret

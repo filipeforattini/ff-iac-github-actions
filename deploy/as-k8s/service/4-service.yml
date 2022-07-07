@@ -21,29 +21,35 @@ metadata:
   #@    })
   #@  end
 
-  #@  if data.values.service.type == "nlb":
+  #@  if data.values.service.controller == "aws":
   #@    serviceAnnotations.update({
   #@      "service.beta.kubernetes.io/aws-load-balancer-type": "nlb",
-  #@      "service.beta.kubernetes.io/aws-load-balancer-internal": "{}".format(data.values.service.nlb.internal).lower(),
+  #@      "service.beta.kubernetes.io/aws-load-balancer-internal": "{}".format(data.values.service.aws.internal).lower(),
   #@      "service.beta.kubernetes.io/aws-load-balancer-backend-protocol": "http",
   #@      "service.beta.kubernetes.io/aws-load-balancer-connection-draining-enabled": "true",
   #@      "service.beta.kubernetes.io/aws-load-balancer-connection-draining-timeout": "60",
   #@      "service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled": "true",
-  #@      "service.beta.kubernetes.io/aws-load-balancer-ssl-cert": data.values.service.nlb.sslCert,
+  #@      "service.beta.kubernetes.io/aws-load-balancer-ssl-cert": data.values.service.aws.sslCert,
   #@      "service.beta.kubernetes.io/aws-load-balancer-ssl-ports": "443",
-  #@      "service.beta.kubernetes.io/aws-load-balancer-target-node-labels": data.values.service.nlb.nodeTabels,
+  #@      "service.beta.kubernetes.io/aws-load-balancer-target-node-labels": data.values.service.aws.nodeTabels,
   #@    })
   #@  end
   annotations: #@ serviceAnnotations
 
 spec:
-  #@ if data.values.service.selector.overwrite:
+  #@  if data.values.service.controller != None:
+  type: LoadBalancer
+  #@  else:
+  type: #@ data.values.service.type
+  #@  end
+
+  #@  if data.values.service.selector.overwrite:
   selector: #@ data.values.service.selector.labels
-  #@ else:
-  #@ serviceMatchLabels = {}
-  #@ serviceMatchLabels.update({ "pipe/selector": data.values.repository + "." + data.values.deployment.name })
+  #@  else:
+  #@    serviceMatchLabels = {}
+  #@    serviceMatchLabels.update({ "pipe/selector": data.values.repository + "." + data.values.deployment.name })
   selector: #@ serviceMatchLabels
-  #@ end
+  #@  end
 
   #@ servicePorts = []
   #@ servicePorts.extend(data.values.service.ports)
