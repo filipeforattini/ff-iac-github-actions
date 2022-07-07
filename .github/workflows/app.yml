@@ -268,7 +268,7 @@ jobs:
   #--------------------------------------------------#
   Build:
     runs-on: ubuntu-latest
-    if: startsWith(github.head_ref, "env/") == true
+    if: ${{ startsWith(github.head_ref, 'env/') }}
 
     needs: 
       - Setup
