@@ -280,6 +280,8 @@ jobs:
       # pre-job
       - name: Setup | Cloning repository
         uses: actions/checkout@v3
+        with:
+          persist-credentials: false
 
       - name: Config | Load setup configs
         env:
