@@ -1,0 +1,20 @@
+#@  load("@ytt:data", "data")
+#@  load("@ytt:overlay", "overlay")
+
+#@ load("@ytt:data", "data")
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  #@  namespace = data.values.repository
+  #@  if data.values.pipelineControl.environmentsAsNamespaces:
+  #@    namespace = "{}-{}".format(data.values.repository, data.values.environment)
+  #@  end
+  name: #@ namespace
+
+
+#@overlay/match by=overlay.not_op(overlay.subset({ "kind": "Namespace" })), expects="0+"
+---
+metadata:
+  #@overlay/match missing_ok=True
+  namespace: #@ namespace

@@ -268,8 +268,8 @@ jobs:
   #--------------------------------------------------#
   Build:
     runs-on: ubuntu-latest
-    if: startsWith(${{ github.head_ref }}, "env/")
-    
+    if: startsWith(github.head_ref, "env/")
+
     needs: 
       - Setup
       - Release

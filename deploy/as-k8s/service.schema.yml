@@ -14,15 +14,31 @@
 #@ end
 
 #@ def defaultService():
-  enable: true
+  enable: false
   name: svc
-  labels: {}
-  annotations: {}
+  type: simple
+
+  #@schema/type any=True
+  labels: null
+  #@schema/type any=True
+  annotations: null
+  
   selector:
     overwrite: false
     labels: {}
+
   #@schema/type any=True
   ports: []
+
+  externalDns:
+    enable: false
+    domain: acme.io
+
+  #! types specifics
+  nlb:
+    internal: true
+    sslCert: secret
+    nodeTabels: ""
 #@ end
 
 #@ def defaultIngress():
@@ -31,7 +47,7 @@
   type: traefik
   
   tls:
-    enable: true
+    enable: false
     domain: acme.io
     email: security@acme.io
     removeEnvironmentPrefix: false
@@ -47,12 +63,19 @@
     certmanager: true
   traefik:
     x: true
-
 #@ end
+
 
 #@data/values-schema
 ---
-#! global
+
+#! PIPELINE CONTROLE
+pipelineControl:
+  datetime: 'today'
+  environmentsAsNamespaces: false
+
+
+#! GLOBAL
 ecosystem: acm
 organization: acme
 containerRegistry: ghcr.io
@@ -61,11 +84,13 @@ environment: dev
 tag: latest
 port: 3333
 
-#! features
+
+#! FEATURES
 features:
   enableLinkerd: false
 
-#! environment
+
+#! ENVIRONMENT
 #@schema/type any=True
 env: []
 #@schema/type any=True
@@ -75,24 +100,16 @@ envFromConfigMaps: []
 #@schema/type any=True
 envFromDependencies: []
 
-#! k8s resources
-namespace:
-  labels: {}
-  annotations: {}
 
+#! KUBERNETES
 #@schema/default defaultDeployment()
 #@schema/type any=True
-deployment: {}
+deployment: null
 
 #@schema/default defaultService()
 #@schema/type any=True
-service: {}
+service: null
 
 #@schema/default defaultIngress()
 #@schema/type any=True
-ingress: {}
-
-#! pipeline control
-pipelineControl:
-  datetime: 'today'
-  environmentsAsNamespaces: false
+ingress: null

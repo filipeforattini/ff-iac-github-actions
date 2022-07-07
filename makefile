@@ -13,10 +13,7 @@ REPOSITORY ?= ff-svc-moleculerjs
 
 test:
 	export REPOSITORY=${REPOSITORY} \
-	&& cd ./test; \
-		sh generate-dependencies.sh; \
-		sh generate-kubefile.sh; \
-		sh generate-kubefile-ingress.sh;
+	&& cd ./test; sh ./tests.sh;
 
 K8S_NAMESPACE ?= ff-svc-moleculerjs-dev
 K8S_LABELS ?= ""

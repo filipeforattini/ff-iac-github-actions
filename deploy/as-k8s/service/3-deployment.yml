@@ -1,0 +1,84 @@
+#@ load("@ytt:md5", "md5")
+#@ load("@ytt:data", "data")
+#@ load("@ytt:json", "json")
+#@ load("@ytt:sha256", "sha256")
+#@ load("@ytt:base64", "base64")
+---
+#@ if data.values.deployment.enable:
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: #@ data.values.deployment.name
+  labels: #@ data.values.deployment.labels
+  annotations: #@ data.values.deployment.annotations
+spec:
+  replicas: #@ data.values.deployment.replicas
+
+  selector:
+    #@ if data.values.deployment.matchLabels.overwrite:
+    matchLabels: #@ data.values.deployment.matchLabels.labels
+    #@ else:
+    #@ deploymentMatchLabels = {}
+    #@ deploymentMatchLabels.update({ "pipe/selector": data.values.repository + "." + data.values.deployment.name })
+    matchLabels: #@ deploymentMatchLabels
+    #@ end
+  
+  template:
+    metadata:
+      #@ deploymentTemplateLabels = {}
+      #@ deploymentTemplateLabels.update({ "pipe/selector": data.values.repository + "." + data.values.deployment.name })
+      #@ deploymentTemplateLabels.update(data.values.deployment.templateLabels)
+      labels: #@ deploymentTemplateLabels
+    spec:
+      restartPolicy: Always
+
+      #@ if/end data.values.deployment.imagePullSecrets:
+      imagePullSecrets:
+        - name: registry-token
+
+      containers:
+        - name: #@ data.values.deployment.name
+          image: #@ "{}/{}/{}:{}".format(data.values.containerRegistry, data.values.organization, data.values.repository, data.values.tag)
+          imagePullPolicy: Always
+          resources: #@ data.values.deployment.resources
+
+          #@ deploymentEnvs = []
+          #@ deploymentEnvs.extend(data.values.env)
+          
+          #@ for i in data.values.envFromConfigMaps:
+          #@   deploymentEnvs.extend([{ 
+          #@    "name": i, 
+          #@    "valueFrom": {
+          #@      "configMapKeyRef": {
+          #@        "name": "svc",
+          #@        "key": i,
+          #@      }
+          #@    }
+          #@   }])
+          #@ end
+          
+          #@ for i in data.values.envFromSecrets:
+          #@   deploymentEnvs.extend([{ 
+          #@    "name": i, 
+          #@    "valueFrom": {
+          #@      "secretKeyRef": {
+          #@        "name": "svc",
+          #@        "key": i,
+          #@      }
+          #@    }
+          #@   }])
+          #@ end
+          
+          #@ for i in data.values.envFromDependencies:
+          #@   deploymentEnvs.extend([{ 
+          #@    "name": (i + "_connection_string").upper(),
+          #@    "valueFrom": {
+          #@      "secretKeyRef": {
+          #@        "name": "dep-secret-" + i,
+          #@        "key": "connection-string",
+          #@      }
+          #@    }
+          #@   }])
+          #@ end
+          env: #@ deploymentEnvs
+#@ end

@@ -1,0 +1,54 @@
+#@ load("@ytt:data", "data")
+#@ load("@ytt:overlay", "overlay")
+
+#@ if data.values.service.enable:
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: #@ data.values.service.name
+  labels: #@ data.values.service.labels
+
+  #@  serviceAnnotations = {}
+
+  #@  if data.values.service.annotations != None:
+  #@    serviceAnnotations.update(data.values.service.annotations)
+  #@  end
+
+  #@  if data.values.service.externalDns.enable:
+  #@    serviceAnnotations.update({
+  #@      "external-dns.alpha.kubernetes.io/hostname": "{}.{}.{}".format(data.values.repository, data.values.environment, data.values.service.externalDns.domain)
+  #@    })
+  #@  end
+
+  #@  if data.values.service.type == "nlb":
+  #@    serviceAnnotations.update({
+  #@      "service.beta.kubernetes.io/aws-load-balancer-type": "nlb",
+  #@      "service.beta.kubernetes.io/aws-load-balancer-internal": "{}".format(data.values.service.nlb.internal).lower(),
+  #@      "service.beta.kubernetes.io/aws-load-balancer-backend-protocol": "http",
+  #@      "service.beta.kubernetes.io/aws-load-balancer-connection-draining-enabled": "true",
+  #@      "service.beta.kubernetes.io/aws-load-balancer-connection-draining-timeout": "60",
+  #@      "service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled": "true",
+  #@      "service.beta.kubernetes.io/aws-load-balancer-ssl-cert": data.values.service.nlb.sslCert,
+  #@      "service.beta.kubernetes.io/aws-load-balancer-ssl-ports": "443",
+  #@      "service.beta.kubernetes.io/aws-load-balancer-target-node-labels": data.values.service.nlb.nodeTabels,
+  #@    })
+  #@  end
+  annotations: #@ serviceAnnotations
+
+spec:
+  #@ if data.values.service.selector.overwrite:
+  selector: #@ data.values.service.selector.labels
+  #@ else:
+  #@ serviceMatchLabels = {}
+  #@ serviceMatchLabels.update({ "pipe/selector": data.values.repository + "." + data.values.deployment.name })
+  selector: #@ serviceMatchLabels
+  #@ end
+
+  #@ servicePorts = []
+  #@ servicePorts.extend(data.values.service.ports)
+  #@ servicePorts.extend([
+  #@   { "name": "http", "protocol": "TCP", "port": data.values.port, "targetPort": data.values.port }
+  #@ ])
+  ports: #@ servicePorts
+#@  end

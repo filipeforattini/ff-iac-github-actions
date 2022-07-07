@@ -1,0 +1,20 @@
+#@data/values
+---
+port: 1234
+
+env:
+  - name: TZ
+    value: America/Sao_Paulo
+
+service:
+  type: nlb
+  annotations:
+    A: "1"
+    B: "2"
+    C: "3"
+  externalDns:
+    enable: true
+    domain: acme.io
+  nlb:
+    internal: true
+    sslCert: secret

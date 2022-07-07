@@ -1,11 +1,4 @@
 #/bin/sh
-
-ytt \
-  -f ../deploy/as-k8s/service.schema.yml \
-  -f ../deploy/as-k8s/service.yml \
-  -f ./concerns/k8s-values.yml \
-    > ./tmp/k8s-to-apply.yml
-
 ECOSYSTEM=ff
 ENVIRONMENTASNAMESPACES=FALSE
 ORGANIZATION=filipeforattini
@@ -14,9 +7,9 @@ REPOSITORY=ff-iac-github-actions
 TAG=latest
 
 ytt \
-  -f ../deploy/as-k8s/service.schema.yml \
-  -f ../deploy/as-k8s/service.yml \
-  -f ./concerns/k8s-values.yml \
+  -f $DIR_SRC/service.schema.yml \
+  -f $DIR_SRC/service \
+  -f $DIR_ASSETS/svc-empty.yml \
   --data-value ecosystem=$ECOSYSTEM \
   --data-value organization=$ORGANIZATION \
   --data-value repository=$REPOSITORY \
@@ -27,16 +20,16 @@ ytt \
   --data-value-yaml envFromConfigMaps="[]" \
   --data-value-yaml envFromDependencies="[]" \
   --data-value-yaml pipelineControl.environmentsAsNamespaces=$ENVIRONMENTASNAMESPACES \
-    > ./tmp/k8s-to-apply-empty.yml
+    > $DIR_RESULTS/src-inputs-1.yml
 
-CONFIGS_LIST=$(if test -f ./concerns/k8s-configs-keys.txt; then cat ./concerns/k8s-configs-keys.txt; else echo ''; fi)
-SECRETS_LIST=$(if test -f ./concerns/k8s-secrets-keys.txt; then cat ./concerns/k8s-secrets-keys.txt; else echo ''; fi)
+CONFIGS_LIST=$(if test -f $DIR_ASSETS/k8s-configs-keys.txt; then cat $DIR_ASSETS/k8s-configs-keys.txt; else echo ''; fi)
+SECRETS_LIST=$(if test -f $DIR_ASSETS/k8s-secrets-keys.txt; then cat $DIR_ASSETS/k8s-secrets-keys.txt; else echo ''; fi)
 DEPENDENCIES_LIST=$(if test -f ./tmp/k8s-dependencies-full.yml; then cat ./tmp/k8s-dependencies-full.yml | yq -P '.dependencies'; fi)
 
 ytt \
-  -f ../deploy/as-k8s/service.schema.yml \
-  -f ../deploy/as-k8s/service.yml \
-  -f ./concerns/k8s-values.yml \
+  -f $DIR_SRC/service.schema.yml \
+  -f $DIR_SRC/service \
+  -f $DIR_ASSETS/svc-empty.yml \
   --data-value ecosystem=$ECOSYSTEM \
   --data-value organization=$ORGANIZATION \
   --data-value repository=$REPOSITORY \
@@ -47,4 +40,4 @@ ytt \
   --data-value-yaml envFromConfigMaps="[$CONFIGS_LIST]" \
   --data-value-yaml envFromDependencies="[$DEPENDENCIES_LIST]" \
   --data-value-yaml pipelineControl.environmentsAsNamespaces=$ENVIRONMENTASNAMESPACES \
-    > ./tmp/k8s-to-apply-full.yml
+    > $DIR_RESULTS/src-inputs-2.yml

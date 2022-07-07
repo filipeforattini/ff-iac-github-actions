@@ -1,0 +1,36 @@
+#@ load("@ytt:md5", "md5")
+#@ load("@ytt:data", "data")
+#@ load("@ytt:json", "json")
+#@ load("@ytt:sha256", "sha256")
+#@ load("@ytt:base64", "base64")
+#@ load("@ytt:overlay", "overlay")
+
+#@ configMD5 = md5.sum(json.encode(data.values))
+#@ configSHA256 = sha256.sum(json.encode(data.values))
+#@ configEncoded = base64.encode(json.encode(data.values))
+
+#@overlay/match by=overlay.all, expects="1+"
+---
+metadata:
+  #@overlay/match expects="0+"
+  labels: 
+    #@overlay/match missing_ok=True
+    ecosystem: #@ data.values.ecosystem
+    #@overlay/match missing_ok=True
+    environment: #@ data.values.environment
+
+  #@overlay/match expects="0+"
+  #@overlay/merge
+  annotations: 
+    #@overlay/match missing_ok=True
+    pipe/config-md5: #@ configMD5
+    #@overlay/match missing_ok=True
+    pipe/config-sha256: #@ configSHA256
+    #@overlay/match missing_ok=True
+    pipe/ecosystem: #@ data.values.ecosystem
+    #@overlay/match missing_ok=True
+    pipe/environment: #@ data.values.environment
+    #@overlay/match missing_ok=True
+    pipe/updated-at: #@ "{}".format(data.values.pipelineControl.datetime)
+    #@overlay/match missing_ok=True
+    kubectl.kubernetes.io/last-applied-configuration: #@ data.values.pipelineControl.datetime
