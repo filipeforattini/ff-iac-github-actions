@@ -280,15 +280,15 @@ jobs:
       # pre-job
       - name: Setup | Cloning repository
         uses: actions/checkout@v3
-        with:
-          persist-credentials: false
 
       # pre-job
+      # git config --global user.email "you@example.com"
+      # git config --global user.name "Your Name"
       - name: Setup | Cloning repository
         run: |
           git fetch
           git checkout -b env/dev
-          git commit --allow-empty -am "deploy: cmt-${{github.sha}} to env-dev"
+          git commit --allow-empty -am "deploy: to env-dev the v${{needs.Release.outputs.Version}} at cmt-${{github.sha}} "
           git push -f -u origin env/dev
 
 
