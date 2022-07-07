@@ -288,10 +288,8 @@ jobs:
         run: |
           git fetch
           git checkout -b env/dev
-          git branch --set-upstream-to=origin/env/dev env/dev
-          git pull
           git commit --allow-empty -am "deploy: cmt-${{github.sha}} to env-dev"
-          git push -f origin env/dev
+          git push -f -u origin env/dev
 
 
   #--------------------------------------------------#
