@@ -286,6 +286,7 @@ jobs:
           PIPELINE_SETUP: ${{ needs.Setup.outputs.PipelineConfig }}
         id: setup
         run: |
+          echo "::set-output name=commit_hash::$(echo $PIPELINE_SETUP | jq -r '.git.commit')"
           echo "::set-output name=user_name::$(echo $PIPELINE_SETUP | jq -r '.git.actor.name')"
           echo "::set-output name=user_email::$(echo $PIPELINE_SETUP | jq -r '.git.actor.email')"
 
@@ -295,7 +296,7 @@ jobs:
           git config --global user.email "${{steps.setup.outputs.user_email}}"
           git fetch
           git checkout -b env/dev
-          git commit --allow-empty -am "deploy: to env-dev the v${{needs.Release.outputs.Version}} at cmt-${{github.sha}} "
+          git commit --allow-empty -am "deploy: to dev\nVersion: ${{needs.Release.outputs.Version}}\nCommit: ${{steps.setup.outputs.commit_hash}}"
           git push -f -u origin env/dev
 
 
