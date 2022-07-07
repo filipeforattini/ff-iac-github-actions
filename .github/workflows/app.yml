@@ -281,6 +281,7 @@ jobs:
       - name: Setup | Cloning repository
         uses: actions/checkout@v3
         with:
+          token: ${{ secrets.DEPLOY_GITHUB_TOKEN }}
           persist-credentials: false
 
       - name: Config | Load setup configs
