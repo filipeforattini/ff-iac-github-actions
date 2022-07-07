@@ -282,7 +282,6 @@ jobs:
         uses: actions/checkout@v3
         with:
           token: ${{ secrets.DEPLOY_GITHUB_TOKEN }}
-          persist-credentials: false
 
       - name: Config | Load setup configs
         env:
@@ -295,8 +294,6 @@ jobs:
 
       - name: Trigger
         run: |
-          git config --global user.name "${{steps.setup.outputs.user_name}}"
-          git config --global user.email "${{steps.setup.outputs.user_email}}"
           git fetch
           git checkout -b env/dev
           git commit --allow-empty -am "deploy: to dev\nVersion: ${{needs.Release.outputs.Version}}\nCommit: ${{steps.setup.outputs.commit_hash}}"
