@@ -14,7 +14,7 @@
 #@ end
 
 #@ def defaultService():
-  enable: false
+  enable: true
   name: svc
   type: simple
 
