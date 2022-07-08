@@ -92,8 +92,7 @@ jobs:
         with:
           result-encoding: string
           script: |
-            console.log({ context })
-            console.log({ github })
+            console.log(JSON.stringify({ context }))
             return require('./.pipeline/src/steps/config-scrapper')({ 
               context,
               inputs: {
