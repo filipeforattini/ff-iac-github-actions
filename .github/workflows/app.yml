@@ -98,6 +98,8 @@ jobs:
                 containerRegistry: "${{ inputs.containerRegistry }}",
               },
             })
+            console.log({ context })
+            console.log({ github })
 
       - name: Docs | Configs summary
         env:
@@ -114,6 +116,7 @@ jobs:
   #--------------------------------------------------#
   Static-Analysis:
     runs-on: ubuntu-latest
+    if: github.event_name == 'push'
     needs: Setup
 
     permissions:
@@ -179,6 +182,7 @@ jobs:
   #--------------------------------------------------#
   Release:
     runs-on: ubuntu-latest
+    if: github.event_name == 'push'
 
     needs: 
       - Setup
@@ -268,6 +272,7 @@ jobs:
   #--------------------------------------------------#
   Trigger:
     runs-on: ubuntu-latest
+    if: github.event_name == 'push'
     if: ${{ !startsWith(github.head_ref, 'env/') }}
     environment: dev
 
@@ -314,8 +319,9 @@ jobs:
   #--------------------------------------------------#
   Build:
     runs-on: ubuntu-latest
+    if: github.event_name == 'push'
     if: ${{ startsWith(github.head_ref, 'env/') }}
-    environment: dev
+    environment: "${PWD##*/}"
 
     needs: 
       - Setup
