@@ -92,14 +92,14 @@ jobs:
         with:
           result-encoding: string
           script: |
+            console.log({ context })
+            console.log({ github })
             return require('./.pipeline/src/steps/config-scrapper')({ 
               context,
               inputs: {
                 containerRegistry: "${{ inputs.containerRegistry }}",
               },
             })
-            console.log({ context })
-            console.log({ github })
 
       - name: Docs | Configs summary
         env:
