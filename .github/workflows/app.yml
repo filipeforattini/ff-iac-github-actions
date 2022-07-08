@@ -269,6 +269,7 @@ jobs:
   Trigger:
     runs-on: ubuntu-latest
     if: ${{ !startsWith(github.head_ref, 'env/') }}
+    environment: dev
 
     needs: 
       - Setup
