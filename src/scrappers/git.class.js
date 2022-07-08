@@ -10,8 +10,8 @@ module.exports = class Git extends Scrapper {
     const organization = this.context.payload.repository.full_name.split('/')[0]
     const branch = this.context.ref.replace('refs/heads/', '')
     
-    let firstName, surnames
-    if (this.context.payload.head_commit.committer) {
+    let firstName, surnames = []
+    if (this.context.payload.head_commit) {
       [ firstName, ...surnames ] = this.context.payload.head_commit.committer.name.split(' ')
     }
 

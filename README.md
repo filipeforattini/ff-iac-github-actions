@@ -4,7 +4,7 @@
 
 This is a personal work in progress. Keep in mind your suggestions are welcome! :)
 
-These workflows are highly opinionated **auto-helm** upgrade or **k8s-apply** pipelines.
+These workflows are highly opinionated **auto-helm** upgrade or **kubectl-apply** pipelines.
 
 ## Introduction
 
