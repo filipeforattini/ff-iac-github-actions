@@ -269,7 +269,6 @@ jobs:
   Trigger:
     runs-on: ubuntu-latest
     if: ${{ !startsWith(github.head_ref, 'env/') }}
-    environment: dev
 
     needs: 
       - Setup
@@ -299,6 +298,13 @@ jobs:
           git commit --allow-empty -am "deploy: to dev\nVersion: ${{needs.Release.outputs.Version}}\nCommit: ${{steps.setup.outputs.commit_hash}}"
           git push -f -u origin env/dev
 
+      - uses: altinukshini/deployment-action@releases/v1
+        name: Create GitHub deployment
+        id: deployment
+        with:
+          token: "${{ secrets.DEPLOY_GITHUB_TOKEN }}"
+          target_url: http://my-app-url.com
+          environment: dev
 
   #--------------------------------------------------#
   #                       Build                      # 
