@@ -273,7 +273,7 @@ jobs:
   Trigger:
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
-    if: ${{ !startsWith(github.head_ref, 'env/') }}
+    # if: ${{ !startsWith(github.head_ref, 'env/') }}
     environment: dev
 
     needs: 
@@ -320,8 +320,8 @@ jobs:
   Build:
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
-    if: ${{ startsWith(github.head_ref, 'env/') }}
-    environment: "${PWD##*/}"
+    # if: ${{ startsWith(github.head_ref, 'env/') }}
+    environment: "${github.head_ref##env/}"
 
     needs: 
       - Setup
