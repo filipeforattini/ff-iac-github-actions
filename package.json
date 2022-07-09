@@ -9,7 +9,7 @@
   "scripts": {
     "commit": "git pull && git commit --allow-empty -am \"fix: empty commit for testing\" && git push",
     "build": "npm run build:pipeline-config-scrapper",
-    "build:pipeline-config-scrapper": "ncc build actions/pipeline-config-scrapper/app.js -m -o actions/pipeline-config-scrapper --license licenses.txt"
+    "build:pipeline-config-scrapper": "ncc build src/actions/pipeline-config-scrapper/index.js -m -o actions/pipeline-config-scrapper --license licenses.txt"
   },
   "repository": {
     "type": "git",
