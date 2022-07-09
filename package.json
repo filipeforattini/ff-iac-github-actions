@@ -9,7 +9,7 @@
   "scripts": {
     "commit": "git pull && git commit --allow-empty -am \"fix: empty commit for testing\" && git push",
     "build": "ACTION_NAME=pipeline-config-scrapper npm run build-action",
-    "build-action": "ncc build src/actions/$ACTION_NAME/index.js -m -o .github/actions/$ACTION_NAME && rm -f .github/actions/$ACTION_NAME/action.yml && cp src/actions/$ACTION_NAME/action.yml .github/actions/$ACTION_NAME/action.yml && rm .github/actions/$ACTION_NAME/package.json  && rm .github/actions/$ACTION_NAME/yarn.lock"
+    "build-action": "ncc build src/actions/$ACTION_NAME/index.js -m -o .github/actions/$ACTION_NAME && rm -f .github/actions/$ACTION_NAME/action.yml && cp src/actions/$ACTION_NAME/action.yml .github/actions/$ACTION_NAME/action.yml"
   },
   "repository": {
     "type": "git",
