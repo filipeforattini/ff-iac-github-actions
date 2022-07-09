@@ -5,19 +5,15 @@ const linguist = require("linguist-js");
 
 async function action () {
   await core.summary
-    .addHeading('Analized 0', 0)
-    .addHeading('Analized 1', 1)
-    .addHeading('Analized 2', 2)
-    .addHeading('Analized 3', 3)
-    .addHeading('Analized 4', 4)
+    .addHeading('Analized 0')
     .addDetails('context', JSON.stringify(github.context, null, 2))
     .addCodeBlock(`
 graph event-push;
 eventpush-->Analyze;
 Analyze-->StaticAnalizys;
 StaticAnalizys-->Test;
-Test-->Release;
-  `,'mermaid')
+Test-->Release;`,'mermaid')
+    .write()
 
   core.info(JSON.stringify(github.context, null, 2));
 }
