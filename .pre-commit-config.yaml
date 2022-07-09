@@ -1,8 +1,8 @@
 repos:
   - repo: local
     hooks:
-      - id: simple-pylint
-        name: simple-pylint
+      - id: build-actions
+        name: Build Actions
         entry: npm
         args: ["run", "build"]
         language: system
