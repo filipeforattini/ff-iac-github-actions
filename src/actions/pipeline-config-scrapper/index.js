@@ -6,7 +6,7 @@ const linguist = require("linguist-js");
 async function action () {
   await core.summary
     .addHeading('Analized', 3)
-    .addDetails('Received context:', `\n \`\`\`json \n\n${JSON.stringify(github.context, null, 2)} \n\n \`\`\` \n`)
+    .addDetails('Received context:', `\n \`\`\` \n\n${JSON.stringify(github.context, null, 2)} \n\n \`\`\` \n`)
     .write()
 
   core.info(JSON.stringify(github.context, null, 2));
