@@ -4,7 +4,7 @@ const github = require('@actions/github');
 const linguist = require('linguist-js');
 
 try {
-  const { files, languages, unknown } = linguist(folder, options);
+  const { files, languages, unknown } = linguist('./', {});
 
   core.setOutput("language", languages);
   const payload = JSON.stringify(github.context.payload, undefined, 2)
