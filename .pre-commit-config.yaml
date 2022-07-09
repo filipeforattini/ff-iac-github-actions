@@ -8,10 +8,11 @@ repos:
         language: system
         types: ['javascript']
         pass_filenames: false
+
       - id: git-add-actions
         name: Add actions after build
         entry: git
-        args: ["add", "./actions"]
+        args: ["add", "./.github/actions"]
         language: system
         types: ['javascript']
         pass_filenames: false
