@@ -5,9 +5,11 @@ const linguist = require('linguist-js');
 
 try {
   const { files, languages, unknown } = linguist('./', {});
+  console.log(`languages: ${JSON.stringify(languages, null, 2)}`);
 
   core.setOutput("language", languages);
-  const payload = JSON.stringify(github.context.payload, undefined, 2)
+  const payload = JSON.stringify(github.context, undefined, 2)
+
   console.log(`The event payload: ${payload}`);
 } catch (error) {
   core.setFailed(error.message);
