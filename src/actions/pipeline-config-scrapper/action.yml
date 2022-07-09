@@ -1,5 +1,5 @@
-name: 'Hello World'
-description: 'Greet someone and record the time'
+name: 'Pipeline Config Scrapper'
+description: 'Analize current event trigger and indicates paths and configs'
 inputs: {}
 outputs:
   time: # id of output
