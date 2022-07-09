@@ -17,7 +17,7 @@ try {
   let providers = [ Git, Run, Code ]
   let output = {}
   let args = github.context
-  core.info("context", JSON.stringify(github.context, null, 2));
+  core.info(JSON.stringify(github.context, null, 2));
 
   output = providers
     .map(p => p.load(args, output))
