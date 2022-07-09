@@ -1,0 +1,30 @@
+{
+  "name": "ff-iac-github-actions",
+  "version": "1.0.0",
+  "description": "[![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)",
+  "main": ".releaserc.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "build": "npm run build:pipeline-config-scrapper",
+    "build:pipeline-config-scrapper": "ncc build src/actions/pipeline-config-scrapper/app.js -m -o src/actions/pipeline-config-scrapper --license licenses.txt"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/filipeforattini/ff-iac-github-actions.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/filipeforattini/ff-iac-github-actions/issues"
+  },
+  "homepage": "https://github.com/filipeforattini/ff-iac-github-actions#readme",
+  "dependencies": {
+    "@actions/core": "^1.9.0",
+    "@actions/github": "^5.0.3",
+    "@vercel/ncc": "^0.34.0",
+    "linguist-js": "^2.5.2",
+    "lodash": "^4.17.21"
+  }
+}
