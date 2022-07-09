@@ -3,7 +3,7 @@ repos:
     hooks:
       - id: simple-pylint
         name: simple-pylint
-        entry: /usr/bin/npm
+        entry: npm
         args: ["run", "build"]
         language: system
         types: [javascript]
