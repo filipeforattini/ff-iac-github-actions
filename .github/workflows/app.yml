@@ -87,7 +87,7 @@ jobs:
 
       # job
       - name: Config | Pipeline config scrapper
-        uses: filipeforattini/ff-iac-github-action/actionspipeline-config-scrapper@main
+        uses: filipeforattini/ff-iac-github-actions/actions/pipeline-config-scrapper@main
         id: script_setup
 
       - name: Docs | Configs summary
