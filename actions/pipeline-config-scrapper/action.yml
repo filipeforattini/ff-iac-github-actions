@@ -1,9 +1,17 @@
 name: 'Pipeline Config Scrapper'
 description: 'Analize current event trigger and indicates paths and configs'
-inputs: {}
-outputs:
-  time: # id of output
-    description: 'The time we greeted you'
+
 runs:
   using: 'node16'
   main: 'index.js'
+
+inputs:
+  containerRegistry:
+    required: false
+    default: ghcr.io
+    description: "Container registry to upload container images"
+
+outputs:
+  time: # id of output
+    description: 'The time we greeted you'
+
