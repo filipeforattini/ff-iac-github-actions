@@ -6,7 +6,7 @@ repos:
         entry: npm
         args: ["run", "build"]
         language: system
-        types: [javascript]
+        types: ['javascript']
         pass_filenames: false
 
   - repo: https://github.com/zricethezav/gitleaks
