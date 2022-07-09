@@ -1,4 +1,4 @@
-const mergeDeep = require('../../../merge-deep')
+const mergeDeep = require('../../../src/merge-deep')
 
 module.exports = class Scrapper {
   constructor ({ github, context, inputs, core, glob, io, exec }, output) {

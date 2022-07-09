@@ -87,18 +87,8 @@ jobs:
 
       # job
       - name: Config | Pipeline config scrapper
-        uses: actions/github-script@v6
+        uses: filipeforattini/ff-iac-github-action/actionspipeline-config-scrapper@main
         id: script_setup
-        with:
-          result-encoding: string
-          script: |
-            console.log(JSON.stringify({ context }))
-            return require('./.pipeline/src/steps/config-scrapper')({ 
-              context,
-              inputs: {
-                containerRegistry: "${{ inputs.containerRegistry }}",
-              },
-            })
 
       - name: Docs | Configs summary
         env:
