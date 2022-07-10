@@ -18,9 +18,10 @@ async function action () {
   core.info(JSON.stringify(languages, null, 2));
   core.setOutput('actor', github.context.actor)
 
+  analysis.root = process.cwd()
   analysis.languages = languages
   analysis.actor = github.context.actor
-
+  
   await core.summary
     .addRaw('<details><summary>Analysis:</summary>\n\n```json \n'+JSON.stringify(analysis, null, 2)+' \n```\n</details>', true)
     .write()
