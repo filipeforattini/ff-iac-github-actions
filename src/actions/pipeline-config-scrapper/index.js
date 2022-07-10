@@ -17,10 +17,10 @@ async function action () {
   const analysis = {}
   
   core.info(JSON.stringify(languages, null, 2));
-  core.setOutput('sender', github.context.sender.login)
+  core.setOutput('actor', github.context.actor)
 
   analysis.languages = languages
-  analysis.sender = github.context.sender.login
+  analysis.actor = github.context.actor
 
   await core.summary
     .addRaw('<details><summary>Analysis:</summary>\n\n```json \n'+JSON.stringify(analysis, null, 2)+' \n```\n</details>', true)
