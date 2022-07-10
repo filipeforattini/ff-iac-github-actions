@@ -1,9 +1,9 @@
-const path = require("path");
 const _ = require("lodash");
+const path = require("path");
 const core = require("@actions/core");
-const github = require("@actions/github");
-const linguist = require("linguist-js");
 const glob = require("@actions/glob");
+const linguist = require("linguist-js");
+const github = require("@actions/github");
 
 async function action() {
   await core.summary
@@ -21,8 +21,8 @@ async function action() {
   const analysis = {};
   analysis.root = process.cwd();
 
-  const languages = linguist(analysis.root, {
-    // categories: ["programming"],
+  const languages = await linguist(analysis.root, {
+    categories: ["programming"],
     ignoredLanguages: ["Shell", "Dockerfile"],
   });
 
