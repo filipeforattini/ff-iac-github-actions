@@ -2,42 +2,38 @@ const _ = require("lodash");
 const core = require("@actions/core");
 const github = require("@actions/github");
 const linguist = require("linguist-js");
-const glob = require('@actions/glob');
+const glob = require("@actions/glob");
 
-
-async function action () {
+async function action() {
   await core.summary
-    .addHeading('🔍 Analized', 3)
-    .addRaw('<details><summary>Received context:</summary>\n\n```json \n'+JSON.stringify(github.context, null, 2)+' \n```\n</details>', true)
-    .write()
+    .addHeading("🔍 Analized", 3)
+    .addRaw(["<details><summary>Received context:</summary>\n\n```json \n", JSON.stringify(github.context, null, 2), " \n```\n</details>"].join(''), true)
+    .write();
 
   const languages = linguist(process.cwd(), {
+    categories: ["programming"],
+    ignoredLanguages: ["Shell", "Dockerfile"],
   });
 
+  const globber = await glob.create("**", { followSymbolicLinks: false });
+  const files = await globber.glob();
+  const analysis = {};
 
-  const globber = await glob.create('**', {followSymbolicLinks: false})
-  const files = await globber.glob()
-  const analysis = {}
-  
   core.info(JSON.stringify(languages, null, 2));
-  core.setOutput('actor', github.context.actor)
+  core.setOutput("actor", github.context.actor);
 
-  analysis.root = process.cwd()
-  analysis.languages = languages
-  analysis.actor = github.context.actor
-  analysis.files = files
-  
+  analysis.root = process.cwd();
+  analysis.languages = languages;
+  analysis.actor = github.context.actor;
+  analysis.files = files;
+
   await core.summary
-    .addRaw('<details><summary>Analysis:</summary>\n\n```json \n'+JSON.stringify(analysis, null, 2)+' \n```\n</details>', true)
-    .write()
+    .addRaw(["<details><summary>Analysis:</summary>\n\n```json \n", JSON.stringify(analysis, null, 2)," \n```\n</details>"].join(''), true)
+    .write();
 }
 
 try {
-  action()
-
-
-
-
+  action();
 
   // let providers = [ Git, Run, Code ]
   // let output = {}
