@@ -2,6 +2,8 @@ const _ = require("lodash");
 const core = require("@actions/core");
 const github = require("@actions/github");
 const linguist = require("linguist-js");
+const glob = require('@actions/glob');
+
 
 async function action () {
   await core.summary
@@ -13,6 +15,9 @@ async function action () {
     categories: ["programming"],
   });
 
+
+  const globber = await glob.create('**', {followSymbolicLinks: false})
+  const files = await globber.glob()
   const analysis = {}
   
   core.info(JSON.stringify(languages, null, 2));
@@ -21,6 +26,7 @@ async function action () {
   analysis.root = process.cwd()
   analysis.languages = languages
   analysis.actor = github.context.actor
+  analysis.files = files
   
   await core.summary
     .addRaw('<details><summary>Analysis:</summary>\n\n```json \n'+JSON.stringify(analysis, null, 2)+' \n```\n</details>', true)
