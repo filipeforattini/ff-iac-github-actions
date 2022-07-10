@@ -2,7 +2,6 @@ const _ = require("lodash");
 const path = require("path");
 const core = require("@actions/core");
 const glob = require("@actions/glob");
-const linguist = require("linguist-js");
 const github = require("@actions/github");
 
 const scrappers = require('./src')
