@@ -27,10 +27,7 @@ async function action() {
   await scrappers.git(analysis)
   await scrappers.run(analysis)
 
-  core.info(JSON.stringify(languages, null, 2));
   core.setOutput("actor", github.context.actor);
-
-  analysis.languages = languages;
   analysis.actor = github.context.actor;
 
   await core.summary
