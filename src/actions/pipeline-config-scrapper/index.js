@@ -5,11 +5,26 @@ const linguist = require("linguist-js");
 
 async function action () {
   await core.summary
-    .addHeading('Analized', 3)
-    .addRaw('<details><summary>Received context:</summary>\n\n```json \n'+JSON.stringify(github.context, null, 2)+' \n </details>', true)
+    .addHeading('🔍 Analized', 3)
+    .addRaw('<details><summary>Received context:</summary>\n\n```json \n'+JSON.stringify(github.context, null, 2)+' \n```\n</details>', true)
     .write()
 
-  core.info(JSON.stringify(github.context, null, 2));
+
+  const { languages } = linguist(process.cwd(), {
+    categories: ["programming"],
+  });
+
+  const analysis = {}
+  
+  core.info(JSON.stringify(languages, null, 2));
+  core.setOutput('sender', github.context.sender.login)
+
+  analysis.languages = languages
+  analysis.sender = github.context.sender.login
+
+  await core.summary
+    .addRaw('<details><summary>Analysis:</summary>\n\n```json \n'+JSON.stringify(analysis, null, 2)+' \n```\n</details>', true)
+    .write()
 }
 
 try {
@@ -52,6 +67,5 @@ try {
 
   // console.log(`The event payload: ${payload}`);
 } catch (error) {
-
-  core.setFailed(error.message);
+  core.setFailed(error);
 }
