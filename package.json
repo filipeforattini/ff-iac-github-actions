@@ -8,7 +8,7 @@
   },
   "scripts": {
     "commit": "npm run build && git pull && git commit --allow-empty -am \"fix: empty commit for testing\" && git push",
-    "build-action": "ncc build src/actions/$ACTION_NAME/index.js -m -s -o .github/actions/$ACTION_NAME && rm -f .github/actions/$ACTION_NAME/action.yml && cp src/actions/$ACTION_NAME/action.yml .github/actions/$ACTION_NAME/action.yml",
+    "build-action": "ncc build src/actions/$ACTION_NAME/index.js -m -q -s -o .github/actions/$ACTION_NAME && rm -f .github/actions/$ACTION_NAME/action.yml && cp src/actions/$ACTION_NAME/action.yml .github/actions/$ACTION_NAME/action.yml",
     "build": "npm run action:pipeline-config-scrapper",
     "action:pipeline-config-scrapper": "ACTION_NAME=pipeline-config-scrapper npm run build-action"
   },
