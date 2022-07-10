@@ -9,8 +9,7 @@ async function action () {
     .addRaw('<details><summary>Received context:</summary>\n\n```json \n'+JSON.stringify(github.context, null, 2)+' \n```\n</details>', true)
     .write()
 
-
-  const { languages } = linguist(process.cwd(), {
+  const languages = linguist(process.cwd(), {
     categories: ["programming"],
   });
 
