@@ -12,7 +12,6 @@ async function action () {
     .write()
 
   const languages = linguist(process.cwd(), {
-    categories: ["programming"],
   });
 
 
