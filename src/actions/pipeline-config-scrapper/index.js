@@ -1,3 +1,4 @@
+const path = require("path");
 const _ = require("lodash");
 const core = require("@actions/core");
 const github = require("@actions/github");
@@ -7,15 +8,24 @@ const glob = require("@actions/glob");
 async function action() {
   await core.summary
     .addHeading("🔍 Analized", 3)
-    .addRaw(["<details><summary>Received context:</summary>\n\n```json \n", JSON.stringify(github.context, null, 2), " \n```\n</details>"].join(''), true)
+    .addRaw(
+      [
+        "<details><summary>Received context:</summary>\n\n```json \n",
+        JSON.stringify(github.context, null, 2),
+        " \n```\n</details>",
+      ].join(""),
+      true
+    )
     .write();
 
-  const languages = linguist(process.cwd(), {
+  const languages = linguist(path.join(process.cwd(), ".."), {
     categories: ["programming"],
     ignoredLanguages: ["Shell", "Dockerfile"],
   });
 
-  const globber = await glob.create("**", { followSymbolicLinks: false });
+  const globber = await glob.create(path.join(process.cwd(), "..") + "**", {
+    followSymbolicLinks: false,
+  });
   const files = await globber.glob();
   const analysis = {};
 
@@ -28,7 +38,14 @@ async function action() {
   analysis.files = files;
 
   await core.summary
-    .addRaw(["<details><summary>Analysis:</summary>\n\n```json \n", JSON.stringify(analysis, null, 2)," \n```\n</details>"].join(''), true)
+    .addRaw(
+      [
+        "<details><summary>Analysis:</summary>\n\n```json \n",
+        JSON.stringify(analysis, null, 2),
+        " \n```\n</details>",
+      ].join(""),
+      true
+    )
     .write();
 }
 
