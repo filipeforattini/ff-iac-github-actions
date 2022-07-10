@@ -18,6 +18,8 @@ async function action() {
     )
     .write();
 
+  const analysis = {};
+      
   const languages = linguist(path.join(process.cwd(), ".."), {
     categories: ["programming"],
     ignoredLanguages: ["Shell", "Dockerfile"],
@@ -27,7 +29,6 @@ async function action() {
     followSymbolicLinks: false,
   });
   const files = await globber.glob();
-  const analysis = {};
 
   core.info(JSON.stringify(languages, null, 2));
   core.setOutput("actor", github.context.actor);
