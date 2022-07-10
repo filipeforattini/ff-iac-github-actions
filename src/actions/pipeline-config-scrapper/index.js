@@ -19,24 +19,18 @@ async function action() {
     .write();
 
   const analysis = {};
-      
-  const languages = linguist(path.join(process.cwd(), ".."), {
-    categories: ["programming"],
+  analysis.root = process.cwd();
+
+  const languages = linguist(analysis.root, {
+    // categories: ["programming"],
     ignoredLanguages: ["Shell", "Dockerfile"],
   });
-
-  const globber = await glob.create(path.join(process.cwd(), "..") + "**", {
-    followSymbolicLinks: false,
-  });
-  const files = await globber.glob();
 
   core.info(JSON.stringify(languages, null, 2));
   core.setOutput("actor", github.context.actor);
 
-  analysis.root = process.cwd();
   analysis.languages = languages;
   analysis.actor = github.context.actor;
-  analysis.files = files;
 
   await core.summary
     .addRaw(
