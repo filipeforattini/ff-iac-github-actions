@@ -8,7 +8,7 @@ inputs:
     description: ""
   files:
     required: false
-    default: master
+    default: "[]"
     description: ""
   npmPlugin:
     required: false
