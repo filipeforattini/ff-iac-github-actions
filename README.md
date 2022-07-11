@@ -68,15 +68,17 @@ Checkout the test repositories:
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Analysis: manual
     [*] --> Analysis: github-action
+    [*] --> Analysis: manual
 
     state if_event <<choice>>
     Analysis --> if_event
-    if_event --> StaticAnalysis: event=push
-    if_event --> StaticAnalysis: event=pullrequest
-    if_event --> Merge=env/stg: event=tag
     if_event --> Build : event=deployment
+
+    state if_branch <<choice>>
+    if_event --> if_branch: event=push
+    if_branch --> StaticAnalysis: push=commit
+    if_branch --> Merge=env/stg: push=tag
 
     StaticAnalysis --> Test
 
