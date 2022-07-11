@@ -1,3 +1,4 @@
+const _ = require("lodash");
 const core = require("@actions/core");
 const linguist = require("linguist-js");
 
@@ -7,7 +8,15 @@ module.exports = async (analysis) => {
     ignoredLanguages: ["Shell", "Dockerfile"],
   });
 
-  core.info(JSON.stringify(languages, null, 2));
+  let langIterator = _.mapValues(languages, "bytes");
+  langIterator = _.toPairs(langIterator);
+  langIterator = langIterator.map((z) => _.zipObject(["language", "bytes"], z));
+  langIterator = _.sortBy(langIterator, "bytes");
 
-  analysis.languages = languages;
-}
+  if (langIterator.length == 0) return core.warning("no language detected");
+
+  const language = langIterator.pop().language;
+  core.info(`language detected! is a ${language} repository`);
+
+  analysis.language = language;
+};

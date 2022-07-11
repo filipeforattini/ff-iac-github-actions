@@ -5,6 +5,7 @@ const glob = require("@actions/glob");
 const github = require("@actions/github");
 
 const scrappers = require('./src')
+const { newAnalysisBag } = require('./core')
 
 async function action() {
   await core.summary
@@ -19,14 +20,14 @@ async function action() {
     )
     .write();
 
-  const analysis = {};
+  const analysis = newAnalysisBag();
   analysis.root = process.cwd();
 
   await scrappers.code(analysis)
   await scrappers.git(analysis)
   await scrappers.run(analysis)
 
-  core.setOutput("actor", github.context.actor);
+  core.setOutput("analysis", JSON.stringify(analysis, null, 2));
   analysis.actor = github.context.actor;
 
   await core.summary
