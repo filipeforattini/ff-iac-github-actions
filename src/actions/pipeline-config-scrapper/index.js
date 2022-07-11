@@ -1,8 +1,18 @@
+const _ = require('lodash')
 const core = require("@actions/core");
 const github = require("@actions/github");
 
 const scrappers = require("./src");
-const { newAnalysisBag } = require("./core");
+
+const analysisFactory = (initial = {}) => new Proxy(initial, {
+  set(obj, prop, value) {
+    if (!obj[prop]) obj[prop] = {}
+    
+    obj[prop] = _.isObject(value)
+      ? _.merge(obj[prop], value)
+      : value
+  }
+})
 
 async function action() {
   await core.summary
@@ -17,8 +27,10 @@ async function action() {
     )
     .write();
 
-  const analysis = newAnalysisBag();
-  analysis.root = process.cwd();
+  const analysis = analysisFactory({
+    root: process.cwd(),
+    actor: github.context.actor,
+  })
 
   await scrappers.code(analysis);
   await scrappers.git(analysis);
@@ -27,7 +39,6 @@ async function action() {
 
   core.setOutput("event", analysis.event);
   core.setOutput("analysis", JSON.stringify(analysis, null, 2));
-  analysis.actor = github.context.actor;
 
   await core.summary
     .addRaw(
