@@ -64,6 +64,36 @@ Checkout the test repositories:
 
 ## Usage
 
+```mermaid
+stateDiagram-v2
+    direction LR
+    [*] --> Analysis
+
+    state if_state <<choice>>
+    Analysis --> if_state
+    if_state --> StaticAnalysis: event=push
+    if_state --> StaticAnalysis: event=pullrequest
+    if_state --> Build : event=deployment
+    
+    StaticAnalysis --> Test
+    state fork_state <<fork>>
+      Test --> fork_state
+      fork_state --> LTS
+      fork_state --> Current
+      fork_state --> Latest
+
+      state join_state <<join>>
+      LTS --> join_state
+      Current --> join_state
+      Latest --> join_state
+      join_state --> Trigger
+
+    Trigger --> [*]
+
+    Build --> Deploy
+    Deploy --> [*]
+```
+
 ### Repository Structure
 
 ```
