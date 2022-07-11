@@ -30,7 +30,7 @@ async function action() {
         [
           "<details><summary>Received context:</summary>\n\n```json \n",
           JSON.stringify(github.context, null, 2),
-          " \n\n ```</details>",
+          " \n\n ``` \n</details>",
         ].join(''),
         true
       )
@@ -61,7 +61,7 @@ async function action() {
         [
           "<details><summary>Analysis:</summary>\n\n```json \n",
           JSON.stringify(analysis, null, 2),
-          " \n\n ```</details>",
+          " \n\n ``` \n</details>",
         ].join(''),
         true
       )
