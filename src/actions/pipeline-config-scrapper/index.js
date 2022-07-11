@@ -20,18 +20,22 @@ const analysisFactory = (initial = {}) => new Proxy(initial, {
 })
 
 async function action() {
-  await core.summary
-    .addHeading("🔍 Analized", 3)
-    .addRaw('This step will read your repository and seak for features to aggregate value!', true)
-    .addRaw(
-      [
-        "<details><summary>Received context:</summary>\n\n```json \n",
-        JSON.stringify(github.context, null, 2),
-        " \n\n ```</details>",
-      ].join(''),
-      true
-    )
-    .write();
+  let writeSummary = core.getBooleanInput('writeSummary', { required: true });
+
+  if (writeSummary) {
+    await core.summary
+      .addHeading("🔍 Analized", 3)
+      .addRaw('This step will read your repository and seak for features to aggregate value!', true)
+      .addRaw(
+        [
+          "<details><summary>Received context:</summary>\n\n```json \n",
+          JSON.stringify(github.context, null, 2),
+          " \n\n ```</details>",
+        ].join(''),
+        true
+      )
+      .write();
+  }
 
   const analysis = analysisFactory({
     root: process.cwd(),
@@ -51,21 +55,23 @@ async function action() {
       core.setOutput(key, _.isObject(value) ? JSON.stringify(analysis, null, 2) : value);
     })
   
-  await core.summary
-    .addRaw(
-      [
-        "<details><summary>Analysis:</summary>\n\n```json \n",
-        JSON.stringify(analysis, null, 2),
-        " \n\n ```</details>",
-      ].join(''),
-      true
-    )
-    .addHeading('Outputs:', 4)
-    .addTable([
-      [ { data: 'key', header: true }, { data: 'value', header: true }],
-      ...Object.entries(analysis.outputs),
-    ])
-    .write()
+  if (writeSummary) {
+    await core.summary
+      .addRaw(
+        [
+          "<details><summary>Analysis:</summary>\n\n```json \n",
+          JSON.stringify(analysis, null, 2),
+          " \n\n ```</details>",
+        ].join(''),
+        true
+      )
+      .addHeading('Outputs:', 4)
+      .addTable([
+        [{ data: 'key', header: true }, { data: 'value', header: true }],
+        ...Object.entries(analysis.outputs),
+      ])
+      .write()
+  }
 }
 
 try {

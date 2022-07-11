@@ -81,6 +81,8 @@ jobs:
       - name: Config | Pipeline config scrapper
         id: analysis
         uses: filipeforattini/ff-iac-github-actions/.github/actions/pipeline-config-scrapper@main
+        with:
+          writeSummary: true
 
 
   #--------------------------------------------------#

@@ -1,7 +1,11 @@
-name: 'Pipeline Config Scrapper'
-description: 'Analize current event trigger and indicates paths and configs'
+name: "Pipeline Config Scrapper"
+description: "Analize current event trigger and indicates paths and configs"
 
 inputs:
+  writeSummary:
+    required: true
+    default: "false"
+    description: ""
   containerRegistry:
     required: false
     default: ghcr.io
@@ -9,9 +13,8 @@ inputs:
 
 outputs:
   time: # id of output
-    description: 'The time we greeted you'
+    description: "The time we greeted you"
 
 runs:
-  using: 'node16'
-  main: 'index.js'
-
+  using: "node16"
+  main: "index.js"
