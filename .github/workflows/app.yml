@@ -68,9 +68,8 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
-      PipelineConfig: ${{ steps.analysis.outputs.result }}
-      BuildNode: ${{ steps.define_builders.outputs.build_node }}
-      BuildPython: ${{ steps.define_builders.outputs.build_python }}
+      Analysis: ${{ steps.analysis.outputs.result }}
+      Event: ${{ steps.analysis.outputs.event }}
 
     steps:
 
@@ -89,7 +88,7 @@ jobs:
   #--------------------------------------------------#
   Static-Analysis:
     runs-on: ubuntu-latest
-    if: github.event_name == 'push'
+    if: needs.Setup.outputs.event == 'push'
     needs: Setup
 
     permissions:
