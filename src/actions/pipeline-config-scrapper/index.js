@@ -5,6 +5,11 @@ const github = require("@actions/github");
 const scrappers = require("./src");
 
 const analysisFactory = (initial = {}) => new Proxy(initial, {
+  get(target, prop, receiver) {
+    if (!target[prop]) target[prop] = {}
+    return target[prop]
+  },
+
   set(obj, prop, value) {
     if (!obj[prop]) obj[prop] = {}
     
@@ -19,10 +24,13 @@ async function action() {
     .addHeading("🔍 Analized", 3)
     .addRaw(
       [
-        "<details><summary>Received context:</summary>\n\n```json \n",
+        "<details>",
+        "<summary>Received context:</summary>",
+        "```json ",
         JSON.stringify(github.context, null, 2),
-        " \n```\n</details>",
-      ].join(""),
+        " \n```",
+        "</details>",
+      ].join('\n'),
       true
     )
     .write();
@@ -30,16 +38,21 @@ async function action() {
   const analysis = analysisFactory({
     root: process.cwd(),
     actor: github.context.actor,
+    outputs: {},
   })
+  
+  analysis.outputs.actor = github.context.actor
 
   await scrappers.code(analysis);
   await scrappers.git(analysis);
   await scrappers.repository(analysis);
   await scrappers.run(analysis);
-
-  core.setOutput("event", analysis.event);
-  core.setOutput("analysis", JSON.stringify(analysis, null, 2));
-
+  
+  Object.entries(analysis.outputs)
+    .forEach(([key, value]) => {
+      core.setOutput(key, _.isObject(value) ? JSON.stringify(analysis, null, 2) : value);
+    })
+  
   await core.summary
     .addRaw(
       [
@@ -50,6 +63,8 @@ async function action() {
       true
     )
     .write();
+
+  core.summary.addTable(Object.entries(analysis.outputs)).write()
 }
 
 try {

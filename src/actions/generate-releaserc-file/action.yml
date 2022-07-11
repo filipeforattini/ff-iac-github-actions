@@ -1,0 +1,21 @@
+name: 'Generate ReleaseRC file'
+description: ''
+
+inputs:
+  defaultBranch:
+    required: true
+    default: master
+    description: ""
+  files:
+    required: false
+    default: master
+    description: ""
+  npmPlugin:
+    required: false
+    default: "false"
+    description: ""
+
+runs:
+  using: 'node16'
+  main: 'index.js'
+

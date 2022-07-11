@@ -1,0 +1,21 @@
+name: 'Setup binaries'
+description: 'Greet someone'
+
+inputs:
+  nodejs:
+    description: 'Inform the Nodejs version'
+    required: false
+    default: 'false'
+
+runs:
+  using: "composite"
+
+  steps:
+    - uses: actions/setup-node@v3
+      if: inputs.nodejs != 'false'
+      with:
+        node-version: ${{ inputs.nodejs }}
+
+    - if: inputs.nodejs != 'false'
+      run: npm -g install yarn npm
+      shell: bash

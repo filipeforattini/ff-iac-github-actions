@@ -17,6 +17,7 @@ module.exports = async (analysis) => {
 
   const language = langIterator.pop().language;
   core.info(`language detected! is a ${language} repository`);
-
   analysis.language = language.toLowerCase();
+
+  analysis.outputs.language = analysis.language
 };
