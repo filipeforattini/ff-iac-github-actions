@@ -24,12 +24,9 @@ async function action() {
     .addHeading("🔍 Analized", 3)
     .addRaw(
       [
-        "<details>",
-        "<summary>Received context:</summary>",
-        "```json ",
+        "<details><summary>Received context:</summary>\n\n```json \n",
         JSON.stringify(github.context, null, 2),
-        " \n```",
-        "</details>",
+        " \n\n ```</details>",
       ].join('\n'),
       true
     )
