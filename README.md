@@ -64,33 +64,55 @@ Checkout the test repositories:
 
 ## Usage
 
+### Flow
+
 ```mermaid
 stateDiagram-v2
-    direction LR
     [*] --> Analysis
 
-    state if_state <<choice>>
-    Analysis --> if_state
-    if_state --> StaticAnalysis: event=push
-    if_state --> StaticAnalysis: event=pullrequest
-    if_state --> Build : event=deployment
-    
+    state if_event <<choice>>
+    Analysis --> if_event
+    if_event --> StaticAnalysis: event=push
+    if_event --> StaticAnalysis: event=pullrequest
+    if_event --> push=env/stg: event=tag
+    if_event --> Build : event=deployment
+    if_event --> Build : manual
+
     StaticAnalysis --> Test
-    state fork_state <<fork>>
-      Test --> fork_state
-      fork_state --> LTS
-      fork_state --> Current
-      fork_state --> Latest
 
-      state join_state <<join>>
-      LTS --> join_state
-      Current --> join_state
-      Latest --> join_state
-      join_state --> Trigger
+    state Test {
+      [*] --> LTS
+      [*] --> Current
+      [*] --> Latest
+      LTS --> [*]
+      Current --> [*]
+      Latest --> [*]
+    }
+    
+    Test --> Release
+    Release --> push=env/dev
+    Release --> emit[tag]
 
-    Trigger --> [*]
+    push=env/dev --> emit[deploy=DEV]
+    emit[deploy=DEV] --> [*]
+    emit[tag] --> [*]
+
+    push=env/stg --> emit[deploy=STG]
+    emit[deploy=STG] --> [*]
 
     Build --> Deploy
+    state Deploy {
+      direction LR
+      [*] --> DEV: env/dev
+      [*] --> STG: env/stg
+      [*] --> SBX: env/sbx
+      [*] --> PRD: env/prd
+      DEV --> app.dev.domain.io
+      DEV --> commit_app.dev.domain.io
+      STG --> app.stg.domain.io
+      SBX --> app.sbx.domain.io
+      PRD --> app.prd.domain.io
+    }
     Deploy --> [*]
 ```
 
