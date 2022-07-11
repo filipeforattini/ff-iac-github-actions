@@ -74,11 +74,8 @@ stateDiagram-v2
     state if_event <<choice>>
     Analysis --> if_event
     if_event --> Build : event=deployment
-
-    state if_branch <<choice>>
-    if_event --> if_branch: event=push
-    if_branch --> StaticAnalysis: push=commit
-    if_branch --> Merge=env/stg: push=tag
+    if_event --> StaticAnalysis: event=push
+    if_event --> Merge=env/stg: event=release
 
     StaticAnalysis --> Test
 
