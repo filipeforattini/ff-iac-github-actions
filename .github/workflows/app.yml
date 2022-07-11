@@ -104,49 +104,10 @@ jobs:
           persist-credentials: false
 
       #job
-      - name: Run GitLeaks scanner
-        if: inputs.staticAnalysis == true
-        uses: docker://opendevsecops/gitleaks
+      - name: Setup | Dependencies
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/static-code-analysis@main
         with:
-          args: --repo=https://github.com/${{github.repository}}
-
-      - name: Run Trivy scanner
-        if: inputs.staticAnalysis == true
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: 'fs'
-          ignore-unfixed: true
-          format: 'sarif'
-          severity: 'CRITICAL,HIGH'
-          output: 'trivy-results.sarif'
-
-      - name: Upload Trivy results
-        if: inputs.staticAnalysis == true
-        uses: github/codeql-action/upload-sarif@v2
-        with:
-          sarif_file: 'trivy-results.sarif'
-
-      - name: Run OSSAR
-        if: inputs.staticAnalysis == true
-        uses: github/ossar-action@v1
-        id: ossar
-
-      - name: Upload OSSAR results
-        if: inputs.staticAnalysis == true
-        uses: github/codeql-action/upload-sarif@v2
-        with:
-          sarif_file: ${{ steps.ossar.outputs.sarifFile }}
-
-      #node
-      - name: Setup CodeQL for Javascript
-        if: inputs.staticAnalysis == true && needs.Setup.outputs.BuildNode == 'true'
-        uses: github/codeql-action/init@v2
-        with:
-          languages: javascript
-
-      - name: Run Javascript CodeQL Analysis
-        if: inputs.staticAnalysis == true && needs.Setup.outputs.BuildNode == 'true'
-        uses: github/codeql-action/analyze@v2
+          language: ${{ needs.Setup.outputs.Language }}
 
 
   #--------------------------------------------------#
