@@ -173,8 +173,8 @@ jobs:
           persist-credentials: false
 
       # dependencies
-      - name: Config | Pipeline config scrapper
-        uses: filipeforattini/ff-iac-github-actions/.github/actions/pipeline-config-scrapper@main
+      - name: Setup | Dependencies
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/setup-binaries@main
         with:
           nodejs: 17
 
