@@ -3,8 +3,8 @@ const path = require("path");
 const core = require("@actions/core");
 
 async function action() {  
-  let defaultBranch = core.getInput('defaultBranch', { required: false });
-  let files = JSON.parse(core.getInput('files', { required: true }))
+  let defaultBranch = core.getInput('defaultBranch', { required: true });
+  let files = JSON.parse(core.getInput('files', { required: false }))
   let npmPlugin = core.getBooleanInput('npmPlugin', { required: false });
 
   let plugins = [
@@ -61,9 +61,10 @@ async function action() {
     plugins,
   };
 
-  releaseFile = JSON.stringify(releaseFile, null, 2);
+  fs.writeFileSync(path.join(process.cwd(), ".releaserc.json"), JSON.stringify(releaseFile, null, 2));
 
-  fs.writeFileSync(path.join(process.cwd(), ".releaserc.json"), releaseFile);
+  let x = fs.readFileSync(path.join(process.cwd(), ".releaserc.json"));
+  core.warning(`content = ${x}`)
 }
 
 try {
