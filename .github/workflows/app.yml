@@ -88,7 +88,7 @@ jobs:
   #--------------------------------------------------#
   Static-Analysis:
     runs-on: ubuntu-latest
-    if: needs.Setup.outputs.event == 'push'
+    if: needs.Setup.outputs.Event == 'push'
     needs: Setup
 
     permissions:
@@ -154,7 +154,7 @@ jobs:
   #--------------------------------------------------#
   Release:
     runs-on: ubuntu-latest
-    if: github.event_name == 'push'
+    if: needs.Setup.outputs.Event == 'push'
 
     needs: 
       - Setup
@@ -171,13 +171,6 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
-
-      - name: Setup | Cloning tools
-        uses: actions/checkout@v3
-        with:
-          ref: main
-          path: .pipeline
-          repository: filipeforattini/ff-iac-github-actions
 
       - name: Install | Node.js 17
         uses: actions/setup-node@v3
