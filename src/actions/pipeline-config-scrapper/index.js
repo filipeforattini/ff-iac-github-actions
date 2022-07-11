@@ -1,7 +1,4 @@
-const _ = require("lodash");
-const path = require("path");
 const core = require("@actions/core");
-const glob = require("@actions/glob");
 const github = require("@actions/github");
 
 const scrappers = require('./src')
@@ -27,6 +24,7 @@ async function action() {
   await scrappers.git(analysis)
   await scrappers.run(analysis)
 
+  core.setOutput("event", analysis.event);
   core.setOutput("analysis", JSON.stringify(analysis, null, 2));
   analysis.actor = github.context.actor;
 
