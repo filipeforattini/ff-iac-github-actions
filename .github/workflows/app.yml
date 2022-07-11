@@ -138,8 +138,8 @@ jobs:
 
       # dependencies
       - name: Config | Pipeline config scrapper
-        id: analysis
         uses: filipeforattini/ff-iac-github-actions/.github/actions/pipeline-config-scrapper@main
+        id: analysis
 
       - name: Setup | Dependencies
         uses: filipeforattini/ff-iac-github-actions/.github/actions/setup-binaries@main
@@ -148,20 +148,12 @@ jobs:
 
       # release
       - name: Config | Create .releaserc.json
-        uses: actions/github-script@v6
-        if: inputs.autoVersioning == true && steps.node_setup.outputs.has_releaserc == 'false'
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/generate-releaserc-file@main
+        if: steps.analysis.outputs.features_has_releaserc == 'false'
         id: releaserc-creation
         with:
-          result-encoding: string
-          script: |
-            return require('./.pipeline/src/steps/generate-releaserc')({
-              defaultBranch: "${{ inputs.mainBranch }}",
-              files: [ 
-                'package.json',
-                'dist/**/*.{js,css}',
-              ],
-              npmPlugin: true,
-            })
+          npmPlugin: true
+          files: "[ 'package.json', 'dist/**/*.{js,css}' ]"
 
       - name: Docs | .releaserc.json
         if: inputs.autoVersioning == true && steps.node_setup.outputs.has_releaserc == 'false'
