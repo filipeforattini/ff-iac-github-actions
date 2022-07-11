@@ -52,7 +52,7 @@ async function action() {
   
   Object.entries(analysis.outputs)
     .forEach(([key, value]) => {
-      core.setOutput(key, _.isObject(value) ? JSON.stringify(analysis, null, 2) : value);
+      core.setOutput(key, _.isObject(value) ? JSON.stringify(analysis, null, 2) : `${value}`);
     })
   
   if (writeSummary) {
@@ -68,7 +68,7 @@ async function action() {
       .addHeading('Outputs:', 4)
       .addTable([
         [{ data: 'key', header: true }, { data: 'value', header: true }],
-        ...Object.entries(analysis.outputs),
+        ...Object.entries(analysis.outputs).map(([key, value]) => [ key, `${value}`]),
       ])
       .write()
   }
