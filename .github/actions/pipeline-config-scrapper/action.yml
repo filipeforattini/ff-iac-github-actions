@@ -1,10 +1,6 @@
 name: 'Pipeline Config Scrapper'
 description: 'Analize current event trigger and indicates paths and configs'
 
-runs:
-  using: 'node16'
-  main: 'index.js'
-
 inputs:
   containerRegistry:
     required: false
@@ -14,4 +10,8 @@ inputs:
 outputs:
   time: # id of output
     description: 'The time we greeted you'
+
+runs:
+  using: 'node16'
+  main: 'index.js'
 
