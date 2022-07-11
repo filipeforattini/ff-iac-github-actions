@@ -59,9 +59,11 @@ async function action() {
       ].join(""),
       true
     )
-    .write();
-
-  core.summary.addTable(Object.entries(analysis.outputs)).write()
+    .addTable([
+      [ { data: 'key', header: true }, { data: 'value', header: true }],
+      ...Object.entries(analysis.outputs),
+    ])
+    .write()
 }
 
 try {
