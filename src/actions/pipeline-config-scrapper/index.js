@@ -1,8 +1,8 @@
 const core = require("@actions/core");
 const github = require("@actions/github");
 
-const scrappers = require('./src')
-const { newAnalysisBag } = require('./core')
+const scrappers = require("./src");
+const { newAnalysisBag } = require("./core");
 
 async function action() {
   await core.summary
@@ -20,9 +20,10 @@ async function action() {
   const analysis = newAnalysisBag();
   analysis.root = process.cwd();
 
-  await scrappers.code(analysis)
-  await scrappers.git(analysis)
-  await scrappers.run(analysis)
+  await scrappers.code(analysis);
+  await scrappers.git(analysis);
+  await scrappers.repository(analysis);
+  await scrappers.run(analysis);
 
   core.setOutput("event", analysis.event);
   core.setOutput("analysis", JSON.stringify(analysis, null, 2));
