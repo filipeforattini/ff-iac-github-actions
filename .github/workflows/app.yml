@@ -172,13 +172,11 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
-      - name: Install | Node.js 17
-        uses: actions/setup-node@v3
+      # dependencies
+      - name: Config | Pipeline config scrapper
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/pipeline-config-scrapper@main
         with:
-          node-version: 17
-
-      - name: Install | Dependency managers
-        run: npm -g install yarn npm
+          nodejs: 17
 
       - name: Config | Load setup configs
         env:
