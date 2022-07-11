@@ -33,7 +33,7 @@ on:
       staticAnalysis:
         type: boolean
         required: false
-        default: true
+        default: false
         description: "Enable static analysis scans"
       autoVersioning:
         type: boolean
@@ -104,8 +104,9 @@ jobs:
           persist-credentials: false
 
       #job
-      - name: Setup | Dependencies
+      - name: Run code analysis
         uses: filipeforattini/ff-iac-github-actions/.github/actions/static-code-analysis@main
+        if: inputs.staticAnalysis
         with:
           language: ${{ needs.Setup.outputs.Language }}
 

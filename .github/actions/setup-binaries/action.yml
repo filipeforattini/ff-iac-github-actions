@@ -18,3 +18,4 @@ runs:
 
     - if: inputs.nodejs != 'false'
       run: npm -g install yarn npm
+      shell: bash
