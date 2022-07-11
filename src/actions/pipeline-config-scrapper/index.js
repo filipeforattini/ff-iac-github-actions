@@ -25,6 +25,7 @@ async function action() {
   if (writeSummary) {
     await core.summary
       .addHeading("🔍 Analized", 3)
+      .addEOL()
       .addRaw('This step will read your repository and seak for features to aggregate value!', true)
       .addRaw(
         [
