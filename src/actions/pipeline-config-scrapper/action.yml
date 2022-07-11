@@ -12,8 +12,16 @@ inputs:
     description: "Container registry to upload container images"
 
 outputs:
-  time: # id of output
-    description: "The time we greeted you"
+  actor:
+    description: ""
+  language:
+    description: ""
+  event:
+    description: ""
+  feature_has_dockerfile:
+    description: ""
+  feature_has_releaserc:
+    description: ""
 
 runs:
   using: "node16"

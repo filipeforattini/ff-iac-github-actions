@@ -137,7 +137,7 @@ jobs:
           persist-credentials: false
 
       # dependencies
-      - name: Config | Pipeline config scrapper
+      - name: Setup | Pipeline config scrapper
         uses: filipeforattini/ff-iac-github-actions/.github/actions/pipeline-config-scrapper@main
         id: analysis
 
@@ -147,9 +147,9 @@ jobs:
           nodejs: 17
 
       # release
-      - name: Config | Create .releaserc.json
+      - name: Create .releaserc.json
         uses: filipeforattini/ff-iac-github-actions/.github/actions/generate-releaserc-file@main
-        if: steps.analysis.outputs.features_has_releaserc == 'false'
+        if: steps.analysis.outputs.features_has_releaserc == false
         id: releaserc-creation
         with:
           npmPlugin: true
