@@ -8,7 +8,7 @@ module.exports = async (analysis) => {
     ignoredLanguages: ["Shell", "Dockerfile"],
   });
 
-  let langIterator = _.mapValues(languages, "bytes");
+  let langIterator = _.mapValues(languages.results, "bytes");
   langIterator = _.toPairs(langIterator);
   langIterator = langIterator.map((z) => _.zipObject(["language", "bytes"], z));
   langIterator = _.sortBy(langIterator, "bytes");
