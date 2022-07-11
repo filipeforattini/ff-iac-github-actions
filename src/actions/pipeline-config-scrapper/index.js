@@ -22,6 +22,7 @@ const analysisFactory = (initial = {}) => new Proxy(initial, {
 async function action() {
   await core.summary
     .addHeading("🔍 Analized", 3)
+    .addRaw('This step will read your repository and seak for features to aggregate value!', true)
     .addRaw(
       [
         "<details><summary>Received context:</summary>\n\n```json \n",
@@ -55,8 +56,8 @@ async function action() {
       [
         "<details><summary>Analysis:</summary>\n\n```json \n",
         JSON.stringify(analysis, null, 2),
-        " \n```\n</details>",
-      ].join("\n"),
+        " \n\n ```</details>",
+      ].join(''),
       true
     )
     .addHeading('Outputs:', 4)
