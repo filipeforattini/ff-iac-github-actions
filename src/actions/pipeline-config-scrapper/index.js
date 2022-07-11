@@ -27,7 +27,7 @@ async function action() {
         "<details><summary>Received context:</summary>\n\n```json \n",
         JSON.stringify(github.context, null, 2),
         " \n\n ```</details>",
-      ].join('\n'),
+      ].join(''),
       true
     )
     .write();
@@ -56,9 +56,10 @@ async function action() {
         "<details><summary>Analysis:</summary>\n\n```json \n",
         JSON.stringify(analysis, null, 2),
         " \n```\n</details>",
-      ].join(""),
+      ].join("\n"),
       true
     )
+    .addHeading('Outputs:', 4)
     .addTable([
       [ { data: 'key', header: true }, { data: 'value', header: true }],
       ...Object.entries(analysis.outputs),
