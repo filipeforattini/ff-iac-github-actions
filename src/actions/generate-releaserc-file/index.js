@@ -3,9 +3,9 @@ const path = require("path");
 const core = require("@actions/core");
 
 async function action() {  
-  let defaultBranch = core.getInput('defaultBranch', { required: true });
-  let files = JSON.parse(core.getInput('files', { required: false }))
-  let npmPlugin = core.getBooleanInput('npmPlugin', { required: true });
+  let defaultBranch = core.getInput('defaultBranch', { required: false });
+  let files = JSON.parse(core.getInput('files', { required: true }))
+  let npmPlugin = core.getBooleanInput('npmPlugin', { required: false });
 
   let plugins = [
     "@semantic-release/commit-analyzer",
