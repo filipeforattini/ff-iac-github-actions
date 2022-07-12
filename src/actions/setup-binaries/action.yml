@@ -6,11 +6,20 @@ inputs:
     description: 'Inform the Nodejs version'
     required: false
     default: 'false'
+  docker-qmeu:
+    description: 'Install'
+    required: false
+    default: 'false'
+  docker-buildx:
+    description: 'Install'
+    required: false
+    default: 'false'
 
 runs:
   using: "composite"
 
   steps:
+    # nodejs
     - uses: actions/setup-node@v3
       if: inputs.nodejs != 'false'
       with:
@@ -19,3 +28,12 @@ runs:
     - if: inputs.nodejs != 'false'
       run: npm -g install yarn npm
       shell: bash
+
+    # docker
+    - if: inputs.docker-qmeu != 'false'
+      uses: docker/setup-qemu-action@v1
+
+    - if: inputs.docker-buildx != 'false'
+      uses: docker/setup-buildx-action@master
+      with:
+        install: true

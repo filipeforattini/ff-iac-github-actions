@@ -20,6 +20,8 @@ outputs:
     description: ""
   feature_has_dockerfile:
     description: ""
+  feature_has_dockerignore:
+    description: ""
   feature_has_releaserc:
     description: ""
   commiter_name:

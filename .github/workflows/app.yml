@@ -107,7 +107,7 @@ jobs:
 
       #job
       - name: Run code analysis
-        uses: filipeforattini/ff-iac-github-actions/.github/actions/static-code-analysis-pack@main
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/pack-static-code-analysis@main
         if: inputs.staticAnalysis
         with:
           language: ${{ needs.Setup.outputs.Language }}
@@ -148,7 +148,7 @@ jobs:
 
       # release
       - name: Semantic Release
-        uses: filipeforattini/ff-iac-github-actions/.github/actions/semantic-release-pack@main
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/pack-semantic-release@main
         if: inputs.autoVersioning
         env:
           GITHUB_TOKEN: ${{ secrets.PIPELINE_DEPLOY_SECRET }}
@@ -210,33 +210,29 @@ jobs:
   Build:
     runs-on: ubuntu-latest
     if: github.event_name == 'deployment'
-    environment: "${github.head_ref##env/}"
+    environment: dev
 
     needs: 
       - Setup
-      - Release
 
     steps:
 
       # pre-job
-      - name: Setup | Cloning repository
-        uses: actions/checkout@v3
-
       - name: Setup | Cloning tools
         uses: actions/checkout@v3
         with:
-          ref: main
+          ref: env/dev
           path: .pipeline
-          repository: filipeforattini/ff-iac-github-actions
 
-      - name: Install | QEMU
-        uses: docker/setup-qemu-action@v1
-
-      - name: Install | Docker Buildx
-        id: buildx
-        uses: docker/setup-buildx-action@master
+      - name: Setup | Dependencies
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/setup-binaries@main
         with:
-          install: true
+          docker-qmeu: true
+          docker-buildx: true
+
+      - name: Pipeline config scrapper
+        id: analysis
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/pipeline-config-scrapper@main
 
       - name: Config | Load setup configs
         env:
@@ -259,14 +255,10 @@ jobs:
 
       # pre-build
       - name: Config | Create .dockerignore
-        uses: actions/github-script@v6
-        if: steps.node_setup.outputs.has_dockerignore == 'false'
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/create-dockerignore@main
+        if: steps.analysis.outputs.feature_has_dockerignore == 'false'
         with:
-          result-encoding: string
-          script: |
-            return require('./.pipeline/src/steps/generate-dockerignore')({ 
-              assetsToIgnore: ['node_modules'],
-            })
+          assetsToIgnore: '["node_modules"]'
 
       - name: Config | Create Dockerfile
         if: steps.node_setup.outputs.has_dockerfile == 'false'

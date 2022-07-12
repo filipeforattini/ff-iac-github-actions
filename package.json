@@ -6,14 +6,14 @@
   "scripts": {
     "commit": "npm run build && git pull && git commit --allow-empty -am \"fix: empty commit for testing\" && git push",
     "build-composition": "ACTION_NAME=setup-binaries mkdir -p .github/actions/$ACTION_NAME && cp src/actions/$ACTION_NAME/action.yml .github/actions/$ACTION_NAME/action.yml",
-    "build-action-js": "mkdir -p .github/actions/generate-releaserc-file && ncc build src/actions/$ACTION_NAME/index.js -m -q -s -o .github/actions/$ACTION_NAME && rm -f .github/actions/$ACTION_NAME/action.yml && cp src/actions/$ACTION_NAME/action.yml .github/actions/$ACTION_NAME/action.yml",
-    "build": "npm run action:pipeline-config-scrapper && npm run action:setup-binaries && npm run action:static-code-analysis-pack && npm run action:generate-releaserc-file && npm run action:semantic-release && npm run action:semantic-release-pack",
+    "build-action-js": "mkdir -p .github/actions/create-releaserc-file && ncc build src/actions/$ACTION_NAME/index.js -m -q -s -o .github/actions/$ACTION_NAME && rm -f .github/actions/$ACTION_NAME/action.yml && cp src/actions/$ACTION_NAME/action.yml .github/actions/$ACTION_NAME/action.yml",
+    "build": "npm run action:pipeline-config-scrapper && npm run action:setup-binaries && npm run action:pack-static-code-analysis && npm run action:create-releaserc-file && npm run action:semantic-release && npm run action:pack-semantic-release",
     "action:pipeline-config-scrapper": "ACTION_NAME=pipeline-config-scrapper npm run build-action-js",
-    "action:static-code-analysis-pack": "mkdir -p .github/actions/static-code-analysis-pack && cp src/actions/static-code-analysis-pack/action.yml .github/actions/static-code-analysis-pack/action.yml",
-    "action:generate-releaserc-file": "ACTION_NAME=generate-releaserc-file npm run build-action-js",
+    "action:pack-static-code-analysis": "mkdir -p .github/actions/pack-static-code-analysis && cp src/actions/pack-static-code-analysis/action.yml .github/actions/pack-static-code-analysis/action.yml",
+    "action:create-releaserc-file": "ACTION_NAME=create-releaserc-file npm run build-action-js",
     "action:semantic-release": "ACTION_NAME=semantic-release npm run build-action-js",
     "action:setup-binaries": "ACTION_NAME=setup-binaries npm run build-composition",
-    "action:semantic-release-pack": "ACTION_NAME=semantic-release-pack npm run build-composition"
+    "action:pack-semantic-release": "ACTION_NAME=pack-semantic-release npm run build-composition"
   },
   "repository": {
     "type": "git",
