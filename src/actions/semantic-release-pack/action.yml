@@ -5,7 +5,7 @@ inputs:
   createReleaseRCIfNotExists:
     description: 'Inform the main repository language'
     required: true
-    default: 'true'
+    default: "true"
   defaultBranch:
     required: true
     default: master
@@ -28,9 +28,13 @@ runs:
       shell: bash
       run: echo '::set-output name=has_releaserc_file::$(if test -f .releaserc.json; then (echo "true"); else (echo "false") ; fi)'
 
+    - shell: bash
+      run: |
+        echo has_releaserc_file=${{steps.file-checker.outputs.has_releaserc_file}}
+
     - name: Create .releaserc.json
       uses: filipeforattini/ff-iac-github-actions/.github/actions/generate-releaserc-file@main
-      if: steps.file-checker.outputs.has_releaserc_file == "false" && inputs.createReleaseRCIfNotExists == "true"
+      if: inputs.createReleaseRCIfNotExists != "false" && steps.file-checker.outputs.has_releaserc_file == "false"
       with:
         defaultBranch: ${{ inputs.mainBranch }}
         files: ${{ inputs.files }}
