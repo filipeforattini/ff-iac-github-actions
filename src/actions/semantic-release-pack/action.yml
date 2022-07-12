@@ -30,7 +30,7 @@ runs:
 
     - name: Create .releaserc.json
       uses: filipeforattini/ff-iac-github-actions/.github/actions/generate-releaserc-file@main
-      if: steps.file-checker.outputs.has_releaserc_file == false && inputs.createReleaseRCIfNotExists == true
+      if: steps.file-checker.outputs.has_releaserc_file == "false" && inputs.createReleaseRCIfNotExists == "true"
       with:
         defaultBranch: ${{ inputs.mainBranch }}
         files: ${{ inputs.files }}
