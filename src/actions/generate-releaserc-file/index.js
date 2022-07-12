@@ -32,7 +32,7 @@ async function action() {
     [
       "@semantic-release/github",
       {
-        assets: [...files],
+        assets: ["README.md", "CHANGELOG.md", ...files],
       },
     ],
   ]);

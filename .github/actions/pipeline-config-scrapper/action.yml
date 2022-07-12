@@ -22,6 +22,10 @@ outputs:
     description: ""
   feature_has_releaserc:
     description: ""
+  commiter_name:
+    description: ""
+  commiter_email:
+    description: ""
 
 runs:
   using: "node16"

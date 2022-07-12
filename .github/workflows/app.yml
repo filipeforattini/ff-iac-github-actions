@@ -170,7 +170,6 @@ jobs:
   Trigger:
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
-    # if: ${{ !startsWith(github.head_ref, 'env/') }}
     environment: dev
 
     needs: 
@@ -183,25 +182,20 @@ jobs:
       - name: Setup | Cloning repository
         uses: actions/checkout@v3
         with:
-          token: ${{ secrets.DEPLOY_GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_DEPLOY_TOKEN }}
 
-      - name: Config | Load setup configs
-        env:
-          PIPELINE_SETUP: ${{ needs.Setup.outputs.PipelineConfig }}
-        id: setup
+      - name: Pipeline config scrapper
+        id: analysis
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/pipeline-config-scrapper@main
+
+      - name: Trigger
         run: |
-          echo "::set-output name=commit_hash::$(echo $PIPELINE_SETUP | jq -r '.git.commit')"
-          echo "::set-output name=user_name::$(echo $PIPELINE_SETUP | jq -r '.git.actor.name')"
-          echo "::set-output name=user_email::$(echo $PIPELINE_SETUP | jq -r '.git.actor.email')"
-
-      # - name: Trigger
-      #   run: |
-      #     git config --global user.name "${{steps.setup.outputs.user_name}}"
-      #     git config --global user.email "${{steps.setup.outputs.user_email}}"
-      #     git fetch
-      #     git checkout -b env/dev
-      #     git commit --allow-empty -am "deploy: to dev\nVersion: ${{needs.Release.outputs.Version}}\nCommit: ${{steps.setup.outputs.commit_hash}}"
-      #     git push -f -u origin env/dev
+          git config --global user.name "${{steps.analysis.outputs.commiter_name}}"
+          git config --global user.email "${{steps.analysis.outputs.commiter_email}}"
+          git fetch
+          git checkout -b env/dev
+          git commit --allow-empty -am "deploy: to dev\nVersion: ${{needs.Release.outputs.Version}}\nCommit: ${{steps.setup.outputs.commit_hash}}"
+          git push -f -u origin env/dev
 
       - uses: altinukshini/deployment-action@releases/v1
         name: Create GitHub deployment
