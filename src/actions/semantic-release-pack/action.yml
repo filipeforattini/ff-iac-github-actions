@@ -30,10 +30,10 @@ runs:
         HAS_RELEASERC_FILE=$(if test -f .releaserc.json; then (echo "true"); else (echo "false") ; fi)
         echo "::set-output name=has_releaserc_file::$HAS_RELEASERC_FILE"
         echo has_releaserc_file=$HAS_RELEASERC_FILE
-        echo branch=${{ inputs.defaultBranch }}
 
     - name: Create .releaserc.json
       uses: filipeforattini/ff-iac-github-actions/.github/actions/generate-releaserc-file@main
+      if: steps.file_checker.outputs.has_releaserc_file == false
       with:
         defaultBranch: ${{ inputs.defaultBranch }}
         files: ${{ inputs.files }}
