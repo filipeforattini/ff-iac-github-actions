@@ -6,7 +6,7 @@
   "scripts": {
     "commit": "npm run build && git pull && git commit --allow-empty -am \"fix: empty commit for testing\" && git push",
     "build-action-js": "mkdir -p .github/actions/generate-releaserc-file && ncc build src/actions/$ACTION_NAME/index.js -m -q -s -o .github/actions/$ACTION_NAME && rm -f .github/actions/$ACTION_NAME/action.yml && cp src/actions/$ACTION_NAME/action.yml .github/actions/$ACTION_NAME/action.yml",
-    "build": "npm run action:pipeline-config-scrapper && npm run action:setup-binaries && npm run action:static-code-analysis && npm run action:generate-releaserc-file",
+    "build": "npm run action:pipeline-config-scrapper && npm run action:setup-binaries && npm run action:static-code-analysis && npm run action:generate-releaserc-file && npm run action:semantic-release",
     "action:pipeline-config-scrapper": "ACTION_NAME=pipeline-config-scrapper npm run build-action-js",
     "action:setup-binaries": "mkdir -p .github/actions/setup-binaries && cp src/actions/setup-binaries/action.yml .github/actions/setup-binaries/action.yml",
     "action:static-code-analysis": "mkdir -p .github/actions/static-code-analysis && cp src/actions/static-code-analysis/action.yml .github/actions/static-code-analysis/action.yml",
