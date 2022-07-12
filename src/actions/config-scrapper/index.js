@@ -47,6 +47,7 @@ async function action() {
   analysis.outputs.actor = github.context.actor
 
   await scrappers.code(analysis);
+  await scrappers.deployment(analysis);
   await scrappers.git(analysis);
   await scrappers.repository(analysis);
   await scrappers.run(analysis);

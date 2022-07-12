@@ -14,9 +14,15 @@ inputs:
 outputs:
   actor:
     description: ""
-  language:
+  commiter_name:
+    description: ""
+  commiter_email:
+    description: ""
+  commiter_username:
     description: ""
   event:
+    description: ""
+  environment:
     description: ""
   feature_has_dockerfile:
     description: ""
@@ -24,11 +30,7 @@ outputs:
     description: ""
   feature_has_releaserc:
     description: ""
-  commiter_name:
-    description: ""
-  commiter_email:
-    description: ""
-  commiter_username:
+  language:
     description: ""
 
 runs:

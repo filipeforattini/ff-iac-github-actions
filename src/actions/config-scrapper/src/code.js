@@ -4,8 +4,8 @@ const linguist = require("linguist-js");
 
 module.exports = async (analysis) => {
   const { languages } = await linguist(analysis.root, {
-    categories: ["programming"],
-    ignoredLanguages: ["Shell", "Dockerfile"],
+    categories: [ "programming" ],
+    ignoredLanguages: [ "Shell", "Dockerfile" ],
   });
 
   let langIterator = _.mapValues(languages.results, "bytes");
