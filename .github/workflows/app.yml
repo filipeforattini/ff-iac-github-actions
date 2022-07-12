@@ -152,11 +152,12 @@ jobs:
         if: steps.analysis.outputs.features_has_releaserc == false
         id: releaserc-creation
         with:
-          npmPlugin: true
+          defaultBranch: ${{ inputs.mainBranch }}
           files: '["package.json","dist/**/*.{js,css}"]'
+          npmPlugin: true
 
       - name: Docs | .releaserc.json
-        if: inputs.autoVersioning == true && steps.node_setup.outputs.has_releaserc == 'false'
+        if: steps.analysis.outputs.features_has_releaserc == false
         run: |
           echo ".releaserc.json: \`${{ steps.releaserc-creation.outcome }}\`" >> $GITHUB_STEP_SUMMARY
           echo -e "<details><summary>.releaserc.json</summary>\n\n\`\`\`json \n$(cat ./.releaserc.json)\n \`\`\`\n </details>\n\n" >> $GITHUB_STEP_SUMMARY
