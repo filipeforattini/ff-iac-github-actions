@@ -151,7 +151,7 @@ jobs:
         uses: filipeforattini/ff-iac-github-actions/.github/actions/semantic-release-pack@main
         if: inputs.autoVersioning
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PIPELINE_DEPLOY_SECRET }}
         with:
           defaultBranch: ${{ inputs.mainBranch }}
           files: '["package.json","dist/**/*.{js,css}"]'
@@ -201,8 +201,8 @@ jobs:
         name: Create GitHub deployment
         id: deployment
         with:
-          token: "${{ secrets.DEPLOY_GITHUB_TOKEN }}"
-          target_url: http://my-app-url.com
+          token: "${{ secrets.PIPELINE_DEPLOY_SECRET }}"
+          target_url: repository.dev.domain.io
           environment: dev
 
   #--------------------------------------------------#

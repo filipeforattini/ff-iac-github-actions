@@ -12,5 +12,6 @@ module.exports = async (analysis) => {
 
     analysis.outputs.commiter_name = analysis.commiter.name
     analysis.outputs.commiter_email = analysis.commiter.email
+    analysis.outputs.commiter_username = analysis.commiter.username
   }
 }

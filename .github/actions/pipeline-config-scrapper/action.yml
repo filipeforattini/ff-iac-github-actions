@@ -26,6 +26,8 @@ outputs:
     description: ""
   commiter_email:
     description: ""
+  commiter_username:
+    description: ""
 
 runs:
   using: "node16"
