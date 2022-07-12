@@ -11,7 +11,7 @@ const template = _.template(`
 async function action() {
   let globsToIgnore = JSON.parse(core.getInput('globsToIgnore', { required: false }))
 
-  const content = compiled({ 
+  const content = template({ 
     'globsToIgnore': [
       '.git',
       '.vscode',
