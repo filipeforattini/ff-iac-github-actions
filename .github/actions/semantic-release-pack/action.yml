@@ -2,10 +2,6 @@ name: 'Semantic release pack'
 description: 'Generates file and runs new release.'
 
 inputs:
-  createReleaseRCIfNotExists:
-    description: 'Inform the main repository language'
-    required: true
-    default: "true"
   defaultBranch:
     required: true
     default: master
