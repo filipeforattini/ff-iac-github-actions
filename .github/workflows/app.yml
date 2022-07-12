@@ -107,7 +107,7 @@ jobs:
 
       #job
       - name: Run code analysis
-        uses: filipeforattini/ff-iac-github-actions/.github/actions/static-code-analysis@main
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/static-code-analysis-pack@main
         if: inputs.staticAnalysis
         with:
           language: ${{ needs.Setup.outputs.Language }}
@@ -147,7 +147,7 @@ jobs:
           nodejs: 17
 
       # release
-      - name: Create .releaserc.json
+      - name: Semantic Release
         uses: filipeforattini/ff-iac-github-actions/.github/actions/semantic-release-pack@main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

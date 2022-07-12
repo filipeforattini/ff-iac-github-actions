@@ -1,0 +1,7 @@
+name: 'Semantic Release'
+description: ''
+
+runs:
+  using: 'node16'
+  main: 'index.js'
+
