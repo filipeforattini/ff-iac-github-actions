@@ -80,7 +80,7 @@ jobs:
       # job
       - name: Pipeline config scrapper
         id: analysis
-        uses: filipeforattini/ff-iac-github-actions/.github/actions/pipeline-config-scrapper@main
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
         with:
           writeSummary: true
 
@@ -138,7 +138,7 @@ jobs:
 
       # dependencies
       - name: Setup | Pipeline config scrapper
-        uses: filipeforattini/ff-iac-github-actions/.github/actions/pipeline-config-scrapper@main
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
         id: analysis
 
       - name: Setup | Dependencies
@@ -186,7 +186,7 @@ jobs:
 
       - name: Pipeline config scrapper
         id: analysis
-        uses: filipeforattini/ff-iac-github-actions/.github/actions/pipeline-config-scrapper@main
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
 
       - name: Trigger
         run: |
@@ -232,7 +232,7 @@ jobs:
 
       - name: Pipeline config scrapper
         id: analysis
-        uses: filipeforattini/ff-iac-github-actions/.github/actions/pipeline-config-scrapper@main
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
 
       - name: Config | Load setup configs
         env:

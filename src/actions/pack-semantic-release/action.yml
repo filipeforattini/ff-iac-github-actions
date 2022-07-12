@@ -1,0 +1,39 @@
+name: 'Semantic release pack'
+description: 'Generates file and runs new release.'
+
+inputs:
+  defaultBranch:
+    required: true
+    default: master
+    description: ""
+  files:
+    required: false
+    default: "[]"
+    description: ""
+  npmPlugin:
+    required: false
+    default: "false"
+    description: ""
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: Check if .releaserc.json exists
+      id: file_checker
+      shell: bash
+      run: |
+        HAS_RELEASERC_FILE=$(if test -f .releaserc.json; then (echo "true"); else (echo "false") ; fi)
+        echo "::set-output name=has_releaserc_file::$HAS_RELEASERC_FILE"
+        echo has_releaserc_file=$HAS_RELEASERC_FILE
+
+    - name: Create .releaserc.json
+      uses: filipeforattini/ff-iac-github-actions/.github/actions/create-releaserc-file@main
+      if: steps.file_checker.outputs.has_releaserc_file == 'false'
+      with:
+        defaultBranch: ${{ inputs.defaultBranch }}
+        files: ${{ inputs.files }}
+        npmPlugin: ${{ inputs.npmPlugin }}
+
+    - name: Semantic Release
+      uses: filipeforattini/ff-iac-github-actions/.github/actions/semantic-release@main

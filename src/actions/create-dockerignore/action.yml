@@ -1,0 +1,13 @@
+name: 'Generate ReleaseRC file'
+description: ''
+
+inputs:
+  globsToIgnore:
+    required: false
+    default: "[]"
+    description: ""
+
+runs:
+  using: 'node16'
+  main: 'index.js'
+

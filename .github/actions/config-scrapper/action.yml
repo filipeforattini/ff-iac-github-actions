@@ -1,0 +1,36 @@
+name: "Pipeline Config Scrapper"
+description: "Analize current event trigger and indicates paths and configs"
+
+inputs:
+  writeSummary:
+    required: true
+    default: "false"
+    description: ""
+  containerRegistry:
+    required: false
+    default: ghcr.io
+    description: "Container registry to upload container images"
+
+outputs:
+  actor:
+    description: ""
+  language:
+    description: ""
+  event:
+    description: ""
+  feature_has_dockerfile:
+    description: ""
+  feature_has_dockerignore:
+    description: ""
+  feature_has_releaserc:
+    description: ""
+  commiter_name:
+    description: ""
+  commiter_email:
+    description: ""
+  commiter_username:
+    description: ""
+
+runs:
+  using: "node16"
+  main: "index.js"
