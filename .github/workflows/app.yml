@@ -182,7 +182,7 @@ jobs:
       - name: Setup | Cloning repository
         uses: actions/checkout@v3
         with:
-          token: ${{ secrets.GITHUB_DEPLOY_TOKEN }}
+          token: ${{ secrets.PIPELINE_DEPLOY_SECRET }}
 
       - name: Pipeline config scrapper
         id: analysis
@@ -210,8 +210,7 @@ jobs:
   #--------------------------------------------------#
   Build:
     runs-on: ubuntu-latest
-    if: github.event_name == 'push'
-    # if: ${{ startsWith(github.head_ref, 'env/') }}
+    if: github.event_name == 'deployment'
     environment: "${github.head_ref##env/}"
 
     needs: 
