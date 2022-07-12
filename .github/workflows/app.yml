@@ -156,14 +156,7 @@ jobs:
           files: '["package.json","dist/**/*.{js,css}"]'
           npmPlugin: true
 
-      - name: Docs | .releaserc.json
-        if: steps.analysis.outputs.features_has_releaserc == false
-        run: |
-          echo ".releaserc.json: \`${{ steps.releaserc-creation.outcome }}\`" >> $GITHUB_STEP_SUMMARY
-          echo -e "<details><summary>.releaserc.json</summary>\n\n\`\`\`json \n$(cat ./.releaserc.json)\n \`\`\`\n </details>\n\n" >> $GITHUB_STEP_SUMMARY
-
       - name: Semantic Release
-        if: inputs.autoVersioning == true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |

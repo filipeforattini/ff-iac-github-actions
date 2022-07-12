@@ -64,7 +64,6 @@ async function action() {
   fs.writeFileSync(path.join(process.cwd(), ".releaserc.json"), JSON.stringify(releaseFile, null, 2));
 
   let x = fs.readFileSync(path.join(process.cwd(), ".releaserc.json"));
-  core.warning(`content = ${x}`)
 }
 
 try {
