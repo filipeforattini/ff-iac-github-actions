@@ -149,6 +149,7 @@ jobs:
       # release
       - name: Semantic Release
         uses: filipeforattini/ff-iac-github-actions/.github/actions/semantic-release-pack@main
+        if: inputs.autoVersioning
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
