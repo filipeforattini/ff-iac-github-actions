@@ -202,7 +202,6 @@ jobs:
         id: deployment
         with:
           token: "${{ secrets.PIPELINE_DEPLOY_SECRET }}"
-          target_url: repository.dev.domain.io
           environment: dev
 
   #--------------------------------------------------#
