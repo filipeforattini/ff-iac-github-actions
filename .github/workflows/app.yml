@@ -194,7 +194,7 @@ jobs:
           git config --global user.email "${{steps.analysis.outputs.commiter_email}}"
           git fetch
           git checkout -b env/dev
-          git commit --allow-empty -am "deploy: to dev\nVersion: ${{needs.Release.outputs.Version}}\nCommit: ${{steps.setup.outputs.commit_hash}}"
+          git commit --allow-empty -am "deploy: to dev [skip ci]\\nVersion: ${{needs.Release.outputs.Version}}\nCommit: ${{steps.setup.outputs.commit_hash}}"
           git push -f -u origin env/dev
 
       - uses: altinukshini/deployment-action@releases/v1
