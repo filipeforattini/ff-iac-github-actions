@@ -255,7 +255,7 @@ jobs:
       # pre-build
       - name: Config | Create .dockerignore
         uses: filipeforattini/ff-iac-github-actions/.github/actions/create-dockerignore@main
-        if: steps.analysis.outputs.feature_has_dockerignore == 'false'
+        if: steps.analysis.outputs.feature_has_dockerignore == false
         with:
           globsToIgnore: '["node_modules"]'
 
