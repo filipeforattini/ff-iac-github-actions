@@ -1,0 +1,12 @@
+name: 'Create Dockerfile'
+description: ''
+
+inputs:
+  preset:
+    required: false
+    default: "spa"
+    description: ""
+
+runs:
+  using: 'node16'
+  main: 'index.js'
