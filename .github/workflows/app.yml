@@ -233,29 +233,22 @@ jobs:
         id: analysis
         uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
 
-      - name: Config | Load setup configs
-        env:
-          PIPELINE_SETUP: ${{ needs.Setup.outputs.PipelineConfig }}
-        id: node_setup
-        run: |
-          echo "::set-output name=cache_key::$(echo $PIPELINE_SETUP | jq -r '.code.cacheKey')"
-          echo "::set-output name=dependency_command::$(echo $PIPELINE_SETUP | jq -r '.code.dependencyCommand')"
-          echo "::set-output name=has_releaserc::$(echo $PIPELINE_SETUP | jq -r '.git.hasReleaserc')"
-          echo "::set-output name=has_dockerfile::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.hasDockerfile')"
-          echo "::set-output name=has_dockerignore::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.hasDockerignore')"
-          echo "::set-output name=docker_command::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.command')"
-          echo "::set-output name=docker_entrypoint::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.entrypoint')"
-          echo "::set-output name=docker_dependency_command::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.dependencyCommand')"
-          echo "::set-output name=docker_image_fullname::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.imageFullname')"
-          echo "::set-output name=docker_image_args::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.buildArgs.dev')"
-          echo "::set-output name=docker_image_tags::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.tagsAsString')"
-          echo "::set-output name=docker_main_image::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.mainImage')"
-          echo "::set-output name=deploy_repository::$(echo $PIPELINE_SETUP | jq -r '.deploy.repository')"
-
       # pre-build
-      - name: Config | Create .dockerignore
+      - name: Create .dockerignore 1
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/create-dockerignore@main
+        if: steps.analysis.outputs.feature_has_dockerignore == 'false'
+        with:
+          globsToIgnore: '["node_modules"]'
+
+      - name: Create .dockerignore 2
         uses: filipeforattini/ff-iac-github-actions/.github/actions/create-dockerignore@main
         if: steps.analysis.outputs.feature_has_dockerignore == false
+        with:
+          globsToIgnore: '["node_modules"]'
+
+      - name: Create .dockerignore 3
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/create-dockerignore@main
+        if: steps.analysis.outputs.feature_has_dockerignore != true
         with:
           globsToIgnore: '["node_modules"]'
 
