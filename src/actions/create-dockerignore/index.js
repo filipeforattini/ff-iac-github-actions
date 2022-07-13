@@ -17,7 +17,7 @@ async function action() {
       '.vscode',
       '.github',
       'manifests',
-      ...JSON.parse(globsToIgnore),
+      ...globsToIgnore,
     ]
   });
 
