@@ -257,7 +257,7 @@ jobs:
         uses: filipeforattini/ff-iac-github-actions/.github/actions/create-dockerignore@main
         if: steps.analysis.outputs.feature_has_dockerignore == 'false'
         with:
-          assetsToIgnore: '["node_modules"]'
+          globsToIgnore: '["node_modules"]'
 
       - name: Config | Create Dockerfile
         if: steps.node_setup.outputs.has_dockerfile == 'false'
