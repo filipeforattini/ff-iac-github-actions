@@ -122,7 +122,6 @@ jobs:
     if: needs.Setup.outputs.Event == 'push'
 
     needs: 
-      - Setup
       - Static-Analysis
 
     outputs:
@@ -173,7 +172,6 @@ jobs:
     if: github.event_name == 'push'
 
     needs: 
-      - Setup
       - Release
 
     steps:
