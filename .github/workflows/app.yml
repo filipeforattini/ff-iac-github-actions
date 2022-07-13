@@ -240,25 +240,11 @@ jobs:
         with:
           globsToIgnore: '["node_modules"]'
 
-      - name: Config | Create Dockerfile
-        if: steps.node_setup.outputs.has_dockerfile != true
-        uses: actions/github-script@v6
-        id: dockerfile
+      - name: Create Dockerfile
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/create-dockerfile@main
+        if: steps.analysis.outputs.feature_has_dockerfile != true
         with:
-          result-encoding: string
-          script: |
-            return require('./.pipeline/src/steps/generate-app-dockerfile')({ 
-              image: 'node',
-              tag: '17-alpine',
-              command: '${{ steps.node_setup.outputs.docker_command }}',
-              entrypoint: '${{ steps.node_setup.outputs.docker_entrypoint }}',
-              dependencyCommand: '${{ steps.node_setup.outputs.docker_dependency_command }}',
-              labels: [ 
-                'archtecture=alpine', 
-                'node-version=17', 
-                'version=${{ needs.Release.outputs.Version }}', 
-              ],
-            })
+          preset: javascript
 
       - name: Docs | Dockerfile
         if: steps.node_setup.outputs.has_dockerfile == 'false'
