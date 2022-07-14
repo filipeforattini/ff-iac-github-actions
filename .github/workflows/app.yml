@@ -242,7 +242,7 @@ jobs:
         uses: filipeforattini/ff-iac-github-actions/.github/actions/create-dockerfile@main
         if: steps.analysis.outputs.feature_has_dockerfile != true
         with:
-          preset: javascript
+          preset: spa
 
       - name: Docs | Dockerfile
         if: steps.node_setup.outputs.has_dockerfile == 'false'
