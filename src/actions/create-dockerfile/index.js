@@ -10,10 +10,17 @@ async function action() {
 
   if (!stubs[preset]) core.error(new Error('preset doesnt exists'))
 
-  const template = _.template(stubs[preset])
+  const { defaultValues, files = {}, stub } = stubs[preset]
+
+  for (const filename of _.keys(files)) {
+    fs.writeFileSync(path.join(process.cwd(), filename), files[filename]);
+  }
+
+  const template = _.template(stub)
 
   const content = template({ 
     generatedAt: new Date().toISOString(),
+    ...defaultValues,
   });
 
   fs.writeFileSync(path.join(process.cwd(), "Dockerignore"), content);

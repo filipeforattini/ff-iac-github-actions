@@ -16,7 +16,7 @@ ENTRYPOINT ["python"]
 CMD ["app.py"]
 `,
 
-  defaults: {
+  defaultValues: {
     image: 'python',
     tag: '3.7',
     labels: [],

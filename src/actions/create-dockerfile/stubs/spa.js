@@ -23,7 +23,7 @@ ENTRYPOINT ["nginx"]
 CMD ["-g daemon off;"]
 `,
 
-  defaults: {},
+  defaultValues: {},
 
   files: {
     'nginx.conf': `
