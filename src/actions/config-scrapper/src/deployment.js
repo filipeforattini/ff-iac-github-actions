@@ -12,17 +12,37 @@ module.exports = async (analysis) => {
     analysis.outputs.environment = analysis.environment
   }
 
-  analysis.deployment.tags = [
-    `${imageFullName}:latest`,
-    `${imageFullName}:d-${this.output.run.date}`,
-    `${imageFullName}:r-${this.output.run.count}`,
-    `${imageFullName}:t-${this.output.run.startTimestamp}`,
-    `${imageFullName}:b-${this.output.git.branch.replace('/', '-')}`,
-    `${imageFullName}:c-${this.output.git.commit}`,
-    // `${imageFullName}:node-${matrix.node-version}`,
-    // `${imageFullName}:node-${matrix.node-version}-latest`,
-    // `${imageFullName}:node-${matrix.node-version}-d-${needs.Setup.outputs.Date}`,
-    // `${imageFullName}:node-${matrix.node-version}-b-${needs.Setup.outputs.Branch}`,
-    // `${imageFullName}:node-${matrix.node-version}-c-${needs.Setup.outputs.ShaHash}`,  
+
+  let tags = [
+    `latest`,
+    `r-${github.context.runNumber}`,
+    `c-${github.context.sha.substring(0,7)}`,
+    `b-${github.context.ref.replace('refs/heads/', '').replace('/', '-')}`,
+    `u-${github.context.actor}`,
   ]
+
+  // push
+  if (github.context.payload.head_commit) {
+    const committedAt = new Date(github.context.payload.head_commit.timestamp)
+
+    tags = tags.concat([
+      `d-${committedAt.toISOString().substring(0,10)}`,
+      `t-${committedAt.getTime()}`,
+    ])
+  }
+
+  // pull_request
+  if (github.context.payload.pull_request) {
+    const committedAt = new Date(github.context.payload.pull_request.updatedAt)
+    
+    tags = tags.concat([
+      `d-${committedAt.toISOString().substring(0,10)}`,
+      `t-${committedAt.getTime()}`,
+    ])
+  }
+
+  tags = tags.map(t => `${imageFullName}:${t}`)
+
+  analysis.deployment.tags = tags
+  analysis.deployment.tagsString = tags.join(',')
 }
