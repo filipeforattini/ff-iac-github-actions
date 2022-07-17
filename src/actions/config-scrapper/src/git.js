@@ -3,8 +3,6 @@ const github = require("@actions/github");
 
 module.exports = async (analysis) => {
   analysis.event = github.context.eventName
-  analysis.outputs.event = analysis.event
-
   core.info(`run trigged by event=${analysis.event}`);
 
   if (github.context.payload.head_commit) {
@@ -14,4 +12,7 @@ module.exports = async (analysis) => {
     analysis.outputs.commiter_email = analysis.commiter.email
     analysis.outputs.commiter_username = analysis.commiter.username
   }
+
+  // outputs
+  analysis.outputs.event = analysis.event
 }

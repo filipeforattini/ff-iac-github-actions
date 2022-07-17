@@ -46,11 +46,13 @@ async function action() {
   
   analysis.outputs.actor = github.context.actor
 
-  await scrappers.code(analysis);
-  await scrappers.deployment(analysis);
-  await scrappers.git(analysis);
-  await scrappers.repository(analysis);
-  await scrappers.run(analysis);
+  await Promise.all([
+    scrappers.git(analysis),
+    scrappers.run(analysis),
+    scrappers.code(analysis),
+    scrappers.deployment(analysis),
+    scrappers.repository(analysis),
+  ])
   
   Object.entries(analysis.outputs)
     .forEach(([key, value]) => {
