@@ -24,7 +24,23 @@ async function action() {
   });
 
   fs.writeFileSync(path.join(process.cwd(), "Dockerignore"), content);
-  core.warning(`content = ${content}`)
+
+  let writeSummary = core.getBooleanInput('writeSummary', { required: true });
+
+  if (writeSummary) {
+    await core.summary
+      .addHeading("📦 Deploy", 3)
+      .addEOL()
+      .addRaw(
+        [
+          "<details><summary>Dockerfile:</summary>\n\n```dockerfile \n",
+          content,
+          " \n\n ``` \n</details>",
+        ].join(''),
+        true
+        )
+      .write();
+  }
 }
 
 try {

@@ -265,20 +265,9 @@ jobs:
         id: hadolint
         continue-on-error: true
         with:
+          writeSummary: true
           dockerfile: Dockerfile
 
-      - name: Docs | Lint result
-        run: | 
-          echo "Hadolint: \`${{ steps.hadolint.outcome }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "\`\`\`txt \n $HADOLINT_RESULTS \n \`\`\`" >> $GITHUB_STEP_SUMMARY
-
-      - name: Cache Docker layers
-        uses: actions/cache@v2
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-multi-buildx-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-multi-buildx
 
       - name: Copy config
         run: |

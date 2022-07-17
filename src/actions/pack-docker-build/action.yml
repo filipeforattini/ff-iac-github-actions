@@ -1,0 +1,48 @@
+name: 'Static code analysis'
+description: 'Greet someone'
+
+inputs:
+  environment:
+    description: 'Environment target'
+    required: false
+    default: 'dev'
+  cached:
+    description: 'Inform the main repository language'
+    required: false
+    default: 'true'
+  platforms:
+    description: "Multi plataform container builds"
+    required: false
+    default: "linux/386,linux/amd64,linux/arm/v7,linux/arm/v8,linux/arm64,linux/ppc64le,linux/s390x"
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: Pipeline config scrapper
+      id: analysis
+      uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
+
+    - name: Build and push
+      uses: docker/build-push-action@v2
+      if: inputs.cached == 'false'
+      with:
+        context: .
+        push: true
+        platforms: ${{ inputs.platforms }}
+        build-args: ${{steps.node_setup.outputs.docker_image_args}}
+        tags: ${{steps.node_setup.outputs.docker_image_tags}}, ${{steps.node_setup.outputs.docker_image_fullname}}:${{needs.Release.outputs.Version}}
+        labels: "organization: ${{github.repository_owner}}, repository: ${{github.repository}}, branch: ${{needs.Setup.outputs.Branch}}, commit: ${{needs.Setup.outputs.ShaHash}}, date: ${{needs.Setup.outputs.Date}}, timestamp: ${{needs.Setup.outputs.Timestamp}}"
+
+    - name: Build and push
+      uses: docker/build-push-action@v2
+      if: inputs.cached == 'true'
+      with:
+        context: .
+        push: true
+        platforms: ${{ inputs.platforms }}
+        build-args: ${{steps.node_setup.outputs.docker_image_args}}
+        tags: ${{steps.node_setup.outputs.docker_image_tags}}, ${{steps.node_setup.outputs.docker_image_fullname}}:${{needs.Release.outputs.Version}}
+        labels: "organization: ${{github.repository_owner}}, repository: ${{github.repository}}, branch: ${{needs.Setup.outputs.Branch}}, commit: ${{needs.Setup.outputs.ShaHash}}, date: ${{needs.Setup.outputs.Date}}, timestamp: ${{needs.Setup.outputs.Timestamp}}"
+        cache-from: type=local,src=/tmp/.buildx-cache
+        cache-to: type=local,mode=max,dest=/tmp/.buildx-cache-new

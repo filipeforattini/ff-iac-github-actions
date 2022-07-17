@@ -2,6 +2,10 @@ name: 'Create Dockerfile'
 description: ''
 
 inputs:
+  writeSummary:
+    required: false
+    default: "false"
+    description: ""
   preset:
     required: false
     default: "spa"
