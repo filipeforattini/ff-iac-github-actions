@@ -15,25 +15,34 @@ inputs:
     required: false
     default: 'false'
 
+outputs:
+  buildx_name:
+    description: ""
+    value: ${{steps.docker-buildx.outputs.name}}
+
 runs:
   using: "composite"
 
   steps:
     # nodejs
-    - uses: actions/setup-node@v3
-      if: inputs.nodejs != 'false'
+    - if: inputs.nodejs != 'false'
+      uses: actions/setup-node@v3
+      id: node
       with:
         node-version: ${{ inputs.nodejs }}
 
     - if: inputs.nodejs != 'false'
-      run: npm -g install yarn npm
       shell: bash
+      id: npm
+      run: npm -g install yarn npm
 
     # docker
     - if: inputs.docker-qmeu != 'false'
       uses: docker/setup-qemu-action@v1
+      id: docker-qmeu
 
     - if: inputs.docker-buildx != 'false'
       uses: docker/setup-buildx-action@master
+      id: docker-buildx
       with:
         install: true

@@ -29,6 +29,7 @@ runs:
   steps:
     - name: Setup | Dependencies
       uses: filipeforattini/ff-iac-github-actions/.github/actions/setup-binaries@main
+      id: dependencies
       if: inputs.install == 'true'
       with:
         docker-qmeu: true
@@ -53,6 +54,7 @@ runs:
       if: inputs.cached == 'true'
       with:
         context: ${{steps.analysis.outputs.pwd}}
+        builder: ${{steps.dependencies.outputs.docker_buildx_name}}
         push: ${{inputs.push}}
         platforms: ${{inputs.platforms}}
         tags: ${{steps.analysis.outputs.build_tags}}
