@@ -208,7 +208,7 @@ jobs:
   Build:
     runs-on: ubuntu-latest
     if: github.event_name == 'deployment'
-    environment: needs.Setup.outputs.Environment
+    environment: ${{needs.Setup.outputs.Environment}}
 
     needs: 
       - Setup
@@ -269,8 +269,8 @@ jobs:
       - name: Build and push
         uses: filipeforattini/ff-iac-github-actions/.github/actions/pack-docker-build@main
         with:
-          cached: true
-          environment: needs.Setup.outputs.Environment
+          cached: false
+          environment: ${{needs.Setup.outputs.Environment}}
 
       - name: Move cache
         run: |
