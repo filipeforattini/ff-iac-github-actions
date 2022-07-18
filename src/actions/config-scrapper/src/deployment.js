@@ -1,3 +1,5 @@
+const fs = require('fs')
+const path = require('path')
 const core = require("@actions/core");
 const github = require("@actions/github");
 
@@ -61,8 +63,18 @@ module.exports = async (analysis) => {
   analysis.deployment.tags = tags
   analysis.deployment.tagsString = tags.join(', ')
 
+  let args = ""
+  if (environment) {
+    if(fs.existsSync(path.join(analysis.root, 'manifests', 'config', `${environment}.env`))) {
+      args = fs.readFileSync(path.join(analysis.root, 'manifests', 'config', `${environment}.env`)).toString()
+      args = args.replace('\n', ', ')
+    }
+  }
+
+  analysis.deployment.build_args = args
+  
   // outputs
-  analysis.outputs.event = analysis.event
   analysis.outputs.deploy_tag = analysis.deployment.tag
   analysis.outputs.deploy_tags = analysis.deployment.tagsString
+  analysis.outputs.build_args = analysis.deployment.build_args
 }

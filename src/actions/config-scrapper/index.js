@@ -41,9 +41,12 @@ async function action() {
   const analysis = analysisFactory({
     root: process.cwd(),
     actor: github.context.actor,
+    event: github.context.eventName,
     outputs: {},
   })
   
+  core.info(`run trigged by event=${analysis.event}`);
+  analysis.outputs.event = analysis.event
   analysis.outputs.actor = github.context.actor
 
   await Promise.all([

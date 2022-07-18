@@ -268,7 +268,6 @@ jobs:
           writeSummary: true
           dockerfile: Dockerfile
 
-
       - name: Copy config
         run: |
           if test -f ./manifests/configs/dev.env; then cp ./manifests/configs/dev.env ./.env; fi
