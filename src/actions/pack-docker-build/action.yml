@@ -6,10 +6,6 @@ inputs:
     description: 'Inform the main repository language'
     required: false
     default: 'true'
-  environment:
-    description: 'Environment target'
-    required: false
-    default: 'dev'
   install:
     description: 'Install docker buildx'
     required: false

@@ -80,7 +80,7 @@ async function action() {
       .write()
   }
 
-  core.info(templateInfo('root', `finished analysis:`, JSON.stringify(analysis, null, 2)));
+  // core.info(templateInfo('root', `finished analysis:`, JSON.stringify(analysis, null, 2)));
 }
 
 try {

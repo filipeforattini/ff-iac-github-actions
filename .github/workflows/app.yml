@@ -242,13 +242,8 @@ jobs:
         uses: filipeforattini/ff-iac-github-actions/.github/actions/create-dockerfile@main
         if: steps.analysis.outputs.feature_has_dockerfile != true
         with:
+          writeSummary: true
           preset: spa
-
-      - name: Docs | Dockerfile
-        if: steps.node_setup.outputs.has_dockerfile == 'false'
-        run: |
-          echo "Dockerfile: \`${{ steps.dockerfile.outcome }}\`" >> $GITHUB_STEP_SUMMARY
-          echo -e "<details><summary>dockerfile</summary>\n\n\`\`\`dockerfile \n$(cat ./Dockerfile)\n \`\`\`\n </details>\n\n" >> $GITHUB_STEP_SUMMARY
 
       # login
       - name: Config | Login to Container Registry
