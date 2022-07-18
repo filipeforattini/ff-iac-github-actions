@@ -286,35 +286,14 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
-      - name: Setup | Cloning tools
-        uses: actions/checkout@v3
+      - name: Setup | Dependencies
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/setup-binaries@main
         with:
-          ref: main
-          path: .pipeline
-          repository: filipeforattini/ff-iac-github-actions
-
-      - name: Install | Kubectl
-        uses: azure/setup-kubectl@v2.1
-      
-      - name: Install | YTT
-        uses: vmware-tanzu/carvel-setup-action@v1
-        with:
-          only: ytt
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Install | YQ
-        env:
-          VERSION: v4.25.2
-          BINARY: yq_linux_amd64
-        run: |
-          wget https://github.com/mikefarah/yq/releases/download/${VERSION}/${BINARY}.tar.gz -O - | tar xz && sudo mv ${BINARY} /usr/bin/yq
-          yq --version
-
-      - name: Install | QEMU
-        uses: docker/setup-qemu-action@v2
-
-      - name: Install | Docker Buildx
-        uses: docker/setup-buildx-action@v1
+          docker-qmeu: true
+          docker-buildx: true
+          kubectl: true
+          ytt: true
+          yq: true
 
       - name: Config | Version
         id: versioning

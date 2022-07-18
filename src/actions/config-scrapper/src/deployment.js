@@ -66,6 +66,7 @@ module.exports = async (analysis) => {
   analysis.deployment.tag = tag
   analysis.deployment.tags = tags
   analysis.deployment.tagsString = tags.join(', ')
+  core.info(templateInfo('deployment', `tag = ${tag}`))
 
   let args = ""
   if (_.isString(analysis.environment)) {
@@ -76,11 +77,17 @@ module.exports = async (analysis) => {
   }
 
   analysis.deployment.build_args = args 
-  core.info(templateInfo('deployment', `tag = ${tag}`))
+
+  let labels = [ `org.opencontainers.image.source=https://github.com/${organization}/${name}` ]
+  analysis.deployment.labels = labels 
+  analysis.deployment.labelsString = labels 
+  core.info(templateInfo('deployment', `labels = ${labels}`))
+
 
   // outputs
   analysis.outputs.registry = analysis.deployment.registry
+  analysis.outputs.deploy_tag = analysis.deployment.tag
   analysis.outputs.build_args = analysis.deployment.build_args
   analysis.outputs.build_tags = analysis.deployment.tagsString
-  analysis.outputs.deploy_tag = analysis.deployment.tag
+  analysis.outputs.build_labels = analysis.deployment.labelsString
 }

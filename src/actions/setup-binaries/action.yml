@@ -2,15 +2,27 @@ name: 'Setup binaries'
 description: 'Greet someone'
 
 inputs:
-  nodejs:
-    description: 'Inform the Nodejs version'
-    required: false
-    default: 'false'
   docker-qmeu:
     description: 'Install'
     required: false
     default: 'false'
   docker-buildx:
+    description: 'Install'
+    required: false
+    default: 'false'
+  kubectl:
+    description: 'Install'
+    required: false
+    default: 'false'
+  nodejs:
+    description: 'Inform the Nodejs version'
+    required: false
+    default: 'false'
+  yq:
+    description: 'Install'
+    required: false
+    default: 'false'
+  ytt:
     description: 'Install'
     required: false
     default: 'false'
@@ -46,3 +58,24 @@ runs:
       id: docker-buildx
       with:
         install: true
+
+    - if: inputs.kubectl != 'false'
+      uses: azure/setup-kubectl@v2.1
+      id: kubectl
+    
+    - if: inputs.ytt != 'false'
+      uses: vmware-tanzu/carvel-setup-action@v1
+      id: ytt
+      with:
+        only: ytt
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - if: inputs.yq != 'false'
+      shell: bash
+      id: yq
+      env:
+        VERSION: v4.25.2
+        BINARY: yq_linux_amd64
+      run: |
+        wget https://github.com/mikefarah/yq/releases/download/${VERSION}/${BINARY}.tar.gz -O - | tar xz && sudo mv ${BINARY} /usr/bin/yq
+        yq --version
