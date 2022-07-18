@@ -80,7 +80,7 @@ module.exports = async (analysis) => {
 
   let labels = [ `org.opencontainers.image.source=https://github.com/${organization}/${name}` ]
   analysis.deployment.labels = labels 
-  analysis.deployment.labelsString = labels 
+  analysis.deployment.labelsString = labels.join(', ')
   core.info(templateInfo('deployment', `labels = ${labels}`))
 
 
