@@ -14,6 +14,10 @@ inputs:
 outputs:
   actor:
     description: ""
+  build_args:
+    description: ""
+  build_tags:
+    description: ""
   commiter_name:
     description: ""
   commiter_email:
@@ -21,8 +25,6 @@ outputs:
   commiter_username:
     description: ""
   deploy_tag:
-    description: ""
-  deploy_tags:
     description: ""
   event:
     description: ""
@@ -35,6 +37,8 @@ outputs:
   feature_has_releaserc:
     description: ""
   language:
+    description: ""
+  registry:
     description: ""
 
 runs:

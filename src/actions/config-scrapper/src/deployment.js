@@ -9,14 +9,16 @@ module.exports = async (analysis) => {
 
   const commitSha = github.context.sha.substring(0,7)
   const [ organization, name ] = github.context.payload.repository.full_name.split('/')
-  const imageFullName = [ containerRegistry, organization, name].join('/')
+  const registry = [ containerRegistry, organization, name].join('/')
+
+  analysis.deployment.registry = registry
 
   if (github.context.payload.deployment) {
     analysis.environment = github.context.payload.deployment.environment
     analysis.outputs.environment = analysis.environment
   }
 
-  let tag = `${imageFullName}:c-${commitSha}`
+  let tag = `${registry}:c-${commitSha}`
   let tags = [
     `latest`,
     `c-${commitSha}`,
@@ -26,7 +28,7 @@ module.exports = async (analysis) => {
   ]
 
   if (environment) {
-    tag = `${imageFullName}:e-${environment}-c-${commitSha}`
+    tag = `${registry}:e-${environment}-c-${commitSha}`
     tags = tags.concat([
       `e-${environment}-latest`,
       `e-${environment}-r-${github.context.runNumber}`,
@@ -57,7 +59,7 @@ module.exports = async (analysis) => {
     }
   }
 
-  tags = tags.map(t => `${imageFullName}:${t}`)
+  tags = tags.map(t => `${registry}:${t}`)
 
   analysis.deployment.tag = tag
   analysis.deployment.tags = tags
@@ -74,7 +76,8 @@ module.exports = async (analysis) => {
   analysis.deployment.build_args = args
   
   // outputs
-  analysis.outputs.deploy_tag = analysis.deployment.tag
-  analysis.outputs.deploy_tags = analysis.deployment.tagsString
+  analysis.outputs.registry = analysis.deployment.registry
   analysis.outputs.build_args = analysis.deployment.build_args
+  analysis.outputs.build_tags = analysis.deployment.tagsString
+  analysis.outputs.deploy_tag = analysis.deployment.tag
 }
