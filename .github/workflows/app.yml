@@ -270,6 +270,7 @@ jobs:
         uses: filipeforattini/ff-iac-github-actions/.github/actions/pack-docker-build@main
         with:
           cached: false
+          platforms: ${{inputs.platforms}}
 
 
   #--------------------------------------------------#

@@ -23,7 +23,6 @@ async function action() {
   });
 
   fs.writeFileSync(path.join(process.cwd(), ".dockerignore"), content);
-  core.warning(`content = ${content}`)
 }
 
 try {
