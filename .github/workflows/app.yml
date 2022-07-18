@@ -255,17 +255,6 @@ jobs:
           password: ${{ secrets.REGISTRY_PASSWORD }}
             
       # build
-      - name: Dockerfile lint
-        uses: hadolint/hadolint-action@v2.1.0
-        id: hadolint
-        continue-on-error: true
-        with:
-          dockerfile: Dockerfile
-
-      - name: Copy config
-        run: |
-          if test -f ./manifests/configs/${{needs.Setup.outputs.Environment}}.env; then cp ./manifests/configs/${{needs.Setup.outputs.Environment}}.env ./.env; fi
-
       - name: Cat Dockerfile
         run: |
           cat ./Dockerfile
@@ -273,6 +262,10 @@ jobs:
       - name: Cat .dockerignore
         run: |
           cat ./.dockerignore
+
+      - name: Copy config
+        run: |
+          if test -f ./manifests/configs/${{needs.Setup.outputs.Environment}}.env; then cp ./manifests/configs/${{needs.Setup.outputs.Environment}}.env ./.env; fi
 
       - name: Build and push
         uses: filipeforattini/ff-iac-github-actions/.github/actions/pack-docker-build@main

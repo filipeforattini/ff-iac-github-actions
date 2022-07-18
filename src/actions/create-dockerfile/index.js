@@ -23,7 +23,10 @@ async function action() {
     ...defaultValues,
   });
 
-  fs.writeFileSync(path.join(process.cwd(), "Dockerignore"), content);
+  fs.writeFileSync(path.join(process.cwd(), "Dockerfile"), content);
+
+  if (!fs.existsSync(path.join(process.cwd(), "Dockerfile")))
+    throw "File was not created."
 
   let writeSummary = core.getBooleanInput('writeSummary', { required: true });
 
