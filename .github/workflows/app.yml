@@ -270,12 +270,6 @@ jobs:
         uses: filipeforattini/ff-iac-github-actions/.github/actions/pack-docker-build@main
         with:
           cached: false
-          environment: ${{needs.Setup.outputs.Environment}}
-
-      - name: Move cache
-        run: |
-          rm -rf /tmp/.buildx-cache
-          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
 
 
   #--------------------------------------------------#

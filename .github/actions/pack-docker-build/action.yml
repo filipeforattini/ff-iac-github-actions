@@ -1,11 +1,15 @@
-name: 'Static code analysis'
-description: 'Greet someone'
+name: 'Docker build pack'
+description: 'Pack for Docker builds'
 
 inputs:
   cached:
     description: 'Inform the main repository language'
     required: false
     default: 'true'
+  context:
+    description: "Context directory"
+    required: false
+    default: "."
   install:
     description: 'Install docker buildx'
     required: false
@@ -14,6 +18,10 @@ inputs:
     description: "Multi plataform container builds"
     required: false
     default: "linux/386,linux/amd64,linux/arm/v7,linux/arm/v8,linux/arm64,linux/ppc64le,linux/s390x"
+  push:
+    description: "Push images"
+    required: false
+    default: "true"
 
 runs:
   using: "composite"
@@ -34,18 +42,18 @@ runs:
       uses: docker/build-push-action@v2
       if: inputs.cached == 'false'
       with:
-        context: .
-        push: true
+        context: ${{inputs.context}}
+        push: ${{inputs.push}}
         platforms: ${{inputs.platforms}}
         tags: ${{steps.analysis.outputs.build_tags}}
         build-args: ${{steps.analysis.outputs.build_args}}
 
-    - name: Build and push
+    - name: Build and push with cache
       uses: docker/build-push-action@v2
       if: inputs.cached == 'true'
       with:
-        context: .
-        push: true
+        context: ${{inputs.context}}
+        push: ${{inputs.push}}
         platforms: ${{inputs.platforms}}
         tags: ${{steps.analysis.outputs.build_tags}}
         build-args: ${{steps.analysis.outputs.build_args}}
