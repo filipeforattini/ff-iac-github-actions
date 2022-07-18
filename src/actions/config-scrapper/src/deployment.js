@@ -29,7 +29,7 @@ module.exports = async (analysis) => {
   ]
 
   if (analysis.environment) {
-    tag = `${registry}:e-${environment}-c-${commitSha}`
+    tag = `${registry}:e-${analysis.environment}-c-${commitSha}`
     tags = tags.concat([
       `e-${analysis.environment}-latest`,
       `e-${analysis.environment}-r-${github.context.runNumber}`,
