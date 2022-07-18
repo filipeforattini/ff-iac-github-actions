@@ -1,4 +1,5 @@
 const fs = require('fs')
+const _ = require('lodash')
 const path = require('path')
 const core = require("@actions/core");
 const github = require("@actions/github");
@@ -28,7 +29,7 @@ module.exports = async (analysis) => {
     `u-${github.context.actor}`,
   ]
 
-  if (analysis.environment) {
+  if (_.isString(analysis.environment)) {
     tag = `${registry}:e-${analysis.environment}-c-${commitSha}`
     tags = tags.concat([
       `e-${analysis.environment}-latest`,
@@ -52,7 +53,7 @@ module.exports = async (analysis) => {
       `d-${committedAt.toISOString().substring(0,10)}`,
     ])
   
-    if (analysis.environment) {
+    if (_.isString(analysis.environment)) {
       tags = tags.concat([
         `e-${analysis.environment}-t-${committedAt.getTime()}`,
         `e-${analysis.environment}-d-${committedAt.toISOString().substring(0,10)}`,
@@ -67,9 +68,9 @@ module.exports = async (analysis) => {
   analysis.deployment.tagsString = tags.join(', ')
 
   let args = ""
-  if (analysis.environment) {
-    if(fs.existsSync(path.join(analysis.root, 'manifests', 'config', `${analysis.environment}.env`))) {
-      args = fs.readFileSync(path.join(analysis.root, 'manifests', 'config', `${analysis.environment}.env`)).toString()
+  if (_.isString(analysis.environment)) {
+    if(fs.existsSync(path.join(analysis.root, 'manifests', 'configs', `${analysis.environment}.env`))) {
+      args = fs.readFileSync(path.join(analysis.root, 'manifests', 'configs', `${analysis.environment}.env`)).toString()
       args = args.replace('\n', ', ')
     }
   }
