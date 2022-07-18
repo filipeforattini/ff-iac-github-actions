@@ -165,7 +165,7 @@ jobs:
 
 
   #--------------------------------------------------#
-  #                      TRIGGER                     # 
+  #                      Trigger                     # 
   #--------------------------------------------------#
   Trigger:
     runs-on: ubuntu-latest
@@ -289,6 +289,7 @@ jobs:
       - name: Setup | Dependencies
         uses: filipeforattini/ff-iac-github-actions/.github/actions/setup-binaries@main
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
           docker-qmeu: true
           docker-buildx: true
           kubectl: true

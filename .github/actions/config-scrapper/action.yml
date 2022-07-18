@@ -18,6 +18,8 @@ outputs:
     description: ""
   build_tags:
     description: ""
+  build_labels:
+    description: ""
   commiter_name:
     description: ""
   commiter_email:

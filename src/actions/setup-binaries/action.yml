@@ -1,7 +1,13 @@
 name: 'Setup binaries'
-description: 'Greet someone'
+description: 'Setup a list of dependencies with one action'
 
 inputs:
+  # config
+  token:
+    description: 'GitHub Token'
+    required: false
+  
+  # apps
   docker-qmeu:
     description: 'Install'
     required: false
@@ -68,7 +74,7 @@ runs:
       id: ytt
       with:
         only: ytt
-        token: ${{ secrets.GITHUB_TOKEN }}
+        token: ${{inputs.token}}
 
     - if: inputs.yq != 'false'
       shell: bash
