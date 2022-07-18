@@ -3,6 +3,7 @@ const core = require("@actions/core");
 const github = require("@actions/github");
 
 const scrappers = require("./src");
+const { templateInfo, templateDetails } = require('./log')
 
 const analysisFactory = (initial = {}) => new Proxy(initial, {
   get(target, prop, receiver) {
@@ -28,11 +29,10 @@ async function action() {
       .addEOL()
       .addRaw('This step will read your repository and seak for features to aggregate value!', true)
       .addRaw(
-        [
-          "<details><summary>Received context:</summary>\n\n```json \n",
-          JSON.stringify(github.context, null, 2),
-          " \n\n ``` \n</details>",
-        ].join(''),
+        templateDetails({ 
+          summary: 'Received context:',
+          content: JSON.stringify(github.context, null, 2), 
+        }),
         true
       )
       .write();
@@ -45,7 +45,7 @@ async function action() {
     outputs: {},
   })
   
-  core.info(`run trigged by event=${analysis.event}`);
+  core.info(templateInfo('root', `run trigged by event=${analysis.event}`));
   analysis.outputs.event = analysis.event
   analysis.outputs.actor = github.context.actor
 
@@ -65,11 +65,10 @@ async function action() {
   if (writeSummary) {
     await core.summary
       .addRaw(
-        [
-          "<details><summary>Analysis:</summary>\n\n```json \n",
-          JSON.stringify(analysis, null, 2),
-          " \n\n ``` \n</details>",
-        ].join(''),
+        templateDetails({ 
+          summary: 'Analysis:',
+          content: JSON.stringify(analysis, null, 2), 
+        }),
         true
       )
       .addHeading('Outputs:', 4)

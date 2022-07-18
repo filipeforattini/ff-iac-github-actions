@@ -3,6 +3,8 @@ const path = require('path')
 const core = require("@actions/core");
 const github = require("@actions/github");
 
+const { templateInfo } = require('../log')
+
 module.exports = async (analysis) => {
   let environment = core.getInput('environment', { required: false });
   let containerRegistry = core.getInput('containerRegistry', { required: true });
@@ -73,8 +75,9 @@ module.exports = async (analysis) => {
     }
   }
 
-  analysis.deployment.build_args = args
-  
+  analysis.deployment.build_args = args 
+  core.info(templateInfo('deployment', `tag = ${tag}`))
+
   // outputs
   analysis.outputs.registry = analysis.deployment.registry
   analysis.outputs.build_args = analysis.deployment.build_args
