@@ -2,14 +2,18 @@ name: 'Static code analysis'
 description: 'Greet someone'
 
 inputs:
-  environment:
-    description: 'Environment target'
-    required: false
-    default: 'dev'
   cached:
     description: 'Inform the main repository language'
     required: false
     default: 'true'
+  environment:
+    description: 'Environment target'
+    required: false
+    default: 'dev'
+  install:
+    description: 'Install docker buildx'
+    required: false
+    default: 'false'
   platforms:
     description: "Multi plataform container builds"
     required: false
@@ -19,6 +23,13 @@ runs:
   using: "composite"
 
   steps:
+    - name: Setup | Dependencies
+      uses: filipeforattini/ff-iac-github-actions/.github/actions/setup-binaries@main
+      if: inputs.install == 'true'
+      with:
+        docker-qmeu: true
+        docker-buildx: true
+
     - name: Pipeline config scrapper
       id: analysis
       uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main

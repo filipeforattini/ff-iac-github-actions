@@ -270,20 +270,13 @@ jobs:
 
       - name: Copy config
         run: |
-          if test -f ./manifests/configs/dev.env; then cp ./manifests/configs/dev.env ./.env; fi
+          if test -f ./manifests/configs/${{needs.Setup.outputs.Environment}}.env; then cp ./manifests/configs/${{needs.Setup.outputs.Environment}}.env ./.env; fi
 
       - name: Build and push
-        uses: docker/build-push-action@v2
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/pack-docker-build@main
         with:
-          context: .
-          push: true
-          platforms: ${{ inputs.platforms }}
-          builder: ${{ steps.buildx.outputs.name }}
-          build-args: ${{steps.node_setup.outputs.docker_image_args}}
-          tags: ${{steps.node_setup.outputs.docker_image_tags}}, ${{steps.node_setup.outputs.docker_image_fullname}}:${{needs.Release.outputs.Version}}
-          labels: "organization: ${{github.repository_owner}}, repository: ${{github.repository}}, branch: ${{needs.Setup.outputs.Branch}}, commit: ${{needs.Setup.outputs.ShaHash}}, date: ${{needs.Setup.outputs.Date}}, timestamp: ${{needs.Setup.outputs.Timestamp}}"
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,mode=max,dest=/tmp/.buildx-cache-new
+          cached: true
+          environment: needs.Setup.outputs.Environment
 
       - name: Move cache
         run: |
