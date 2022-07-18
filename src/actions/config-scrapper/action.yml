@@ -20,6 +20,10 @@ outputs:
     description: ""
   commiter_username:
     description: ""
+  deploy_tag:
+    description: ""
+  deploy_tags:
+    description: ""
   event:
     description: ""
   environment:

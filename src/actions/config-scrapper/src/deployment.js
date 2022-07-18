@@ -14,17 +14,17 @@ module.exports = async (analysis) => {
     analysis.outputs.environment = analysis.environment
   }
 
-  let tag = `c-${commitSha}`
+  let tag = `${imageFullName}:c-${commitSha}`
   let tags = [
     `latest`,
-    `r-${github.context.runNumber}`,
     `c-${commitSha}`,
+    `r-${github.context.runNumber}`,
     `b-${github.context.ref.replace('refs/heads/', '').replace('/', '-')}`,
     `u-${github.context.actor}`,
   ]
 
   if (environment) {
-    tag = `e-${environment}-c-${commitSha}`
+    tag = `${imageFullName}:e-${environment}-c-${commitSha}`
     tags = tags.concat([
       `e-${environment}-latest`,
       `e-${environment}-r-${github.context.runNumber}`,
@@ -43,14 +43,14 @@ module.exports = async (analysis) => {
 
   if (committedAt) {
     tags = tags.concat([
-      `d-${committedAt.toISOString().substring(0,10)}`,
       `t-${committedAt.getTime()}`,
+      `d-${committedAt.toISOString().substring(0,10)}`,
     ])
   
     if (environment) {
       tags = tags.concat([
-        `e-${environment}-d-${committedAt.toISOString().substring(0,10)}`,
         `e-${environment}-t-${committedAt.getTime()}`,
+        `e-${environment}-d-${committedAt.toISOString().substring(0,10)}`,
       ])
     }
   }
@@ -59,10 +59,10 @@ module.exports = async (analysis) => {
 
   analysis.deployment.tag = tag
   analysis.deployment.tags = tags
-  analysis.deployment.tagsString = tags.join(',')
+  analysis.deployment.tagsString = tags.join(', ')
 
   // outputs
   analysis.outputs.event = analysis.event
-  analysis.outputs.tag = analysis.deployment.tag
-  analysis.outputs.tags = analysis.deployment.tagsString
+  analysis.outputs.deploy_tag = analysis.deployment.tag
+  analysis.outputs.deploy_tags = analysis.deployment.tagsString
 }
