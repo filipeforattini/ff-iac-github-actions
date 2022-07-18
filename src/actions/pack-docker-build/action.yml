@@ -43,7 +43,7 @@ runs:
       uses: docker/build-push-action@v3
       if: inputs.cached == 'false'
       with:
-        context: ${{steps.analysis.outputs.pwd}}
+        context: ${{inputs.context}}
         push: ${{inputs.push}}
         platforms: ${{inputs.platforms}}
         tags: ${{steps.analysis.outputs.build_tags}}
@@ -53,8 +53,7 @@ runs:
       uses: docker/build-push-action@v2
       if: inputs.cached == 'true'
       with:
-        context: ${{steps.analysis.outputs.pwd}}
-        builder: ${{steps.dependencies.outputs.docker_buildx_name}}
+        context: ${{inputs.context}}
         push: ${{inputs.push}}
         platforms: ${{inputs.platforms}}
         tags: ${{steps.analysis.outputs.build_tags}}

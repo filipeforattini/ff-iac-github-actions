@@ -255,14 +255,6 @@ jobs:
           password: ${{ secrets.REGISTRY_PASSWORD }}
             
       # build
-      - name: Cat Dockerfile
-        run: |
-          cat ./Dockerfile
-
-      - name: Cat .dockerignore
-        run: |
-          cat ./.dockerignore
-
       - name: Copy config
         run: |
           if test -f ./manifests/configs/${{needs.Setup.outputs.Environment}}.env; then cp ./manifests/configs/${{needs.Setup.outputs.Environment}}.env ./.env; fi
@@ -270,7 +262,7 @@ jobs:
       - name: Build and push
         uses: filipeforattini/ff-iac-github-actions/.github/actions/pack-docker-build@main
         with:
-          cached: false
+          cached: true
           platforms: ${{inputs.platforms}}
 
 

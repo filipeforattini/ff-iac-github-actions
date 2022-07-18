@@ -23,9 +23,6 @@ async function action() {
   });
 
   fs.writeFileSync(path.join(process.cwd(), ".dockerignore"), content);
-  
-  if (!fs.existsSync(path.join(process.cwd(), ".dockerignore")))
-    throw "File was not created."
 }
 
 try {

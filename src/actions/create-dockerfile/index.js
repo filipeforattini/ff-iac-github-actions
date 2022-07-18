@@ -7,6 +7,7 @@ const stubs = require('./stubs')
 
 async function action() {
   let preset = core.getInput('preset', { required: true })
+  let writeSummary = core.getBooleanInput('writeSummary', { required: true });
 
   if (!stubs[preset]) core.error(new Error('preset doesnt exists'))
 
@@ -17,18 +18,12 @@ async function action() {
   }
 
   const template = _.template(stub)
-
   const content = template({ 
     generatedAt: new Date().toISOString(),
     ...defaultValues,
   });
 
   fs.writeFileSync(path.join(process.cwd(), "Dockerfile"), content);
-
-  if (!fs.existsSync(path.join(process.cwd(), "Dockerfile")))
-    throw "File was not created."
-
-  let writeSummary = core.getBooleanInput('writeSummary', { required: true });
 
   if (writeSummary) {
     await core.summary
