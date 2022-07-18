@@ -265,7 +265,6 @@ jobs:
         id: hadolint
         continue-on-error: true
         with:
-          writeSummary: true
           dockerfile: Dockerfile
 
       - name: Copy config

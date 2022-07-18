@@ -15,10 +15,10 @@ module.exports = async (analysis) => {
   langIterator = langIterator.map((z) => _.zipObject(["language", "bytes"], z));
   langIterator = _.sortBy(langIterator, "bytes");
 
-  if (langIterator.length == 0) return core.warning("no language detected");
+  if (langIterator.length == 0) return core.warning(templateInfo('code', "no language detected"));
 
   const language = langIterator.pop().language;
-  core.info(templateInfo('code', `language detected! is a ${language} repository`));
+  core.info(templateInfo('code', `language ${language} detected!`));
   analysis.language = language.toLowerCase();
 
   analysis.outputs.language = analysis.language
