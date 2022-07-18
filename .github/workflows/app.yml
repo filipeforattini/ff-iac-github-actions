@@ -266,6 +266,14 @@ jobs:
         run: |
           if test -f ./manifests/configs/${{needs.Setup.outputs.Environment}}.env; then cp ./manifests/configs/${{needs.Setup.outputs.Environment}}.env ./.env; fi
 
+      - name: Cat Dockerfile
+        run: |
+          cat ./Dockerfile
+
+      - name: Cat .dockerignore
+        run: |
+          cat ./.dockerignore
+
       - name: Build and push
         uses: filipeforattini/ff-iac-github-actions/.github/actions/pack-docker-build@main
         with:
