@@ -24,19 +24,19 @@ module.exports = async (analysis) => {
   let tags = [
     `latest`,
     `c-${commitSha}`,
+    `u-${github.context.actor}`,
     `r-${github.context.runNumber}`,
     `b-${github.context.ref.replace('refs/heads/', '').replace('/', '-')}`,
-    `u-${github.context.actor}`,
   ]
 
   if (_.isString(analysis.environment)) {
     tag = `${registry}:e-${analysis.environment}-c-${commitSha}`
     tags = tags.concat([
       `e-${analysis.environment}-latest`,
-      `e-${analysis.environment}-r-${github.context.runNumber}`,
       `e-${analysis.environment}-c-${commitSha}`,
-      `e-${analysis.environment}-b-${github.context.ref.replace('refs/heads/', '').replace('/', '-')}`,
       `e-${analysis.environment}-u-${github.context.actor}`,
+      `e-${analysis.environment}-r-${github.context.runNumber}`,
+      `e-${analysis.environment}-b-${github.context.ref.replace('refs/heads/', '').replace('/', '-')}`,
     ])
   }
 

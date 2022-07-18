@@ -40,7 +40,7 @@ runs:
       with:
         context: .
         push: true
-        platforms: ${{ inputs.platforms }}
+        platforms: ${{inputs.platforms}}
         tags: ${{steps.analysis.outputs.build_tags}}
         build-args: ${{steps.analysis.outputs.build_args}}
 
@@ -50,8 +50,8 @@ runs:
       with:
         context: .
         push: true
-        platforms: ${{ inputs.platforms }}
+        platforms: ${{inputs.platforms}}
+        tags: ${{steps.analysis.outputs.build_tags}}
         build-args: ${{steps.analysis.outputs.build_args}}
-        tags: ${{steps.analysis.outputs.deploy_tags}}
         cache-from: type=local,src=/tmp/.buildx-cache
         cache-to: type=local,mode=max,dest=/tmp/.buildx-cache-new

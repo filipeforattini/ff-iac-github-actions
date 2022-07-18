@@ -38,6 +38,8 @@ outputs:
     description: ""
   language:
     description: ""
+  pwd:
+    description: ""
   registry:
     description: ""
 

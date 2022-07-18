@@ -46,6 +46,7 @@ async function action() {
   })
   
   core.info(templateInfo('root', `run trigged by event=${analysis.event}`));
+  analysis.outputs.pwd = analysis.root
   analysis.outputs.event = analysis.event
   analysis.outputs.actor = github.context.actor
 
