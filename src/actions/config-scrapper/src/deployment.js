@@ -6,7 +6,6 @@ const github = require("@actions/github");
 const { templateInfo } = require('../log')
 
 module.exports = async (analysis) => {
-  let environment = core.getInput('environment', { required: false });
   let containerRegistry = core.getInput('containerRegistry', { required: true });
 
   const commitSha = github.context.sha.substring(0,7)
@@ -29,14 +28,14 @@ module.exports = async (analysis) => {
     `u-${github.context.actor}`,
   ]
 
-  if (environment) {
+  if (analysis.environment) {
     tag = `${registry}:e-${environment}-c-${commitSha}`
     tags = tags.concat([
-      `e-${environment}-latest`,
-      `e-${environment}-r-${github.context.runNumber}`,
-      `e-${environment}-c-${commitSha}`,
-      `e-${environment}-b-${github.context.ref.replace('refs/heads/', '').replace('/', '-')}`,
-      `e-${environment}-u-${github.context.actor}`,
+      `e-${analysis.environment}-latest`,
+      `e-${analysis.environment}-r-${github.context.runNumber}`,
+      `e-${analysis.environment}-c-${commitSha}`,
+      `e-${analysis.environment}-b-${github.context.ref.replace('refs/heads/', '').replace('/', '-')}`,
+      `e-${analysis.environment}-u-${github.context.actor}`,
     ])
   }
 
@@ -53,10 +52,10 @@ module.exports = async (analysis) => {
       `d-${committedAt.toISOString().substring(0,10)}`,
     ])
   
-    if (environment) {
+    if (analysis.environment) {
       tags = tags.concat([
-        `e-${environment}-t-${committedAt.getTime()}`,
-        `e-${environment}-d-${committedAt.toISOString().substring(0,10)}`,
+        `e-${analysis.environment}-t-${committedAt.getTime()}`,
+        `e-${analysis.environment}-d-${committedAt.toISOString().substring(0,10)}`,
       ])
     }
   }
@@ -68,9 +67,9 @@ module.exports = async (analysis) => {
   analysis.deployment.tagsString = tags.join(', ')
 
   let args = ""
-  if (environment) {
-    if(fs.existsSync(path.join(analysis.root, 'manifests', 'config', `${environment}.env`))) {
-      args = fs.readFileSync(path.join(analysis.root, 'manifests', 'config', `${environment}.env`)).toString()
+  if (analysis.environment) {
+    if(fs.existsSync(path.join(analysis.root, 'manifests', 'config', `${analysis.environment}.env`))) {
+      args = fs.readFileSync(path.join(analysis.root, 'manifests', 'config', `${analysis.environment}.env`)).toString()
       args = args.replace('\n', ', ')
     }
   }
