@@ -83,7 +83,6 @@ module.exports = async (analysis) => {
   analysis.deployment.labelsString = labels.join(', ')
   core.info(templateInfo('deployment', `labels = ${labels}`))
 
-
   // outputs
   analysis.outputs.registry = analysis.deployment.registry
   analysis.outputs.deploy_tag = analysis.deployment.tag
