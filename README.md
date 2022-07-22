@@ -50,6 +50,7 @@ Checkout the test repositories:
 | svc | Javascript / Moleculerjs | https://github.com/filipeforattini/ff-svc-moleculerjs | ![](https://github.com/filipeforattini/ff-svc-moleculerjs/actions/workflows/svc-push.yml/badge.svg) |
 | svc | Javascript / Nestjs | https://github.com/filipeforattini/ff-svc-nestjs | ![](https://github.com/filipeforattini/ff-svc-nestjs/actions/workflows/app-push.yml/badge.svg) |
 | svc | Python | https://github.com/filipeforattini/ff-svc-python | ![](https://github.com/filipeforattini/ff-svc-python/actions/workflows/svc-push.yml/badge.svg) |
+| svc | Python / FastAPI | https://github.com/filipeforattini/ff-svc-fastapi | ![](https://github.com/filipeforattini/ff-svc-fastapi/actions/workflows/svc-push.yml/badge.svg) |
 | app | React | https://github.com/filipeforattini/ff-app-react | ![](https://github.com/filipeforattini/ff-app-react/actions/workflows/app-push.yml/badge.svg) |
 
 ### Environments
@@ -237,3 +238,99 @@ gpg -v \
 Thanks to:
 - https://evilmartians.com/chronicles/build-images-on-github-actions-with-docker-layer-caching
 - https://github.blog/2022-05-09-supercharging-github-actions-with-job-summaries/
+
+
+## Example ecosystem
+
+This ecosystem generates few data per second as samples for our apis.
+
+### Architecture
+
+#### Full independent
+
+In this implementation, each service has its own resources.
+
+```mermaid
+flowchart
+  https---ingress
+
+  subgraph k8s
+    ingress---|ff-svc-nestjs.dev.forattini.app|nestjs
+    ingress---|ff-svc-nextjs.dev.forattini.app|nextjs
+    ingress---|ff-svc-fastapi.dev.forattini.app|fastapi
+    ingress---|ff-svc-moleculer.dev.forattini.app|moleculer
+
+    subgraph ff-svc-nextjs
+      nextjs---rabbitmq-nextjs[rabbit]
+    end
+    
+    subgraph ff-svc-moleculer
+      moleculer---postgres-moleculer[postgres]
+      moleculer---mysql-moleculer[mysql]
+      moleculer---redis-moleculer[redis]
+      moleculer---rabbitmq-moleculer[rabbit]
+      moleculer---etcd-moleculer[etcd]
+      moleculer---nats-moleculer[nats]
+
+      moleculer---rabbitmq-nextjs
+    end
+
+    subgraph ff-svc-fastapi
+      fastapi---postgres-fastapi[postgres]
+      fastapi---rabbitmq-fastapi[rabbit]
+      
+      fastapi---rabbitmq-nextjs
+    end
+
+    subgraph ff-svc-nestjs
+      nestjs---postgres-nestjs[postgres]
+      nestjs---rabbitmq-nestjs[rabbitmq]
+
+      nestjs---rabbitmq-nextjs
+    end
+  end
+```
+
+#### Shared resources
+
+In this implementation, all services connects to a shared resource.
+
+```mermaid
+flowchart
+  https---ingress
+
+  subgraph k8s
+    ingress---|ff-svc-nestjs.dev.forattini.app|nestjs
+    ingress---|ff-svc-nextjs.dev.forattini.app|nextjs
+    ingress---|ff-svc-fastapi.dev.forattini.app|fastapi
+    ingress---|ff-svc-moleculer.dev.forattini.app|moleculer
+
+    subgraph ff-svc-nextjs
+      nextjs---rabbitmq-nextjs[rabbit]
+      nextjs---postgres-nextjs[postgres]
+      nextjs---mysql-nextjs[mysql]
+      nextjs---redis-nextjs[mysql]
+      etcd-nextjs[etcd]
+      nats-nextjs[nats]
+    end
+    
+    subgraph ff-svc-moleculer
+      moleculer---postgres-nextjs
+      moleculer---mysql-nextjs
+      moleculer---redis-nextjs
+      moleculer---rabbitmq-nextjs
+      moleculer---etcd-nextjs
+      moleculer---nats-nextjs
+    end
+
+    subgraph ff-svc-fastapi
+      fastapi---postgres-nextjs[postgres]
+      fastapi---rabbitmq-nextjs[rabbit]
+    end
+
+    subgraph ff-svc-nestjs
+      nestjs---postgres-nextjs[postgres]
+      nestjs---rabbitmq-nextjs[rabbitmq]
+    end
+  end
+```
