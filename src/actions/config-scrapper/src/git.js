@@ -9,7 +9,4 @@ module.exports = async (analysis) => {
     analysis.outputs.commiter_email = analysis.commiter.email
     analysis.outputs.commiter_username = analysis.commiter.username
   }
-
-  // outputs
-  analysis.outputs.event = analysis.event
 }

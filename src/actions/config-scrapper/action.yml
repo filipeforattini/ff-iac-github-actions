@@ -26,11 +26,25 @@ outputs:
     description: ""
   commiter_username:
     description: ""
+  deploy_configs_file:
+    description: ""
+  deploy_secrets_file:
+    description: ""
+  deploy_dependencies_file:
+    description: ""
+  deploy_namespace:
+    description: ""
   deploy_tag:
     description: ""
   event:
     description: ""
   environment:
+    description: ""
+  feature_has_configs:
+    description: ""
+  feature_has_secrets:
+    description: ""
+  feature_has_dependencies:
     description: ""
   feature_has_dockerfile:
     description: ""
@@ -43,6 +57,10 @@ outputs:
   pwd:
     description: ""
   registry:
+    description: ""
+  repository:
+    description: ""
+  organization:
     description: ""
 
 runs:

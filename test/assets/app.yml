@@ -1,0 +1,12 @@
+#@data/values
+---
+port: 80
+
+env:
+  - name: TZ
+    value: America/Sao_Paulo
+
+#! ingress:
+#!   enable: true
+#!   type: traefik
+#!

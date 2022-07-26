@@ -83,6 +83,35 @@ module.exports = async (analysis) => {
   analysis.deployment.labelsString = labels.join(', ')
   core.info(templateInfo('deployment', `labels = ${labels}`))
 
+
+  if (github.context.payload.deployment) {
+    // k8s
+    analysis.deployment.namespace = `${name}-${analysis.environment}`
+    analysis.outputs.deploy_namespace = analysis.deployment.namespace
+
+    const configsFilePath = path.join(analysis.root, 'manifests', 'configs', `${analysis.environment}.env`)
+    const secretsFilePath = path.join(analysis.root, 'manifests', 'secrets', `${analysis.environment}.gpg`)
+    const dependenciesFilePath = path.join(analysis.root, 'manifests', 'dependencies', `${analysis.environment}.yml`)
+
+    if(fs.existsSync(configsFilePath)) {
+      analysis.deployment.configsFile = configsFilePath
+      analysis.outputs.deploy_configs_file = configsFilePath
+      analysis.outputs.feature_has_configs = true
+    }
+    
+    if(fs.existsSync(secretsFilePath)) {
+      analysis.deployment.secretsFile = secretsFilePath
+      analysis.outputs.deploy_secrets_file = secretsFilePath
+      analysis.outputs.feature_has_secrets = true
+    }
+    
+    if(fs.existsSync(dependenciesFilePath)) {
+      analysis.deployment.dependenciesFile = dependenciesFilePath
+      analysis.outputs.deploy_dependencies_file = dependenciesFilePath
+      analysis.outputs.feature_has_dependencies = true
+    }
+  }
+
   // outputs
   analysis.outputs.registry = analysis.deployment.registry
   analysis.outputs.deploy_tag = analysis.deployment.tag

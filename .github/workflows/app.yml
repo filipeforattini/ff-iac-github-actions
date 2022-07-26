@@ -339,7 +339,7 @@ jobs:
 
       # namespace
       - name: K8s create namespace
-        run: kubectl create namespace ${{steps.deploy_setup.outputs.deploy_namespace}} --dry-run=client --validate=false --output=yaml | kubectl apply -f -
+        run: kubectl create namespace ${{steps.analysis.outputs.deploy_namespace}} --dry-run=client --validate=false --output=yaml | kubectl apply -f -
 
       # secrets for registry auth
       - name: Config | Login to Container Registry
@@ -351,52 +351,31 @@ jobs:
           password: ${{ secrets.REGISTRY_PASSWORD }}
 
       - name: Config | Gives runner access to docker config file 
-        if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
         run: |
           sudo chown $(whoami):docker /home/$(whoami)/.docker/config.json
           cp /home/$(whoami)/.docker/config.json ./manifests/docker-config.json
 
       - name: K8s create registry-token secret
-        if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
-        run: kubectl create secret generic -n ${{steps.deploy_setup.outputs.deploy_namespace}} registry-token --type=kubernetes.io/dockerconfigjson --from-file=.dockerconfigjson=./manifests/docker-config.json --dry-run=client --validate=false --output=yaml | kubectl apply -f -
+        run: kubectl create secret generic -n ${{steps.analysis.outputs.deploy_namespace}} registry-token --type=kubernetes.io/dockerconfigjson --from-file=.dockerconfigjson=./manifests/docker-config.json --dry-run=client --validate=false --output=yaml | kubectl apply -f -
 
       # generate k8s manifests
       - name: K8s generates final yml
-        if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
         run: |
-          CONFIGS_LIST=$(if test -f ./manifests/k8s-configs-keys.txt; then cat ./manifests/k8s-configs-keys.txt; else echo ''; fi)
-          SECRETS_LIST=$(if test -f ./manifests/k8s-secrets-keys.txt; then cat ./manifests/k8s-secrets-keys.txt; else echo ''; fi)
-          DEPENDENCIES_LIST=$(if test -f ./manifests/k8s-dependencies.yml; then (cat ./manifests/k8s-dependencies.yml | yq -P '.dependencies'); else echo '' ; fi)
           ytt \
             -f ./.pipeline/deploy/as-k8s/app.schema.yml \
             -f ./.pipeline/deploy/as-k8s/app.yml \
-            -f ./manifests/k8s-values.yml \
-            --data-value ecosystem=${{steps.deploy_setup.outputs.deploy_ecosystem}} \
-            --data-value organization=${{steps.deploy_setup.outputs.deploy_organization}} \
-            --data-value repository=${{steps.deploy_setup.outputs.deploy_repository}} \
-            --data-value containerRegistry=${{steps.deploy_setup.outputs.deploy_container_registry}} \
-            --data-value tag=${{steps.deploy_setup.outputs.deploy_tag}} \
-            --data-value-yaml deployment.imagePullSecrets=true \
-            --data-value pipelineControl.datetime=${{steps.deploy_setup.outputs.run_started_at}} \
-            --data-value-yaml pipelineControl.environmentsAsNamespaces=${{inputs.environmentsAsNamespaces}} \
+            -f ./manifests/k8s.yml \
+            --data-value                                      ecosystem=${{steps.deploy_setup.outputs.deploy_ecosystem}} \
+            --data-value                                   organization=${{steps.deploy_setup.outputs.deploy_organization}} \
+            --data-value                                     repository=${{steps.deploy_setup.outputs.deploy_repository}} \
+            --data-value                              containerRegistry=${{steps.deploy_setup.outputs.deploy_container_registry}} \
+            --data-value                                            tag=${{steps.deploy_setup.outputs.deploy_tag}} \
+            --data-value-yaml               deployment.imagePullSecrets=true \
+            --data-value                       pipelineControl.datetime=${{steps.deploy_setup.outputs.run_started_at}} \
+            --data-value-yaml  pipelineControl.environmentsAsNamespaces=${{inputs.environmentsAsNamespaces}} \
               > ./manifests/k8s-to-apply.yml
 
-      - name: Docs | K8s summary
-        if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
-        run: |
-          CONFIGS_LIST=$(if test -f ./manifests/k8s-configs-keys.txt; then cat ./manifests/k8s-configs-keys.txt; else echo ''; fi)
-          SECRETS_LIST=$(if test -f ./manifests/k8s-secrets-keys.txt; then cat ./manifests/k8s-secrets-keys.txt; else echo ''; fi)
-          DEPENDENCIES_LIST=$(if test -f ./manifests/k8s-dependencies.yml; then (cat ./manifests/k8s-dependencies.yml | yq -P '.dependencies'); else echo ''; fi)
-          echo -e "### k8s\n\n" >> $GITHUB_STEP_SUMMARY
-          echo -e "| param | value |" >> $GITHUB_STEP_SUMMARY
-          echo -e "| --- | :---: |" >> $GITHUB_STEP_SUMMARY
-          echo -e "| secrets | $SECRETS_LIST |" >> $GITHUB_STEP_SUMMARY
-          echo -e "| configs | $CONFIGS_LIST |" >> $GITHUB_STEP_SUMMARY
-          echo -e "| dependencies | $DEPENDENCIES_LIST |" >> $GITHUB_STEP_SUMMARY
-          echo -e "<details><summary>kubefile</summary>\n\n\`\`\`yml \n$(cat ./manifests/k8s-to-apply.yml)\n \`\`\`\n </details>\n\n" >> $GITHUB_STEP_SUMMARY
-
       - name: K8s apply yml
-        if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
         run: |
           kubectl apply -f ./manifests/k8s-to-apply.yml
-          kubectl get pods -n ${{steps.deploy_setup.outputs.deploy_namespace}}
+          kubectl get pods -o wide -n ${{steps.deploy_setup.outputs.deploy_namespace}}

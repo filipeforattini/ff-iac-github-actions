@@ -8,3 +8,5 @@ export DIR_RESULTS=${DIR_RESULTS:-"./tmp"}
 sh $DIR_TESTS/svc.sh
 sh $DIR_TESTS/svc-inputs.sh
 sh $DIR_TESTS/svc-service.sh
+
+sh $DIR_TESTS/app.sh

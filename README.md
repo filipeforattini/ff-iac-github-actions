@@ -131,8 +131,8 @@ stateDiagram-v2
 │  │  └─ dev.yml
 │  ├─ secrets
 │  │  └─ dev.gpg
-│  ├─ k8s-values.yml
-│  └─ helm-values.yml
+│  ├─ k8s.yml
+│  └─ helm.yml
 ├─ dist
 │     // distibuition version of our code
 └─ src
