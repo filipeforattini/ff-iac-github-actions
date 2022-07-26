@@ -271,7 +271,6 @@ jobs:
   Deploy:
     environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
-    environment: ${{needs.Setup.outputs.Environment}}
     
     needs:
       - Setup
