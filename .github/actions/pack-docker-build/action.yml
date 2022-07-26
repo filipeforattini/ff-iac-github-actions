@@ -60,5 +60,5 @@ runs:
         tags: ${{steps.analysis.outputs.build_tags}}
         labels: ${{steps.analysis.outputs.build_labels}}
         build-args: ${{steps.analysis.outputs.build_args}}
-        cache-from: type=registry
-        cache-to: type=registry,mode=max
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
