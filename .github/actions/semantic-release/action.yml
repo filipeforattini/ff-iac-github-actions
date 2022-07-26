@@ -5,3 +5,8 @@ runs:
   using: 'node16'
   main: 'index.js'
 
+inputs:
+  cached:
+    description: 'Inform the main repository language'
+    required: false
+    default: 'true'

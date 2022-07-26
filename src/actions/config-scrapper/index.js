@@ -75,7 +75,7 @@ async function action() {
       .addHeading('Outputs:', 4)
       .addTable([
         [{ data: 'key', header: true }, { data: 'value', header: true }],
-        ...Object.entries(analysis.outputs).map(([key, value]) => [ key, `${value}`]),
+        ..._.sortBy(Object.entries(analysis.outputs), '[0]').map(([key, value]) => [ key, `${value}`]),
       ])
       .write()
   }
