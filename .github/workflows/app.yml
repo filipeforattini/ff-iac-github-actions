@@ -167,7 +167,7 @@ jobs:
   #--------------------------------------------------#
   #                      Trigger                     # 
   #--------------------------------------------------#
-  Trigger:
+  Trigger-Build:
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
 
@@ -218,17 +218,17 @@ jobs:
       - name: Setup | Cloning tools
         uses: actions/checkout@v3
         with:
-          ref: env/dev
+          ref: env/${{needs.Setup.outputs.Environment}}
+
+      - name: Pipeline config scrapper
+        id: analysis
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
 
       - name: Setup | Dependencies
         uses: filipeforattini/ff-iac-github-actions/.github/actions/setup-binaries@main
         with:
           docker-qmeu: true
           docker-buildx: true
-
-      - name: Pipeline config scrapper
-        id: analysis
-        uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
 
       # pre-build
       - name: Create .dockerignore

@@ -60,5 +60,5 @@ runs:
         tags: ${{steps.analysis.outputs.build_tags}}
         labels: ${{steps.analysis.outputs.build_labels}}
         build-args: ${{steps.analysis.outputs.build_args}}
-        cache-from: type=local,src=/tmp/.buildx-cache
-        cache-to: type=local,mode=max,dest=/tmp/.buildx-cache-new
+        cache-from: type=registry
+        cache-to: type=registry,mode=max
