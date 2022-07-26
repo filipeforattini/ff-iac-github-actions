@@ -258,7 +258,7 @@ jobs:
         run: |
           if test -f ./manifests/configs/${{needs.Setup.outputs.Environment}}.env; then cp ./manifests/configs/${{needs.Setup.outputs.Environment}}.env ./.env; fi
 
-      - name: Build and push
+      - name: Build container image and push
         uses: filipeforattini/ff-iac-github-actions/.github/actions/pack-docker-build@main
         with:
           cached: true
@@ -361,8 +361,8 @@ jobs:
       - name: K8s generates final yml
         run: |
           ytt \
-            -f ./.pipeline/deploy/as-k8s/app.schema.yml \
-            -f ./.pipeline/deploy/as-k8s/app.yml \
+            -f ./.pipeline/deploy/as-k8s/service.schema.yml \
+            -f ./.pipeline/deploy/as-k8s/service \
             -f ./manifests/k8s.yml \
             --data-value                                      ecosystem=${{steps.deploy_setup.outputs.deploy_ecosystem}} \
             --data-value                                   organization=${{steps.deploy_setup.outputs.deploy_organization}} \
