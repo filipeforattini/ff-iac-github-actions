@@ -285,6 +285,13 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
         
+      - name: Setup | Cloning tools
+        uses: actions/checkout@v3
+        with:
+          ref: main
+          path: .pipeline
+          repository: filipeforattini/ff-iac-github-actions
+          
       - name: Setup | Dependencies
         uses: filipeforattini/ff-iac-github-actions/.github/actions/setup-binaries@main
         with:
