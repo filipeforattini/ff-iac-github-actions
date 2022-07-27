@@ -291,7 +291,7 @@ jobs:
           ref: main
           path: .pipeline
           repository: filipeforattini/ff-iac-github-actions
-          
+
       - name: Setup | Dependencies
         uses: filipeforattini/ff-iac-github-actions/.github/actions/setup-binaries@main
         with:
@@ -371,17 +371,17 @@ jobs:
             -f ./.pipeline/deploy/as-k8s/service.schema.yml \
             -f ./.pipeline/deploy/as-k8s/service \
             -f ./manifests/k8s.yml \
-            --data-value                                      ecosystem=${{steps.deploy_setup.outputs.deploy_ecosystem}} \
-            --data-value                                   organization=${{steps.deploy_setup.outputs.deploy_organization}} \
-            --data-value                                     repository=${{steps.deploy_setup.outputs.deploy_repository}} \
-            --data-value                              containerRegistry=${{steps.deploy_setup.outputs.deploy_container_registry}} \
-            --data-value                                            tag=${{steps.deploy_setup.outputs.deploy_tag}} \
+            --data-value                                      ecosystem=${{steps.analysis.outputs.deploy_ecosystem}} \
+            --data-value                                   organization=${{steps.analysis.outputs.organization}} \
+            --data-value                                     repository=${{steps.analysis.outputs.repository}} \
+            --data-value                              containerRegistry=${{inputs.containerRegistry}} \
+            --data-value                                            tag=${{steps.analysis.outputs.deploy_tag}} \
             --data-value-yaml               deployment.imagePullSecrets=true \
-            --data-value                       pipelineControl.datetime=${{steps.deploy_setup.outputs.run_started_at}} \
+            --data-value                       pipelineControl.datetime=${{steps.analysis.outputs.run_started_at}} \
             --data-value-yaml  pipelineControl.environmentsAsNamespaces=${{inputs.environmentsAsNamespaces}} \
               > ./manifests/k8s-to-apply.yml
 
       - name: K8s apply yml
         run: |
           kubectl apply -f ./manifests/k8s-to-apply.yml
-          kubectl get pods -o wide -n ${{steps.deploy_setup.outputs.deploy_namespace}}
+          kubectl get pods -o wide -n ${{steps.analysis.outputs.deploy_namespace}}
