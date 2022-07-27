@@ -269,8 +269,8 @@ jobs:
   #                      Deploy                      # 
   #--------------------------------------------------#
   Deploy:
-    environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
+    environment: env/${{needs.Setup.outputs.Environment}}
     
     needs:
       - Setup
@@ -312,29 +312,6 @@ jobs:
           NEXT_VERSION=$(git for-each-ref --sort=authordate --format '%(refname)' refs/tags | tail -n 1 | sed -n -e 's/^.*refs\/tags\/v//p')
           echo "next version = $NEXT_VERSION"
           echo "::set-output name=version::$NEXT_VERSION"
-
-      - name: Config | Load setup configs
-        env:
-          ENVIRONMENTS_AS_NAMESPACES: ${{ inputs.environmentsAsNamespaces }}
-          PIPELINE_SETUP: ${{ needs.Setup.outputs.PipelineConfig }}
-        id: deploy_setup
-        run: |
-          echo "::set-output name=deploy_as_k8s::$(echo $PIPELINE_SETUP | jq -r '.deploy.deployAsK8s')"
-          echo "::set-output name=deploy_as_chart::$(echo $PIPELINE_SETUP | jq -r '.deploy.deployAsChart')"
-          echo "::set-output name=has_dev_secrets::$(echo $PIPELINE_SETUP | jq -r '.deploy.secrets.dev')"
-          echo "::set-output name=has_dev_configs::$(echo $PIPELINE_SETUP | jq -r '.deploy.configs.dev')"
-          echo "::set-output name=has_dev_dependencies::$(echo $PIPELINE_SETUP | jq -r '.deploy.dependencies.dev')"
-          echo "::set-output name=deploy_ecosystem::$(echo $PIPELINE_SETUP | jq -r '.deploy.ecosystem')"
-          echo "::set-output name=deploy_organization::$(echo $PIPELINE_SETUP | jq -r '.deploy.organization')"
-          echo "::set-output name=deploy_container_registry::$(echo $PIPELINE_SETUP | jq -r '.deploy.containerRegistry')"
-          echo "::set-output name=deploy_repository::$(echo $PIPELINE_SETUP | jq -r '.deploy.repository')"
-          echo "::set-output name=deploy_tag::$(echo $PIPELINE_SETUP | jq -r '.deploy.commitTag')"
-          echo "::set-output name=run_started_at::$(echo $PIPELINE_SETUP | jq -r '.run.startedAt')"
-          case $ENVIRONMENTS_AS_NAMESPACES in
-            "true")  echo "::set-output name=deploy_namespace::$(echo $PIPELINE_SETUP | jq -r '.deploy.namespaces.dev')";;
-            "false") echo "::set-output name=deploy_namespace::$(echo $PIPELINE_SETUP | jq -r '.deploy.namespace')";;
-            *)     echo "::set-output name=deploy_namespace::$(echo $PIPELINE_SETUP | jq -r '.deploy.namespace')";;
-          esac
 
       - name: Config | Kubectl config file
         env:

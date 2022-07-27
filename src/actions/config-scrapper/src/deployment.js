@@ -20,7 +20,7 @@ module.exports = async (analysis) => {
     analysis.outputs.environment = analysis.environment
   }
 
-  let tag = `${registry}:c-${commitSha}`
+  let tag = `c-${commitSha}`
   let tags = [
     `latest`,
     `c-${commitSha}`,
@@ -30,7 +30,7 @@ module.exports = async (analysis) => {
   ]
 
   if (_.isString(analysis.environment)) {
-    tag = `${registry}:e-${analysis.environment}-c-${commitSha}`
+    tag = `e-${analysis.environment}-c-${commitSha}`
     tags = tags.concat([
       `e-${analysis.environment}-latest`,
       `e-${analysis.environment}-c-${commitSha}`,
@@ -61,11 +61,14 @@ module.exports = async (analysis) => {
     }
   }
 
-  tags = tags.map(t => `${registry}:${t}`)
+  const fullname_tag = `${registry}:${tag}`
+  const fullname_tags = tags.map(t => `${registry}:${t}`)
 
   analysis.deployment.tag = tag
   analysis.deployment.tags = tags
-  analysis.deployment.tagsString = tags.join(', ')
+  analysis.deployment.fullname_tag = fullname_tag
+  analysis.deployment.fullname_tags = fullname_tags
+  analysis.deployment.tagsString = fullname_tags.join(', ')
   core.info(templateInfo('deployment', `tag = ${tag}`))
 
   let args = ""
@@ -115,6 +118,7 @@ module.exports = async (analysis) => {
   // outputs
   analysis.outputs.registry = analysis.deployment.registry
   analysis.outputs.deploy_tag = analysis.deployment.tag
+  analysis.outputs.deploy_fullname_tag = analysis.deployment.fullname_tag
   analysis.outputs.build_args = analysis.deployment.build_args
   analysis.outputs.build_tags = analysis.deployment.tagsString
   analysis.outputs.build_labels = analysis.deployment.labelsString
