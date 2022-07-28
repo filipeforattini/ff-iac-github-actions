@@ -335,7 +335,7 @@ jobs:
           ytt \
             -f ./.pipeline/deploy/as-k8s/service.schema.yml \
             -f ./.pipeline/deploy/as-k8s/service \
-            -f ./manifests/k8s.yml \
+            -f ./manifests/k8s-values.yml \
             --data-value ecosystem=${{steps.deploy_setup.outputs.deploy_ecosystem}} \
             --data-value organization=${{steps.deploy_setup.outputs.deploy_organization}} \
             --data-value repository=${{steps.deploy_setup.outputs.deploy_repository}} \

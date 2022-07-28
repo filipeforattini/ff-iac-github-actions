@@ -26,9 +26,9 @@ This pipeline assumes you have just `4` types of repositories:
 
 | Name | Short | Description | Result |
 | ---: | :---: | --- | :---: |
-| Web Application | app | Front-end application with internet-facing ingress | pod language-based |
+| Web Application | app | Front-end application with internet-facing ingress | language-based pod |
 | Mobile Application | mob | Mobile application | apk |
-| Service | svc | Microservice that may - or may not - have ingress | pod nginx-based |
+| Service | svc | Microservice that may - or may not - have ingress | nginx-based pod |
 | Infrastructure as Code | iac | Code that generates cloud infrastructure | - |
 
 Those repositories must obey a name pattern.
@@ -45,11 +45,11 @@ Examples:
 Checkout the test repositories:
 
 | Type| Language / Framework | Repository | Status |
-| :---: | :---: | :---: | :---: |
-| svc | Javascript | https://github.com/filipeforattini/ff-svc-nodejs | ![](https://github.com/filipeforattini/ff-svc-nodejs/actions/workflows/svc-push.yml/badge.svg) |
+| :---: | --- | :---: | :---: |
+| svc | Javascript / Express | https://github.com/filipeforattini/ff-svc-nodejs | ![](https://github.com/filipeforattini/ff-svc-nodejs/actions/workflows/svc-push.yml/badge.svg) |
 | svc | Javascript / Moleculerjs | https://github.com/filipeforattini/ff-svc-moleculerjs | ![](https://github.com/filipeforattini/ff-svc-moleculerjs/actions/workflows/svc-push.yml/badge.svg) |
 | svc | Javascript / Nestjs | https://github.com/filipeforattini/ff-svc-nestjs | ![](https://github.com/filipeforattini/ff-svc-nestjs/actions/workflows/app-push.yml/badge.svg) |
-| svc | Python | https://github.com/filipeforattini/ff-svc-python | ![](https://github.com/filipeforattini/ff-svc-python/actions/workflows/svc-push.yml/badge.svg) |
+| svc | Python / Flask | https://github.com/filipeforattini/ff-svc-python | ![](https://github.com/filipeforattini/ff-svc-python/actions/workflows/svc-push.yml/badge.svg) |
 | svc | Python / FastAPI | https://github.com/filipeforattini/ff-svc-fastapi | ![](https://github.com/filipeforattini/ff-svc-fastapi/actions/workflows/svc-push.yml/badge.svg) |
 | app | React | https://github.com/filipeforattini/ff-app-react | ![](https://github.com/filipeforattini/ff-app-react/actions/workflows/app-push.yml/badge.svg) |
 
@@ -79,18 +79,28 @@ stateDiagram-v2
     if_event --> StaticAnalysis: event=push
     if_event --> Merge=env/stg: event=release
 
-    StaticAnalysis --> Test
+    StaticAnalysis --> Test_Node
+    StaticAnalysis --> Test_Python
 
-    state Test {
-      [*] --> LTS
-      [*] --> Current
-      [*] --> Latest
-      LTS --> [*]
-      Current --> [*]
-      Latest --> [*]
+    state Test_Node {
+      [*] --> Node_LTS
+      [*] --> Node_Current
+      [*] --> Node_Latest
+      Node_LTS --> [*]
+      Node_Current --> [*]
+      Node_Latest --> [*]
+    }
+
+    state Test_Python {
+      [*] --> Python_LTS
+      [*] --> Python_Current
+      [*] --> Python_Latest
+      Python_LTS --> [*]
+      Python_Current --> [*]
+      Python_Latest --> [*]
     }
     
-    Test --> Release
+    Test_Node --> Release
     Release --> Merge=env/dev
     Release --> emit[tag]
 
