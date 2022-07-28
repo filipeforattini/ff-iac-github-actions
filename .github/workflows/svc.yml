@@ -1,0 +1,889 @@
+name: push-svc
+
+concurrency:
+  group: ${{github.workflow}}
+
+#--------------------------------------------------#
+#                     Triggers                     # 
+#--------------------------------------------------#
+on:
+
+  workflow_call:
+
+    inputs:
+      mainBranch:
+        type: string
+        required: false
+        default: master
+        description: "Main repository branch may interfere with versioning"
+      ecosystem:
+        type: string
+        required: false
+        description: "Special prefix that will be added to the image name"
+      containerRegistry:
+        type: string
+        required: false
+        default: ghcr.io
+        description: "Container registry to upload container images"
+      environmentsAsNamespaces:
+        type: boolean
+        required: false
+        default: false
+        description: "Separate environments as namespaces"
+      staticAnalysis:
+        type: boolean
+        required: false
+        default: true
+        description: "Enable static analysis scans"
+      autoVersioning:
+        type: boolean
+        required: false
+        default: true
+        description: "Enable auto versioning with semantic versioning"
+      nodeMatrix:
+        type: string
+        required: false
+        default: '[14, 16, 17]'
+      pythonMatrix:
+        type: string
+        required: false
+        default: '["2.7", "3.6", "3.8", "3.10"]'
+      platforms:
+        type: string
+        required: false
+        default: "linux/386,linux/amd64,linux/arm/v7,linux/arm/v8,linux/arm64,linux/ppc64le,linux/s390x"
+        description: "Multi plataform container builds"
+
+    outputs:
+      PipelineConfig: 
+        description: "Used pipeline config"
+        value: ${{ jobs.Setup.outputs.PipelineConfig }}
+
+
+#--------------------------------------------------#
+#                  Workflow Jobs                   # 
+#--------------------------------------------------#
+jobs:
+
+  #--------------------------------------------------#
+  #                    Setup Jobs                    # 
+  #--------------------------------------------------#
+  Setup:
+    runs-on: ubuntu-latest
+
+    outputs:
+      Event: ${{ steps.analysis.outputs.event }}
+      Analysis: ${{ steps.analysis.outputs.result }}
+      Language: ${{ steps.analysis.outputs.language }}
+      Environment: ${{ steps.analysis.outputs.environment }}
+
+    steps:
+
+      # pre-job
+      - name: Setup | Cloning repository
+        uses: actions/checkout@v3
+
+      # job
+      - name: Pipeline config scrapper
+        id: analysis
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
+        with:
+          writeSummary: true
+
+
+  #--------------------------------------------------#
+  #                  Static Analysis                 # 
+  #--------------------------------------------------#
+  Static-Analysis:
+    runs-on: ubuntu-latest
+    if: needs.Setup.outputs.Event == 'push'
+    needs: Setup
+
+    permissions:
+      security-events: write
+
+    steps:
+
+      # pre-job
+      - name: Setup | Cloning repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: '0'
+          persist-credentials: false
+
+      #job
+      - name: Run code analysis
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/pack-static-code-analysis@main
+        if: inputs.staticAnalysis
+        with:
+          language: ${{ needs.Setup.outputs.Language }}
+
+
+  #--------------------------------------------------#
+  #                  Tests: Node.js                  # 
+  #--------------------------------------------------#
+  Tests-Node:
+    runs-on: ubuntu-latest
+    needs: Setup
+    if: |
+      github.event_name == 'push'
+      && needs.Setup.outputs.Language == 'javascript'
+
+    permissions:
+      security-events: write
+
+    strategy:
+      matrix:
+        node-version: ${{ fromJSON(inputs.nodeMatrix) }}
+    
+    steps:
+
+      # pre-job
+      - name: Setup | Cloning repository
+        uses: actions/checkout@v3
+
+      - name: Setup | Cloning tools
+        uses: actions/checkout@v3
+        with:
+          ref: main
+          path: .pipeline
+          repository: filipeforattini/ff-iac-github-actions
+
+      - name: Install | Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install | Dependency managers
+        run: npm -g install yarn npm
+
+      - name: Config | Load setup configs
+        env:
+          PIPELINE_SETUP: ${{ needs.Setup.outputs.PipelineConfig }}
+        id: node_setup
+        run: |
+          echo "::set-output name=cache_key::$(echo $PIPELINE_SETUP | jq -r '.code.cacheKey')"
+          echo "::set-output name=dependency_command::$(echo $PIPELINE_SETUP | jq -r '.code.dependencyCommand')"
+
+      # load caches
+      - name: Load cache from yarn.lock
+        uses: actions/cache@v2
+        if: steps.node_setup.outputs.cache_key == 'yarn.lock'
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+
+      - name: Load cache from package-lock.json
+        uses: actions/cache@v2
+        if: steps.node_setup.outputs.cache_key == 'package-lock.json'
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/package-lock.json') }}
+
+      - name: Load cache from package.json
+        uses: actions/cache@v2
+        if: steps.node_setup.outputs.cache_key == 'package-lock.json'
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/package.json') }}
+
+      # install dependencies
+      - name: Install dependencies
+        run: ${{ steps.node_setup.outputs.dependency_command }}
+
+      # run scripts
+      - name: Run linter
+        run: npm run lint --if-present
+
+      - name: Run tests
+        run: npm run test --if-present
+
+
+  #--------------------------------------------------#
+  #                  Tests: Python                   # 
+  #--------------------------------------------------#
+  Tests-Python:
+    runs-on: ubuntu-latest
+    needs: Setup
+    if: |
+      github.event_name == 'push'
+      && needs.Setup.outputs.Language == 'python'
+
+    strategy:
+      matrix:
+        python-version: ${{ fromJSON(inputs.pythonMatrix) }}
+    
+    steps:
+
+      # pre-job
+      - name: Setup | Cloning repository
+        uses: actions/checkout@v3
+
+      - name: Setup | Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Pip install
+        run: pip install -r requirements.txt
+
+
+  #--------------------------------------------------#
+  #                 Release: Node.js                 # 
+  #--------------------------------------------------#
+  Release-Node:
+    runs-on: ubuntu-latest
+    needs: 
+      - Setup
+      - Tests-Node
+      - Static-Analysis
+
+    outputs:
+      Version: ${{ steps.versioning.outputs.version }}
+
+    steps:
+
+      # pre-job
+      - name: Setup | Cloning repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      # dependencies
+      - name: Setup | Pipeline config scrapper
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
+        id: analysis
+
+      - name: Setup | Dependencies
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/setup-binaries@main
+        with:
+          nodejs: 17
+
+      # release
+      - name: Semantic Release
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/pack-semantic-release@main
+        if: inputs.autoVersioning
+        env:
+          GITHUB_TOKEN: ${{ secrets.PIPELINE_DEPLOY_SECRET }}
+        with:
+          defaultBranch: ${{ inputs.mainBranch }}
+          files: '["package.json","dist/**/*.{js,css}"]'
+          npmPlugin: true
+
+      - name: Current Version
+        id: versioning
+        run: |
+          echo "::set-output name=version::$(cat package.json | jq -r '.version')"
+          echo -e "\n\nINFO  current version = $(cat package.json | jq -r '.version')\n\n"
+
+
+  #--------------------------------------------------#
+  #                 Release: Python                  # 
+  #--------------------------------------------------#
+  Release-Python:
+    runs-on: ubuntu-latest
+    needs: 
+      - Setup
+      - Tests-Python
+      - Static-Analysis
+
+    outputs:
+      Version: ${{ steps.versioning.outputs.version }}
+
+    steps:
+
+      # pre-job
+      - name: Setup | Cloning repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Setup | Cloning tools
+        uses: actions/checkout@v3
+        with:
+          ref: main
+          path: .pipeline
+          repository: filipeforattini/ff-iac-github-actions
+
+      - name: Install | Node.js 17
+        uses: actions/setup-node@v3
+        with:
+          node-version: 17
+
+      - name: Install | Dependency managers
+        run: npm -g install yarn npm
+
+      - name: Config | Load setup configs
+        env:
+          PIPELINE_SETUP: ${{ needs.Setup.outputs.PipelineConfig }}
+        id: node_setup
+        run: echo "::set-output name=has_releaserc::$(echo $PIPELINE_SETUP | jq -r '.git.hasReleaserc')"
+
+      # release
+      - name: Config | Create .releaserc.json
+        uses: actions/github-script@v6
+        id: releaserc-creation
+        if: inputs.autoVersioning == true && steps.node_setup.outputs.has_releaserc == 'false'
+        with:
+          result-encoding: string
+          script: |
+            return require('./.pipeline/src/steps/generate-releaserc')({
+              defaultBranch: "${{ inputs.mainBranch }}",
+              files: [ 
+                'dist/**/*.{py}',
+              ]
+            })
+
+      - name: Docs | .releaserc.json
+        if: inputs.autoVersioning == true && steps.node_setup.outputs.has_releaserc == 'false'
+        run: |
+          echo ".releaserc.json: \`${{ steps.releaserc-creation.outcome }}\`" >> $GITHUB_STEP_SUMMARY
+          echo -e "<details><summary>.releaserc.json</summary>\n\n\`\`\`json \n$(cat ./.releaserc.json)\n \`\`\`\n </details>\n\n" >> $GITHUB_STEP_SUMMARY
+
+      - name: Current Version
+        run: |
+          CURRENT_VERSION=$(git for-each-ref --sort=authordate --format '%(refname)' refs/tags | tail -n 1 | sed -n -e 's/^.*refs\/tags\/v//p')
+          echo "current version = $CURRENT_VERSION"
+          echo "::set-output name=current_version::$CURRENT_VERSION"
+
+      - name: Semantic Release
+        if: inputs.autoVersioning == true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          npm i -g -D \
+            semantic-release \
+            @semantic-release/git \
+            @semantic-release/npm \
+            @semantic-release/github \
+            @semantic-release/changelog \
+            @semantic-release/commit-analyzer \
+            @semantic-release/release-notes-generator
+          echo -e "\n\nINFO  semantic-release version = $(semantic-release -v)\n\n"
+          semantic-release
+
+      - name: Next Version
+        id: versioning
+        run: |
+          NEXT_VERSION=$(git for-each-ref --sort=authordate --format '%(refname)' refs/tags | tail -n 1 | sed -n -e 's/^.*refs\/tags\/v//p')
+          echo "next version = $NEXT_VERSION"
+          echo "::set-output name=version::$NEXT_VERSION"
+
+
+  #--------------------------------------------------#
+  #                      Trigger JS                    # 
+  #--------------------------------------------------#
+  Trigger-Build:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+
+    needs: 
+      - Release-Node
+
+    steps:
+
+      # pre-job
+      - name: Setup | Cloning repository
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.PIPELINE_DEPLOY_SECRET }}
+
+      - name: Pipeline config scrapper
+        id: analysis
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
+
+      - name: Trigger
+        run: |
+          git config --global user.name "${{steps.analysis.outputs.commiter_name}}"
+          git config --global user.email "${{steps.analysis.outputs.commiter_email}}"
+          git fetch
+          git checkout -B env/dev
+          git commit --allow-empty -am "deploy: to dev [skip ci]\\nVersion: ${{needs.Release.outputs.Version}}\nCommit: ${{steps.setup.outputs.commit_hash}}"
+          git push -f -u origin env/dev
+
+      - uses: altinukshini/deployment-action@releases/v1
+        name: Create GitHub deployment
+        id: deployment
+        with:
+          token: "${{ secrets.PIPELINE_DEPLOY_SECRET }}"
+          environment: dev
+
+  #--------------------------------------------------#
+  #                  Build: Node.js                  # 
+  #--------------------------------------------------#
+  Build-Node:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'deployment'
+
+    needs: 
+      - Setup
+
+    strategy:
+      matrix:
+        node-version: ${{ fromJSON(inputs.nodeMatrix) }}
+
+    steps:
+
+      # pre-job
+      - name: Setup | Cloning tools
+        uses: actions/checkout@v3
+        with:
+          ref: env/${{needs.Setup.outputs.Environment}}
+
+      - name: Pipeline config scrapper
+        id: analysis
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
+
+      - name: Setup | Dependencies
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/setup-binaries@main
+        with:
+          docker-qmeu: true
+          docker-buildx: true
+      
+      # pre-build
+      - name: Create .dockerignore
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/create-dockerignore@main
+        if: steps.analysis.outputs.feature_has_dockerignore != true
+        with:
+          globsToIgnore: '["node_modules"]'
+
+      - name: Create Dockerfile
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/create-dockerfile@main
+        if: steps.analysis.outputs.feature_has_dockerfile != true
+        with:
+          writeSummary: true
+          preset: node
+
+      # login
+      - name: Config | Login to Container Registry
+        uses: docker/login-action@v2
+        with:
+          logout: false
+          registry: ${{ inputs.containerRegistry }}
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+
+      # build
+      - name: Copy config
+        run: |
+          if test -f ./manifests/configs/${{needs.Setup.outputs.Environment}}.env; then cp ./manifests/configs/${{needs.Setup.outputs.Environment}}.env ./.env; fi
+
+      - name: Build container image and push
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/pack-docker-build@main
+        with:
+          cached: true
+          platforms: ${{inputs.platforms}}
+
+
+  #--------------------------------------------------#
+  #                  Build: Python                   # 
+  #--------------------------------------------------#
+  Build-Python:
+    runs-on: ubuntu-latest
+    needs: 
+      - Setup
+      - Release-Python
+
+    strategy:
+      matrix:
+        python-version: ${{ fromJSON(inputs.pythonMatrix) }}
+
+    steps:
+
+      # pre-job
+      - name: Setup | Cloning repository
+        uses: actions/checkout@v3
+
+      - name: Setup | Cloning tools
+        uses: actions/checkout@v3
+        with:
+          ref: main
+          path: .pipeline
+          repository: filipeforattini/ff-iac-github-actions
+
+      - name: Install | QEMU
+        uses: docker/setup-qemu-action@v1
+
+      - name: Install | Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@master
+        with:
+          install: true
+
+      - name: Config | Load setup configs
+        env:
+          PIPELINE_SETUP: ${{ needs.Setup.outputs.PipelineConfig }}
+        id: node_setup
+        run: |
+          echo "::set-output name=cache_key::$(echo $PIPELINE_SETUP | jq -r '.code.cacheKey')"
+          echo "::set-output name=dependency_command::$(echo $PIPELINE_SETUP | jq -r '.code.dependencyCommand')"
+          echo "::set-output name=has_releaserc::$(echo $PIPELINE_SETUP | jq -r '.git.hasReleaserc')"
+          echo "::set-output name=has_dockerfile::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.hasDockerfile')"
+          echo "::set-output name=has_dockerignore::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.hasDockerignore')"
+          echo "::set-output name=docker_command::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.command')"
+          echo "::set-output name=docker_entrypoint::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.entrypoint')"
+          echo "::set-output name=docker_dependency_command::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.dependencyCommand')"
+          echo "::set-output name=docker_image_fullname::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.imageFullname')"
+          echo "::set-output name=docker_image_tags::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.tagsAsString')"
+          echo "::set-output name=docker_main_image::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.mainImage')"
+          echo "::set-output name=deploy_repository::$(echo $PIPELINE_SETUP | jq -r '.deploy.repository')"
+
+      # pre-build
+      - name: Config | Create .dockerignore
+        uses: actions/github-script@v6
+        if: steps.node_setup.outputs.has_dockerignore == 'false'
+        with:
+          result-encoding: string
+          script: |
+            return require('./.pipeline/src/steps/generate-dockerignore')({ 
+              assetsToIgnore: ['node_modules'],
+            })
+
+      - name: Config | Create Dockerfile
+        if: steps.node_setup.outputs.has_dockerfile == 'false'
+        uses: actions/github-script@v6
+        id: dockerfile
+        with:
+          result-encoding: string
+          script: |
+            return require('./.pipeline/src/steps/generate-svc-dockerfile')({ 
+              image: 'python',
+              tag: '${{ matrix.python-version }}-alpine',
+              command: '${{ steps.node_setup.outputs.docker_command }}',
+              entrypoint: '${{ steps.node_setup.outputs.docker_entrypoint }}',
+              dependencyCommand: '${{ steps.node_setup.outputs.docker_dependency_command }}',
+              labels: [ 
+                'archtecture=alpine', 
+                'python-version=${{ matrix.python-version }}', 
+                'version=${{ needs.Release-Python.outputs.Version }}', 
+              ],
+            })
+
+      - name: Docs | Dockerfile
+        if: steps.node_setup.outputs.has_dockerfile == 'false'
+        run: |
+          echo "Dockerfile: \`${{ steps.dockerfile.outcome }}\`" >> $GITHUB_STEP_SUMMARY
+          echo -e "<details><summary>dockerfile</summary>\n\n\`\`\`dockerfile \n$(cat ./Dockerfile)\n \`\`\`\n </details>\n\n" >> $GITHUB_STEP_SUMMARY
+
+      - name: Config | Login to Container Registry
+        uses: docker/login-action@v2
+        with:
+          logout: false
+          registry: ${{ inputs.containerRegistry }}
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+            
+      # build
+      - name: Dockerfile lint
+        uses: hadolint/hadolint-action@v2.1.0
+        id: hadolint
+        continue-on-error: true
+        with:
+          dockerfile: Dockerfile
+
+      - name: Docs | Lint result
+        run: | 
+          echo "Hadolint: \`${{ steps.hadolint.outcome }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`txt \n $HADOLINT_RESULTS \n \`\`\`" >> $GITHUB_STEP_SUMMARY
+
+      - name: Build image test
+        if: inputs.staticAnalysis == true
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          outputs: type=docker,dest=./dockerimage-python-${{ matrix.python-version }}.tar
+
+      - name: Run Trivy scanner
+        if: inputs.staticAnalysis == true
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: image
+          input: ./dockerimage-python-${{ matrix.python-version }}.tar
+          format: 'sarif'
+          severity: 'CRITICAL,HIGH'
+          output: 'trivy-results.sarif'
+
+      - name: Upload Trivy results
+        if: inputs.staticAnalysis == true
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-multi-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-multi-buildx
+
+      - name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          platforms: ${{ inputs.platforms }}
+          builder: ${{ steps.buildx.outputs.name }}
+          tags: ${{steps.node_setup.outputs.docker_image_tags}}, ${{steps.node_setup.outputs.docker_image_fullname}}:${{needs.Release-Python.outputs.Version}}
+          labels: "organization: ${{github.repository_owner}}, repository: ${{github.repository}}, branch: ${{needs.Setup.outputs.Branch}}, commit: ${{needs.Setup.outputs.ShaHash}}, date: ${{needs.Setup.outputs.Date}}, timestamp: ${{needs.Setup.outputs.Timestamp}}"
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,mode=max,dest=/tmp/.buildx-cache-new
+
+      - name: Move cache
+        run: |
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+
+
+  #--------------------------------------------------#
+  #                      Deploy                      # 
+  #--------------------------------------------------#
+  Deploy:
+    runs-on: ubuntu-latest
+    environment: env/${{needs.Setup.outputs.Environment}}
+    
+    needs:
+      - Setup
+      - Build
+
+    steps:
+
+      # pre-job
+      - name: Setup | Cloning repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+        
+      - name: Setup | Cloning tools
+        uses: actions/checkout@v3
+        with:
+          ref: main
+          path: .pipeline
+          repository: filipeforattini/ff-iac-github-actions
+
+      - name: Setup | Dependencies
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/setup-binaries@main
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          docker-qmeu: true
+          docker-buildx: true
+          kubectl: true
+          ytt: true
+          yq: true
+
+      - name: Pipeline config scrapper
+        id: analysis
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
+
+      - name: Config | Version
+        id: versioning
+        run: |
+          NEXT_VERSION=$(git for-each-ref --sort=authordate --format '%(refname)' refs/tags | tail -n 1 | sed -n -e 's/^.*refs\/tags\/v//p')
+          echo "next version = $NEXT_VERSION"
+          echo "::set-output name=version::$NEXT_VERSION"
+
+      - name: Config | Kubectl config file
+        env:
+          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+        run: |
+          mkdir -p ~/.kube
+          echo "$KUBE_CONFIG" | base64 -d > ~/.kube/config
+
+      # namespace
+      - name: K8s create namespace
+        run: kubectl create namespace ${{steps.analysis.outputs.deploy_namespace}} --dry-run=client --validate=false --output=yaml | kubectl apply -f -
+
+
+      # dependencies
+      - name: Dependencies | Resources render
+        if: steps.deploy_setup.outputs.has_dev_dependencies == 'true'
+        run: |
+          ytt \
+            -f ./.pipeline/deploy/as-k8s/dependencies.schema.yml \
+            -f ./.pipeline/deploy/as-k8s/dependencies.yml \
+            -f ./manifests/dependencies/dev.yml \
+            --data-value repository=${{steps.deploy_setup.outputs.deploy_repository}} \
+              > ./manifests/k8s-dependencies.yml
+
+      - name: Docs | Dependencies
+        if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
+        run: | 
+          echo -e "### Dependencies\n\n" >> $GITHUB_STEP_SUMMARY
+          echo -e "<details><summary>dependencies</summary>\n\n\`\`\`yml \n$(cat ./manifests/k8s-dependencies.yml)\n \`\`\`\n </details>\n\n" >> $GITHUB_STEP_SUMMARY
+          echo -e "| name | chart version | app version |" >> $GITHUB_STEP_SUMMARY
+          echo -e "| --- | :---: | :---: |" >> $GITHUB_STEP_SUMMARY
+          if [ $(cat ./manifests/k8s-dependencies.yml | yq -P '.postgres.enabled') = true ]; then
+            echo -e "| postgres | $(cat ./manifests/k8s-dependencies.yml | yq -P '.postgres.version') | $(cat ./manifests/k8s-dependencies.yml | yq -P '.postgres.helm.image.tag') |" >> $GITHUB_STEP_SUMMARY
+          fi
+          if [ $(cat ./manifests/k8s-dependencies.yml | yq -P '.mysql.enabled') = true ]; then
+            echo -e "| mysql | $(cat ./manifests/k8s-dependencies.yml | yq -P '.mysql.version') | $(cat ./manifests/k8s-dependencies.yml | yq -P '.mysql.helm.image.tag') |\n" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Dependencies | Helm update
+        if: steps.deploy_setup.outputs.has_dev_dependencies == 'true'
+        run: |	
+          helm repo add bitnami https://charts.bitnami.com/bitnami
+          helm repo update
+
+      - name: Dependencies | Mysql
+        if: steps.deploy_setup.outputs.has_dev_dependencies == 'true'
+        continue-on-error: true
+        run: |	
+          K8S_NAMESPACE=${{steps.analysis.outputs.deploy_namespace}} \
+          DEPENDENCY_NAME=mysql \
+          REPOSITORY_TAG_VERSION=${{steps.versioning.outputs.version}} \
+          DEPENDENCY_FILE=./manifests/k8s-dependencies.yml \
+            ./.pipeline/src/dependency-install.sh
+          
+      - name: Dependencies | Postgres
+        if: steps.deploy_setup.outputs.has_dev_dependencies == 'true'
+        continue-on-error: true
+        run: |	
+          K8S_NAMESPACE=${{steps.analysis.outputs.deploy_namespace}} \
+          DEPENDENCY_NAME=postgres \
+          REPOSITORY_TAG_VERSION=${{steps.versioning.outputs.version}} \
+          DEPENDENCY_FILE=./manifests/k8s-dependencies.yml \
+            ./.pipeline/src/dependency-install.sh
+
+      - name: Dependencies | Rabbitmq
+        if: steps.deploy_setup.outputs.has_dev_dependencies == 'true'
+        continue-on-error: true
+        run: |	
+          K8S_NAMESPACE=${{steps.analysis.outputs.deploy_namespace}} \
+          DEPENDENCY_NAME=rabbitmq \
+          REPOSITORY_TAG_VERSION=${{steps.versioning.outputs.version}} \
+          DEPENDENCY_FILE=./manifests/k8s-dependencies.yml \
+            ./.pipeline/src/dependency-install.sh
+
+      - name: Dependencies | Elasticsearch
+        if: steps.deploy_setup.outputs.has_dev_dependencies == 'true'
+        continue-on-error: true
+        run: |	
+          K8S_NAMESPACE=${{steps.analysis.outputs.deploy_namespace}} \
+          DEPENDENCY_NAME=elasticsearch \
+          REPOSITORY_TAG_VERSION=${{steps.versioning.outputs.version}} \
+          DEPENDENCY_FILE=./manifests/k8s-dependencies.yml \
+            ./.pipeline/src/dependency-install.sh
+
+      - name: Dependencies | Redis
+        if: steps.deploy_setup.outputs.has_dev_dependencies == 'true'
+        continue-on-error: true
+        run: |	
+          K8S_NAMESPACE=${{steps.analysis.outputs.deploy_namespace}} \
+          DEPENDENCY_NAME=redis \
+          REPOSITORY_TAG_VERSION=${{steps.versioning.outputs.version}} \
+          DEPENDENCY_FILE=./manifests/k8s-dependencies.yml \
+            ./.pipeline/src/dependency-install.sh
+
+      - name: Dependencies | Nats
+        if: steps.deploy_setup.outputs.has_dev_dependencies == 'true'
+        continue-on-error: true
+        run: |	
+          K8S_NAMESPACE=${{steps.analysis.outputs.deploy_namespace}} \
+          DEPENDENCY_NAME=nats \
+          REPOSITORY_TAG_VERSION=${{steps.versioning.outputs.version}} \
+          DEPENDENCY_FILE=./manifests/k8s-dependencies.yml \
+            ./.pipeline/src/dependency-install.sh
+
+      - name: Dependencies | Etcd
+        if: steps.deploy_setup.outputs.has_dev_dependencies == 'true'
+        continue-on-error: true
+        run: |	
+          K8S_NAMESPACE=${{steps.analysis.outputs.deploy_namespace}} \
+          DEPENDENCY_NAME=etcd \
+          REPOSITORY_TAG_VERSION=${{steps.versioning.outputs.version}} \
+          DEPENDENCY_FILE=./manifests/k8s-dependencies.yml \
+            ./.pipeline/src/dependency-install.sh
+
+      # configs
+      - name: K8s create config-map
+        if: steps.deploy_setup.outputs.has_dev_configs == 'true'
+        run: |
+          kubectl create configmap -n ${{steps.analysis.outputs.deploy_namespace}} svc --from-env-file=${{steps.analysis.outputs.deploy_configs_file}} --dry-run=client --validate=false --output=yaml | kubectl apply -f -
+          kubectl create configmap -n ${{steps.analysis.outputs.deploy_namespace}} svc-${{steps.versioning.outputs.version}} --from-env-file=${{steps.analysis.outputs.deploy_configs_file}} --dry-run=client --validate=false --output=yaml | kubectl apply -f -
+          kubectl get configmap -n ${{steps.analysis.outputs.deploy_namespace}} svc -o jsonpath='{.data}' | jq -r 'keys[]' |  tr '\n' '~' | sed 's/~/,/g;s/,$//' > ./manifests/k8s-configs-keys.txt
+
+      # secrets
+      - name: Decrypt DEV secrets
+        if: steps.deploy_setup.outputs.has_dev_secrets == 'true'
+        run: |
+          gpg \
+            --yes --batch --quiet --decrypt \
+            --passphrase="${{ secrets.GPG_PASSPHRASE }}" \
+            --output ./manifests/k8s-secrets.env \
+            ./manifests/secrets/dev.gpg
+
+      - name: K8s create secrets
+        if: steps.deploy_setup.outputs.has_dev_secrets == 'true'
+        run: |
+          kubectl create secret generic -n ${{steps.analysis.outputs.deploy_namespace}} svc --from-env-file=./manifests/k8s-secrets.env --dry-run=client --validate=false --output=yaml | kubectl apply -f -
+          kubectl create secret generic -n ${{steps.analysis.outputs.deploy_namespace}} svc-${{steps.versioning.outputs.version}} --from-env-file=./manifests/k8s-secrets.env --dry-run=client --validate=false --output=yaml | kubectl apply -f -
+          kubectl get secret -n ${{steps.analysis.outputs.deploy_namespace}} svc -o jsonpath='{.data}' | jq -r 'keys[]' |  tr '\n' '~' | sed 's/~/,/g;s/,$//' > ./manifests/k8s-secrets-keys.txt
+
+      # secrets for registry auth
+      - name: Config | Login to Container Registry
+        uses: docker/login-action@v2
+        with:
+          logout: false
+          registry: ${{ inputs.containerRegistry }}
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+
+      - name: Config | Gives runner access to docker config file 
+        if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
+        run: |
+          sudo chown $(whoami):docker /home/$(whoami)/.docker/config.json
+          cp /home/$(whoami)/.docker/config.json ./manifests/docker-config.json
+
+      - name: K8s create registry-token secret
+        if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
+        run: kubectl create secret generic -n ${{steps.analysis.outputs.deploy_namespace}} registry-token --type=kubernetes.io/dockerconfigjson --from-file=.dockerconfigjson=./manifests/docker-config.json --dry-run=client --validate=false --output=yaml | kubectl apply -f -
+
+      # generate k8s manifests
+      - name: K8s generates final yml
+        if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
+        run: |
+          CONFIGS_LIST=$(if test -f ./manifests/k8s-configs-keys.txt; then cat ./manifests/k8s-configs-keys.txt; else echo ''; fi)
+          SECRETS_LIST=$(if test -f ./manifests/k8s-secrets-keys.txt; then cat ./manifests/k8s-secrets-keys.txt; else echo ''; fi)
+          DEPENDENCIES_LIST=$(if test -f ./manifests/k8s-dependencies.yml; then (cat ./manifests/k8s-dependencies.yml | yq -P '.dependencies'); else echo '' ; fi)
+          ytt \
+            -f ./.pipeline/deploy/as-k8s/service.schema.yml \
+            -f ./.pipeline/deploy/as-k8s/service \
+            -f ./manifests/k8s-values.yml \
+            --data-value ecosystem=${{steps.deploy_setup.outputs.deploy_ecosystem}} \
+            --data-value organization=${{steps.deploy_setup.outputs.deploy_organization}} \
+            --data-value repository=${{steps.deploy_setup.outputs.deploy_repository}} \
+            --data-value containerRegistry=${{steps.deploy_setup.outputs.deploy_container_registry}} \
+            --data-value tag=${{steps.deploy_setup.outputs.deploy_tag}} \
+            --data-value-yaml deployment.imagePullSecrets=true \
+            --data-value-yaml envFromSecrets="[$SECRETS_LIST]" \
+            --data-value-yaml envFromConfigMaps="[$CONFIGS_LIST]" \
+            --data-value-yaml envFromDependencies="[$DEPENDENCIES_LIST]" \
+            --data-value pipelineControl.datetime=${{steps.deploy_setup.outputs.run_started_at}} \
+            --data-value-yaml pipelineControl.environmentsAsNamespaces=${{inputs.environmentsAsNamespaces}} \
+              > ./manifests/k8s-to-apply.yml
+
+      - name: Docs | K8s summary
+        if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
+        run: |
+          CONFIGS_LIST=$(if test -f ./manifests/k8s-configs-keys.txt; then cat ./manifests/k8s-configs-keys.txt; else echo ''; fi)
+          SECRETS_LIST=$(if test -f ./manifests/k8s-secrets-keys.txt; then cat ./manifests/k8s-secrets-keys.txt; else echo ''; fi)
+          DEPENDENCIES_LIST=$(if test -f ./manifests/k8s-dependencies.yml; then (cat ./manifests/k8s-dependencies.yml | yq -P '.dependencies'); else echo ''; fi)
+          echo -e "### k8s\n\n" >> $GITHUB_STEP_SUMMARY
+          echo -e "| param | value |" >> $GITHUB_STEP_SUMMARY
+          echo -e "| --- | :---: |" >> $GITHUB_STEP_SUMMARY
+          echo -e "| secrets | $SECRETS_LIST |" >> $GITHUB_STEP_SUMMARY
+          echo -e "| configs | $CONFIGS_LIST |" >> $GITHUB_STEP_SUMMARY
+          echo -e "| dependencies | $DEPENDENCIES_LIST |" >> $GITHUB_STEP_SUMMARY
+          echo -e "<details><summary>kubefile</summary>\n\n\`\`\`yml \n$(cat ./manifests/k8s-to-apply.yml)\n \`\`\`\n </details>\n\n" >> $GITHUB_STEP_SUMMARY
+
+      - name: K8s apply yml
+        if: steps.deploy_setup.outputs.deploy_as_k8s == 'true'
+        run: |
+          kubectl apply -f ./manifests/k8s-to-apply.yml
+          kubectl get pods -n ${{steps.analysis.outputs.deploy_namespace}}
