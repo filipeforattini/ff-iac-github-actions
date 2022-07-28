@@ -15,7 +15,7 @@ async function action() {
 
   if (!stubs[preset]) core.error(new Error(`preset "${preset}" doesnt exist`));
 
-  const { defaultValues, files = {}, stub } = stubs[preset];
+  let { defaultValues, files = {}, stub } = stubs[preset];
 
   for (const filename of _.keys(files)) {
     fs.writeFileSync(path.join(process.cwd(), filename), files[filename]);
@@ -23,7 +23,9 @@ async function action() {
 
   const template = _.template(stub);
 
-  let data = _.merge(
+  defaultValues = _.mapValues(defaultValues, (v) => _.isFunction(v) ? v() : v)
+
+  const data = _.merge(
     defaultValues,
     decode(
       [
