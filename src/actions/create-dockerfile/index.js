@@ -9,7 +9,7 @@ async function action() {
   let preset = core.getInput('preset', { required: true })
   let writeSummary = core.getBooleanInput('writeSummary', { required: true });
 
-  if (!stubs[preset]) core.error(new Error('preset doesnt exists'))
+  if (!stubs[preset]) core.error(new Error(`preset "${preset}" doesnt exists`))
 
   const { defaultValues, files = {}, stub } = stubs[preset]
 
