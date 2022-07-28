@@ -13,7 +13,7 @@ async function action() {
   let preset = core.getInput("preset", { required: true });
   let writeSummary = core.getBooleanInput("writeSummary", { required: true });
 
-  if (!stubs[preset]) core.error(new Error(`preset "${preset}" doesnt exists`));
+  if (!stubs[preset]) core.error(new Error(`preset "${preset}" doesnt exist`));
 
   const { defaultValues, files = {}, stub } = stubs[preset];
 
@@ -39,8 +39,6 @@ async function action() {
     )
   );
 
-  data = _.mapValues(data, (v) => (!_.isArray(v) ? v : v.join(`\\\n\t`)));
-
   const content = template(data);
 
   fs.writeFileSync(path.join(process.cwd(), "Dockerfile"), content);
@@ -59,6 +57,8 @@ async function action() {
       )
       .write();
   }
+
+  return content
 }
 
 try {
