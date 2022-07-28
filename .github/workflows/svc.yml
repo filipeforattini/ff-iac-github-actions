@@ -799,9 +799,9 @@ jobs:
       - name: K8s create config-map
         if: steps.deploy_setup.outputs.has_dev_configs == 'true'
         run: |
-          kubectl create configmap -n ${{steps.analysis.outputs.deploy_namespace}} svc --from-env-file=${{steps.analysis.outputs.deploy_configs_file}} --dry-run=client --validate=false --output=yaml | kubectl apply -f -
-          kubectl create configmap -n ${{steps.analysis.outputs.deploy_namespace}} svc-${{steps.versioning.outputs.version}} --from-env-file=${{steps.analysis.outputs.deploy_configs_file}} --dry-run=client --validate=false --output=yaml | kubectl apply -f -
-          kubectl get configmap -n ${{steps.analysis.outputs.deploy_namespace}} svc -o jsonpath='{.data}' | jq -r 'keys[]' |  tr '\n' '~' | sed 's/~/,/g;s/,$//' > ./manifests/k8s-configs-keys.txt
+          kubectl create configmap -n ${{steps.analysis.outputs.deploy_namespace}} ${{steps.analysis.outputs.repository}} --from-env-file=${{steps.analysis.outputs.deploy_configs_file}} --dry-run=client --validate=false --output=yaml | kubectl apply -f -
+          kubectl create configmap -n ${{steps.analysis.outputs.deploy_namespace}} ${{steps.analysis.outputs.repository}}-${{steps.versioning.outputs.version}} --from-env-file=${{steps.analysis.outputs.deploy_configs_file}} --dry-run=client --validate=false --output=yaml | kubectl apply -f -
+          kubectl get configmap -n ${{steps.analysis.outputs.deploy_namespace}} ${{steps.analysis.outputs.repository}} -o jsonpath='{.data}' | jq -r 'keys[]' |  tr '\n' '~' | sed 's/~/,/g;s/,$//' > ./manifests/k8s-configs-keys.txt
 
       # secrets
       - name: Decrypt DEV secrets
@@ -816,9 +816,9 @@ jobs:
       - name: K8s create secrets
         if: steps.deploy_setup.outputs.has_dev_secrets == 'true'
         run: |
-          kubectl create secret generic -n ${{steps.analysis.outputs.deploy_namespace}} svc --from-env-file=./manifests/k8s-secrets.env --dry-run=client --validate=false --output=yaml | kubectl apply -f -
-          kubectl create secret generic -n ${{steps.analysis.outputs.deploy_namespace}} svc-${{steps.versioning.outputs.version}} --from-env-file=./manifests/k8s-secrets.env --dry-run=client --validate=false --output=yaml | kubectl apply -f -
-          kubectl get secret -n ${{steps.analysis.outputs.deploy_namespace}} svc -o jsonpath='{.data}' | jq -r 'keys[]' |  tr '\n' '~' | sed 's/~/,/g;s/,$//' > ./manifests/k8s-secrets-keys.txt
+          kubectl create secret generic -n ${{steps.analysis.outputs.deploy_namespace}} ${{steps.analysis.outputs.repository}} --from-env-file=./manifests/k8s-secrets.env --dry-run=client --validate=false --output=yaml | kubectl apply -f -
+          kubectl create secret generic -n ${{steps.analysis.outputs.deploy_namespace}} ${{steps.analysis.outputs.repository}}-${{steps.versioning.outputs.version}} --from-env-file=./manifests/k8s-secrets.env --dry-run=client --validate=false --output=yaml | kubectl apply -f -
+          kubectl get secret -n ${{steps.analysis.outputs.deploy_namespace}} ${{steps.analysis.outputs.repository}} -o jsonpath='{.data}' | jq -r 'keys[]' |  tr '\n' '~' | sed 's/~/,/g;s/,$//' > ./manifests/k8s-secrets-keys.txt
 
       # secrets for registry auth
       - name: Config | Login to Container Registry

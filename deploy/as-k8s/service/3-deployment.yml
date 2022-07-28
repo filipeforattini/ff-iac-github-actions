@@ -50,7 +50,7 @@ spec:
           #@    "name": i, 
           #@    "valueFrom": {
           #@      "configMapKeyRef": {
-          #@        "name": "svc",
+          #@        "name": data.values.repository,
           #@        "key": i,
           #@      }
           #@    }
@@ -62,7 +62,7 @@ spec:
           #@    "name": i, 
           #@    "valueFrom": {
           #@      "secretKeyRef": {
-          #@        "name": "svc",
+          #@        "name": data.values.repository,
           #@        "key": i,
           #@      }
           #@    }
