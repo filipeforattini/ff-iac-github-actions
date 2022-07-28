@@ -1,27 +1,47 @@
 const fs = require("fs");
-const _ = require('lodash');
+const qs = require("qs");
+const _ = require("lodash");
 const path = require("path");
 const core = require("@actions/core");
 
-const stubs = require('./stubs')
+const stubs = require("./stubs");
+
+const encode = (obj) => qs.stringify(obj, { arrayFormat: "brackets" });
+const decode = (str) => qs.parse(str);
 
 async function action() {
-  let preset = core.getInput('preset', { required: true })
-  let writeSummary = core.getBooleanInput('writeSummary', { required: true });
+  let preset = core.getInput("preset", { required: true });
+  let writeSummary = core.getBooleanInput("writeSummary", { required: true });
 
-  if (!stubs[preset]) core.error(new Error(`preset "${preset}" doesnt exists`))
+  if (!stubs[preset]) core.error(new Error(`preset "${preset}" doesnt exists`));
 
-  const { defaultValues, files = {}, stub } = stubs[preset]
+  const { defaultValues, files = {}, stub } = stubs[preset];
 
   for (const filename of _.keys(files)) {
     fs.writeFileSync(path.join(process.cwd(), filename), files[filename]);
   }
 
-  const template = _.template(stub)
-  const content = template({ 
-    generatedAt: new Date().toISOString(),
-    ...defaultValues,
-  });
+  const template = _.template(stub);
+
+  let data = _.merge(
+    defaultValues,
+    decode(
+      [
+        encode({
+          generatedAt: new Date().toISOString(),
+          ...defaultValues,
+        }),
+        encode({
+          labels: [],
+          environmentVariables: [],
+        }),
+      ].join("&")
+    )
+  );
+
+  data = _.mapValues(data, (v) => (!_.isArray(v) ? v : v.join(`\\\n\t`)));
+
+  const content = template(data);
 
   fs.writeFileSync(path.join(process.cwd(), "Dockerfile"), content);
 
@@ -34,9 +54,9 @@ async function action() {
           "<details><summary>Dockerfile:</summary>\n\n```dockerfile \n",
           content,
           " \n\n ``` \n</details>",
-        ].join(''),
+        ].join(""),
         true
-        )
+      )
       .write();
   }
 }

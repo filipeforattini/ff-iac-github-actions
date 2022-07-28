@@ -39,6 +39,7 @@
     "@actions/tool-cache": "^2.0.1",
     "@vercel/ncc": "^0.34.0",
     "linguist-js": "^2.5.2",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "qs": "^6.11.0"
   }
 }
