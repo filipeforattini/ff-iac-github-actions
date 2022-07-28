@@ -270,7 +270,7 @@ jobs:
   #--------------------------------------------------#
   Deploy:
     runs-on: ubuntu-latest
-    environment: env/${{needs.Setup.outputs.Environment}}
+    environment: ${{needs.Setup.outputs.Environment}}
     
     needs:
       - Setup
