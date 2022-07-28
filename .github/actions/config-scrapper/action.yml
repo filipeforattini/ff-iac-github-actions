@@ -40,6 +40,8 @@ outputs:
     description: ""
   event:
     description: ""
+  ecosystem:
+    description: ""
   environment:
     description: ""
   feature_has_configs:
