@@ -419,10 +419,6 @@ jobs:
     needs: 
       - Setup
 
-    strategy:
-      matrix:
-        node-version: ${{ fromJSON(inputs.nodeMatrix) }}
-
     steps:
 
       # pre-job
