@@ -14,7 +14,7 @@ module.exports = async (analysis) => {
     ignoredLanguages: [ "Shell", "Dockerfile" ],
   });
 
-  analysis.code.languages = languages
+  analysis.code.languages = languages.results
 
   let langIterator = _.mapValues(languages.results, "bytes");
   langIterator = _.toPairs(langIterator);
@@ -24,14 +24,15 @@ module.exports = async (analysis) => {
   if (langIterator.length == 0) return core.warning(templateInfo('code', "no language detected"));
 
   let language = langIterator.pop().language;
-  analysis.language = language.toLowerCase();
-
+  language = language.toLowerCase();
+  
   core.info(templateInfo('code', `language ${language} detected!`));
-
+  
   if (languagesRouter[language]) {
     language = languagesRouter[language]
     core.info(templateInfo('code', `language routed to ${language}!`));
   }
-
+  
+  analysis.language = language
   analysis.outputs.language = analysis.language
 };
