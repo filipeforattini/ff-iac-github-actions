@@ -1,5 +1,5 @@
 name: "Pipeline Config Scrapper"
-description: "Analize current event trigger and indicates paths and configs"
+description: "Analyze current event trigger and indicates paths and configs"
 
 inputs:
   writeSummary:
