@@ -190,8 +190,8 @@ jobs:
       # install dependencies
       - name: Install dependencies
         run: |
-          if test -f ./yarn.lock then yarn; fi
-          if test -f ./package-lock.json then npm install; fi
+          if test -f ./yarn.lock; then yarn; fi
+          if test -f ./package-lock.json; then npm install; fi
 
       # run scripts
       - name: Run linter
