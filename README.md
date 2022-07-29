@@ -46,12 +46,12 @@ Checkout the test repositories:
 
 | Type| Language / Framework | Repository | Status |
 | :---: | --- | :---: | :---: |
-| svc | Javascript / Express | https://github.com/filipeforattini/ff-svc-nodejs | ![](https://github.com/filipeforattini/ff-svc-nodejs/actions/workflows/svc-push.yml/badge.svg) |
-| svc | Javascript / Moleculerjs | https://github.com/filipeforattini/ff-svc-moleculerjs | ![](https://github.com/filipeforattini/ff-svc-moleculerjs/actions/workflows/svc-push.yml/badge.svg) |
-| svc | Javascript / Nestjs | https://github.com/filipeforattini/ff-svc-nestjs | ![](https://github.com/filipeforattini/ff-svc-nestjs/actions/workflows/app-push.yml/badge.svg) |
+| svc | Javascript (Node) / Express | https://github.com/filipeforattini/ff-svc-nodejs | ![](https://github.com/filipeforattini/ff-svc-nodejs/actions/workflows/svc-push.yml/badge.svg) |
+| svc | Javascript (Node) / Moleculer | https://github.com/filipeforattini/ff-svc-moleculer | ![](https://github.com/filipeforattini/ff-svc-moleculer/actions/workflows/svc-push.yml/badge.svg) |
+| svc | Javascript (Node) / Nestjs | https://github.com/filipeforattini/ff-svc-nestjs | ![](https://github.com/filipeforattini/ff-svc-nestjs/actions/workflows/app-push.yml/badge.svg) |
 | svc | Python / Flask | https://github.com/filipeforattini/ff-svc-python | ![](https://github.com/filipeforattini/ff-svc-python/actions/workflows/svc-push.yml/badge.svg) |
 | svc | Python / FastAPI | https://github.com/filipeforattini/ff-svc-fastapi | ![](https://github.com/filipeforattini/ff-svc-fastapi/actions/workflows/svc-push.yml/badge.svg) |
-| app | SPA / React | https://github.com/filipeforattini/ff-app-react | ![](https://github.com/filipeforattini/ff-app-react/actions/workflows/app-push.yml/badge.svg) |
+| app | Javascript (SPA) / React | https://github.com/filipeforattini/ff-app-react | ![](https://github.com/filipeforattini/ff-app-react/actions/workflows/app-push.yml/badge.svg) |
 
 ### Environments
 

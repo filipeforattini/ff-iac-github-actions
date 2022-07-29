@@ -9,13 +9,13 @@ render:
 help:
 	ytt website
 
-REPOSITORY ?= ff-svc-moleculerjs
+REPOSITORY ?= ff-svc-moleculer
 
 test:
 	export REPOSITORY=${REPOSITORY} \
 	&& cd ./test; sh ./tests.sh;
 
-K8S_NAMESPACE ?= ff-svc-moleculerjs-dev
+K8S_NAMESPACE ?= ff-svc-moleculer-dev
 K8S_LABELS ?= ""
 DEPENDENCY_FILE ?= "$(PWD)/test/tmp/k8s-dependencies-full.yml"
 DEPENDENCY_FILE_EMPTY ?= "$(PWD)/test/tmp/k8s-dependencies-empty.yml"
