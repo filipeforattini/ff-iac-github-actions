@@ -51,7 +51,7 @@ Checkout the test repositories:
 | svc | Javascript / Nestjs | https://github.com/filipeforattini/ff-svc-nestjs | ![](https://github.com/filipeforattini/ff-svc-nestjs/actions/workflows/app-push.yml/badge.svg) |
 | svc | Python / Flask | https://github.com/filipeforattini/ff-svc-python | ![](https://github.com/filipeforattini/ff-svc-python/actions/workflows/svc-push.yml/badge.svg) |
 | svc | Python / FastAPI | https://github.com/filipeforattini/ff-svc-fastapi | ![](https://github.com/filipeforattini/ff-svc-fastapi/actions/workflows/svc-push.yml/badge.svg) |
-| app | React | https://github.com/filipeforattini/ff-app-react | ![](https://github.com/filipeforattini/ff-app-react/actions/workflows/app-push.yml/badge.svg) |
+| app | SPA / React | https://github.com/filipeforattini/ff-app-react | ![](https://github.com/filipeforattini/ff-app-react/actions/workflows/app-push.yml/badge.svg) |
 
 ### Environments
 
