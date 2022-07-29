@@ -1,7 +1,7 @@
 name: push-app
 
 concurrency:
-  group: ${{github.workflow}}
+  group: ${{github.workflow}}-${{github.event_name}}
 
 #--------------------------------------------------#
 #                     Triggers                     # 
