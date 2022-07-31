@@ -70,62 +70,60 @@ Checkout the test repositories:
 ### Flow
 
 ```mermaid
-stateDiagram-v2
-    [*] --> Analysis: github-action
-    [*] --> Analysis: manual
+flowchart
+  start[Start]
+  analysis[Analysis]
+  node-test[Node Tests]
+  python-test[Python Tests]
+  static-analysis[Static Analysis]
+  
+  start --- |action/manual| analysis
+  start --- |action/github| analysis
 
-    state if_event <<choice>>
-    Analysis --> if_event
-    if_event --> Build : event=deployment
-    if_event --> StaticAnalysis: event=push
-    if_event --> Merge=env/stg: event=release
+  analysis --- |event/push| static-analysis
+  static-analysis --- |lang/javascript| node-test
+  static-analysis --- |lang/python| python-test
+  static-analysis --- |lang/go| go-test
+  
+  subgraph node:
+    node-test --- node-release
+    node-release --- node-trigger
+  end
 
-    StaticAnalysis --> Test_Node
-    StaticAnalysis --> Test_Python
+  subgraph python:
+    python-test --- python-release
+    python-release --- python-trigger
+  end
 
-    state Test_Node {
-      [*] --> Node_LTS
-      [*] --> Node_Current
-      [*] --> Node_Latest
-      Node_LTS --> [*]
-      Node_Current --> [*]
-      Node_Latest --> [*]
-    }
+  subgraph go:
+    go-test --- go-release
+    go-release --- go-trigger
+  end
 
-    state Test_Python {
-      [*] --> Python_LTS
-      [*] --> Python_Current
-      [*] --> Python_Latest
-      Python_LTS --> [*]
-      Python_Current --> [*]
-      Python_Latest --> [*]
-    }
-    
-    Test_Node --> Release
-    Release --> Merge=env/dev
-    Release --> emit[tag]
+  node-trigger --- |deployment/dev| finish
+  python-trigger --- |deployment/dev| finish
+  go-trigger --- |deployment/dev| finish
 
-    Merge=env/dev --> emit[deploy=DEV]
-    emit[deploy=DEV] --> [*]
-    emit[tag] --> [*]
+  analysis --- |event/pull-request| static-analysis
+  trigger --- |env/xxx| finish
 
-    Merge=env/stg --> emit[deploy=STG]
-    emit[deploy=STG] --> [*]
+  analysis --- |event/deployment| build
+  build --- |env/dev| env-dev
+  build --- |env/stg| env-stg
+  build --- |env/prd| env-prd
 
-    Build --> Deploy
-    state Deploy {
-      direction LR
-      [*] --> DEV: env/dev
-      [*] --> STG: env/stg
-      [*] --> SBX: env/sbx
-      [*] --> PRD: env/prd
-      DEV --> app.dev.domain.io
-      DEV --> commit_app.dev.domain.io
-      STG --> app.stg.domain.io
-      SBX --> app.sbx.domain.io
-      PRD --> app.prd.domain.io
-    }
-    Deploy --> [*]
+  subgraph dev:
+    env-dev --- |app.dev.domain.io| DEV
+    env-dev --- |app-commit.dev.domain.io| DEV
+  end
+
+  subgraph stg:
+    env-stg --- |app.stg.domain.io| STG
+  end
+  
+  subgraph prd:
+    env-prd --- |app.prd.domain.io| PRD
+  end
 ```
 
 ### Repository Structure
