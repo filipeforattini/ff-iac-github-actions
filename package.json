@@ -16,7 +16,9 @@
     "action:create-dockerfile": "ACTION_NAME=create-dockerfile npm run build-action-js",
     "action:setup-binaries": "ACTION_NAME=setup-binaries npm run build-composition",
     "action:pack-semantic-release": "ACTION_NAME=pack-semantic-release npm run build-composition",
-    "action:pack-docker-build": "ACTION_NAME=pack-docker-build npm run build-composition"
+    "action:pack-docker-build": "ACTION_NAME=pack-docker-build npm run build-composition",
+    "commit:proj": "cd ../$PROJ_NAME; npm run commit && cd ../ff-iac-github-actions;",
+    "commit:all": "PROJ_NAME=ff-svc-express npm run commit:proj & PROJ_NAME=ff-svc-moleculer npm run commit:proj"
   },
   "repository": {
     "type": "git",

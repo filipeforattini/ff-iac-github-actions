@@ -6,6 +6,8 @@ This is a personal work in progress. Keep in mind your suggestions are welcome! 
 
 These workflows are highly opinionated **kubectl-apply** or **helm-upgrade** pipelines.
 
+<img src="https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/express.svg" height="38"> <img src="https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/moleculer.svg" height="38"> <img src="https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/nestjs.svg" height="38"> <img src="https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/nextdotjs.svg" height="38"> <img src="https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/flask.svg" height="38"> <img src="https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/fastapi.svg" height="38"> <img src="https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/react.svg" height="38"> <img src="https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/vuedotjs.svg" height="38">
+
 ## Introduction
 
 ### Features
@@ -44,16 +46,16 @@ Examples:
 
 Checkout the test repositories:
 
-| Type| Language / Framework | Repository | Status |
-| :---: | --- | :---: | :---: |
-| svc | Javascript (Node) / Express | https://github.com/filipeforattini/ff-svc-express | ![](https://github.com/filipeforattini/ff-svc-express/actions/workflows/pipeline.yml/badge.svg) |
-| svc | Javascript (Node) / Moleculer | https://github.com/filipeforattini/ff-svc-moleculer | ![](https://github.com/filipeforattini/ff-svc-moleculer/actions/workflows/pipeline.yml/badge.svg) |
-| svc | Javascript (Node) / Nestjs | https://github.com/filipeforattini/ff-svc-nestjs | ![](https://github.com/filipeforattini/ff-svc-nestjs/actions/workflows/pipeline.yml/badge.svg) |
-| svc | Javascript (Node) / Nextjs | https://github.com/filipeforattini/ff-svc-nextjs | ![](https://github.com/filipeforattini/ff-svc-nextjs/actions/workflows/pipeline.yml/badge.svg) |
-| svc | Python / Flask | https://github.com/filipeforattini/ff-svc-flask | ![](https://github.com/filipeforattini/ff-svc-flask/actions/workflows/svc-push.yml/badge.svg) |
-| svc | Python / FastAPI | https://github.com/filipeforattini/ff-svc-fastapi | ![](https://github.com/filipeforattini/ff-svc-fastapi/actions/workflows/svc-push.yml/badge.svg) |
-| app | Javascript (SPA) / React | https://github.com/filipeforattini/ff-app-react | ![](https://github.com/filipeforattini/ff-app-react/actions/workflows/pipeline.yml/badge.svg) |
-| app | Javascript (SPA) / Vue | https://github.com/filipeforattini/ff-app-vue | ![](https://github.com/filipeforattini/ff-app-vue/actions/workflows/pipeline.yml/badge.svg) |
+| Type| Language / Framework | Repository | Pipeline | Deploy |
+| :---: | --- | :---: | :---: | :---: |
+| svc | Javascript (Node) / Express | https://github.com/filipeforattini/ff-svc-express | ![](https://github.com/filipeforattini/ff-svc-express/actions/workflows/pipeline.yml/badge.svg) | ![](https://img.shields.io/github/deployments/filipeforattini/ff-svc-express/dev?label=deploy) |
+| svc | Javascript (Node) / Moleculer | https://github.com/filipeforattini/ff-svc-moleculer | ![](https://github.com/filipeforattini/ff-svc-moleculer/actions/workflows/pipeline.yml/badge.svg) | ![](https://img.shields.io/github/deployments/filipeforattini/ff-svc-moleculer/dev?label=deploy) |
+| svc | Javascript (Node) / Nestjs | https://github.com/filipeforattini/ff-svc-nestjs | ![](https://github.com/filipeforattini/ff-svc-nestjs/actions/workflows/pipeline.yml/badge.svg) | ![](https://img.shields.io/github/deployments/filipeforattini/ff-svc-nestjs/dev?label=deploy) |
+| svc | Javascript (Node) / Nextjs | https://github.com/filipeforattini/ff-svc-nextjs | ![](https://github.com/filipeforattini/ff-svc-nextjs/actions/workflows/pipeline.yml/badge.svg) | ![](https://img.shields.io/github/deployments/filipeforattini/ff-svc-nextjs/dev?label=deploy) |
+| svc | Python / Flask | https://github.com/filipeforattini/ff-svc-flask | ![](https://github.com/filipeforattini/ff-svc-flask/actions/workflows/pipeline.yml/badge.svg) | ![](https://img.shields.io/github/deployments/filipeforattini/ff-svc-flask/dev?label=deploy) |
+| svc | Python / FastAPI | https://github.com/filipeforattini/ff-svc-fastapi | ![](https://github.com/filipeforattini/ff-svc-fastapi/actions/workflows/pipeline.yml/badge.svg) | ![](https://img.shields.io/github/deployments/filipeforattini/ff-svc-fastapi/dev?label=deploy) |
+| app | Javascript (SPA) / React | https://github.com/filipeforattini/ff-app-react | ![](https://github.com/filipeforattini/ff-app-react/actions/workflows/pipeline.yml/badge.svg) | ![](https://img.shields.io/github/deployments/filipeforattini/ff-app-react/dev?label=deploy) |
+| app | Javascript (SPA) / Vue | https://github.com/filipeforattini/ff-app-vue | ![](https://github.com/filipeforattini/ff-app-vue/actions/workflows/pipeline.yml/badge.svg) | ![](https://img.shields.io/github/deployments/filipeforattini/ff-app-vue/dev?label=deploy) |
 
 ### Environments
 
