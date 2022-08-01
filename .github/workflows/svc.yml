@@ -47,7 +47,7 @@ on:
       pythonMatrix:
         type: string
         required: false
-        default: '["2.7", "3.6", "3.8", "3.10"]'
+        default: '["3.8", "3.9", "3.10"]'
       platforms:
         type: string
         required: false
@@ -374,7 +374,7 @@ jobs:
 
 
   #--------------------------------------------------#
-  #                      Trigger JS                    # 
+  #                      Trigger JS                  # 
   #--------------------------------------------------#
   Trigger-Build:
     runs-on: ubuntu-latest
@@ -410,6 +410,7 @@ jobs:
         with:
           token: "${{ secrets.PIPELINE_DEPLOY_SECRET }}"
           environment: dev
+
 
   #--------------------------------------------------#
   #                  Build: Node.js                  # 
@@ -490,80 +491,34 @@ jobs:
     steps:
 
       # pre-job
-      - name: Setup | Cloning repository
-        uses: actions/checkout@v3
-
       - name: Setup | Cloning tools
         uses: actions/checkout@v3
         with:
-          ref: main
-          path: .pipeline
-          repository: filipeforattini/ff-iac-github-actions
+          ref: env/${{needs.Setup.outputs.Environment}}
 
-      - name: Install | QEMU
-        uses: docker/setup-qemu-action@v1
+      - name: Pipeline config scrapper
+        id: analysis
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
 
-      - name: Install | Docker Buildx
-        id: buildx
-        uses: docker/setup-buildx-action@master
+      - name: Setup | Dependencies
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/setup-binaries@main
         with:
-          install: true
-
-      - name: Config | Load setup configs
-        env:
-          PIPELINE_SETUP: ${{ needs.Setup.outputs.PipelineConfig }}
-        id: node_setup
-        run: |
-          echo "::set-output name=cache_key::$(echo $PIPELINE_SETUP | jq -r '.code.cacheKey')"
-          echo "::set-output name=dependency_command::$(echo $PIPELINE_SETUP | jq -r '.code.dependencyCommand')"
-          echo "::set-output name=has_releaserc::$(echo $PIPELINE_SETUP | jq -r '.git.hasReleaserc')"
-          echo "::set-output name=has_dockerfile::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.hasDockerfile')"
-          echo "::set-output name=has_dockerignore::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.hasDockerignore')"
-          echo "::set-output name=docker_command::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.command')"
-          echo "::set-output name=docker_entrypoint::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.entrypoint')"
-          echo "::set-output name=docker_dependency_command::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.dependencyCommand')"
-          echo "::set-output name=docker_image_fullname::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.imageFullname')"
-          echo "::set-output name=docker_image_tags::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.tagsAsString')"
-          echo "::set-output name=docker_main_image::$(echo $PIPELINE_SETUP | jq -r '.dockerfile.mainImage')"
-          echo "::set-output name=deploy_repository::$(echo $PIPELINE_SETUP | jq -r '.deploy.repository')"
+          docker-qmeu: true
+          docker-buildx: true
 
       # pre-build
-      - name: Config | Create .dockerignore
-        uses: actions/github-script@v6
-        if: steps.node_setup.outputs.has_dockerignore == 'false'
+      - name: Create .dockerignore
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/create-dockerignore@main
+        if: steps.analysis.outputs.feature_has_dockerignore != true
+
+      - name: Create Dockerfile
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/create-dockerfile@main
+        if: steps.analysis.outputs.feature_has_dockerfile != true
         with:
-          result-encoding: string
-          script: |
-            return require('./.pipeline/src/steps/generate-dockerignore')({ 
-              assetsToIgnore: ['node_modules'],
-            })
+          writeSummary: true
+          preset: python
 
-      - name: Config | Create Dockerfile
-        if: steps.node_setup.outputs.has_dockerfile == 'false'
-        uses: actions/github-script@v6
-        id: dockerfile
-        with:
-          result-encoding: string
-          script: |
-            return require('./.pipeline/src/steps/generate-svc-dockerfile')({ 
-              image: 'python',
-              tag: '${{ matrix.python-version }}-alpine',
-              command: '${{ steps.node_setup.outputs.docker_command }}',
-              entrypoint: '${{ steps.node_setup.outputs.docker_entrypoint }}',
-              dependencyCommand: '${{ steps.node_setup.outputs.docker_dependency_command }}',
-              labels: [ 
-                'archtecture=alpine', 
-                'python-version=${{ matrix.python-version }}', 
-                'version=${{ needs.Release-Python.outputs.Version }}', 
-              ],
-            })
-
-      - name: Docs | Dockerfile
-        if: steps.node_setup.outputs.has_dockerfile == 'false'
-        run: |
-          echo "Dockerfile: \`${{ steps.dockerfile.outcome }}\`" >> $GITHUB_STEP_SUMMARY
-          echo -e "<details><summary>dockerfile</summary>\n\n\`\`\`dockerfile \n$(cat ./Dockerfile)\n \`\`\`\n </details>\n\n" >> $GITHUB_STEP_SUMMARY
-
+      # login
       - name: Config | Login to Container Registry
         uses: docker/login-action@v2
         with:
@@ -571,69 +526,17 @@ jobs:
           registry: ${{ inputs.containerRegistry }}
           username: ${{ secrets.REGISTRY_USERNAME }}
           password: ${{ secrets.REGISTRY_PASSWORD }}
-            
+
       # build
-      - name: Dockerfile lint
-        uses: hadolint/hadolint-action@v2.1.0
-        id: hadolint
-        continue-on-error: true
-        with:
-          dockerfile: Dockerfile
-
-      - name: Docs | Lint result
-        run: | 
-          echo "Hadolint: \`${{ steps.hadolint.outcome }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "\`\`\`txt \n $HADOLINT_RESULTS \n \`\`\`" >> $GITHUB_STEP_SUMMARY
-
-      - name: Build image test
-        if: inputs.staticAnalysis == true
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-          outputs: type=docker,dest=./dockerimage-python-${{ matrix.python-version }}.tar
-
-      - name: Run Trivy scanner
-        if: inputs.staticAnalysis == true
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: image
-          input: ./dockerimage-python-${{ matrix.python-version }}.tar
-          format: 'sarif'
-          severity: 'CRITICAL,HIGH'
-          output: 'trivy-results.sarif'
-
-      - name: Upload Trivy results
-        if: inputs.staticAnalysis == true
-        uses: github/codeql-action/upload-sarif@v2
-        with:
-          sarif_file: 'trivy-results.sarif'
-
-      - name: Cache Docker layers
-        uses: actions/cache@v2
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-multi-buildx-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-multi-buildx
-
-      - name: Build and push
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          push: true
-          platforms: ${{ inputs.platforms }}
-          builder: ${{ steps.buildx.outputs.name }}
-          tags: ${{steps.node_setup.outputs.docker_image_tags}}, ${{steps.node_setup.outputs.docker_image_fullname}}:${{needs.Release-Python.outputs.Version}}
-          labels: "organization: ${{github.repository_owner}}, repository: ${{github.repository}}, branch: ${{needs.Setup.outputs.Branch}}, commit: ${{needs.Setup.outputs.ShaHash}}, date: ${{needs.Setup.outputs.Date}}, timestamp: ${{needs.Setup.outputs.Timestamp}}"
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,mode=max,dest=/tmp/.buildx-cache-new
-
-      - name: Move cache
+      - name: Copy config
         run: |
-          rm -rf /tmp/.buildx-cache
-          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+          if test -f ./manifests/configs/${{needs.Setup.outputs.Environment}}.env; then cp ./manifests/configs/${{needs.Setup.outputs.Environment}}.env ./.env; fi
+
+      - name: Build container image and push
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/pack-docker-build@main
+        with:
+          cached: true
+          platforms: ${{inputs.platforms}}
 
 
   #--------------------------------------------------#
@@ -694,7 +597,6 @@ jobs:
       # namespace
       - name: K8s create namespace
         run: kubectl create namespace ${{steps.analysis.outputs.deploy_namespace}} --dry-run=client --validate=false --output=yaml | kubectl apply -f -
-
 
       # dependencies
       - name: Dependencies | Resources render

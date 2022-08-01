@@ -46,16 +46,16 @@ Checkout the test repositories:
 
 | Type| Language / Framework | Repository | Status |
 | :---: | --- | :---: | :---: |
-| svc | Javascript (Node) / Express | https://github.com/filipeforattini/ff-svc-express | ![](https://github.com/filipeforattini/ff-svc-express/actions/workflows/svc-push.yml/badge.svg) |
-| svc | Javascript (Node) / Moleculer | https://github.com/filipeforattini/ff-svc-moleculer | ![](https://github.com/filipeforattini/ff-svc-moleculer/actions/workflows/svc-push.yml/badge.svg) |
-| svc | Javascript (Node) / Nestjs | https://github.com/filipeforattini/ff-svc-nestjs | ![](https://github.com/filipeforattini/ff-svc-nestjs/actions/workflows/app-push.yml/badge.svg) |
-| svc | Javascript (Node) / Nextjs | https://github.com/filipeforattini/ff-svc-nextjs | ![](https://github.com/filipeforattini/ff-svc-nextjs/actions/workflows/app-push.yml/badge.svg) |
+| svc | Javascript (Node) / Express | https://github.com/filipeforattini/ff-svc-express | ![](https://github.com/filipeforattini/ff-svc-express/actions/workflows/pipeline.yml/badge.svg) |
+| svc | Javascript (Node) / Moleculer | https://github.com/filipeforattini/ff-svc-moleculer | ![](https://github.com/filipeforattini/ff-svc-moleculer/actions/workflows/pipeline.yml/badge.svg) |
+| svc | Javascript (Node) / Nestjs | https://github.com/filipeforattini/ff-svc-nestjs | ![](https://github.com/filipeforattini/ff-svc-nestjs/actions/workflows/pipeline.yml/badge.svg) |
+| svc | Javascript (Node) / Nextjs | https://github.com/filipeforattini/ff-svc-nextjs | ![](https://github.com/filipeforattini/ff-svc-nextjs/actions/workflows/pipeline.yml/badge.svg) |
 | svc | Python / Flask | https://github.com/filipeforattini/ff-svc-flask | ![](https://github.com/filipeforattini/ff-svc-flask/actions/workflows/svc-push.yml/badge.svg) |
 | svc | Python / FastAPI | https://github.com/filipeforattini/ff-svc-fastapi | ![](https://github.com/filipeforattini/ff-svc-fastapi/actions/workflows/svc-push.yml/badge.svg) |
-| app | Javascript (SPA) / React | https://github.com/filipeforattini/ff-app-react | ![](https://github.com/filipeforattini/ff-app-react/actions/workflows/app-push.yml/badge.svg) |
+| app | Javascript (SPA) / React | https://github.com/filipeforattini/ff-app-react | ![](https://github.com/filipeforattini/ff-app-react/actions/workflows/pipeline.yml/badge.svg) |
+| app | Javascript (SPA) / Vue | https://github.com/filipeforattini/ff-app-vue | ![](https://github.com/filipeforattini/ff-app-vue/actions/workflows/pipeline.yml/badge.svg) |
 
 ### Environments
-
 
 | Name | Short | Description |
 | ---: | :---: | --- |
