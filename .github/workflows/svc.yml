@@ -599,6 +599,7 @@ jobs:
           writeSummary: true
           kubeConfig: ${{secrets.KUBE_CONFIG}}
           version: ${{steps.versioning.outputs.version}}
+          repository: ${{steps.analysis.outputs.repository}}
           namespace: ${{steps.analysis.outputs.deploy_namespace}}
 
       # configs
@@ -749,6 +750,7 @@ jobs:
           writeSummary: true
           kubeConfig: ${{secrets.KUBE_CONFIG}}
           version: ${{steps.versioning.outputs.version}}
+          repository: ${{steps.analysis.outputs.repository}}
           namespace: ${{steps.analysis.outputs.deploy_namespace}}
 
       # configs

@@ -17,6 +17,10 @@ inputs:
     description: ''
     required: false
     default: '0.0.1'
+  repository:
+    description: ''
+    required: false
+    default: '0.0.1'
   renderedOutput:
     description: ''
     required: false
