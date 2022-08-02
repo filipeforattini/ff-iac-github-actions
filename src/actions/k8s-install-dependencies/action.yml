@@ -1,0 +1,157 @@
+name: 'Install k8s dependencies'
+description: 'Install k8s dependencies'
+
+inputs:
+  kubeConfig:
+    description: 'kubeconfig file as base64'
+    required: true
+  cloneTools:
+    description: 'check if downloads'
+    required: false
+    default: 'true'
+  renderedOutput:
+    description: ''
+    required: false
+    default: '${{inputs.renderedOutput}}'
+
+runs:
+  using: "composite"
+
+  steps:
+
+    # pre-job
+    - name: Setup | Cloning tools
+      uses: actions/checkout@v3
+      with:
+        ref: main
+        path: .pipeline
+        repository: filipeforattini/ff-iac-github-actions
+
+    - name: Setup | Pipeline config scrapper
+      if: inputs.cloneTools != "false"
+      uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
+      id: analysis
+
+    - name: Config | Kubectl config file
+      shell: bash
+      env:
+        KUBE_CONFIG: ${{ inputs.kubeConfig }}
+      run: |
+        mkdir -p ~/.kube
+        echo "$KUBE_CONFIG" | base64 -d > ~/.kube/config
+
+    # namespace
+    - name: K8s create namespace
+      shell: bash
+      run: kubectl create namespace ${{steps.analysis.outputs.deploy_namespace}} --dry-run=client --validate=false --output=yaml | kubectl apply -f -
+
+    # dependencies
+    - name: Dependencies | Resources render
+      if: steps.analysis.outputs.feature_has_dependencies == 'true'
+      shell: bash
+      run: |
+        ytt \
+          -f ./.pipeline/deploy/as-k8s/dependencies.schema.yml \
+          -f ./.pipeline/deploy/as-k8s/dependencies.yml \
+          -f ${{steps.analysis.outputs.deploy_dependencies_file}} \
+          --data-value repository=${{steps.analysis.outputs.deploy_repository}} \
+            > ${{inputs.renderedOutput}}
+
+    - name: Docs | Dependencies
+      if: steps.analysis.outputs.feature_has_dependencies == 'true'
+      shell: bash
+      run: | 
+        echo -e "### Dependencies\n\n" >> $GITHUB_STEP_SUMMARY
+        echo -e "<details><summary>dependencies</summary>\n\n\`\`\`yml \n$(cat ${{inputs.renderedOutput}})\n \`\`\`\n </details>\n\n" >> $GITHUB_STEP_SUMMARY
+        echo -e "| name | chart version | app version |" >> $GITHUB_STEP_SUMMARY
+        echo -e "| --- | :---: | :---: |" >> $GITHUB_STEP_SUMMARY
+        if [ $(cat ${{inputs.renderedOutput}} | yq -P '.postgres.enabled') = true ]; then
+          echo -e "| postgres | $(cat ${{inputs.renderedOutput}} | yq -P '.postgres.version') | $(cat ${{inputs.renderedOutput}} | yq -P '.postgres.helm.image.tag') |" >> $GITHUB_STEP_SUMMARY
+        fi
+        if [ $(cat ${{inputs.renderedOutput}} | yq -P '.mysql.enabled') = true ]; then
+          echo -e "| mysql | $(cat ${{inputs.renderedOutput}} | yq -P '.mysql.version') | $(cat ${{inputs.renderedOutput}} | yq -P '.mysql.helm.image.tag') |\n" >> $GITHUB_STEP_SUMMARY
+        fi
+
+    - name: Dependencies | Helm update
+      if: steps.analysis.outputs.feature_has_dependencies == 'true'
+      shell: bash
+      run: |	
+        helm repo add bitnami https://charts.bitnami.com/bitnami
+        helm repo update
+
+    - name: Dependencies | Mysql
+      if: steps.analysis.outputs.feature_has_dependencies == 'true'
+      continue-on-error: true
+      shell: bash
+      run: |	
+        K8S_NAMESPACE=${{steps.analysis.outputs.deploy_namespace}} \
+        DEPENDENCY_NAME=mysql \
+        REPOSITORY_TAG_VERSION=${{steps.versioning.outputs.version}} \
+        DEPENDENCY_FILE=${{inputs.renderedOutput}} \
+          ./.pipeline/src/dependency-install.sh
+        
+    - name: Dependencies | Postgres
+      if: steps.analysis.outputs.feature_has_dependencies == 'true'
+      continue-on-error: true
+      shell: bash
+      run: |	
+        K8S_NAMESPACE=${{steps.analysis.outputs.deploy_namespace}} \
+        DEPENDENCY_NAME=postgres \
+        REPOSITORY_TAG_VERSION=${{steps.versioning.outputs.version}} \
+        DEPENDENCY_FILE=${{inputs.renderedOutput}} \
+          ./.pipeline/src/dependency-install.sh
+
+    - name: Dependencies | Rabbitmq
+      if: steps.analysis.outputs.feature_has_dependencies == 'true'
+      continue-on-error: true
+      shell: bash
+      run: |	
+        K8S_NAMESPACE=${{steps.analysis.outputs.deploy_namespace}} \
+        DEPENDENCY_NAME=rabbitmq \
+        REPOSITORY_TAG_VERSION=${{steps.versioning.outputs.version}} \
+        DEPENDENCY_FILE=${{inputs.renderedOutput}} \
+          ./.pipeline/src/dependency-install.sh
+
+    - name: Dependencies | Elasticsearch
+      if: steps.analysis.outputs.feature_has_dependencies == 'true'
+      continue-on-error: true
+      shell: bash
+      run: |	
+        K8S_NAMESPACE=${{steps.analysis.outputs.deploy_namespace}} \
+        DEPENDENCY_NAME=elasticsearch \
+        REPOSITORY_TAG_VERSION=${{steps.versioning.outputs.version}} \
+        DEPENDENCY_FILE=${{inputs.renderedOutput}} \
+          ./.pipeline/src/dependency-install.sh
+
+    - name: Dependencies | Redis
+      if: steps.analysis.outputs.feature_has_dependencies == 'true'
+      continue-on-error: true
+      shell: bash
+      run: |	
+        K8S_NAMESPACE=${{steps.analysis.outputs.deploy_namespace}} \
+        DEPENDENCY_NAME=redis \
+        REPOSITORY_TAG_VERSION=${{steps.versioning.outputs.version}} \
+        DEPENDENCY_FILE=${{inputs.renderedOutput}} \
+          ./.pipeline/src/dependency-install.sh
+
+    - name: Dependencies | Nats
+      if: steps.analysis.outputs.feature_has_dependencies == 'true'
+      continue-on-error: true
+      shell: bash
+      run: |	
+        K8S_NAMESPACE=${{steps.analysis.outputs.deploy_namespace}} \
+        DEPENDENCY_NAME=nats \
+        REPOSITORY_TAG_VERSION=${{steps.versioning.outputs.version}} \
+        DEPENDENCY_FILE=${{inputs.renderedOutput}} \
+          ./.pipeline/src/dependency-install.sh
+
+    - name: Dependencies | Etcd
+      if: steps.analysis.outputs.feature_has_dependencies == 'true'
+      continue-on-error: true
+      shell: bash
+      run: |	
+        K8S_NAMESPACE=${{steps.analysis.outputs.deploy_namespace}} \
+        DEPENDENCY_NAME=etcd \
+        REPOSITORY_TAG_VERSION=${{steps.versioning.outputs.version}} \
+        DEPENDENCY_FILE=${{inputs.renderedOutput}} \
+          ./.pipeline/src/dependency-install.sh

@@ -7,7 +7,7 @@
     "commit": "npm run build && git pull && git commit --allow-empty -am \"fix: empty commit for testing\" && git push",
     "build-composition": "ACTION_NAME=setup-binaries mkdir -p .github/actions/$ACTION_NAME && cp src/actions/$ACTION_NAME/action.yml .github/actions/$ACTION_NAME/action.yml",
     "build-action-js": "mkdir -p .github/actions/create-releaserc-file && ncc build src/actions/$ACTION_NAME/index.js -m -q -s -o .github/actions/$ACTION_NAME && rm -f .github/actions/$ACTION_NAME/action.yml && cp src/actions/$ACTION_NAME/action.yml .github/actions/$ACTION_NAME/action.yml",
-    "build": "npm run action:config-scrapper && npm run action:setup-binaries && npm run action:pack-static-code-analysis && npm run action:create-releaserc-file && npm run action:semantic-release && npm run action:pack-semantic-release && npm run action:create-dockerignore && npm run action:create-dockerfile && npm run action:pack-docker-build",
+    "build": "npm run action:config-scrapper & npm run action:setup-binaries & npm run action:pack-static-code-analysis & npm run action:create-releaserc-file & npm run action:semantic-release & npm run action:pack-semantic-release & npm run action:create-dockerignore & npm run action:create-dockerfile & npm run action:pack-docker-build & npm run action:k8s-install-dependencies",
     "action:config-scrapper": "ACTION_NAME=config-scrapper npm run build-action-js",
     "action:pack-static-code-analysis": "mkdir -p .github/actions/pack-static-code-analysis && cp src/actions/pack-static-code-analysis/action.yml .github/actions/pack-static-code-analysis/action.yml",
     "action:create-releaserc-file": "ACTION_NAME=create-releaserc-file npm run build-action-js",
@@ -17,6 +17,7 @@
     "action:setup-binaries": "ACTION_NAME=setup-binaries npm run build-composition",
     "action:pack-semantic-release": "ACTION_NAME=pack-semantic-release npm run build-composition",
     "action:pack-docker-build": "ACTION_NAME=pack-docker-build npm run build-composition",
+    "action:k8s-install-dependencies": "ACTION_NAME=k8s-install-dependencies npm run build-composition",
     "commit:proj-js": "cd ../$PROJ_NAME; git add . && npm run commit && cd ../ff-iac-github-actions;",
     "commit:proj-py": "cd ../$PROJ_NAME; git add . && make commit && cd ../ff-iac-github-actions;",
     "commit:all": "PROJ_NAME=ff-app-react npm run commit:proj-js & PROJ_NAME=ff-app-vue npm run commit:proj-js & PROJ_NAME=ff-svc-express npm run commit:proj-js & PROJ_NAME=ff-svc-fastapi npm run commit:proj-py & PROJ_NAME=ff-svc-flask npm run commit:proj-py & PROJ_NAME=ff-svc-moleculer npm run commit:proj-js & PROJ_NAME=ff-svc-nestjs npm run commit:proj-js & PROJ_NAME=ff-svc-nextjs npm run commit:proj-js"
