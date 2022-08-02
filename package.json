@@ -42,6 +42,7 @@
     "@actions/http-client": "^2.0.1",
     "@actions/tool-cache": "^2.0.1",
     "@vercel/ncc": "^0.34.0",
+    "dayjs": "^1.11.4",
     "linguist-js": "^2.5.2",
     "lodash": "^4.17.21",
     "qs": "^6.11.0"

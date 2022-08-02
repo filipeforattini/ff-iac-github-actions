@@ -26,8 +26,6 @@ outputs:
     description: ""
   commiter_username:
     description: ""
-  date:
-    description: ""
   deploy_configs_file:
     description: ""
   deploy_secrets_file:
@@ -39,6 +37,8 @@ outputs:
   deploy_tag:
     description: ""
   deploy_fullname_tag:
+    description: ""
+  executed_at:
     description: ""
   event:
     description: ""
