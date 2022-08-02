@@ -20,7 +20,7 @@ inputs:
   repository:
     description: ''
     required: false
-    default: '0.0.1'
+    default: 'acm-app-repository'
   renderedOutput:
     description: ''
     required: false
