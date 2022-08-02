@@ -71,29 +71,7 @@ runs:
           -f ./.pipeline/deploy/as-k8s/dependencies.yml \
           -f ${{steps.analysis.outputs.deploy_dependencies_file}} \
           --data-value repository=${{inputs.repository}} \
-            > ./manifests/k8s-dependencies.yml
-
-    - name: TEMPORARY
-      if: steps.analysis.outputs.feature_has_dependencies == 'true'
-      shell: bash
-      run: |
-        cat ${{steps.analysis.outputs.deploy_dependencies_file}}
-        cat ./manifests/k8s-dependencies.yml
-
-    # - name: Docs | Dependencies
-    #   if: steps.analysis.outputs.feature_has_dependencies == 'true'
-    #   shell: bash
-    #   run: | 
-    #     echo -e "### Dependencies\n\n" >> $GITHUB_STEP_SUMMARY
-    #     echo -e "<details><summary>dependencies</summary>\n\n\`\`\`yml \n$(cat ./manifests/k8s-dependencies.yml\n \`\`\`\n </details>\n\n" >> $GITHUB_STEP_SUMMARY
-    #     echo -e "| name | chart version | app version |" >> $GITHUB_STEP_SUMMARY
-    #     echo -e "| --- | :---: | :---: |" >> $GITHUB_STEP_SUMMARY
-    #     if [ $(cat ./manifests/k8s-dependencies.yml| yq -P '.postgres.enabled') = true ]; then
-    #       echo -e "| postgres | $(cat ./manifests/k8s-dependencies.yml| yq -P '.postgres.version') | $(cat ./manifests/k8s-dependencies.yml| yq -P '.postgres.helm.image.tag') |" >> $GITHUB_STEP_SUMMARY
-    #     fi
-    #     if [ $(cat ./manifests/k8s-dependencies.yml| yq -P '.mysql.enabled') = true ]; then
-    #       echo -e "| mysql | $(cat ./manifests/k8s-dependencies.yml| yq -P '.mysql.version') | $(cat ./manifests/k8s-dependencies.yml| yq -P '.mysql.helm.image.tag') |\n" >> $GITHUB_STEP_SUMMARY
-    #     fi
+            > ${{inputs.renderedOutput}}
 
     - name: Dependencies | Helm update
       if: steps.analysis.outputs.feature_has_dependencies == 'true'
@@ -110,7 +88,7 @@ runs:
         K8S_NAMESPACE=${{inputs.namespace}} \
         DEPENDENCY_NAME=mysql \
         REPOSITORY_TAG_VERSION=${{inputs.version}} \
-        DEPENDENCY_FILE./manifests/k8s-dependencies.yml\
+        DEPENDENCY_FILE=${{inputs.renderedOutput}} \
           ./.pipeline/src/dependency-install.sh
         
     - name: Dependencies | Postgres
@@ -121,7 +99,7 @@ runs:
         K8S_NAMESPACE=${{inputs.namespace}} \
         DEPENDENCY_NAME=postgres \
         REPOSITORY_TAG_VERSION=${{inputs.version}} \
-        DEPENDENCY_FILE./manifests/k8s-dependencies.yml\
+        DEPENDENCY_FILE=${{inputs.renderedOutput}} \
           ./.pipeline/src/dependency-install.sh
 
     - name: Dependencies | Rabbitmq
@@ -132,7 +110,7 @@ runs:
         K8S_NAMESPACE=${{inputs.namespace}} \
         DEPENDENCY_NAME=rabbitmq \
         REPOSITORY_TAG_VERSION=${{inputs.version}} \
-        DEPENDENCY_FILE./manifests/k8s-dependencies.yml\
+        DEPENDENCY_FILE=${{inputs.renderedOutput}} \
           ./.pipeline/src/dependency-install.sh
 
     - name: Dependencies | Elasticsearch
@@ -143,7 +121,7 @@ runs:
         K8S_NAMESPACE=${{inputs.namespace}} \
         DEPENDENCY_NAME=elasticsearch \
         REPOSITORY_TAG_VERSION=${{inputs.version}} \
-        DEPENDENCY_FILE./manifests/k8s-dependencies.yml\
+        DEPENDENCY_FILE=${{inputs.renderedOutput}} \
           ./.pipeline/src/dependency-install.sh
 
     - name: Dependencies | Redis
@@ -154,7 +132,7 @@ runs:
         K8S_NAMESPACE=${{inputs.namespace}} \
         DEPENDENCY_NAME=redis \
         REPOSITORY_TAG_VERSION=${{inputs.version}} \
-        DEPENDENCY_FILE./manifests/k8s-dependencies.yml\
+        DEPENDENCY_FILE=${{inputs.renderedOutput}} \
           ./.pipeline/src/dependency-install.sh
 
     - name: Dependencies | Nats
@@ -165,7 +143,7 @@ runs:
         K8S_NAMESPACE=${{inputs.namespace}} \
         DEPENDENCY_NAME=nats \
         REPOSITORY_TAG_VERSION=${{inputs.version}} \
-        DEPENDENCY_FILE./manifests/k8s-dependencies.yml\
+        DEPENDENCY_FILE=${{inputs.renderedOutput}} \
           ./.pipeline/src/dependency-install.sh
 
     - name: Dependencies | Etcd
@@ -176,5 +154,5 @@ runs:
         K8S_NAMESPACE=${{inputs.namespace}} \
         DEPENDENCY_NAME=etcd \
         REPOSITORY_TAG_VERSION=${{inputs.version}} \
-        DEPENDENCY_FILE./manifests/k8s-dependencies.yml\
+        DEPENDENCY_FILE=${{inputs.renderedOutput}} \
           ./.pipeline/src/dependency-install.sh
