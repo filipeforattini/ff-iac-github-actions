@@ -1,7 +1,9 @@
-const core = require("@actions/core");
 const github = require("@actions/github");
 
 module.exports = async (analysis) => {
+  const commitSha = github.context.sha.substring(0,7)
+  analysis.outputs.commit_hash = commitSha
+  
   if (github.context.payload.head_commit) {
     analysis.commiter = { ...github.context.payload.head_commit.committer}
 
