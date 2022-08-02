@@ -28,7 +28,7 @@ runs:
         repository: filipeforattini/ff-iac-github-actions
 
     - name: Setup | Pipeline config scrapper
-      if: inputs.cloneTools != "false"
+      if: inputs.cloneTools != false
       uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
       id: analysis
 
