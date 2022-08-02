@@ -12,10 +12,10 @@ module.exports = async (analysis) => {
     analysis.outputs.commiter_email = analysis.commiter.email
     analysis.outputs.commiter_username = analysis.commiter.username
 
-    analysis.outputs.executed_at = dayjs(github.context.payload.head_commit.timestamp)
+    analysis.outputs.executed_at = dayjs(github.context.payload.head_commit.timestamp).toISOString()
   }
 
   if (github.context.payload.deployment) {
-    analysis.outputs.executed_at = dayjs(github.context.payload.deployment.updated_at)
+    analysis.outputs.executed_at = dayjs(github.context.payload.deployment.updated_at).toISOString()
   }
 }
