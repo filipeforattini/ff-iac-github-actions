@@ -13,6 +13,10 @@ inputs:
     description: ''
     required: false
     default: ./manifests/k8s-dependencies.yml
+  writeSummary:
+    required: true
+    default: "false"
+    description: ""
 
 runs:
   using: "composite"
@@ -56,20 +60,21 @@ runs:
           -f ${{steps.analysis.outputs.deploy_dependencies_file}} \
           --data-value repository=${{steps.analysis.outputs.deploy_repository}} \
             > ./manifests/k8s-dependencies.yml
-    - name: Docs | Dependencies
-      if: steps.analysis.outputs.feature_has_dependencies == 'true'
-      shell: bash
-      run: | 
-        echo -e "### Dependencies\n\n" >> $GITHUB_STEP_SUMMARY
-        echo -e "<details><summary>dependencies</summary>\n\n\`\`\`yml \n$(cat ./manifests/k8s-dependencies.yml\n \`\`\`\n </details>\n\n" >> $GITHUB_STEP_SUMMARY
-        echo -e "| name | chart version | app version |" >> $GITHUB_STEP_SUMMARY
-        echo -e "| --- | :---: | :---: |" >> $GITHUB_STEP_SUMMARY
-        if [ $(cat ./manifests/k8s-dependencies.yml| yq -P '.postgres.enabled') = true ]; then
-          echo -e "| postgres | $(cat ./manifests/k8s-dependencies.yml| yq -P '.postgres.version') | $(cat ./manifests/k8s-dependencies.yml| yq -P '.postgres.helm.image.tag') |" >> $GITHUB_STEP_SUMMARY
-        fi
-        if [ $(cat ./manifests/k8s-dependencies.yml| yq -P '.mysql.enabled') = true ]; then
-          echo -e "| mysql | $(cat ./manifests/k8s-dependencies.yml| yq -P '.mysql.version') | $(cat ./manifests/k8s-dependencies.yml| yq -P '.mysql.helm.image.tag') |\n" >> $GITHUB_STEP_SUMMARY
-        fi
+
+    # - name: Docs | Dependencies
+    #   if: steps.analysis.outputs.feature_has_dependencies == 'true'
+    #   shell: bash
+    #   run: | 
+    #     echo -e "### Dependencies\n\n" >> $GITHUB_STEP_SUMMARY
+    #     echo -e "<details><summary>dependencies</summary>\n\n\`\`\`yml \n$(cat ./manifests/k8s-dependencies.yml\n \`\`\`\n </details>\n\n" >> $GITHUB_STEP_SUMMARY
+    #     echo -e "| name | chart version | app version |" >> $GITHUB_STEP_SUMMARY
+    #     echo -e "| --- | :---: | :---: |" >> $GITHUB_STEP_SUMMARY
+    #     if [ $(cat ./manifests/k8s-dependencies.yml| yq -P '.postgres.enabled') = true ]; then
+    #       echo -e "| postgres | $(cat ./manifests/k8s-dependencies.yml| yq -P '.postgres.version') | $(cat ./manifests/k8s-dependencies.yml| yq -P '.postgres.helm.image.tag') |" >> $GITHUB_STEP_SUMMARY
+    #     fi
+    #     if [ $(cat ./manifests/k8s-dependencies.yml| yq -P '.mysql.enabled') = true ]; then
+    #       echo -e "| mysql | $(cat ./manifests/k8s-dependencies.yml| yq -P '.mysql.version') | $(cat ./manifests/k8s-dependencies.yml| yq -P '.mysql.helm.image.tag') |\n" >> $GITHUB_STEP_SUMMARY
+    #     fi
 
     - name: Dependencies | Helm update
       if: steps.analysis.outputs.feature_has_dependencies == 'true'
