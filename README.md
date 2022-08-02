@@ -133,8 +133,8 @@ flowchart
 ```
 ├─ .github
 │  └─ workflows
-│     ├─ pull-request.yml
-│     └─ service-push.yml
+│  │  └─ pipeline.yml
+│  └─ dependabot.yml
 ├─ manifests
 │  ├─ configs
 │  │  └─ dev.env
@@ -144,27 +144,40 @@ flowchart
 │  │  └─ dev.gpg
 │  ├─ k8s.yml
 │  └─ helm.yml
-├─ dist
-│     // distibuition version of our code
+├─ build
+│  // distibuition version of our code
 └─ src
-      // our code goes here
+   // our code goes here
 ```
 
 
-#### Push
+#### Pipeline
 
-Your repository need to implement:
+Add this pipeline to your repository:
 
 ```yml
-name: My pipeline
-on: ['push', 'pull_request']
+name: pipeline
+
+on: 
+  push:
+  deployment:
+  release:
+    types: [created]
+  pull_request:
+    types: [opened, reopened]
 
 jobs:
 
-  Service:
-    uses: filipeforattini/ff-iac-github-actions/.github/workflows/service.yml@stable
+  APP:
+    uses: filipeforattini/ff-iac-github-actions/.github/workflows/app.yml@main
+    secrets: inherit
     with:
+      mainBranch: main
+      platforms: linux/amd64,linux/arm64
+      staticAnalysis: false
       containerRegistry: ghcr.io
+      nodeMatrix: '[17]'
+      environmentsAsNamespaces: true
 ```
 
 ### Parameters
@@ -252,8 +265,8 @@ Thanks to:
 
 
 ## Example ecosystem
-
 This ecosystem generates few data per second as samples for our apis.
+
 
 ### Architecture
 

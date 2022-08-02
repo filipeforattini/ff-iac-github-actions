@@ -332,12 +332,51 @@ jobs:
   #--------------------------------------------------#
   #                      Trigger JS                  # 
   #--------------------------------------------------#
-  Trigger-Build:
+  Trigger-Build-Node:
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
 
     needs: 
       - Release-Node
+
+    steps:
+
+      # pre-job
+      - name: Setup | Cloning repository
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.PIPELINE_DEPLOY_SECRET }}
+
+      - name: Pipeline config scrapper
+        id: analysis
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
+
+      - name: Trigger
+        run: |
+          git config --global user.name "${{steps.analysis.outputs.commiter_name}}"
+          git config --global user.email "${{steps.analysis.outputs.commiter_email}}"
+          git fetch
+          git checkout -B env/dev
+          git commit --allow-empty -am "deploy: to dev [skip ci]\\nVersion: ${{needs.Release.outputs.Version}}\nCommit: ${{steps.setup.outputs.commit_hash}}"
+          git push -f -u origin env/dev
+
+      - uses: altinukshini/deployment-action@releases/v1
+        name: Create GitHub deployment
+        id: deployment
+        with:
+          token: "${{ secrets.PIPELINE_DEPLOY_SECRET }}"
+          environment: dev
+
+
+  #--------------------------------------------------#
+  #                      Trigger PY                  # 
+  #--------------------------------------------------#
+  Trigger-Build-Python:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+
+    needs: 
+      - Release-Python
 
     steps:
 
@@ -436,13 +475,10 @@ jobs:
   #--------------------------------------------------#
   Build-Python:
     runs-on: ubuntu-latest
+    if: github.event_name == 'deployment'
+
     needs: 
       - Setup
-      - Release-Python
-
-    strategy:
-      matrix:
-        python-version: ${{ fromJSON(inputs.pythonMatrix) }}
 
     steps:
 
