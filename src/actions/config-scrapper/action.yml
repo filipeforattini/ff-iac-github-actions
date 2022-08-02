@@ -26,6 +26,8 @@ outputs:
     description: ""
   commiter_username:
     description: ""
+  date:
+    description: ""
   deploy_configs_file:
     description: ""
   deploy_secrets_file:
