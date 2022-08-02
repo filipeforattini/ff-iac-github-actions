@@ -412,7 +412,9 @@ jobs:
   #--------------------------------------------------#
   Build-Node:
     runs-on: ubuntu-latest
-    if: github.event_name == 'deployment'
+    if: |
+      github.event_name == 'deployment'
+      && needs.Setup.outputs.Language == 'javascript'
 
     needs: 
       - Setup
@@ -475,7 +477,9 @@ jobs:
   #--------------------------------------------------#
   Build-Python:
     runs-on: ubuntu-latest
-    if: github.event_name == 'deployment'
+    if: |
+      github.event_name == 'deployment'
+      && needs.Setup.outputs.Language == 'python'
 
     needs: 
       - Setup
