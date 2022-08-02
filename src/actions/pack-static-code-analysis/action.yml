@@ -6,19 +6,23 @@ inputs:
     description: 'Inform the main repository language'
     required: false
     default: 'javascript'
+  runAnalysis:
+    description: ''
+    required: false
+    default: 'true'
 
 runs:
   using: "composite"
 
   steps:
     - name: Run GitLeaks scanner
-      if: inputs.staticAnalysis == true
+      if: inputs.runAnalysis == true
       uses: docker://opendevsecops/gitleaks
       with:
         args: --repo=https://github.com/${{github.repository}}
 
     - name: Run Trivy scanner
-      if: inputs.staticAnalysis == true
+      if: inputs.runAnalysis == true
       uses: aquasecurity/trivy-action@master
       with:
         scan-type: 'fs'
@@ -28,18 +32,18 @@ runs:
         output: 'trivy-results.sarif'
 
     - name: Upload Trivy results
-      if: inputs.staticAnalysis == true
+      if: inputs.runAnalysis == true
       uses: github/codeql-action/upload-sarif@v2
       with:
         sarif_file: 'trivy-results.sarif'
 
     - name: Run OSSAR
-      if: inputs.staticAnalysis == true
+      if: inputs.runAnalysis == true
       uses: github/ossar-action@v1
       id: ossar
 
     - name: Upload OSSAR results
-      if: inputs.staticAnalysis == true
+      if: inputs.runAnalysis == true
       uses: github/codeql-action/upload-sarif@v2
       with:
         sarif_file: ${{ steps.ossar.outputs.sarifFile }}

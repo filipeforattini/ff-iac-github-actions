@@ -87,9 +87,9 @@ jobs:
 
 
   #--------------------------------------------------#
-  #                 Release: Node.js                 # 
+  #                      Release                     # 
   #--------------------------------------------------#
-  Release-Node:
+  Release:
     runs-on: ubuntu-latest
     needs:
       - Static-Analysis
