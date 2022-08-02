@@ -595,9 +595,11 @@ jobs:
       - name: Create k8s dependencies
         uses: filipeforattini/ff-iac-github-actions/.github/actions/k8s-install-dependencies@main
         with:
+          cloneTools: false
           writeSummary: true
           kubeConfig: ${{secrets.KUBE_CONFIG}}
-          cloneTools: false
+          version: ${{steps.versioning.outputs.version}}
+          namespace: ${{steps.analysis.outputs.deploy_namespace}}
 
       # configs
       - name: K8s create config-map
@@ -743,9 +745,11 @@ jobs:
       - name: Create k8s dependencies
         uses: filipeforattini/ff-iac-github-actions/.github/actions/k8s-install-dependencies@main
         with:
+          cloneTools: false
           writeSummary: true
           kubeConfig: ${{secrets.KUBE_CONFIG}}
-          cloneTools: false
+          version: ${{steps.versioning.outputs.version}}
+          namespace: ${{steps.analysis.outputs.deploy_namespace}}
 
       # configs
       - name: K8s create config-map

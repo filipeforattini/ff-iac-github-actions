@@ -9,6 +9,14 @@ inputs:
     description: 'check if downloads'
     required: false
     default: 'true'
+  namespace:
+    description: ''
+    required: false
+    default: 'default'
+  version:
+    description: ''
+    required: false
+    default: '0.0.1'
   renderedOutput:
     description: ''
     required: false
@@ -47,7 +55,7 @@ runs:
     # namespace
     - name: K8s create namespace
       shell: bash
-      run: kubectl create namespace ${{steps.analysis.outputs.deploy_namespace}} --dry-run=client --validate=false --output=yaml | kubectl apply -f -
+      run: kubectl create namespace ${{inputs.namespace}} --dry-run=client --validate=false --output=yaml | kubectl apply -f -
 
     # dependencies
     - name: Dependencies | Resources render
@@ -88,9 +96,9 @@ runs:
       continue-on-error: true
       shell: bash
       run: |	
-        K8S_NAMESPACE=${{steps.analysis.outputs.deploy_namespace}} \
+        K8S_NAMESPACE=${{inputs.namespace}} \
         DEPENDENCY_NAME=mysql \
-        REPOSITORY_TAG_VERSION=${{steps.versioning.outputs.version}} \
+        REPOSITORY_TAG_VERSION=${{inputs.version}} \
         DEPENDENCY_FILE./manifests/k8s-dependencies.yml\
           ./.pipeline/src/dependency-install.sh
         
@@ -99,9 +107,9 @@ runs:
       continue-on-error: true
       shell: bash
       run: |	
-        K8S_NAMESPACE=${{steps.analysis.outputs.deploy_namespace}} \
+        K8S_NAMESPACE=${{inputs.namespace}} \
         DEPENDENCY_NAME=postgres \
-        REPOSITORY_TAG_VERSION=${{steps.versioning.outputs.version}} \
+        REPOSITORY_TAG_VERSION=${{inputs.version}} \
         DEPENDENCY_FILE./manifests/k8s-dependencies.yml\
           ./.pipeline/src/dependency-install.sh
 
@@ -110,9 +118,9 @@ runs:
       continue-on-error: true
       shell: bash
       run: |	
-        K8S_NAMESPACE=${{steps.analysis.outputs.deploy_namespace}} \
+        K8S_NAMESPACE=${{inputs.namespace}} \
         DEPENDENCY_NAME=rabbitmq \
-        REPOSITORY_TAG_VERSION=${{steps.versioning.outputs.version}} \
+        REPOSITORY_TAG_VERSION=${{inputs.version}} \
         DEPENDENCY_FILE./manifests/k8s-dependencies.yml\
           ./.pipeline/src/dependency-install.sh
 
@@ -121,9 +129,9 @@ runs:
       continue-on-error: true
       shell: bash
       run: |	
-        K8S_NAMESPACE=${{steps.analysis.outputs.deploy_namespace}} \
+        K8S_NAMESPACE=${{inputs.namespace}} \
         DEPENDENCY_NAME=elasticsearch \
-        REPOSITORY_TAG_VERSION=${{steps.versioning.outputs.version}} \
+        REPOSITORY_TAG_VERSION=${{inputs.version}} \
         DEPENDENCY_FILE./manifests/k8s-dependencies.yml\
           ./.pipeline/src/dependency-install.sh
 
@@ -132,9 +140,9 @@ runs:
       continue-on-error: true
       shell: bash
       run: |	
-        K8S_NAMESPACE=${{steps.analysis.outputs.deploy_namespace}} \
+        K8S_NAMESPACE=${{inputs.namespace}} \
         DEPENDENCY_NAME=redis \
-        REPOSITORY_TAG_VERSION=${{steps.versioning.outputs.version}} \
+        REPOSITORY_TAG_VERSION=${{inputs.version}} \
         DEPENDENCY_FILE./manifests/k8s-dependencies.yml\
           ./.pipeline/src/dependency-install.sh
 
@@ -143,9 +151,9 @@ runs:
       continue-on-error: true
       shell: bash
       run: |	
-        K8S_NAMESPACE=${{steps.analysis.outputs.deploy_namespace}} \
+        K8S_NAMESPACE=${{inputs.namespace}} \
         DEPENDENCY_NAME=nats \
-        REPOSITORY_TAG_VERSION=${{steps.versioning.outputs.version}} \
+        REPOSITORY_TAG_VERSION=${{inputs.version}} \
         DEPENDENCY_FILE./manifests/k8s-dependencies.yml\
           ./.pipeline/src/dependency-install.sh
 
@@ -154,8 +162,8 @@ runs:
       continue-on-error: true
       shell: bash
       run: |	
-        K8S_NAMESPACE=${{steps.analysis.outputs.deploy_namespace}} \
+        K8S_NAMESPACE=${{inputs.namespace}} \
         DEPENDENCY_NAME=etcd \
-        REPOSITORY_TAG_VERSION=${{steps.versioning.outputs.version}} \
+        REPOSITORY_TAG_VERSION=${{inputs.version}} \
         DEPENDENCY_FILE./manifests/k8s-dependencies.yml\
           ./.pipeline/src/dependency-install.sh
