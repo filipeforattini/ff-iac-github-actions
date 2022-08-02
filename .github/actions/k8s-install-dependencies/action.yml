@@ -73,6 +73,13 @@ runs:
           --data-value repository=${{inputs.repository}} \
             > ./manifests/k8s-dependencies.yml
 
+    - name: TEMPORARY
+      if: steps.analysis.outputs.feature_has_dependencies == 'true'
+      shell: bash
+      run: |
+        cat ${{steps.analysis.outputs.deploy_dependencies_file}}
+        cat ./manifests/k8s-dependencies.yml
+
     # - name: Docs | Dependencies
     #   if: steps.analysis.outputs.feature_has_dependencies == 'true'
     #   shell: bash
