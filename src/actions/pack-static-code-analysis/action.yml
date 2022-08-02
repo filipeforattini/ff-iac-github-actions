@@ -16,13 +16,13 @@ runs:
 
   steps:
     - name: Run GitLeaks scanner
-      if: inputs.runAnalysis == true
+      if: inputs.runAnalysis != "false"
       uses: docker://opendevsecops/gitleaks
       with:
         args: --repo=https://github.com/${{github.repository}}
 
     - name: Run Trivy scanner
-      if: inputs.runAnalysis == true
+      if: inputs.runAnalysis != "false"
       uses: aquasecurity/trivy-action@master
       with:
         scan-type: 'fs'
@@ -32,18 +32,18 @@ runs:
         output: 'trivy-results.sarif'
 
     - name: Upload Trivy results
-      if: inputs.runAnalysis == true
+      if: inputs.runAnalysis != "false"
       uses: github/codeql-action/upload-sarif@v2
       with:
         sarif_file: 'trivy-results.sarif'
 
     - name: Run OSSAR
-      if: inputs.runAnalysis == true
+      if: inputs.runAnalysis != "false"
       uses: github/ossar-action@v1
       id: ossar
 
     - name: Upload OSSAR results
-      if: inputs.runAnalysis == true
+      if: inputs.runAnalysis != "false"
       uses: github/codeql-action/upload-sarif@v2
       with:
         sarif_file: ${{ steps.ossar.outputs.sarifFile }}
