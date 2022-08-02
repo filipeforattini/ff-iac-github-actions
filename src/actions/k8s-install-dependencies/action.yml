@@ -70,7 +70,7 @@ runs:
           -f ./.pipeline/deploy/as-k8s/dependencies.schema.yml \
           -f ./.pipeline/deploy/as-k8s/dependencies.yml \
           -f ${{steps.analysis.outputs.deploy_dependencies_file}} \
-          --data-value repository=${{steps.analysis.outputs.deploy_repository}} \
+          --data-value repository=${{inputs.repository}} \
             > ./manifests/k8s-dependencies.yml
 
     # - name: Docs | Dependencies
