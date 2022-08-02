@@ -663,7 +663,7 @@ jobs:
             --data-value-yaml                            envFromSecrets="[$SECRETS_LIST]" \
             --data-value-yaml                         envFromConfigMaps="[$CONFIGS_LIST]" \
             --data-value-yaml                       envFromDependencies="[$DEPENDENCIES_LIST]" \
-            --data-value                       pipelineControl.datetime=${{steps.analysis.outputs.run_started_at}} \
+            --data-value                       pipelineControl.datetime=${{steps.analysis.outputs.date}} \
             --data-value-yaml  pipelineControl.environmentsAsNamespaces=${{inputs.environmentsAsNamespaces}} \
               > ./manifests/k8s-to-apply.yml
 
@@ -814,7 +814,7 @@ jobs:
             --data-value-yaml                            envFromSecrets="[$SECRETS_LIST]" \
             --data-value-yaml                         envFromConfigMaps="[$CONFIGS_LIST]" \
             --data-value-yaml                       envFromDependencies="[$DEPENDENCIES_LIST]" \
-            --data-value                       pipelineControl.datetime=${{steps.analysis.outputs.run_started_at}} \
+            --data-value                       pipelineControl.datetime=${{steps.analysis.outputs.date}} \
             --data-value-yaml  pipelineControl.environmentsAsNamespaces=${{inputs.environmentsAsNamespaces}} \
               > ./manifests/k8s-to-apply.yml
 
