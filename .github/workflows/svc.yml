@@ -1,4 +1,4 @@
-name: piepeline-svc
+name: svc
 
 concurrency:
   group: ${{github.workflow}}-${{github.event_name}}

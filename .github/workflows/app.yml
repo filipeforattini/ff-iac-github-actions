@@ -1,4 +1,4 @@
-name: piepeline-app
+name: app
 
 concurrency:
   group: ${{github.workflow}}-${{github.event_name}}
