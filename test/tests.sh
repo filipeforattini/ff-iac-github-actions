@@ -15,3 +15,4 @@ sh $DIR_TESTS/app.sh
 
 # dependencies
 sh $DIR_TESTS/generate-dependencies.sh
+sh $DIR_TESTS/dependencies-moleculer.sh

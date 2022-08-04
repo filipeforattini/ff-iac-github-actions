@@ -44,7 +44,7 @@ module.exports = async (analysis) => {
   const committedAt = github.context.payload.head_commit
     ? new Date(github.context.payload.head_commit.timestamp) // push
     : github.context.payload.pull_request
-      ? new Date(github.context.payload.pull_request.updatedAt) // pr
+      ? new Date(github.context.payload.pull_request.updated_at) // pr
       : null
 
   if (committedAt) {
