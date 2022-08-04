@@ -1,6 +1,6 @@
 {
   "name": "ff-iac-github-actions",
-  "version": "1.25.1",
+  "version": "1.25.2",
   "description": "Pipelines",
   "main": "",
   "scripts": {
