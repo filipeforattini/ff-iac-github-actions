@@ -1,3 +1,10 @@
+## [1.25.3](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.25.2...v1.25.3) (2022-08-04)
+
+
+### Bug Fixes
+
+* readded missing user to dependencies ([31b49e9](https://github.com/filipeforattini/ff-iac-github-actions/commit/31b49e984af8633ea2cc45de2ffe63e8fe988f88))
+
 ## [1.25.2](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.25.1...v1.25.2) (2022-08-04)
 
 
