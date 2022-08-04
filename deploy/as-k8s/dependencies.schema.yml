@@ -6,6 +6,7 @@
   image:
     debug: false
     pullPolicy: IfNotPresent
+    registry: docker.io
     repository: bitnami/mysql
     tag: 8.0.30-debian-11-r3
   metrics:
@@ -37,6 +38,7 @@
   image:
     debug: false
     pullPolicy: IfNotPresent
+    registry: docker.io
     repository: bitnami/postgresql
     tag: 14.4.0-debian-11-r20
   metrics:
@@ -69,6 +71,7 @@
   image:
     debug: false
     pullPolicy: IfNotPresent
+    registry: docker.io
     repository: bitnami/rabbitmq
     tag: 3.10.6-debian-11-r5
   ingress:
@@ -128,6 +131,7 @@
   image:
     debug: false
     pullPolicy: IfNotPresent
+    registry: docker.io
     repository: bitnami/elasticsearch
     tag: 8.3.3-debian-11-r1
   ingest:
@@ -167,6 +171,7 @@
   image:
     debug: false
     pullPolicy: IfNotPresent
+    registry: docker.io
     repository: bitnami/redis
     tag: 7.0.4-debian-11-r7
   ingress:
@@ -197,6 +202,7 @@
   image:
     debug: false
     pullPolicy: IfNotPresent
+    registry: docker.io
     repository: bitnami/nats
     tag: 2.8.4-debian-11-r24
   metrics:
@@ -217,6 +223,7 @@
   image:
     debug: false
     pullPolicy: IfNotPresent
+    registry: docker.io
     repository: bitnami/etcd
     tag: 3.5.4-debian-11-r21
   metrics:
