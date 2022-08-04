@@ -86,6 +86,7 @@ runs:
       shell: bash
       run: |	
         K8S_NAMESPACE=${{inputs.namespace}} \
+        K8S_REPOSITORY=${{inputs.repository}} \
         DEPENDENCY_NAME=mysql \
         REPOSITORY_TAG_VERSION=${{inputs.version}} \
         DEPENDENCY_FILE=${{inputs.renderedOutput}} \
@@ -97,6 +98,7 @@ runs:
       shell: bash
       run: |	
         K8S_NAMESPACE=${{inputs.namespace}} \
+        K8S_REPOSITORY=${{inputs.repository}} \
         DEPENDENCY_NAME=postgres \
         REPOSITORY_TAG_VERSION=${{inputs.version}} \
         DEPENDENCY_FILE=${{inputs.renderedOutput}} \
@@ -108,6 +110,7 @@ runs:
       shell: bash
       run: |	
         K8S_NAMESPACE=${{inputs.namespace}} \
+        K8S_REPOSITORY=${{inputs.repository}} \
         DEPENDENCY_NAME=rabbitmq \
         REPOSITORY_TAG_VERSION=${{inputs.version}} \
         DEPENDENCY_FILE=${{inputs.renderedOutput}} \
@@ -119,6 +122,7 @@ runs:
       shell: bash
       run: |	
         K8S_NAMESPACE=${{inputs.namespace}} \
+        K8S_REPOSITORY=${{inputs.repository}} \
         DEPENDENCY_NAME=elasticsearch \
         REPOSITORY_TAG_VERSION=${{inputs.version}} \
         DEPENDENCY_FILE=${{inputs.renderedOutput}} \
@@ -130,6 +134,7 @@ runs:
       shell: bash
       run: |	
         K8S_NAMESPACE=${{inputs.namespace}} \
+        K8S_REPOSITORY=${{inputs.repository}} \
         DEPENDENCY_NAME=redis \
         REPOSITORY_TAG_VERSION=${{inputs.version}} \
         DEPENDENCY_FILE=${{inputs.renderedOutput}} \
@@ -141,6 +146,7 @@ runs:
       shell: bash
       run: |	
         K8S_NAMESPACE=${{inputs.namespace}} \
+        K8S_REPOSITORY=${{inputs.repository}} \
         DEPENDENCY_NAME=nats \
         REPOSITORY_TAG_VERSION=${{inputs.version}} \
         DEPENDENCY_FILE=${{inputs.renderedOutput}} \
@@ -152,6 +158,7 @@ runs:
       shell: bash
       run: |	
         K8S_NAMESPACE=${{inputs.namespace}} \
+        K8S_REPOSITORY=${{inputs.repository}} \
         DEPENDENCY_NAME=etcd \
         REPOSITORY_TAG_VERSION=${{inputs.version}} \
         DEPENDENCY_FILE=${{inputs.renderedOutput}} \
