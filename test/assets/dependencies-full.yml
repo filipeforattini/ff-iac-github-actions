@@ -4,10 +4,8 @@ mysql:
   enabled: true
   values:
     primary:
-      nodeSelector:
-        - name: arch
-          value: amd64
       persistence:
+        enabled: false
         size: 2Gi
         storageClass: longhorn
 
@@ -15,20 +13,16 @@ postgres:
   enabled: true  
   values:
     primary:
-      nodeSelector:
-        - name: arch
-          value: amd64
       persistence:
+        enabled: false
         size: 2Gi	
         storageClass: longhorn
 
 rabbitmq:
   enabled: true 
   values:
-    nodeSelector:
-      - name: arch
-        value: amd64
     persistence:
+      enabled: false
       size: 2Gi
       storageClass: longhorn
 
@@ -36,17 +30,12 @@ elasticsearch:
   enabled: true  
   values:
     master:
-      nodeSelector:
-        - name: arch
-          value: amd64
       persistence:
         size: 2Gi
         storageClass: longhorn
     data:
-      nodeSelector:
-        - name: arch
-          value: amd64
       persistence:
+        enabled: false
         size: 2Gi
         storageClass: longhorn
 
@@ -54,9 +43,6 @@ redis:
   enabled: true
   values:
     master:
-      nodeSelector:
-        - name: arch
-          value: amd64
       persistence:
         enabled: false
 
@@ -70,6 +56,5 @@ nats:
 etcd:
   enabled: true
   values:
-    nodeSelector:
-      - name: arch
-        value: amd64
+    persistence:
+      enabled: false

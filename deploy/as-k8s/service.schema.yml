@@ -80,7 +80,7 @@ pipelineControl:
 ecosystem: acm
 organization: acme
 containerRegistry: ghcr.io
-repository: acm-svc-repository
+repository: acm-svc-service
 environment: dev
 tag: latest
 port: 3333

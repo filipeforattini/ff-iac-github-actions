@@ -6,6 +6,7 @@
   image:
     debug: false
     pullPolicy: IfNotPresent
+    repository: zcube/bitnami-compat/mysql
   metrics:
     enabled: false
     #@schema/type any=True
@@ -35,6 +36,7 @@
   image:
     debug: false
     pullPolicy: IfNotPresent
+    repository: zcube/bitnami-compat/postgresql
   metrics:
     enabled: false
     #@schema/type any=True
@@ -65,6 +67,7 @@
   image:
     debug: false
     pullPolicy: IfNotPresent
+    repository: zcube/bitnami-compat/rabbitmq
   ingress:
     enabled: false
   metrics:
@@ -122,6 +125,7 @@
   image:
     debug: false
     pullPolicy: IfNotPresent
+    repository: zcube/bitnami-compat/elasticsearch
   ingest:
     #@schema/type any=True
     nodeSelector: []
@@ -159,6 +163,7 @@
   image:
     debug: false
     pullPolicy: IfNotPresent
+    repository: zcube/bitnami-compat/postgresql
   ingress:
     enabled: false
   metrics:
@@ -205,6 +210,7 @@
   image:
     debug: false
     pullPolicy: IfNotPresent
+    repository: zcube/bitnami-compat/postgresql
   metrics:
     enabled: false
   #@schema/type any=True

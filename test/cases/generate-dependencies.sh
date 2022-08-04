@@ -1,22 +1,22 @@
 REPOSITORY=${REPOSITORY:-"ff-iac-github-actions"}
 
 ytt \
-  -f ../deploy/as-k8s/dependencies.schema.yml \
-  -f ../deploy/as-k8s/dependencies.yml \
-  -f ./concerns/dependencies-empty.yml \
+  -f $DIR_SRC/dependencies.schema.yml \
+  -f $DIR_SRC/dependencies.yml \
+  -f $DIR_ASSETS/dependencies-empty.yml \
   --data-value repository=$REPOSITORY \
-    > ./tmp/k8s-dependencies-empty.yml
+    > $DIR_RESULTS/k8s-dependencies-empty.yml
 
 ytt \
-  -f ../deploy/as-k8s/dependencies.schema.yml \
-  -f ../deploy/as-k8s/dependencies.yml \
-  -f ./concerns/dependencies-full.yml \
+  -f $DIR_SRC/dependencies.schema.yml \
+  -f $DIR_SRC/dependencies.yml \
+  -f $DIR_ASSETS/dependencies-full.yml \
   --data-value repository=$REPOSITORY \
-    > ./tmp/k8s-dependencies.yml
+    > $DIR_RESULTS/k8s-dependencies.yml
 
 ytt \
-  -f ../deploy/as-k8s/dependencies.schema.yml \
-  -f ../deploy/as-k8s/dependencies.yml \
-  -f ./concerns/dependencies-full.yml \
+  -f $DIR_SRC/dependencies.schema.yml \
+  -f $DIR_SRC/dependencies.yml \
+  -f $DIR_ASSETS/dependencies-full.yml \
   --data-value repository=$REPOSITORY \
-    > ./tmp/k8s-dependencies-full.yml
+    > $DIR_RESULTS/k8s-dependencies-full.yml
