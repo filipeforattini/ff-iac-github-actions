@@ -1,6 +1,6 @@
 #@ def defaultDeployment():
   enable: true
-  replicas: 2
+  replicas: 1
   name: svc
   labels: {}
   annotations: {}
