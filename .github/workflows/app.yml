@@ -50,11 +50,6 @@ on:
         default: "linux/386,linux/amd64,linux/arm/v7,linux/arm/v8,linux/arm64,linux/ppc64le,linux/s390x"
         description: "Multi plataform container builds"
 
-    outputs:
-      PipelineConfig: 
-        description: "Used pipeline config"
-        value: ${{ jobs.Setup.outputs.PipelineConfig }}
-
 
 #--------------------------------------------------#
 #                  Workflow Jobs                   # 
@@ -348,7 +343,7 @@ jobs:
             -f ./.pipeline/deploy/as-k8s/service.schema.yml \
             -f ./.pipeline/deploy/as-k8s/service \
             -f ./manifests/k8s.yml \
-            --data-value                                      ecosystem=${{steps.analysis.outputs.deploy_ecosystem}} \
+            --data-value                                      ecosystem=${{steps.analysis.outputs.ecosystem}} \
             --data-value                                   organization=${{steps.analysis.outputs.organization}} \
             --data-value                                     repository=${{steps.analysis.outputs.repository}} \
             --data-value                              containerRegistry=${{inputs.containerRegistry}} \
