@@ -1,3 +1,10 @@
+# [1.26.0](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.25.3...v1.26.0) (2022-08-04)
+
+
+### Features
+
+* added default repository and tag for each dependency ([f83b860](https://github.com/filipeforattini/ff-iac-github-actions/commit/f83b860370780b3e1f36b440ae36443f4511a3c2))
+
 ## [1.25.3](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.25.2...v1.25.3) (2022-08-04)
 
 
