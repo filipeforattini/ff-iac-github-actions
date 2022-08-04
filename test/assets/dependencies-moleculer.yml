@@ -4,6 +4,7 @@ mysql:
   enabled: true
   values:
     image:
+      registry: ghcr.io
       repository: zcube/bitnami-compat/mysql
       tag: 8.0.30-debian-11-r19
     primary:
@@ -14,6 +15,7 @@ postgres:
   enabled: true
   values:
     image:
+      registry: ghcr.io
       repository: zcube/bitnami-compat/postgresql
       tag: 14.4.0-debian-11-r19
     primary:
@@ -24,6 +26,7 @@ redis:
   enabled: true
   values:
     image:
+      registry: ghcr.io
       repository: zcube/bitnami-compat/redis
       tag: 7.0.4-debian-11-r19
 
@@ -41,6 +44,7 @@ rabbitmq:
   enabled: true
   values:
     image:
+      registry: ghcr.io
       repository: zcube/bitnami-compat/rabbitmq
       tag: 3.10.6-debian-11-r19
     persistence:
