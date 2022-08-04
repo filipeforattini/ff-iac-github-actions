@@ -1,3 +1,10 @@
+# [1.27.0](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.26.0...v1.27.0) (2022-08-04)
+
+
+### Features
+
+* added default registry ([48dc2ef](https://github.com/filipeforattini/ff-iac-github-actions/commit/48dc2ef5d6b0a9b851603fedb9fd9135b089aa0b))
+
 # [1.26.0](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.25.3...v1.26.0) (2022-08-04)
 
 
