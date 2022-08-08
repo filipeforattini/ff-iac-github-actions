@@ -150,8 +150,19 @@ flowchart
    // our code goes here
 ```
 
+### Repository Secrets
 
-#### Pipeline
+
+| Name | Description |
+| ---: | --- |
+| GPG_PASSPHRASE |  |
+| KUBE_CONFIG | Your `~/.kube/config` file as base64. |
+| PIPELINE_DEPLOY_SECRET | A GitHub token, see the permissions below. |
+| REGISTRY_USERNAME | Registry username. |
+| REGISTRY_PASSWORD | Registry password. |
+
+
+### Pipeline
 
 Add this pipeline to your repository:
 
@@ -174,13 +185,12 @@ jobs:
     with:
       mainBranch: main
       platforms: linux/amd64,linux/arm64
-      staticAnalysis: false
       containerRegistry: ghcr.io
       nodeMatrix: '[17]'
       environmentsAsNamespaces: true
 ```
 
-### Parameters
+#### Parameters
 
 | Name | Default | Description |
 | --- | --- | --- |
