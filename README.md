@@ -8,6 +8,17 @@ These workflows are highly opinionated **kubectl-apply** or **helm-upgrade** pip
 
 <img src="https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/react.svg" height="38"> <img src="https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/vuedotjs.svg" height="38"> <img src="https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/express.svg" height="38"> <img src="https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/fastapi.svg" height="38"> <img src="https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/flask.svg" height="38"> <img src="https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/moleculer.svg" height="38"> <img src="https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/nestjs.svg" height="38"> <img src="https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/nextdotjs.svg" height="38">
 
+---
+
+## tldr;
+
+1. Config tour repository with [these](#repository-secrets) secrets.
+1. Create a directory `.github/workflow` in your repository and add [this](#pipeline) file.
+1. Create a another directory `manifests` and add [this]() file.
+1. Commit and open your repository actions page! :)
+
+---
+
 ## Introduction
 
 ### Features
@@ -164,7 +175,7 @@ flowchart
 
 ### Pipeline
 
-Add this pipeline to your repository:
+Add this pipeline to your repository creating a file `pipeline.yml` in your `.github/workflows` directory.
 
 ```yml
 name: pipeline
@@ -196,6 +207,31 @@ jobs:
 | --- | --- | --- |
 | containerRegistry | ghcr.io | Container registry host that you will use |
 | environmentsASnamespaces | false |  |
+
+
+#### Deploy with kubetl apply (default)
+
+Create a file `k8s.yml` in your `manifests` directory.
+
+```yml
+#@data/values
+---
+port: 1234
+
+env:
+  - name: TZ
+    value: America/Sao_Paulo
+
+ingress:
+  enable: true
+  type: traefik
+
+  tls:
+    enable: true
+    domain: forattini.app
+    letsencrypt:
+      enable: true
+```
 
 ### Requirements
 
