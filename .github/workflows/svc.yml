@@ -216,13 +216,13 @@ jobs:
       - name: Setup | Cloning repository
         uses: actions/checkout@v3
 
-      - name: Setup | Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v3
+      - name: Setup | Dependencies
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/setup-binaries@main
         with:
-          python-version: ${{ matrix.python-version }}
+          python: ${{ matrix.python-version }}
 
       - name: Pip install
-        run: pip install -r requirements.txt
+        run: pip install --upgrade -r requirements.txt
 
 
   #--------------------------------------------------#
@@ -505,6 +505,8 @@ jobs:
       - name: Create .dockerignore
         uses: filipeforattini/ff-iac-github-actions/.github/actions/create-dockerignore@main
         if: steps.analysis.outputs.feature_has_dockerignore != true
+        with:
+          writeSummary: true
 
       - name: Create Dockerfile
         uses: filipeforattini/ff-iac-github-actions/.github/actions/create-dockerfile@main

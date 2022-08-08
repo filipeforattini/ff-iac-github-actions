@@ -24,6 +24,10 @@ inputs:
     description: 'Inform the Nodejs version'
     required: false
     default: 'false'
+  python:
+    description: 'Inform the Python version'
+    required: false
+    default: 'false'
   yq:
     description: 'Install'
     required: false
@@ -43,7 +47,7 @@ runs:
 
   steps:
     # nodejs
-    - name: Setup | NodeJs
+    - name: Setup | NodeJs ${{ inputs.nodejs }}
       if: inputs.nodejs != 'false'
       uses: actions/setup-node@v3
       id: node
@@ -55,6 +59,12 @@ runs:
       shell: bash
       id: npm
       run: npm -g install yarn npm
+
+    # python
+    - name: Setup | Python ${{ inputs.python }}
+      uses: actions/setup-python@v4.1.0
+      with:
+        python-version: ${{ inputs.python }}
 
     # docker
     - name: Setup | Docker QMEU
