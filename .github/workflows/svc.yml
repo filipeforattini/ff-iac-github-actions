@@ -263,6 +263,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.PIPELINE_DEPLOY_SECRET }}
         with:
+          writeSummary: true
           defaultBranch: ${{ inputs.mainBranch }}
           files: '["package.json","dist/**/*.{js,css}"]'
           npmPlugin: true
@@ -439,6 +440,7 @@ jobs:
         uses: filipeforattini/ff-iac-github-actions/.github/actions/create-dockerignore@main
         if: steps.analysis.outputs.feature_has_dockerignore != true
         with:
+          writeSummary: true
           globsToIgnore: '["node_modules"]'
 
       - name: Create Dockerfile

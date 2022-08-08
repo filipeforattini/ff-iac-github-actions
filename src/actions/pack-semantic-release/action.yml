@@ -2,6 +2,10 @@ name: 'Semantic release pack'
 description: 'Generates file and runs new release.'
 
 inputs:
+  writeSummary:
+    required: false
+    default: "false"
+    description: ""
   defaultBranch:
     required: true
     default: master
@@ -31,6 +35,7 @@ runs:
       uses: filipeforattini/ff-iac-github-actions/.github/actions/create-releaserc-file@main
       if: steps.file_checker.outputs.has_releaserc_file == 'false'
       with:
+        writeSummary: true
         defaultBranch: ${{ inputs.defaultBranch }}
         files: ${{ inputs.files }}
         npmPlugin: ${{ inputs.npmPlugin }}
