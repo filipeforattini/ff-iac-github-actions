@@ -69,7 +69,7 @@ async function action() {
     await core.summary
       .addRaw(
         [
-          "<details><summary>Generated [.releaserc.json]</summary>\n\n```dockerfile \n",
+          "<details><summary>📝 .releaserc.json</summary>\n\n```dockerfile \n",
           content,
           " \n\n ``` \n</details>",
         ].join(""),

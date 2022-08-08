@@ -18,6 +18,7 @@ async function action() {
       '.git',
       '.vscode',
       '.github',
+      '.pipeline',
       'manifests',
       ...globsToIgnore,
     ]
@@ -29,7 +30,7 @@ async function action() {
     await core.summary
       .addRaw(
         [
-          "<details><summary>Generated [.dockerignore]</summary>\n\n```dockerfile \n",
+          "<details><summary>📝 .dockerignore</summary>\n\n```dockerfile \n",
           content,
           " \n\n ``` \n</details>",
         ].join(""),
