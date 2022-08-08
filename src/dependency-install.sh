@@ -14,7 +14,7 @@ REPOSITORY_TAG_VERSION="${REPOSITORY_TAG_VERSION:-"0.0.1"}"
 # utils
 debug () {
   echo "[$DEPENDENCY_NAME] debug  | $*"
-}
+}ada
 
 info () {
   echo "[$DEPENDENCY_NAME]  info  | $*"

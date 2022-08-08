@@ -285,7 +285,7 @@ elasticsearch:
 #! REDIS
 redis:
   enabled: false
-  version: 17.0.7
+  version: 16.13.2
   chart: bitnami/redis
   #@schema/default defaultRedis()
   #@schema/type any=True
