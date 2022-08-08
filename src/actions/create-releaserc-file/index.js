@@ -62,7 +62,8 @@ async function action() {
     plugins,
   };
 
-  fs.writeFileSync(path.join(process.cwd(), ".releaserc.json"), JSON.stringify(releaseFile, null, 2));
+  const content = JSON.stringify(releaseFile, null, 2)
+  fs.writeFileSync(path.join(process.cwd(), ".releaserc.json"), content);
 
   if (writeSummary) {
     await core.summary
