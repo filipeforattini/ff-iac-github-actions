@@ -10,6 +10,7 @@ const template = _.template(`
 
 async function action() {
   let globsToIgnore = JSON.parse(core.getInput('globsToIgnore', { required: false }))
+  let writeSummary = core.getBooleanInput("writeSummary", { required: true });
 
   const content = template({ 
     generatedAt: new Date().toISOString(),
@@ -23,6 +24,21 @@ async function action() {
   });
 
   fs.writeFileSync(path.join(process.cwd(), ".dockerignore"), content);
+
+  if (writeSummary) {
+    await core.summary
+      .addRaw(
+        [
+          "<details><summary>Generated [.dockerignore]</summary>\n\n```dockerfile \n",
+          content,
+          " \n\n ``` \n</details>",
+        ].join(""),
+        true
+      )
+      .write();
+  }
+ 
+  return content
 }
 
 try {

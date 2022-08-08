@@ -47,11 +47,9 @@ async function action() {
 
   if (writeSummary) {
     await core.summary
-      .addHeading("📦 Deploy", 3)
-      .addEOL()
       .addRaw(
         [
-          "<details><summary>Dockerfile:</summary>\n\n```dockerfile \n",
+          "<details><summary>Generated [Dockerfile]</summary>\n\n```dockerfile \n",
           content,
           " \n\n ``` \n</details>",
         ].join(""),

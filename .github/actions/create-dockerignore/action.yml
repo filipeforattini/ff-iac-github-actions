@@ -2,6 +2,10 @@ name: 'Create .dockerignore'
 description: ''
 
 inputs:
+  writeSummary:
+    required: false
+    default: "false"
+    description: ""
   globsToIgnore:
     required: false
     default: "[]"

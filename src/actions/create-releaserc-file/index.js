@@ -6,6 +6,7 @@ async function action() {
   let defaultBranch = core.getInput('defaultBranch', { required: true });
   let files = JSON.parse(core.getInput('files', { required: false }))
   let npmPlugin = core.getBooleanInput('npmPlugin', { required: false });
+  let writeSummary = core.getBooleanInput("writeSummary", { required: true });
 
   let plugins = [
     "@semantic-release/commit-analyzer",
@@ -63,7 +64,18 @@ async function action() {
 
   fs.writeFileSync(path.join(process.cwd(), ".releaserc.json"), JSON.stringify(releaseFile, null, 2));
 
-  let x = fs.readFileSync(path.join(process.cwd(), ".releaserc.json"));
+  if (writeSummary) {
+    await core.summary
+      .addRaw(
+        [
+          "<details><summary>Generated [.releaserc.json]</summary>\n\n```dockerfile \n",
+          content,
+          " \n\n ``` \n</details>",
+        ].join(""),
+        true
+      )
+      .write();
+  } 
 }
 
 try {

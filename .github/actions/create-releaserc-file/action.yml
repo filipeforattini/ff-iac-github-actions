@@ -2,6 +2,10 @@ name: 'Generate ReleaseRC file'
 description: ''
 
 inputs:
+  writeSummary:
+    required: false
+    default: "false"
+    description: ""
   defaultBranch:
     required: true
     default: master

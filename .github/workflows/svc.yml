@@ -432,6 +432,8 @@ jobs:
           docker-qmeu: true
           docker-buildx: true
       
+      - run: echo '### Build & Shipping :rocket:' >> $GITHUB_STEP_SUMMARY
+
       # pre-build
       - name: Create .dockerignore
         uses: filipeforattini/ff-iac-github-actions/.github/actions/create-dockerignore@main
