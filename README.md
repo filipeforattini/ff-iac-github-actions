@@ -267,7 +267,7 @@ gpg -v \
 Thanks to:
 - https://evilmartians.com/chronicles/build-images-on-github-actions-with-docker-layer-caching
 - https://github.blog/2022-05-09-supercharging-github-actions-with-job-summaries/
-
+- https://blog.gitguardian.com/github-actions-security-cheat-sheet/
 
 ## Example ecosystem
 This ecosystem generates few data per second as samples for our apis.

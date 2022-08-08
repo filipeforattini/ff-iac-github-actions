@@ -433,7 +433,7 @@ jobs:
           docker-qmeu: true
           docker-buildx: true
       
-      - run: echo '### Build & Shipping :rocket:' >> $GITHUB_STEP_SUMMARY
+      - run: echo "### :package: Build" >> $GITHUB_STEP_SUMMARY
 
       # pre-build
       - name: Create .dockerignore
@@ -500,6 +500,8 @@ jobs:
         with:
           docker-qmeu: true
           docker-buildx: true
+
+      - run: echo "### :package: Build" >> $GITHUB_STEP_SUMMARY
 
       # pre-build
       - name: Create .dockerignore
