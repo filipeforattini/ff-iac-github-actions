@@ -793,7 +793,7 @@ jobs:
 
       # configs
       - name: K8s create config-map
-        if: steps.analysis.outputs.feature_has_configs == 'true'
+        if: steps.analysis.outputs.feature_has_configs
         run: |
           kubectl create configmap -n ${{steps.analysis.outputs.deploy_namespace}} ${{steps.analysis.outputs.repository}} --from-env-file=${{steps.analysis.outputs.deploy_configs_file}} --dry-run=client --validate=false --output=yaml | kubectl apply -f -
           kubectl create configmap -n ${{steps.analysis.outputs.deploy_namespace}} ${{steps.analysis.outputs.repository}}-${{steps.versioning.outputs.version}} --from-env-file=${{steps.analysis.outputs.deploy_configs_file}} --dry-run=client --validate=false --output=yaml | kubectl apply -f -
@@ -801,7 +801,7 @@ jobs:
 
       # secrets
       - name: Decrypt secrets
-        if: steps.analysis.outputs.feature_has_secrets == 'true'
+        if: steps.analysis.outputs.feature_has_secrets
         run: |
           gpg \
             --yes --batch --quiet --decrypt \
@@ -810,7 +810,7 @@ jobs:
             ${{steps.analysis.outputs.deploy_secrets_file}}
 
       - name: K8s create secrets
-        if: steps.analysis.outputs.feature_has_secrets == 'true'
+        if: steps.analysis.outputs.feature_has_secrets
         run: |
           kubectl create secret generic -n ${{steps.analysis.outputs.deploy_namespace}} ${{steps.analysis.outputs.repository}} --from-env-file=./manifests/k8s-secrets.env --dry-run=client --validate=false --output=yaml | kubectl apply -f -
           kubectl create secret generic -n ${{steps.analysis.outputs.deploy_namespace}} ${{steps.analysis.outputs.repository}}-${{steps.versioning.outputs.version}} --from-env-file=./manifests/k8s-secrets.env --dry-run=client --validate=false --output=yaml | kubectl apply -f -

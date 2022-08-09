@@ -73,6 +73,13 @@ runs:
           --data-value repository=${{inputs.repository}} \
             > ${{inputs.renderedOutput}}
 
+    - name: Docs | Outputs dependencies
+      if: steps.analysis.outputs.feature_has_dependencies == 'true'
+      shell: bash
+      run: |
+        echo -e "<details><summary>📝 Dependencies</summary>\n\n\`\`\`yml \n$(cat ${{inputs.renderedOutput}})\n \`\`\`\n </details>\n\n" >> $GITHUB_STEP_SUMMARY
+
+
     - name: Dependencies | Helm update
       if: steps.analysis.outputs.feature_has_dependencies == 'true'
       shell: bash
