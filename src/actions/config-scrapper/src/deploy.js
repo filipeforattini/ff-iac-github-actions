@@ -15,11 +15,6 @@ module.exports = async (analysis) => {
 
   analysis.deployment.registry = registry
 
-  if (github.context.payload.deployment) {
-    analysis.environment = github.context.payload.deployment.environment
-    analysis.outputs.environment = analysis.environment
-  }
-
   let tag = `c-${commitSha}`
   let tags = [
     `latest`,

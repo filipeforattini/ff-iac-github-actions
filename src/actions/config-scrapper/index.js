@@ -6,12 +6,14 @@ const scrappers = require("./src");
 const { templateInfo, templateDetails } = require('./log')
 
 const analysisFactory = (initial = {}) => new Proxy(initial, {
-  get(target, prop, receiver) {
+  get(target, prop) {
     if (!target[prop]) target[prop] = {}
     return target[prop]
   },
 
   set(obj, prop, value) {
+    if (_.isString(value)) obj[prop] = prop
+
     if (!obj[prop]) obj[prop] = {}
     
     obj[prop] = _.isObject(value)
@@ -52,14 +54,16 @@ async function action() {
   analysis.outputs.actor = github.context.actor
 
   if (analysis.event === 'workflow_dispatch') {
-    await scrappers.dispatch(analysis)
+    await scrappers.eventDispatch(analysis)
+  } else if (analysis.event === 'deployment') {
+    await scrappers.eventDeployment(analysis)
   }
 
   await Promise.all([
     scrappers.git(analysis),
     scrappers.run(analysis),
     scrappers.code(analysis),
-    scrappers.deployment(analysis),
+    scrappers.deploy(analysis),
     scrappers.repository(analysis),
   ])
   
