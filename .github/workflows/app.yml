@@ -262,11 +262,9 @@ jobs:
           docker-buildx: true
 
       # pre-build
-      - name: Create .dockerignore
-        uses: filipeforattini/ff-iac-github-actions/.github/actions/create-dockerignore@main
-        if: steps.analysis.outputs.feature_has_dockerignore != true
-        with:
-          globsToIgnore: '["node_modules"]'
+      - name: Docs | Write summary title
+        run: |
+          echo "### 🚢 Build" >> $GITHUB_STEP_SUMMARY
 
       - name: Create Dockerfile
         uses: filipeforattini/ff-iac-github-actions/.github/actions/create-dockerfile@main
@@ -274,6 +272,12 @@ jobs:
         with:
           writeSummary: true
           preset: spa
+
+      - name: Create .dockerignore
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/create-dockerignore@main
+        if: steps.analysis.outputs.feature_has_dockerignore != true
+        with:
+          globsToIgnore: '["node_modules"]'
 
       # login
       - name: Config | Login to Container Registry

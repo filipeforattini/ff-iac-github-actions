@@ -461,7 +461,8 @@ jobs:
           docker-qmeu: true
           docker-buildx: true
       
-      - run: |
+      - name: Docs | Write summary title
+        run: |
           echo "### 🚢 Build" >> $GITHUB_STEP_SUMMARY
 
       # pre-build
@@ -531,7 +532,8 @@ jobs:
           docker-qmeu: true
           docker-buildx: true
 
-      - run: |
+      - name: Docs | Write summary title
+        run: |
           echo "### 🚢 Build" >> $GITHUB_STEP_SUMMARY
 
       # pre-build
@@ -639,7 +641,7 @@ jobs:
 
       # configs
       - name: K8s create config-map
-        if: steps.deploy_setup.outputs.feature_has_configs
+        if: ${{ fromJSON(steps.deploy_setup.outputs.feature_has_configs) }}
         run: |
           kubectl create configmap -n ${{steps.analysis.outputs.deploy_namespace}} ${{steps.analysis.outputs.repository}} --from-env-file=${{steps.analysis.outputs.deploy_configs_file}} --dry-run=client --validate=false --output=yaml | kubectl apply -f -
           kubectl create configmap -n ${{steps.analysis.outputs.deploy_namespace}} ${{steps.analysis.outputs.repository}}-${{steps.versioning.outputs.version}} --from-env-file=${{steps.analysis.outputs.deploy_configs_file}} --dry-run=client --validate=false --output=yaml | kubectl apply -f -
