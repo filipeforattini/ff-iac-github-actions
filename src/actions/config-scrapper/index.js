@@ -52,6 +52,7 @@ async function action() {
   analysis.outputs.pwd = analysis.root
   analysis.outputs.event = analysis.event
   analysis.outputs.actor = github.context.actor
+  analysis.outputs.environment = 'dev'
 
   if (analysis.event === 'workflow_dispatch') {
     await scrappers.eventDispatch(analysis)
