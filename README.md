@@ -88,10 +88,12 @@ flowchart
   python-test[Python Tests]
   static-analysis[Static Analysis]
   
-  start --- |action/manual| analysis
-  start --- |action/github| analysis
+  start --- analysis
 
   analysis --- |event/push| static-analysis
+  analysis --- |event/pull_request| static-analysis
+  analysis --- |event/workflow_dispatch| trigger-manual
+
   static-analysis --- |lang/javascript| node-test
   static-analysis --- |lang/python| python-test
   static-analysis --- |lang/go| go-test
@@ -115,8 +117,7 @@ flowchart
   python-trigger --- |deployment/dev| finish
   go-trigger --- |deployment/dev| finish
 
-  analysis --- |event/pull-request| static-analysis
-  trigger --- |env/xxx| finish
+  trigger-manual --- |env/xxx| finish
 
   analysis --- |event/deployment| build
   build --- |env/dev| env-dev
@@ -218,7 +219,7 @@ jobs:
 | environmentsASnamespaces | false |  |
 
 
-#### Deploy with kubetl apply (default)
+#### Deploy with kubetl apply
 
 Create a file `k8s.yml` in your `manifests` directory.
 
@@ -238,8 +239,6 @@ ingress:
   tls:
     enable: true
     domain: your.domain
-    letsencrypt:
-      enable: true
 ```
 
 ### Requirements
@@ -345,32 +344,30 @@ flowchart
     ingress---|ff-svc-fastapi.dev.forattini.app|fastapi
     ingress---|ff-svc-moleculer.dev.forattini.app|moleculer
 
-    subgraph ff-svc-nextjs
-      nextjs---rabbitmq-nextjs[rabbit]
-      nextjs---postgres-nextjs[postgres]
-      nextjs---mysql-nextjs[mysql]
-      nextjs---redis-nextjs[mysql]
-      etcd-nextjs[etcd]
-      nats-nextjs[nats]
-    end
-    
     subgraph ff-svc-moleculer
-      moleculer---postgres-nextjs
-      moleculer---mysql-nextjs
-      moleculer---redis-nextjs
-      moleculer---rabbitmq-nextjs
-      moleculer---etcd-nextjs
-      moleculer---nats-nextjs
+      moleculer---postgres-moleculer[postgres]
+      moleculer---mysql-moleculer[mysql]
+      moleculer---redis-moleculer[redis]
+      moleculer---rabbitmq-moleculer[rabbitmq]
+      moleculer---etcd-moleculer[etcd]
+      moleculer---nats-moleculer[nats]
+    end
+
+    subgraph ff-svc-nextjs
+      nextjs---rabbitmq-moleculer
+      nextjs---postgres-moleculer
+      nextjs---mysql-moleculer
+      nextjs---redis-moleculer
     end
 
     subgraph ff-svc-fastapi
-      fastapi---postgres-nextjs[postgres]
-      fastapi---rabbitmq-nextjs[rabbit]
+      fastapi---postgres-moleculer
+      fastapi---rabbitmq-moleculer
     end
 
     subgraph ff-svc-nestjs
-      nestjs---postgres-nextjs[postgres]
-      nestjs---rabbitmq-nextjs[rabbitmq]
+      nestjs---postgres-moleculer
+      nestjs---rabbitmq-moleculer
     end
   end
 ```
