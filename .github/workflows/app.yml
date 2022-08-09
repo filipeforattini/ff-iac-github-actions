@@ -197,6 +197,46 @@ jobs:
           token: "${{ secrets.PIPELINE_DEPLOY_SECRET }}"
           environment: dev
 
+
+  #--------------------------------------------------#
+  #                  Trigger Manual                  # 
+  #--------------------------------------------------#
+  Trigger-Manual:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch'
+
+    needs: 
+      - Setup
+
+    steps:
+
+      # pre-job
+      - name: Setup | Cloning repository
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.PIPELINE_DEPLOY_SECRET }}
+
+      - name: Pipeline config scrapper
+        id: analysis
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
+
+      - name: Trigger
+        run: |
+          git config --global user.name "Pipeline[bot]"
+          git config --global user.email "pipeline[bot]"
+          git fetch
+          git checkout -B env/${{steps.analysis.outputs.environment}}
+          git commit --allow-empty -am "deploy: to ${{steps.analysis.outputs.environment}} [skip ci]\nCommit: ${{steps.setup.outputs.commit_hash}}"
+          git push -f -u origin env/${{steps.analysis.outputs.environment}}
+
+      - uses: altinukshini/deployment-action@releases/v1
+        name: Create GitHub deployment
+        id: deployment
+        with:
+          token: "${{ secrets.PIPELINE_DEPLOY_SECRET }}"
+          environment: ${{steps.analysis.outputs.environment}}
+
+
   #--------------------------------------------------#
   #                       Build                      # 
   #--------------------------------------------------#
