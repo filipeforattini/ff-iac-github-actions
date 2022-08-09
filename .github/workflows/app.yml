@@ -382,6 +382,7 @@ jobs:
             --data-value                                      ecosystem=${{steps.analysis.outputs.ecosystem}} \
             --data-value                                   organization=${{steps.analysis.outputs.organization}} \
             --data-value                                     repository=${{steps.analysis.outputs.repository}} \
+            --data-value                                    environment=${{steps.analysis.outputs.environment}} \
             --data-value                              containerRegistry=${{inputs.containerRegistry}} \
             --data-value                                            tag=${{steps.analysis.outputs.deploy_tag}} \
             --data-value-yaml               deployment.imagePullSecrets=true \
