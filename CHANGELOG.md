@@ -1,3 +1,11 @@
+## [1.35.8](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.35.7...v1.35.8) (2022-08-09)
+
+
+### Bug Fixes
+
+* empty commit for testing ([a1794e1](https://github.com/filipeforattini/ff-iac-github-actions/commit/a1794e122353e1a401283683faa06afde93d4801))
+* environment data was missing ([dd7dc59](https://github.com/filipeforattini/ff-iac-github-actions/commit/dd7dc59ad626b8dd420e1a8e710aba5a568b082b))
+
 ## [1.35.7](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.35.6...v1.35.7) (2022-08-09)
 
 
