@@ -36,13 +36,13 @@ async function action() {
           generatedAt: new Date().toISOString(),
           ...defaultValues,
         }),
-        encode(overwriteParams),
         encode({
           labels: [],
           environmentVariables: [],
         }),
       ].join("&")
-    )
+    ),
+    overwriteParams,
   );
 
   const content = template(data);
