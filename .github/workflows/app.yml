@@ -218,8 +218,8 @@ jobs:
 
       - name: Trigger
         run: |
-          git config --global user.name "Pipeline[bot]"
-          git config --global user.email "pipeline[bot]"
+          git config --global user.name "pipeline-bot"
+          git config --global user.email "pipeline-bot"
           git fetch
           git checkout -B env/${{steps.analysis.outputs.environment}}
           git commit --allow-empty -am "deploy: to ${{steps.analysis.outputs.environment}} [skip ci]\nCommit: ${{steps.setup.outputs.commit_hash}}"

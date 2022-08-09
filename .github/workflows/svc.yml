@@ -416,8 +416,8 @@ jobs:
 
       - name: Trigger
         run: |
-          git config --global user.name "Pipeline[bot]"
-          git config --global user.email "pipeline[bot]"
+          git config --global user.name "pipeline-bot"
+          git config --global user.email "pipeline-bot"
           git fetch
           git checkout -B env/${{steps.analysis.outputs.environment}}
           git commit --allow-empty -am "deploy: to ${{steps.analysis.outputs.environment}} [skip ci]\nCommit: ${{steps.setup.outputs.commit_hash}}"
@@ -648,7 +648,7 @@ jobs:
           kubectl get configmap -n ${{steps.analysis.outputs.deploy_namespace}} ${{steps.analysis.outputs.repository}} -o jsonpath='{.data}' | jq -r 'keys[]' |  tr '\n' '~' | sed 's/~/,/g;s/,$//' > ./manifests/k8s-configs-keys.txt
 
       # secrets
-      - name: Decrypt DEV secrets
+      - name: Decrypt secrets
         if: steps.analysis.outputs.feature_has_secrets
         run: |
           gpg \
@@ -800,7 +800,7 @@ jobs:
           kubectl get configmap -n ${{steps.analysis.outputs.deploy_namespace}} ${{steps.analysis.outputs.repository}} -o jsonpath='{.data}' | jq -r 'keys[]' |  tr '\n' '~' | sed 's/~/,/g;s/,$//' > ./manifests/k8s-configs-keys.txt
 
       # secrets
-      - name: Decrypt DEV secrets
+      - name: Decrypt secrets
         if: steps.analysis.outputs.feature_has_secrets == 'true'
         run: |
           gpg \
