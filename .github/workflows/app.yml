@@ -40,10 +40,6 @@ on:
         required: false
         default: true
         description: "Enable auto versioning with semantic versioning"
-      nodeMatrix:
-        type: string
-        required: false
-        default: '[14, 16, 17]'
       platforms:
         type: string
         required: false
