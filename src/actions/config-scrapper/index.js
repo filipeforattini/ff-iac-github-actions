@@ -42,6 +42,7 @@ async function action() {
     root: process.cwd(),
     actor: github.context.actor,
     event: github.context.eventName,
+    environment: 'dev',
     outputs: {},
   })
   
