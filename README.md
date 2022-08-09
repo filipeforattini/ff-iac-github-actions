@@ -175,6 +175,7 @@ flowchart
 
 Add this pipeline to your repository creating a file `pipeline.yml` in your `.github/workflows` directory.
 
+#### For SVC
 ```yml
 name: pipeline
 
@@ -186,16 +187,25 @@ on:
   pull_request:
     types: [opened, reopened]
 
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment'
+        required: true
+        type: choice
+        default: 'dev'
+        options:
+        - dev
+        - prd
+
 jobs:
 
-  APP:
-    uses: filipeforattini/ff-iac-github-actions/.github/workflows/app.yml@main
+  SVC:
+    uses: filipeforattini/ff-iac-github-actions/.github/workflows/svc.yml@main
     secrets: inherit
     with:
       mainBranch: main
-      platforms: linux/amd64,linux/arm64
       containerRegistry: ghcr.io
-      nodeMatrix: '[17]'
       environmentsAsNamespaces: true
 ```
 
