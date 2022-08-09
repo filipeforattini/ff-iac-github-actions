@@ -44,10 +44,18 @@ on:
         type: string
         required: false
         default: '[14, 16, 17]'
+      nodeVersion:
+        type: string
+        required: false
+        default: '17'
       pythonMatrix:
         type: string
         required: false
         default: '["3.8", "3.9", "3.10"]'
+      pythonVersion:
+        type: string
+        required: false
+        default: '3.10'
       platforms:
         type: string
         required: false
@@ -246,16 +254,6 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
-      # dependencies
-      - name: Setup | Pipeline config scrapper
-        uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
-        id: analysis
-
-      - name: Setup | Dependencies
-        uses: filipeforattini/ff-iac-github-actions/.github/actions/setup-binaries@main
-        with:
-          nodejs: 17
-
       # release
       - name: Semantic Release
         uses: filipeforattini/ff-iac-github-actions/.github/actions/pack-semantic-release@main
@@ -263,6 +261,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.PIPELINE_DEPLOY_SECRET }}
         with:
+          installNode: true
           writeSummary: true
           defaultBranch: ${{ inputs.mainBranch }}
           files: '["package.json","dist/**/*.{js,css}"]'
@@ -295,16 +294,6 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
-
-      # dependencies
-      - name: Setup | Pipeline config scrapper
-        uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
-        id: analysis
-
-      - name: Setup | Dependencies
-        uses: filipeforattini/ff-iac-github-actions/.github/actions/setup-binaries@main
-        with:
-          nodejs: 17
 
       # release
       - name: Semantic Release
