@@ -434,7 +434,7 @@ jobs:
           docker-buildx: true
       
       - run: |
-          echo "### :package: Build" >> $GITHUB_STEP_SUMMARY
+          echo "### 🚢 Build" >> $GITHUB_STEP_SUMMARY
 
       # pre-build
       - name: Create .dockerignore
@@ -503,7 +503,7 @@ jobs:
           docker-buildx: true
 
       - run: |
-          echo "### :package: Build" >> $GITHUB_STEP_SUMMARY
+          echo "### 🚢 Build" >> $GITHUB_STEP_SUMMARY
 
       # pre-build
       - name: Create .dockerignore
