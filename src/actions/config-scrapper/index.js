@@ -50,7 +50,9 @@ async function action() {
   analysis.outputs.event = analysis.event
   analysis.outputs.actor = github.context.actor
 
-  await scrappers.dispatch(analysis),
+  if (analysis.event === 'workflow_dispatch') {
+    await scrappers.dispatch(analysis)
+  }
 
   await Promise.all([
     scrappers.git(analysis),
