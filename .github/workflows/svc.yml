@@ -75,10 +75,10 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
-      Event: ${{ steps.analysis.outputs.event }}
-      Analysis: ${{ steps.analysis.outputs.result }}
-      Language: ${{ steps.analysis.outputs.language }}
-      Environment: ${{ steps.analysis.outputs.environment }}
+      Event: ${{steps.analysis.outputs.event}}
+      Analysis: ${{steps.analysis.outputs.result}}
+      Language: ${{steps.analysis.outputs.language}}
+      Environment: ${{steps.analysis.outputs.environment}}
 
     steps:
 
@@ -119,7 +119,7 @@ jobs:
         uses: filipeforattini/ff-iac-github-actions/.github/actions/pack-static-code-analysis@main
         if: inputs.staticAnalysis
         with:
-          language: ${{ needs.Setup.outputs.Language }}
+          language: ${{needs.Setup.outputs.Language}}
 
 
   #--------------------------------------------------#
@@ -137,7 +137,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: ${{ fromJSON(inputs.nodeMatrix) }}
+        node-version: ${{fromJSON(inputs.nodeMatrix)}}
     
     steps:
 
@@ -152,17 +152,17 @@ jobs:
           path: .pipeline
           repository: filipeforattini/ff-iac-github-actions
 
-      - name: Install | Node.js ${{ matrix.node-version }}
+      - name: Install | Node.js ${{matrix.node-version}}
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: ${{matrix.node-version}}
 
       - name: Install | Dependency managers
         run: npm -g install yarn npm
 
       - name: Config | Load setup configs
         env:
-          PIPELINE_SETUP: ${{ needs.Setup.outputs.PipelineConfig }}
+          PIPELINE_SETUP: ${{needs.Setup.outputs.PipelineConfig}}
         id: node_setup
         run: |
           echo "::set-output name=cache_key::$(echo $PIPELINE_SETUP | jq -r '.code.cacheKey')"
@@ -174,21 +174,21 @@ jobs:
         if: steps.node_setup.outputs.cache_key == 'yarn.lock'
         with:
           path: '**/node_modules'
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+          key: ${{runner.os}}-modules-${{hashFiles('**/yarn.lock')}}
 
       - name: Load cache from package-lock.json
         uses: actions/cache@v2
         if: steps.node_setup.outputs.cache_key == 'package-lock.json'
         with:
           path: '**/node_modules'
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/package-lock.json') }}
+          key: ${{runner.os}}-modules-${{hashFiles('**/package-lock.json')}}
 
       - name: Load cache from package.json
         uses: actions/cache@v2
         if: steps.node_setup.outputs.cache_key == 'package-lock.json'
         with:
           path: '**/node_modules'
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/package.json') }}
+          key: ${{runner.os}}-modules-${{hashFiles('**/package.json')}}
 
       # install dependencies
       - name: Install dependencies
@@ -216,7 +216,7 @@ jobs:
 
     strategy:
       matrix:
-        python-version: ${{ fromJSON(inputs.pythonMatrix) }}
+        python-version: ${{fromJSON(inputs.pythonMatrix)}}
     
     steps:
 
@@ -227,7 +227,7 @@ jobs:
       - name: Setup | Dependencies
         uses: filipeforattini/ff-iac-github-actions/.github/actions/setup-binaries@main
         with:
-          python: ${{ matrix.python-version }}
+          python: ${{matrix.python-version}}
 
       - name: Pip install
         run: pip install --upgrade -r requirements.txt
@@ -243,7 +243,7 @@ jobs:
       - Static-Analysis
 
     outputs:
-      Version: ${{ steps.versioning.outputs.version }}
+      Version: ${{steps.versioning.outputs.version}}
 
     steps:
 
@@ -259,11 +259,11 @@ jobs:
         uses: filipeforattini/ff-iac-github-actions/.github/actions/pack-semantic-release@main
         if: inputs.autoVersioning
         env:
-          GITHUB_TOKEN: ${{ secrets.PIPELINE_DEPLOY_SECRET }}
+          GITHUB_TOKEN: ${{secrets.PIPELINE_DEPLOY_SECRET}}
         with:
           installNode: true
           writeSummary: true
-          defaultBranch: ${{ inputs.mainBranch }}
+          defaultBranch: ${{inputs.mainBranch}}
           files: '["package.json","dist/**/*.{js,css}"]'
           npmPlugin: true
 
@@ -284,7 +284,7 @@ jobs:
       - Static-Analysis
 
     outputs:
-      Version: ${{ steps.versioning.outputs.version }}
+      Version: ${{steps.versioning.outputs.version}}
 
     steps:
 
@@ -300,9 +300,9 @@ jobs:
         uses: filipeforattini/ff-iac-github-actions/.github/actions/pack-semantic-release@main
         if: inputs.autoVersioning
         env:
-          GITHUB_TOKEN: ${{ secrets.PIPELINE_DEPLOY_SECRET }}
+          GITHUB_TOKEN: ${{secrets.PIPELINE_DEPLOY_SECRET}}
         with:
-          defaultBranch: ${{ inputs.mainBranch }}
+          defaultBranch: ${{inputs.mainBranch}}
           files: '[]'
           npmPlugin: false
 
@@ -330,7 +330,7 @@ jobs:
       - name: Setup | Cloning repository
         uses: actions/checkout@v3
         with:
-          token: ${{ secrets.PIPELINE_DEPLOY_SECRET }}
+          token: ${{secrets.PIPELINE_DEPLOY_SECRET}}
 
       - name: Pipeline config scrapper
         id: analysis
@@ -349,7 +349,7 @@ jobs:
         name: Create GitHub deployment
         id: deployment
         with:
-          token: "${{ secrets.PIPELINE_DEPLOY_SECRET }}"
+          token: "${{secrets.PIPELINE_DEPLOY_SECRET}}"
           environment: dev
 
 
@@ -369,7 +369,7 @@ jobs:
       - name: Setup | Cloning repository
         uses: actions/checkout@v3
         with:
-          token: ${{ secrets.PIPELINE_DEPLOY_SECRET }}
+          token: ${{secrets.PIPELINE_DEPLOY_SECRET}}
 
       - name: Pipeline config scrapper
         id: analysis
@@ -388,7 +388,7 @@ jobs:
         name: Create GitHub deployment
         id: deployment
         with:
-          token: "${{ secrets.PIPELINE_DEPLOY_SECRET }}"
+          token: "${{secrets.PIPELINE_DEPLOY_SECRET}}"
           environment: dev
 
 
@@ -408,7 +408,7 @@ jobs:
       - name: Setup | Cloning repository
         uses: actions/checkout@v3
         with:
-          token: ${{ secrets.PIPELINE_DEPLOY_SECRET }}
+          token: ${{secrets.PIPELINE_DEPLOY_SECRET}}
 
       - name: Pipeline config scrapper
         id: analysis
@@ -427,7 +427,7 @@ jobs:
         name: Create GitHub deployment
         id: deployment
         with:
-          token: "${{ secrets.PIPELINE_DEPLOY_SECRET }}"
+          token: "${{secrets.PIPELINE_DEPLOY_SECRET}}"
           environment: ${{steps.analysis.outputs.environment}}
 
 
@@ -486,9 +486,9 @@ jobs:
         uses: docker/login-action@v2
         with:
           logout: false
-          registry: ${{ inputs.containerRegistry }}
-          username: ${{ secrets.REGISTRY_USERNAME }}
-          password: ${{ secrets.REGISTRY_PASSWORD }}
+          registry: ${{inputs.containerRegistry}}
+          username: ${{secrets.REGISTRY_USERNAME}}
+          password: ${{secrets.REGISTRY_PASSWORD}}
 
       # build
       - name: Copy config
@@ -556,9 +556,9 @@ jobs:
         uses: docker/login-action@v2
         with:
           logout: false
-          registry: ${{ inputs.containerRegistry }}
-          username: ${{ secrets.REGISTRY_USERNAME }}
-          password: ${{ secrets.REGISTRY_PASSWORD }}
+          registry: ${{inputs.containerRegistry}}
+          username: ${{secrets.REGISTRY_USERNAME}}
+          password: ${{secrets.REGISTRY_PASSWORD}}
 
       # build
       - name: Copy config
@@ -603,7 +603,7 @@ jobs:
       - name: Setup | Dependencies
         uses: filipeforattini/ff-iac-github-actions/.github/actions/setup-binaries@main
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{secrets.GITHUB_TOKEN}}
           docker-qmeu: true
           docker-buildx: true
           kubectl: true
@@ -623,7 +623,7 @@ jobs:
 
       - name: Config | Kubectl config file
         env:
-          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+          KUBE_CONFIG: ${{secrets.KUBE_CONFIG}}
         run: |
           mkdir -p ~/.kube
           echo "$KUBE_CONFIG" | base64 -d > ~/.kube/config
@@ -641,7 +641,7 @@ jobs:
 
       # configs
       - name: K8s create config-map
-        if: ${{ fromJSON(steps.deploy_setup.outputs.feature_has_configs) }}
+        if: ${{fromJSON(steps.deploy_setup.outputs.feature_has_configs)}}
         run: |
           kubectl create configmap -n ${{steps.analysis.outputs.deploy_namespace}} ${{steps.analysis.outputs.repository}} --from-env-file=${{steps.analysis.outputs.deploy_configs_file}} --dry-run=client --validate=false --output=yaml | kubectl apply -f -
           kubectl create configmap -n ${{steps.analysis.outputs.deploy_namespace}} ${{steps.analysis.outputs.repository}}-${{steps.versioning.outputs.version}} --from-env-file=${{steps.analysis.outputs.deploy_configs_file}} --dry-run=client --validate=false --output=yaml | kubectl apply -f -
@@ -653,7 +653,7 @@ jobs:
         run: |
           gpg \
             --yes --batch --quiet --decrypt \
-            --passphrase="${{ secrets.GPG_PASSPHRASE }}" \
+            --passphrase="${{secrets.GPG_PASSPHRASE}}" \
             --output ./manifests/k8s-secrets.env \
             ${{steps.analysis.outputs.deploy_secrets_file}}
 
@@ -669,9 +669,9 @@ jobs:
         uses: docker/login-action@v2
         with:
           logout: false
-          registry: ${{ inputs.containerRegistry }}
-          username: ${{ secrets.REGISTRY_USERNAME }}
-          password: ${{ secrets.REGISTRY_PASSWORD }}
+          registry: ${{inputs.containerRegistry}}
+          username: ${{secrets.REGISTRY_USERNAME}}
+          password: ${{secrets.REGISTRY_PASSWORD}}
 
       - name: Config | Gives runner access to docker config file 
         run: |
@@ -755,7 +755,7 @@ jobs:
       - name: Setup | Dependencies
         uses: filipeforattini/ff-iac-github-actions/.github/actions/setup-binaries@main
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{secrets.GITHUB_TOKEN}}
           docker-qmeu: true
           docker-buildx: true
           kubectl: true
@@ -775,7 +775,7 @@ jobs:
 
       - name: Config | Kubectl config file
         env:
-          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+          KUBE_CONFIG: ${{secrets.KUBE_CONFIG}}
         run: |
           mkdir -p ~/.kube
           echo "$KUBE_CONFIG" | base64 -d > ~/.kube/config
@@ -805,7 +805,7 @@ jobs:
         run: |
           gpg \
             --yes --batch --quiet --decrypt \
-            --passphrase="${{ secrets.GPG_PASSPHRASE }}" \
+            --passphrase="${{secrets.GPG_PASSPHRASE}}" \
             --output ./manifests/k8s-secrets.env \
             ${{steps.analysis.outputs.deploy_secrets_file}}
 
@@ -821,9 +821,9 @@ jobs:
         uses: docker/login-action@v2
         with:
           logout: false
-          registry: ${{ inputs.containerRegistry }}
-          username: ${{ secrets.REGISTRY_USERNAME }}
-          password: ${{ secrets.REGISTRY_PASSWORD }}
+          registry: ${{inputs.containerRegistry}}
+          username: ${{secrets.REGISTRY_USERNAME}}
+          password: ${{secrets.REGISTRY_PASSWORD}}
 
       - name: Config | Gives runner access to docker config file 
         run: |
