@@ -1,3 +1,10 @@
+## [1.27.5](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.27.4...v1.27.5) (2022-08-09)
+
+
+### Bug Fixes
+
+* empty commit for testing ([540b167](https://github.com/filipeforattini/ff-iac-github-actions/commit/540b167209fedc4107d2cc130219d30470d10d75))
+
 ## [1.27.4](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.27.3...v1.27.4) (2022-08-09)
 
 
