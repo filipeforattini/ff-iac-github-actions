@@ -12,6 +12,7 @@ const decode = (str) => qs.parse(str);
 async function action() {
   let preset = core.getInput("preset", { required: true });
   let writeSummary = core.getBooleanInput("writeSummary", { required: true });
+  
   let overwriteParams = core.getInput("params", { required: false });
   overwriteParams = JSON.parse(overwriteParams)
 

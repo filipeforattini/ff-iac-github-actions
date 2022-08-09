@@ -10,6 +10,10 @@ inputs:
     required: false
     default: "spa"
     description: ""
+  params:
+    required: false
+    default: "{}"
+    description: ""
 
 runs:
   using: 'node16'

@@ -426,19 +426,20 @@ jobs:
           echo "### 🚢 Build" >> $GITHUB_STEP_SUMMARY
 
       # pre-build
-      - name: Create .dockerignore
-        uses: filipeforattini/ff-iac-github-actions/.github/actions/create-dockerignore@main
-        if: steps.analysis.outputs.feature_has_dockerignore != true
-        with:
-          writeSummary: true
-          globsToIgnore: '["node_modules"]'
-
       - name: Create Dockerfile
         uses: filipeforattini/ff-iac-github-actions/.github/actions/create-dockerfile@main
         if: steps.analysis.outputs.feature_has_dockerfile != true
         with:
           writeSummary: true
           preset: node
+          params: '{"tag": "${{inputs.nodeVersion}}-slim"}'
+
+      - name: Create .dockerignore
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/create-dockerignore@main
+        if: steps.analysis.outputs.feature_has_dockerignore != true
+        with:
+          writeSummary: true
+          globsToIgnore: '["node_modules"]'
 
       # login
       - name: Config | Login to Container Registry
@@ -495,18 +496,19 @@ jobs:
           echo "### 🚢 Build" >> $GITHUB_STEP_SUMMARY
 
       # pre-build
-      - name: Create .dockerignore
-        uses: filipeforattini/ff-iac-github-actions/.github/actions/create-dockerignore@main
-        if: steps.analysis.outputs.feature_has_dockerignore != true
-        with:
-          writeSummary: true
-
       - name: Create Dockerfile
         uses: filipeforattini/ff-iac-github-actions/.github/actions/create-dockerfile@main
         if: steps.analysis.outputs.feature_has_dockerfile != true
         with:
           writeSummary: true
           preset: python
+          params: '{"tag": "${{inputs.pythonVersion}}"}'
+
+      - name: Create .dockerignore
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/create-dockerignore@main
+        if: steps.analysis.outputs.feature_has_dockerignore != true
+        with:
+          writeSummary: true
 
       # login
       - name: Config | Login to Container Registry
