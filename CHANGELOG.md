@@ -1,3 +1,10 @@
+# [1.31.0](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.30.0...v1.31.0) (2022-08-09)
+
+
+### Features
+
+* added dispatch command ([4e30eb4](https://github.com/filipeforattini/ff-iac-github-actions/commit/4e30eb4ddd858b7d7b8d84dfa27ef80227a35d48))
+
 # [1.30.0](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.29.0...v1.30.0) (2022-08-09)
 
 
