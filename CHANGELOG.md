@@ -1,3 +1,16 @@
+# [1.36.0](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.35.25...v1.36.0) (2022-08-10)
+
+
+### Bug Fixes
+
+* empty commit for testing ([cda4777](https://github.com/filipeforattini/ff-iac-github-actions/commit/cda4777a731185874184c8bf02739e9b749c8271))
+* empty commit for testing ([e27eebc](https://github.com/filipeforattini/ff-iac-github-actions/commit/e27eebc65c976dddf1f5bad5981b6955eb6d72af))
+
+
+### Features
+
+* added driver option to buildx installer ([6e7a0a0](https://github.com/filipeforattini/ff-iac-github-actions/commit/6e7a0a0b0e6c88f6644291911a6c1573339b525d))
+
 ## [1.35.25](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.35.24...v1.35.25) (2022-08-10)
 
 
