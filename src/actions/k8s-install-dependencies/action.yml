@@ -170,10 +170,3 @@ runs:
         REPOSITORY_TAG_VERSION=${{inputs.version}} \
         DEPENDENCY_FILE=${{inputs.renderedOutput}} \
           ./.pipeline/src/dependency-install.sh
-
-        K8S_NAMESPACE=ff-svc-moleculer-dev \
-        K8S_REPOSITORY=ff-svc-moleculer \
-        DEPENDENCY_NAME=etcd \
-        REPOSITORY_TAG_VERSION=1.6.83 \
-        DEPENDENCY_FILE=./test/tmp/k8s-dependencies-full.yml \
-          ./src/dependency-install.sh

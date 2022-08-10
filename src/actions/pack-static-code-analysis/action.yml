@@ -15,12 +15,22 @@ runs:
   using: "composite"
 
   steps:
+    # GitLeaks
     - name: Run GitLeaks scanner
+      id: gitleaks
       if: inputs.runAnalysis == true
-      uses: docker://opendevsecops/gitleaks
+      uses: DariuszPorowski/github-action-gitleaks@v2
       with:
-        args: --repo=https://github.com/${{github.repository}}
+        report_format: "sarif"
+        fail: false
 
+    - name: Upload Gitleaks SARIF report to code scanning service
+      if: steps.gitleaks.outputs.exitcode == 1
+      uses: github/codeql-action/upload-sarif@v2
+      with:
+        sarif_file: ${{steps.gitleaks.outputs.report}}
+
+    # Trivy
     - name: Run Trivy scanner
       if: inputs.runAnalysis == true
       uses: aquasecurity/trivy-action@master
@@ -37,6 +47,7 @@ runs:
       with:
         sarif_file: 'trivy-results.sarif'
 
+    # OSSAR
     - name: Run OSSAR
       if: inputs.runAnalysis == true
       uses: github/ossar-action@v1
@@ -48,6 +59,7 @@ runs:
       with:
         sarif_file: ${{ steps.ossar.outputs.sarifFile }}
 
+    # CodeQL
     - name: Setup CodeQL for ${{ inputs.language }}
       uses: github/codeql-action/init@v2
       with:

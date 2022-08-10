@@ -298,6 +298,7 @@ jobs:
         with:
           cached: true
           platforms: ${{inputs.platforms}}
+          containerRegistry: ${{inputs.containerRegistry}}
 
 
   #--------------------------------------------------#

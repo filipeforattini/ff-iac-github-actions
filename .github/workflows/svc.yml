@@ -92,6 +92,7 @@ jobs:
         uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
         with:
           writeSummary: true
+          containerRegistry: ${{inputs.containerRegistry}}
 
 
   #--------------------------------------------------#
@@ -335,6 +336,8 @@ jobs:
       - name: Pipeline config scrapper
         id: analysis
         uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
+        with:
+          containerRegistry: ${{inputs.containerRegistry}}
 
       - name: Trigger
         run: |
@@ -374,6 +377,8 @@ jobs:
       - name: Pipeline config scrapper
         id: analysis
         uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
+        with:
+          containerRegistry: ${{inputs.containerRegistry}}
 
       - name: Trigger
         run: |
@@ -413,6 +418,8 @@ jobs:
       - name: Pipeline config scrapper
         id: analysis
         uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
+        with:
+          containerRegistry: ${{inputs.containerRegistry}}
 
       - name: Trigger
         run: |
@@ -454,6 +461,8 @@ jobs:
       - name: Pipeline config scrapper
         id: analysis
         uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
+        with:
+          containerRegistry: ${{inputs.containerRegistry}}
 
       - name: Setup | Dependencies
         uses: filipeforattini/ff-iac-github-actions/.github/actions/setup-binaries@main
@@ -500,6 +509,7 @@ jobs:
         with:
           cached: true
           platforms: ${{inputs.platforms}}
+          containerRegistry: ${{inputs.containerRegistry}}
 
 
   #--------------------------------------------------#
@@ -525,6 +535,8 @@ jobs:
       - name: Pipeline config scrapper
         id: analysis
         uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
+        with:
+          containerRegistry: ${{inputs.containerRegistry}}
 
       - name: Setup | Dependencies
         uses: filipeforattini/ff-iac-github-actions/.github/actions/setup-binaries@main
@@ -570,6 +582,7 @@ jobs:
         with:
           cached: true
           platforms: ${{inputs.platforms}}
+          containerRegistry: ${{inputs.containerRegistry}}
 
 
   #--------------------------------------------------#
@@ -613,6 +626,8 @@ jobs:
       - name: Pipeline config scrapper
         id: analysis
         uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
+        with:
+          containerRegistry: ${{inputs.containerRegistry}}
 
       - name: Config | Version
         id: versioning
@@ -765,6 +780,8 @@ jobs:
       - name: Pipeline config scrapper
         id: analysis
         uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
+        with:
+          containerRegistry: ${{inputs.containerRegistry}}
 
       - name: Config | Version
         id: versioning

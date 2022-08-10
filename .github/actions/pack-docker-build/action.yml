@@ -22,6 +22,10 @@ inputs:
     description: "Push images"
     required: false
     default: "true"
+  containerRegistry:
+    description: "Image containers registry"
+    required: false
+    default: "true"
 
 runs:
   using: "composite"
@@ -38,6 +42,8 @@ runs:
     - name: Pipeline config scrapper
       id: analysis
       uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
+      with:
+        containerRegistry: ${{inputs.containerRegistry}}
 
     - name: Build and push without cache
       uses: docker/build-push-action@v3

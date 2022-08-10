@@ -73,6 +73,7 @@
 #! PIPELINE CONTROLE
 pipelineControl:
   datetime: 'today'
+  environmentAsSubdomains: true
   environmentsAsNamespaces: false
 
 
