@@ -1,3 +1,10 @@
+## [1.35.22](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.35.21...v1.35.22) (2022-08-10)
+
+
+### Bug Fixes
+
+* cascaded registry host to inner jobs' stepps ([c071c0f](https://github.com/filipeforattini/ff-iac-github-actions/commit/c071c0f614d2ee1ddb9b2548c05fad53199eff98))
+
 ## [1.35.21](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.35.20...v1.35.21) (2022-08-10)
 
 
