@@ -30,6 +30,7 @@ These workflows are highly opinionated **kubectl-apply** or **helm-upgrade** pip
     - [GitLeaks](https://github.com/zricethezav/gitleaks) for repository
     - [Trivy](https://github.com/aquasecurity/trivy) for repository and image
     - Open Source Static Analysis Runner
+    - GitHub's CodeQL analyzer
 - Dynamic container generator
 
 ### Repository Patterns
