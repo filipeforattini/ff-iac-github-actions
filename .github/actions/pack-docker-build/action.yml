@@ -14,6 +14,10 @@ inputs:
     description: 'Install docker buildx'
     required: false
     default: 'false'
+  multiPlatform:
+    description: "Multi plataform container builds"
+    required: false
+    default: "true"
   platforms:
     description: "Multi plataform container builds"
     required: false
@@ -47,7 +51,7 @@ runs:
 
     - name: Build and push without cache
       uses: docker/build-push-action@v3
-      if: inputs.cached == 'false'
+      if: inputs.cached == 'false' && inputs.multiPlatform = 'true'
       with:
         context: ${{inputs.context}}
         push: ${{inputs.push}}
@@ -56,13 +60,35 @@ runs:
         labels: ${{steps.analysis.outputs.build_labels}}
         build-args: ${{steps.analysis.outputs.build_args}}
 
+    - name: Build and push without cache
+      uses: docker/build-push-action@v3
+      if: inputs.cached == 'false' && inputs.multiPlatform = 'false'
+      with:
+        context: ${{inputs.context}}
+        push: ${{inputs.push}}
+        tags: ${{steps.analysis.outputs.build_tags}}
+        labels: ${{steps.analysis.outputs.build_labels}}
+        build-args: ${{steps.analysis.outputs.build_args}}
+
     - name: Build and push with cache
       uses: docker/build-push-action@v3
-      if: inputs.cached == 'true'
+      if: inputs.cached == 'true' && inputs.multiPlatform = 'true'
       with:
         context: ${{inputs.context}}
         push: ${{inputs.push}}
         platforms: ${{inputs.platforms}}
+        tags: ${{steps.analysis.outputs.build_tags}}
+        labels: ${{steps.analysis.outputs.build_labels}}
+        build-args: ${{steps.analysis.outputs.build_args}}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+
+    - name: Build and push with cache
+      uses: docker/build-push-action@v3
+      if: inputs.cached == 'true' && inputs.multiPlatform = 'false'
+      with:
+        context: ${{inputs.context}}
+        push: ${{inputs.push}}
         tags: ${{steps.analysis.outputs.build_tags}}
         labels: ${{steps.analysis.outputs.build_labels}}
         build-args: ${{steps.analysis.outputs.build_args}}
