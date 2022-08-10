@@ -16,6 +16,10 @@ inputs:
     description: 'Install'
     required: false
     default: 'false'
+  docker-buildx-driver:
+    description: 'Docker Buildx Driver'
+    required: false
+    default: 'docker-container'
   kubectl:
     description: 'Install'
     required: false
@@ -79,12 +83,15 @@ runs:
       id: docker-buildx
       with:
         install: true
+        driver: ${{inputs.docker-buildx-driver}}
 
+    # kubectl
     - name: Setup | Kubectl
       if: inputs.kubectl != 'false'
       uses: azure/setup-kubectl@v2.1
       id: kubectl
 
+    # yq
     - name: Setup | YQ
       if: inputs.yq != 'false'
       shell: bash
@@ -96,6 +103,7 @@ runs:
         wget https://github.com/mikefarah/yq/releases/download/${VERSION}/${BINARY}.tar.gz -O - | tar xz && sudo mv ${BINARY} /usr/bin/yq
         yq --version
     
+    # ytt
     - name: Setup | YTT
       if: inputs.ytt != 'false'
       uses: vmware-tanzu/carvel-setup-action@v1
