@@ -2,6 +2,10 @@ name: 'Static code analysis'
 description: 'Greet someone'
 
 inputs:
+  token:
+    description: ''
+    required: true
+    default: 'true'
   language:
     description: 'Inform the main repository language'
     required: false
@@ -28,6 +32,7 @@ runs:
       if: steps.gitleaks.outputs.exitcode == 1
       uses: github/codeql-action/upload-sarif@v2
       with:
+        token: ${{inputs.token}}
         sarif_file: ${{steps.gitleaks.outputs.report}}
 
     # Trivy
@@ -45,6 +50,7 @@ runs:
       if: inputs.runAnalysis == true
       uses: github/codeql-action/upload-sarif@v2
       with:
+        token: ${{inputs.token}}
         sarif_file: 'trivy-results.sarif'
 
     # OSSAR
@@ -57,13 +63,17 @@ runs:
       if: inputs.runAnalysis == true
       uses: github/codeql-action/upload-sarif@v2
       with:
+        token: ${{inputs.token}}
         sarif_file: ${{ steps.ossar.outputs.sarifFile }}
 
     # CodeQL
     - name: Setup CodeQL for ${{ inputs.language }}
       uses: github/codeql-action/init@v2
       with:
+        token: ${{inputs.token}}
         languages: ${{ inputs.language }}
 
     - name: Run ${{ inputs.language }} CodeQL Analysis
       uses: github/codeql-action/analyze@v2
+      with:
+        token: ${{inputs.token}}
