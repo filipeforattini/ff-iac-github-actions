@@ -51,7 +51,7 @@ runs:
 
     - name: Build and push without cache
       uses: docker/build-push-action@v3
-      if: inputs.cached == 'false' && inputs.multiPlatform = 'true'
+      if: inputs.cached == 'false' && inputs.multiPlatform == 'true'
       with:
         context: ${{inputs.context}}
         push: ${{inputs.push}}
@@ -62,7 +62,7 @@ runs:
 
     - name: Build and push without cache
       uses: docker/build-push-action@v3
-      if: inputs.cached == 'false' && inputs.multiPlatform = 'false'
+      if: inputs.cached == 'false' && inputs.multiPlatform == 'false'
       with:
         context: ${{inputs.context}}
         push: ${{inputs.push}}
@@ -72,7 +72,7 @@ runs:
 
     - name: Build and push with cache
       uses: docker/build-push-action@v3
-      if: inputs.cached == 'true' && inputs.multiPlatform = 'true'
+      if: inputs.cached == 'true' && inputs.multiPlatform == 'true'
       with:
         context: ${{inputs.context}}
         push: ${{inputs.push}}
@@ -85,7 +85,7 @@ runs:
 
     - name: Build and push with cache
       uses: docker/build-push-action@v3
-      if: inputs.cached == 'true' && inputs.multiPlatform = 'false'
+      if: inputs.cached == 'true' && inputs.multiPlatform == 'false'
       with:
         context: ${{inputs.context}}
         push: ${{inputs.push}}
