@@ -1,3 +1,10 @@
+## [1.35.23](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.35.22...v1.35.23) (2022-08-10)
+
+
+### Bug Fixes
+
+* added tsx language redirector ([f11cf90](https://github.com/filipeforattini/ff-iac-github-actions/commit/f11cf909250d27e76902a0cd237d1ef57a6abc38))
+
 ## [1.35.22](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.35.21...v1.35.22) (2022-08-10)
 
 
