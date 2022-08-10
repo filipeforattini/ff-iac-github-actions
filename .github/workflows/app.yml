@@ -110,6 +110,7 @@ jobs:
   #--------------------------------------------------#
   Release:
     runs-on: ubuntu-latest
+
     if: needs.Setup.outputs.Event == 'push'
 
     needs: 
@@ -160,6 +161,7 @@ jobs:
   #--------------------------------------------------#
   Trigger-Build:
     runs-on: ubuntu-latest
+
     if: github.event_name == 'push'
 
     needs: 
@@ -176,6 +178,8 @@ jobs:
       - name: Pipeline config scrapper
         id: analysis
         uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
+        with:
+          containerRegistry: ${{inputs.containerRegistry}}
 
       - name: Trigger
         run: |
@@ -254,6 +258,8 @@ jobs:
       - name: Pipeline config scrapper
         id: analysis
         uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
+        with:
+          containerRegistry: ${{inputs.containerRegistry}}
 
       - name: Setup | Dependencies
         uses: filipeforattini/ff-iac-github-actions/.github/actions/setup-binaries@main
@@ -306,6 +312,7 @@ jobs:
   #--------------------------------------------------#
   Deploy:
     runs-on: ubuntu-latest
+
     environment: ${{needs.Setup.outputs.Environment}}
     
     needs:
@@ -341,6 +348,8 @@ jobs:
       - name: Pipeline config scrapper
         id: analysis
         uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
+        with:
+          containerRegistry: ${{inputs.containerRegistry}}
 
       - name: Config | Version
         id: versioning

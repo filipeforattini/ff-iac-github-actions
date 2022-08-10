@@ -7,6 +7,7 @@ const { templateInfo } = require("../log");
 const LanguagesToOmit = ["Makefile"];
 const languagesRouter = {
   typescript: "javascript",
+  tsx: "javascript",
 };
 
 module.exports = async (analysis) => {

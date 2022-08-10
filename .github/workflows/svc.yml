@@ -3,13 +3,13 @@ name: svc
 concurrency:
   group: ${{github.workflow}}-${{github.event_name}}
 
+
 #--------------------------------------------------#
 #                     Triggers                     # 
 #--------------------------------------------------#
 on:
 
   workflow_call:
-
     inputs:
       mainBranch:
         type: string
@@ -321,7 +321,6 @@ jobs:
   Trigger-Build-Node:
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
-
     needs: 
       - Release-Node
 
@@ -362,7 +361,6 @@ jobs:
   Trigger-Build-Python:
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
-
     needs: 
       - Release-Python
 
@@ -446,7 +444,6 @@ jobs:
     if: |
       github.event_name == 'deployment'
       && needs.Setup.outputs.Language == 'javascript'
-
     needs: 
       - Setup
 
@@ -647,6 +644,7 @@ jobs:
       - name: Create k8s dependencies
         uses: filipeforattini/ff-iac-github-actions/.github/actions/k8s-install-dependencies@main
         with:
+          token: ${{secrets.GITHUB_TOKEN}}
           cloneTools: false
           writeSummary: true
           kubeConfig: ${{secrets.KUBE_CONFIG}}
@@ -654,7 +652,7 @@ jobs:
           repository: ${{steps.analysis.outputs.repository}}
           namespace: ${{steps.analysis.outputs.deploy_namespace}}
 
-      # configs\
+      # configs
       - name: K8s create config-map
         if: steps.analysis.outputs.feature_has_configs 
         run: |
@@ -744,7 +742,9 @@ jobs:
   #--------------------------------------------------#
   Deploy-Python:
     runs-on: ubuntu-latest
+
     environment: ${{needs.Setup.outputs.Environment}}
+
     if: needs.Setup.outputs.Language == 'python'
     
     needs:
