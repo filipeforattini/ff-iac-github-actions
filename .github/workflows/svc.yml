@@ -801,6 +801,7 @@ jobs:
       - name: Create k8s dependencies
         uses: filipeforattini/ff-iac-github-actions/.github/actions/k8s-install-dependencies@main
         with:
+          token: ${{secrets.GITHUB_TOKEN}}
           cloneTools: false
           writeSummary: true
           kubeConfig: ${{secrets.KUBE_CONFIG}}
