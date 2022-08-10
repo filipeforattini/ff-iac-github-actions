@@ -1,3 +1,11 @@
+## [1.36.1](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.36.0...v1.36.1) (2022-08-10)
+
+
+### Bug Fixes
+
+* empty commit for testing ([cf75c1b](https://github.com/filipeforattini/ff-iac-github-actions/commit/cf75c1b1dc02ed1d4b9b432ecfdbe2df0f5e14c3))
+* missing token param for python build ([53e83f0](https://github.com/filipeforattini/ff-iac-github-actions/commit/53e83f025ecda675a97087d2709b0a184ca36bbc))
+
 # [1.36.0](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.35.25...v1.36.0) (2022-08-10)
 
 
