@@ -1,3 +1,10 @@
+## [1.35.25](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.35.24...v1.35.25) (2022-08-10)
+
+
+### Bug Fixes
+
+* missing equal operator ([a65ecfd](https://github.com/filipeforattini/ff-iac-github-actions/commit/a65ecfd0e0703b47dc7e28b24fd032d6df3038a0))
+
 ## [1.35.24](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.35.23...v1.35.24) (2022-08-10)
 
 
