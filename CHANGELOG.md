@@ -1,3 +1,10 @@
+## [1.35.21](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.35.20...v1.35.21) (2022-08-10)
+
+
+### Bug Fixes
+
+* dependencies installer had a typo ([da8f216](https://github.com/filipeforattini/ff-iac-github-actions/commit/da8f21667800fbf2d9b3ac86b115d32cbfd597d6))
+
 ## [1.35.20](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.35.19...v1.35.20) (2022-08-10)
 
 
