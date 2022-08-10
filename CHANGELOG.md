@@ -1,3 +1,10 @@
+## [1.35.24](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.35.23...v1.35.24) (2022-08-10)
+
+
+### Bug Fixes
+
+* removed multi-platform build ([a85429a](https://github.com/filipeforattini/ff-iac-github-actions/commit/a85429adb3cb1ab247b3822a12a856acd327ea4a))
+
 ## [1.35.23](https://github.com/filipeforattini/ff-iac-github-actions/compare/v1.35.22...v1.35.23) (2022-08-10)
 
 
