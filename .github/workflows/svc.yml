@@ -649,7 +649,6 @@ jobs:
           token: ${{secrets.GITHUB_TOKEN}}
           cloneTools: false
           writeSummary: true
-          kubeConfig: ${{secrets.KUBE_CONFIG}}
           version: ${{steps.versioning.outputs.version}}
           repository: ${{steps.analysis.outputs.repository}}
           namespace: ${{steps.analysis.outputs.deploy_namespace}}

@@ -5,9 +5,6 @@ inputs:
   token:
     description: 'github token'
     required: true
-  kubeConfig:
-    description: 'kubeconfig file as base64'
-    required: true
   cloneTools:
     description: 'check if downloads'
     required: false
@@ -51,14 +48,6 @@ runs:
       if: inputs.cloneTools != false
       uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
       id: analysis
-
-    - name: Config | Kubectl config file
-      shell: bash
-      env:
-        KUBE_CONFIG: ${{ inputs.kubeConfig }}
-      run: |
-        mkdir -p ~/.kube
-        echo "$KUBE_CONFIG" | base64 -d > ~/.kube/config
 
     # namespace
     - name: K8s create namespace
