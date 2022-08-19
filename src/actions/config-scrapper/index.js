@@ -64,7 +64,7 @@ async function action() {
       .write()
 
     if (!Object.values(pipelineSecrets).every(x => x)) {
-      core.setFailed(new Error('problems with secrets'));
+      core.setFailed(new Error('There are non-defined secrets. Please configure your repository with the `secrets` below in the summary.'));
     }
   }
 
