@@ -37,7 +37,7 @@ runs:
 
   steps:
     - shell: bash
-      if: inputs.writeSummary == 'true'
+      if: inputs.writeSummary != 'false'
       run: |
         echo "### 📦 Package" >> $GITHUB_STEP_SUMMARY
 
