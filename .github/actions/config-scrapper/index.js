@@ -33986,7 +33986,7 @@ async function action() {
     ]
     .map(s => s.replace('SECRET_', ''))
     .reduce((acc, s) => { 
-      acc[s] = !_.isEmpty(core.getInput(s, { required: true }))
+      acc[s] = !_.isEmpty(core.getInput(s))
       return acc
     }, {})
 
