@@ -69,7 +69,3 @@ runs:
       env:
         GH_TOKEN: ${{ inputs.token }}
         GITHUB_TOKEN: ${{ inputs.token }}
-        GIT_AUTHOR_NAME: ${{ inputs.author }}
-        GIT_AUTHOR_EMAIL: ${{ inputs.email }}
-        GIT_COMMITTER_NAME: ${{ inputs.author }}
-        GIT_COMMITTER_EMAIL	: ${{ inputs.email }}
