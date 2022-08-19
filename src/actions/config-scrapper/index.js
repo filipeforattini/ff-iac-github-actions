@@ -40,6 +40,33 @@ async function action() {
       .write();
   }
 
+  const evaluateSecrets = core.getBooleanInput('evaluateSecrets');
+
+  if (evaluateSecrets) {
+    const pipelineSecrets = [
+      'SECRET_KUBE_CONFIG',
+      'SECRET_REGISTRY_PASSWORD',
+      'SECRET_REGISTRY_USERNAME',
+      'SECRET_PIPELINE_DEPLOY_TOKEN',
+    ].reduce((acc, s) => { 
+      acc[s] = !_.isEmpty(core.getInput(s, { required: true }))
+      return acc
+    }, {})
+
+    if (pipelineSecrets.every()) {
+      await core.summary
+        .addRaw('Secrets analysis')
+        .addTable([
+          [{ data: 'secret', header: true }, { data: 'defined', header: true }],
+          ...Object.entries(pipelineSecrets).map(([key, value]) => [ key, `${value}`]),
+        ])
+        .write()
+    } else {
+      core.setFailed(new Error('problems with secrets'));
+    }
+  }
+
+
   const analysis = analysisFactory({
     root: process.cwd(),
     actor: github.context.actor,
