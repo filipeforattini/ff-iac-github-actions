@@ -44,14 +44,14 @@ async function action() {
 
   if (evaluateSecrets) {
     const pipelineSecrets = [
-      'SECRET_KUBE_CONFIG',
-      'SECRET_REGISTRY_PASSWORD',
-      'SECRET_REGISTRY_USERNAME',
-      'SECRET_PIPELINE_DEPLOY_TOKEN',
+      'PIPESECRET_KUBE_CONFIG',
+      'PIPESECRET_REGISTRY_PASSWORD',
+      'PIPESECRET_REGISTRY_USERNAME',
+      'PIPESECRET_PIPELINE_DEPLOY_TOKEN',
     ]
-    .map(s => s.replace('SECRET_', ''))
+    .map(s => s.replace('PIPESECRET_', ''))
     .reduce((acc, s) => { 
-      acc[s] = !_.isEmpty(core.getInput(s))
+      acc[s] = !_.isEmpty(process.env[s])
       return acc
     }, {})
 
