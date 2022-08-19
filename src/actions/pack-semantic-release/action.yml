@@ -37,7 +37,7 @@ runs:
 
   steps:
     - shell: bash
-      if: inputs.writeSummary
+      if: inputs.writeSummary == 'true'
       run: |
         echo "### 📦 Package" >> $GITHUB_STEP_SUMMARY
 
@@ -53,7 +53,7 @@ runs:
       uses: filipeforattini/ff-iac-github-actions/.github/actions/create-releaserc-file@main
       if: steps.file_checker.outputs.has_releaserc_file == 'false'
       with:
-        writeSummary: ${{inputs.writeSummary}}
+        writeSummary: ${{ inputs.writeSummary }}
         defaultBranch: ${{ inputs.defaultBranch }}
         files: ${{ inputs.files }}
         npmPlugin: ${{ inputs.npmPlugin }}
