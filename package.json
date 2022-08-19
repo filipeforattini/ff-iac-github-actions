@@ -3,10 +3,13 @@
   "version": "1.36.1",
   "description": "Pipelines",
   "main": "",
+  "engines": {
+    "node": ">=16.0.0"
+  },
   "scripts": {
     "commit": "npm run build && git pull && git commit --allow-empty -am \"fix: empty commit for testing\" && git push",
     "build-composition": "ACTION_NAME=setup-binaries mkdir -p .github/actions/$ACTION_NAME && cp src/actions/$ACTION_NAME/action.yml .github/actions/$ACTION_NAME/action.yml",
-    "build-action-js": "mkdir -p .github/actions/create-releaserc-file && ncc build src/actions/$ACTION_NAME/index.js -m -q -s -o .github/actions/$ACTION_NAME && rm -f .github/actions/$ACTION_NAME/action.yml && cp src/actions/$ACTION_NAME/action.yml .github/actions/$ACTION_NAME/action.yml",
+    "build-action-js": "mkdir -p .github/actions/$ACTION_NAME && ncc build src/actions/$ACTION_NAME/index.js -q -s -o .github/actions/$ACTION_NAME && rm -f .github/actions/$ACTION_NAME/action.yml && cp src/actions/$ACTION_NAME/action.yml .github/actions/$ACTION_NAME/action.yml",
     "build": "npm run action:config-scrapper & npm run action:setup-binaries & npm run action:pack-static-code-analysis & npm run action:create-releaserc-file & npm run action:semantic-release & npm run action:pack-semantic-release & npm run action:create-dockerignore & npm run action:create-dockerfile & npm run action:pack-docker-build & npm run action:k8s-install-dependencies",
     "action:config-scrapper": "ACTION_NAME=config-scrapper npm run build-action-js",
     "action:pack-static-code-analysis": "mkdir -p .github/actions/pack-static-code-analysis && cp src/actions/pack-static-code-analysis/action.yml .github/actions/pack-static-code-analysis/action.yml",
@@ -34,15 +37,15 @@
   "homepage": "https://github.com/filipeforattini/ff-iac-github-actions#readme",
   "dependencies": {
     "@actions/artifact": "^1.1.0",
-    "@actions/cache": "^3.0.0",
-    "@actions/core": "^1.9.0",
+    "@actions/cache": "^3.0.4",
+    "@actions/core": "^1.9.1",
     "@actions/exec": "^1.1.1",
     "@actions/github": "^5.0.3",
     "@actions/glob": "^0.3.0",
     "@actions/http-client": "^2.0.1",
     "@actions/tool-cache": "^2.0.1",
     "@vercel/ncc": "^0.34.0",
-    "dayjs": "^1.11.4",
+    "dayjs": "^1.11.5",
     "linguist-js": "^2.5.2",
     "lodash": "^4.17.21",
     "qs": "^6.11.0"

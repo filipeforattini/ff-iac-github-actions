@@ -2,6 +2,9 @@ name: 'Semantic release pack'
 description: 'Generates file and runs new release.'
 
 inputs:
+  token:
+    required: true
+    description: ""
   writeSummary:
     required: false
     default: "false"
@@ -57,3 +60,5 @@ runs:
 
     - name: Semantic Release
       uses: filipeforattini/ff-iac-github-actions/.github/actions/semantic-release@main
+      env:
+        GITHUB_TOKEN: ${{ inputs.token }}

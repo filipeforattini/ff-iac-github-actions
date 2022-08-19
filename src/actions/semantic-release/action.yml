@@ -7,6 +7,6 @@ runs:
 
 inputs:
   cached:
-    description: 'Inform the main repository language'
+    description: ''
     required: false
     default: 'true'
