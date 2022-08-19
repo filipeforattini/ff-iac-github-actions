@@ -4096,7 +4096,14 @@ var __webpack_exports__ = {};
 const core = __nccwpck_require__(186);
 const exec = __nccwpck_require__(514);
 
-async function action() {  
+const {
+  GIT_AUTHOR_NAME,
+  GIT_AUTHOR_EMAIL,
+} = process.env
+
+async function action() {
+  core.info(`Analyzing commit from ${GIT_AUTHOR_NAME} <${GIT_AUTHOR_EMAIL}>`);
+
   let plugins = [
     'semantic-release',
     '@semantic-release/git',
