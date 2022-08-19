@@ -108,7 +108,7 @@ jobs:
       - name: Setup | Dependencies
         uses: filipeforattini/ff-iac-github-actions/.github/actions/setup-binaries@main
         with:
-          nodejs: 17
+          nodejs: 18
 
       # release
       - name: Semantic Release
@@ -116,7 +116,7 @@ jobs:
         if: inputs.autoVersioning
         with:
           writeSummary: true
-          token: ${{ secrets.PIPELINE_DEPLOY_SECRET }}
+          token: ${{ secrets.PIPELINE_DEPLOY_TOKEN }}
           author: ${{steps.analysis.outputs.commiter_name}} 
           email: ${{steps.analysis.outputs.commiter_email}}
           npmPlugin: true
@@ -147,7 +147,7 @@ jobs:
       - name: Setup | Cloning repository
         uses: actions/checkout@v3
         with:
-          token: ${{ secrets.PIPELINE_DEPLOY_SECRET }}
+          token: ${{ secrets.PIPELINE_DEPLOY_TOKEN }}
 
       - name: Pipeline config scrapper
         id: analysis
@@ -168,7 +168,7 @@ jobs:
         name: Create GitHub deployment
         id: deployment
         with:
-          token: "${{ secrets.PIPELINE_DEPLOY_SECRET }}"
+          token: "${{ secrets.PIPELINE_DEPLOY_TOKEN }}"
           environment: dev
 
 
@@ -188,7 +188,7 @@ jobs:
       - name: Setup | Cloning repository
         uses: actions/checkout@v3
         with:
-          token: ${{ secrets.PIPELINE_DEPLOY_SECRET }}
+          token: ${{ secrets.PIPELINE_DEPLOY_TOKEN }}
 
       - name: Pipeline config scrapper
         id: analysis
@@ -207,7 +207,7 @@ jobs:
         name: Create GitHub deployment
         id: deployment
         with:
-          token: "${{ secrets.PIPELINE_DEPLOY_SECRET }}"
+          token: "${{ secrets.PIPELINE_DEPLOY_TOKEN }}"
           environment: ${{steps.analysis.outputs.environment}}
 
 

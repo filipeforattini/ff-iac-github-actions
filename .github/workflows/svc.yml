@@ -262,7 +262,7 @@ jobs:
         uses: filipeforattini/ff-iac-github-actions/.github/actions/pack-semantic-release@main
         if: inputs.autoVersioning
         env:
-          GITHUB_TOKEN: ${{secrets.PIPELINE_DEPLOY_SECRET}}
+          GITHUB_TOKEN: ${{secrets.PIPELINE_DEPLOY_TOKEN}}
         with:
           installNode: true
           writeSummary: true
@@ -303,7 +303,7 @@ jobs:
         uses: filipeforattini/ff-iac-github-actions/.github/actions/pack-semantic-release@main
         if: inputs.autoVersioning
         env:
-          GITHUB_TOKEN: ${{secrets.PIPELINE_DEPLOY_SECRET}}
+          GITHUB_TOKEN: ${{secrets.PIPELINE_DEPLOY_TOKEN}}
         with:
           defaultBranch: ${{inputs.mainBranch}}
           files: '[]'
@@ -332,7 +332,7 @@ jobs:
       - name: Setup | Cloning repository
         uses: actions/checkout@v3
         with:
-          token: ${{secrets.PIPELINE_DEPLOY_SECRET}}
+          token: ${{secrets.PIPELINE_DEPLOY_TOKEN}}
 
       - name: Pipeline config scrapper
         id: analysis
@@ -353,7 +353,7 @@ jobs:
         name: Create GitHub deployment
         id: deployment
         with:
-          token: "${{secrets.PIPELINE_DEPLOY_SECRET}}"
+          token: "${{secrets.PIPELINE_DEPLOY_TOKEN}}"
           environment: dev
 
 
@@ -372,7 +372,7 @@ jobs:
       - name: Setup | Cloning repository
         uses: actions/checkout@v3
         with:
-          token: ${{secrets.PIPELINE_DEPLOY_SECRET}}
+          token: ${{secrets.PIPELINE_DEPLOY_TOKEN}}
 
       - name: Pipeline config scrapper
         id: analysis
@@ -393,7 +393,7 @@ jobs:
         name: Create GitHub deployment
         id: deployment
         with:
-          token: "${{secrets.PIPELINE_DEPLOY_SECRET}}"
+          token: "${{secrets.PIPELINE_DEPLOY_TOKEN}}"
           environment: dev
 
 
@@ -413,7 +413,7 @@ jobs:
       - name: Setup | Cloning repository
         uses: actions/checkout@v3
         with:
-          token: ${{secrets.PIPELINE_DEPLOY_SECRET}}
+          token: ${{secrets.PIPELINE_DEPLOY_TOKEN}}
 
       - name: Pipeline config scrapper
         id: analysis
@@ -434,7 +434,7 @@ jobs:
         name: Create GitHub deployment
         id: deployment
         with:
-          token: "${{secrets.PIPELINE_DEPLOY_SECRET}}"
+          token: "${{secrets.PIPELINE_DEPLOY_TOKEN}}"
           environment: ${{steps.analysis.outputs.environment}}
 
 

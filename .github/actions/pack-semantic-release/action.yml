@@ -37,7 +37,7 @@ runs:
 
   steps:
     - shell: bash
-      if: inputs.writeSummary
+      if: inputs.writeSummary != 'false'
       run: |
         echo "### 📦 Package" >> $GITHUB_STEP_SUMMARY
 
@@ -53,7 +53,7 @@ runs:
       uses: filipeforattini/ff-iac-github-actions/.github/actions/create-releaserc-file@main
       if: steps.file_checker.outputs.has_releaserc_file == 'false'
       with:
-        writeSummary: ${{inputs.writeSummary}}
+        writeSummary: ${{ inputs.writeSummary }}
         defaultBranch: ${{ inputs.defaultBranch }}
         files: ${{ inputs.files }}
         npmPlugin: ${{ inputs.npmPlugin }}
@@ -67,6 +67,7 @@ runs:
     - name: Semantic Release
       uses: filipeforattini/ff-iac-github-actions/.github/actions/semantic-release@main
       env:
+        GH_TOKEN: ${{ inputs.token }}
         GITHUB_TOKEN: ${{ inputs.token }}
         GIT_AUTHOR_NAME: ${{ inputs.author }}
         GIT_AUTHOR_EMAIL: ${{ inputs.email }}

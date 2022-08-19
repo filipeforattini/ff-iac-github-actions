@@ -169,7 +169,7 @@ flowchart
 | ---: | --- |
 | GPG_PASSPHRASE |  |
 | KUBE_CONFIG | Your `~/.kube/config` file as base64. |
-| PIPELINE_DEPLOY_SECRET | A GitHub token, see the permissions below. |
+| PIPELINE_DEPLOY_TOKEN | A GitHub token, see the permissions below. |
 | REGISTRY_USERNAME | Registry username. |
 | REGISTRY_PASSWORD | Registry password. |
 
