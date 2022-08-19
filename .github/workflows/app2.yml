@@ -117,9 +117,11 @@ jobs:
         if: inputs.autoVersioning
         with:
           token: ${{ secrets.PIPELINE_DEPLOY_SECRET }}
+          author: ${{steps.analysis.outputs.commiter_name}} 
+          email: ${{steps.analysis.outputs.commiter_email}}
+          npmPlugin: true
           defaultBranch: ${{ inputs.mainBranch }}
           files: '["package.json","dist/**/*.{js,css}"]'
-          npmPlugin: true
 
       - name: Current Version
         id: versioning
