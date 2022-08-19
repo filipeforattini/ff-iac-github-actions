@@ -33990,7 +33990,7 @@ async function action() {
       return acc
     }, {})
 
-    if (pipelineSecrets.every()) {
+    if (Object.values(pipelineSecrets).every()) {
       await core.summary
         .addRaw('Secrets analysis')
         .addTable([
