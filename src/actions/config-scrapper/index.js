@@ -55,7 +55,7 @@ async function action() {
       return acc
     }, {})
 
-    if (Object.values(pipelineSecrets).every()) {
+    if (Object.values(pipelineSecrets).every(x => x)) {
       await core.summary
         .addRaw('Secrets analysis')
         .addTable([
