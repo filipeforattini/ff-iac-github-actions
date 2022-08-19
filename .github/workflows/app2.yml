@@ -99,7 +99,6 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-          persist-credentials: false
 
       # dependencies
       - name: Setup | Pipeline config scrapper
@@ -301,7 +300,6 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-          persist-credentials: false
         
       - name: Setup | Cloning tools
         uses: actions/checkout@v3
