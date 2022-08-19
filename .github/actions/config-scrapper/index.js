@@ -33990,15 +33990,15 @@ async function action() {
       return acc
     }, {})
 
-    if (Object.values(pipelineSecrets).every(x => x)) {
-      await core.summary
-        .addRaw('Secrets analysis')
-        .addTable([
-          [{ data: 'secret', header: true }, { data: 'defined', header: true }],
-          ...Object.entries(pipelineSecrets).map(([key, value]) => [ key, `${value}`]),
-        ])
-        .write()
-    } else {
+    await core.summary
+      .addRaw('Secrets analysis')
+      .addTable([
+        [{ data: 'secret', header: true }, { data: 'defined', header: true }],
+        ...Object.entries(pipelineSecrets).map(([key, value]) => [ key, `${value}`]),
+      ])
+      .write()
+
+    if (!Object.values(pipelineSecrets).every(x => x)) {
       core.setFailed(new Error('problems with secrets'));
     }
   }
