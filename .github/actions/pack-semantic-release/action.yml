@@ -41,12 +41,6 @@ runs:
       run: |
         echo "### 📦 Package" >> $GITHUB_STEP_SUMMARY
 
-    - name: Setup | Dependencies
-      if: inputs.installNode
-      uses: filipeforattini/ff-iac-github-actions/.github/actions/setup-binaries@main
-      with:
-        nodejs: 17
-
     - name: Check if .releaserc.json exists
       id: file_checker
       shell: bash
@@ -63,6 +57,12 @@ runs:
         defaultBranch: ${{ inputs.defaultBranch }}
         files: ${{ inputs.files }}
         npmPlugin: ${{ inputs.npmPlugin }}
+
+    - name: Setup | Dependencies
+      if: inputs.installNode
+      uses: filipeforattini/ff-iac-github-actions/.github/actions/setup-binaries@main
+      with:
+        nodejs: 18
 
     - name: Semantic Release
       uses: filipeforattini/ff-iac-github-actions/.github/actions/semantic-release@main

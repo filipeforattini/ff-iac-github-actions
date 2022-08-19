@@ -116,6 +116,7 @@ jobs:
         uses: filipeforattini/ff-iac-github-actions/.github/actions/pack-semantic-release@main
         if: inputs.autoVersioning
         with:
+          writeSummary: true
           token: ${{ secrets.PIPELINE_DEPLOY_SECRET }}
           author: ${{steps.analysis.outputs.commiter_name}} 
           email: ${{steps.analysis.outputs.commiter_email}}
