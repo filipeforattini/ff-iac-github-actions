@@ -33983,7 +33983,9 @@ async function action() {
       'SECRET_REGISTRY_PASSWORD',
       'SECRET_REGISTRY_USERNAME',
       'SECRET_PIPELINE_DEPLOY_TOKEN',
-    ].reduce((acc, s) => { 
+    ]
+    .map(s => s.replace('SECRET_', ''))
+    .reduce((acc, s) => { 
       acc[s] = !_.isEmpty(core.getInput(s, { required: true }))
       return acc
     }, {})
