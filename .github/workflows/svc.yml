@@ -93,6 +93,11 @@ jobs:
         with:
           writeSummary: true
           containerRegistry: ${{inputs.containerRegistry}}
+          evaluateSecrets: true
+          SECRET_KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+          SECRET_REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
+          SECRET_REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
+          SECRET_PIPELINE_DEPLOY_TOKEN: ${{ secrets.PIPELINE_DEPLOY_TOKEN }}
 
 
   #--------------------------------------------------#

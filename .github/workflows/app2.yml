@@ -76,6 +76,7 @@ jobs:
         uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
         with:
           writeSummary: true
+          containerRegistry: ${{inputs.containerRegistry}}
           evaluateSecrets: true
           SECRET_KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
           SECRET_REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
