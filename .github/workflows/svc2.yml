@@ -93,7 +93,7 @@ jobs:
         with:
           writeSummary: true
           containerRegistry: ${{inputs.containerRegistry}}
-          evaluateSecrets: true
+          evaluateSecrets: false
           PIPESECRET_KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
           PIPESECRET_REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
           PIPESECRET_REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
