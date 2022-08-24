@@ -141,15 +141,9 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
-      # dependencies
       - name: Setup | Pipeline config scrapper
         uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
         id: analysis
-
-      - name: Setup | Dependencies
-        uses: filipeforattini/ff-iac-github-actions/.github/actions/setup-binaries@main
-        with:
-          nodejs: 17
 
       # release
       - name: Semantic Release
@@ -158,6 +152,7 @@ jobs:
         with:
           writeSummary: true
           token: ${{secrets.PIPELINE_DEPLOY_TOKEN}}
+          installNode: true
           npmPlugin: true
           defaultBranch: ${{ inputs.mainBranch }}
           author: ${{steps.analysis.outputs.commiter_name}} 
