@@ -81,8 +81,8 @@ jobs:
           PIPESECRET_PIPELINE_DEPLOY_TOKEN: ${{ secrets.PIPELINE_DEPLOY_TOKEN }}
         with:
           writeSummary: true
-          containerRegistry: ${{inputs.containerRegistry}}
           evaluateSecrets: true
+          containerRegistry: ${{inputs.containerRegistry}}
 
 
   #--------------------------------------------------#

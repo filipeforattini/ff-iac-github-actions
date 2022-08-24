@@ -33992,7 +33992,7 @@ async function action() {
         ? core.info(templateInfo('secret', `${friendlyName} is definied.`))
         : core.info(templateInfo('secret', `${friendlyName} is [not] definied.`))
 
-        acc[s] = !_.isEmpty(value)
+      acc[friendlyName] = !_.isEmpty(value)
       return acc
     }, {})
 
