@@ -33457,8 +33457,11 @@ module.exports = async (analysis) => {
   langIterator = langIterator.map((z) => _.zipObject(["language", "bytes"], z));
   langIterator = _.sortBy(langIterator, "bytes");
 
-  if (langIterator.length == 0)
-    return core.warning(templateInfo("code", "no language detected"));
+  if (langIterator.length == 0) {
+    analysis.language = 'undetected';
+    analysis.outputs.language = analysis.language;
+    return
+  }
 
   let language = langIterator.pop().language;
   language = language.toLowerCase();
