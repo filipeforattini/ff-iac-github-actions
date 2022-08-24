@@ -311,16 +311,23 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
+      - name: Setup | Pipeline config scrapper
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
+        id: analysis
+
       # release
       - name: Semantic Release
         uses: filipeforattini/ff-iac-github-actions/.github/actions/pack-semantic-release@main
         if: inputs.autoVersioning
-        env:
-          GITHUB_TOKEN: ${{secrets.PIPELINE_DEPLOY_TOKEN}}
         with:
+          writeSummary: true
           defaultBranch: ${{inputs.mainBranch}}
-          files: '[]'
+          installNode: true
           npmPlugin: false
+          token: ${{secrets.PIPELINE_DEPLOY_TOKEN}}
+          author: ${{steps.analysis.outputs.commiter_name}} 
+          email: ${{steps.analysis.outputs.commiter_email}}
+          files: '[]'
 
       - name: Next Version
         id: versioning
