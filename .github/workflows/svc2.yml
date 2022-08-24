@@ -90,14 +90,15 @@ jobs:
       - name: Pipeline config scrapper
         id: analysis
         uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
-        with:
-          writeSummary: true
-          containerRegistry: ${{inputs.containerRegistry}}
-          evaluateSecrets: false
+        env:
           PIPESECRET_KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
           PIPESECRET_REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
           PIPESECRET_REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
           PIPESECRET_PIPELINE_DEPLOY_TOKEN: ${{ secrets.PIPELINE_DEPLOY_TOKEN }}
+        with:
+          writeSummary: true
+          containerRegistry: ${{inputs.containerRegistry}}
+          evaluateSecrets: true
 
 
   #--------------------------------------------------#
