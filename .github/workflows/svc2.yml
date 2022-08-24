@@ -269,10 +269,10 @@ jobs:
         uses: filipeforattini/ff-iac-github-actions/.github/actions/pack-semantic-release@main
         if: inputs.autoVersioning
         env:
-          GITHUB_TOKEN: ${{secrets.PIPELINE_DEPLOY_TOKEN}}
         with:
-          installNode: true
           writeSummary: true
+          token: ${{secrets.PIPELINE_DEPLOY_TOKEN}}
+          installNode: true
           defaultBranch: ${{inputs.mainBranch}}
           files: '["package.json","dist/**/*.{js,css}"]'
           npmPlugin: true
