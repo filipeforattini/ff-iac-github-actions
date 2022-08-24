@@ -73,6 +73,8 @@ jobs:
   #--------------------------------------------------#
   Setup:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
     outputs:
       Event: ${{steps.analysis.outputs.event}}
