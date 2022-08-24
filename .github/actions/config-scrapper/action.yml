@@ -15,19 +15,19 @@ inputs:
     default: "false"
     description: ""
 
-  SECRET_KUBE_CONFIG:
+  PIPESECRET_KUBE_CONFIG:
     required: false
     default: ""
     description: ""
-  SECRET_REGISTRY_PASSWORD:
+  PIPESECRET_REGISTRY_PASSWORD:
     required: false
     default: ""
     description: ""
-  SECRET_REGISTRY_USERNAME:
+  PIPESECRET_REGISTRY_USERNAME:
     required: false
     default: ""
     description: ""
-  SECRET_PIPELINE_DEPLOY_TOKEN:
+  PIPESECRET_PIPELINE_DEPLOY_TOKEN:
     required: false
     default: ""
     description: ""
