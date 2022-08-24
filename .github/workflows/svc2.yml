@@ -272,10 +272,12 @@ jobs:
           writeSummary: true
           token: ${{secrets.PIPELINE_DEPLOY_TOKEN}}
           installNode: true
-          defaultBranch: ${{inputs.mainBranch}}
-          files: '["package.json","dist/**/*.{js,css}"]'
           npmPlugin: true
-
+          defaultBranch: ${{inputs.mainBranch}}
+          author: ${{steps.analysis.outputs.commiter_name}} 
+          email: ${{steps.analysis.outputs.commiter_email}}
+          files: '["package.json","dist/**/*.{js,css}"]'
+          
       - name: Current Version
         id: versioning
         run: |

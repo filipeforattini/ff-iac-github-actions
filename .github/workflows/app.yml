@@ -158,10 +158,10 @@ jobs:
         with:
           writeSummary: true
           token: ${{secrets.PIPELINE_DEPLOY_TOKEN}}
-          author: ${{steps.analysis.outputs.commiter_name}} 
-          email: ${{steps.analysis.outputs.commiter_email}}
           npmPlugin: true
           defaultBranch: ${{ inputs.mainBranch }}
+          author: ${{steps.analysis.outputs.commiter_name}} 
+          email: ${{steps.analysis.outputs.commiter_email}}
           files: '["package.json","dist/**/*.{js,css}"]'
 
       - name: Current Version
