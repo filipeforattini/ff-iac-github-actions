@@ -33984,7 +33984,6 @@ async function action() {
       'PIPESECRET_REGISTRY_USERNAME',
       'PIPESECRET_PIPELINE_DEPLOY_TOKEN',
     ]
-    .map(s => s.replace('PIPESECRET_', ''))
     .reduce((acc, s) => { 
       acc[s] = !_.isEmpty(process.env[s])
       return acc
