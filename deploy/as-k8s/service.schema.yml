@@ -4,8 +4,12 @@
   name: svc
   labels: {}
   annotations: {}
-  resources: {}
   imagePullSecrets: false
+  resources:
+    #@schema/type any=True
+    limits: []
+    #@schema/type any=True
+    requests: []
 
   templateLabels: {}
   matchLabels:

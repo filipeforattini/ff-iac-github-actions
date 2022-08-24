@@ -3,6 +3,14 @@
 #@ load("@ytt:json", "json")
 #@ load("@ytt:sha256", "sha256")
 #@ load("@ytt:base64", "base64")
+
+#@ def ListToMap (listOfMaps):
+#@    newMap = {}
+#@    for i in range(len(listOfMaps)):
+#@        newMap.update({ listOfMaps[i].name: listOfMaps[i].value })
+#@    end
+#@    return newMap
+#@ end
 ---
 #@ if data.values.deployment.enable:
 apiVersion: apps/v1
@@ -40,7 +48,12 @@ spec:
         - name: #@ data.values.deployment.name
           image: #@ "{}/{}/{}:{}".format(data.values.containerRegistry, data.values.organization, data.values.repository, data.values.tag)
           imagePullPolicy: Always
-          resources: #@ data.values.deployment.resources
+
+          #@  deploymentResources = {
+          #@    "limits": ListToMap(data.values.deployment.resources.limits),
+          #@    "requests": ListToMap(data.values.deployment.resources.requests),
+          #@  }
+          resources: #@ deploymentResources
 
           #@ deploymentEnvs = []
           #@ deploymentEnvs.extend(data.values.env)

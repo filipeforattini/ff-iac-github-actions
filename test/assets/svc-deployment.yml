@@ -1,0 +1,20 @@
+#@data/values
+---
+port: 1234
+
+env:
+  - name: TZ
+    value: America/Sao_Paulo
+
+deployment:
+  resources:
+    requests:
+      - name: cpu 
+        value: 1
+      - name: memory
+        value: 2Gi
+    limits: 
+      - name: cpu 
+        value: 1
+      - name: memory
+        value: 4Gi
