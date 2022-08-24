@@ -33985,7 +33985,9 @@ async function action() {
       'PIPESECRET_PIPELINE_DEPLOY_TOKEN',
     ]
     .reduce((acc, s) => { 
-      acc[s] = !_.isEmpty(process.env[s])
+      let value = process.env[s]
+      core.info(templateInfo('secret', `${s.toLowerCase()} is definied (${value.length})`));
+      acc[s] = !_.isEmpty(value)
       return acc
     }, {})
 
