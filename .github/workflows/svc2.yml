@@ -73,14 +73,13 @@ jobs:
   #--------------------------------------------------#
   Setup:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
 
     outputs:
       Event: ${{steps.analysis.outputs.event}}
       Analysis: ${{steps.analysis.outputs.result}}
       Language: ${{steps.analysis.outputs.language}}
       Environment: ${{steps.analysis.outputs.environment}}
+
     steps:
 
       # pre-job
@@ -111,6 +110,7 @@ jobs:
     needs: Setup
 
     permissions:
+      contents: read
       security-events: write
 
     steps:
