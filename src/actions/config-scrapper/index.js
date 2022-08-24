@@ -50,9 +50,14 @@ async function action() {
       'PIPESECRET_PIPELINE_DEPLOY_TOKEN',
     ]
     .reduce((acc, s) => { 
-      let value = process.env[s]
-      core.info(templateInfo('secret', `${s.toLowerCase()} is definied (${value.length})`));
-      acc[s] = !_.isEmpty(value)
+      let value = process.env[s] || ''
+      let friendlyName = s.replace('PIPESECRET_', '')
+      
+      value.length > 0
+        ? core.info(templateInfo('secret', `${friendlyName} is definied.`))
+        : core.info(templateInfo('secret', `${friendlyName} is [not] definied.`))
+
+        acc[s] = !_.isEmpty(value)
       return acc
     }, {})
 
