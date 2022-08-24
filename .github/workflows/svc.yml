@@ -921,8 +921,11 @@ jobs:
   Deploy-Docker:
     runs-on: ubuntu-latest
     environment: ${{needs.Setup.outputs.Environment}}
-    if: needs.Setup.outputs.Language == 'undetected' 
-    
+
+    if: |
+      github.event_name == 'deployment'
+      && needs.Setup.outputs.Language == 'undetected'
+
     needs:
       - Setup
 
