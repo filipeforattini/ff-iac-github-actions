@@ -605,6 +605,71 @@ jobs:
 
 
   #--------------------------------------------------#
+  #                Build: Dockerfile                 # 
+  #--------------------------------------------------#
+  Build-Dockerfile:
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'deployment'
+      && needs.Setup.outputs.Language == 'undetected'
+
+    needs: 
+      - Setup
+
+    steps:
+
+      # pre-job
+      - name: Setup | Cloning tools
+        uses: actions/checkout@v3
+        with:
+          ref: env/${{needs.Setup.outputs.Environment}}
+
+      - name: Pipeline config scrapper
+        id: analysis
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
+        with:
+          containerRegistry: ${{inputs.containerRegistry}}
+
+      - name: Setup | Dependencies
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/setup-binaries@main
+        with:
+          docker-qmeu: true
+          docker-buildx: true
+
+      - name: Docs | Write summary title
+        run: |
+          echo "### 🚢 Build" >> $GITHUB_STEP_SUMMARY
+
+      # pre-build
+      - name: Create .dockerignore
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/create-dockerignore@main
+        if: steps.analysis.outputs.feature_has_dockerignore != true
+        with:
+          writeSummary: true
+
+      # login
+      - name: Config | Login to Container Registry
+        uses: docker/login-action@v2
+        with:
+          logout: false
+          registry: ${{inputs.containerRegistry}}
+          username: ${{secrets.REGISTRY_USERNAME}}
+          password: ${{secrets.REGISTRY_PASSWORD}}
+
+      # build
+      - name: Copy config
+        run: |
+          if test -f ./manifests/configs/${{needs.Setup.outputs.Environment}}.env; then cp ./manifests/configs/${{needs.Setup.outputs.Environment}}.env ./.env; fi
+
+      - name: Build container image and push
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/pack-docker-build@main
+        with:
+          cached: true
+          platforms: ${{inputs.platforms}}
+          containerRegistry: ${{inputs.containerRegistry}}
+
+
+  #--------------------------------------------------#
   #                      Deploy JS                   # 
   #--------------------------------------------------#
   Deploy-Node:
@@ -918,16 +983,14 @@ jobs:
   #--------------------------------------------------#
   #                Deploy Dockerfile                 # 
   #--------------------------------------------------#
-  Deploy-Docker:
+  Deploy-Dockerfile:
     runs-on: ubuntu-latest
     environment: ${{needs.Setup.outputs.Environment}}
-
-    if: |
-      github.event_name == 'deployment'
-      && needs.Setup.outputs.Language == 'undetected'
-
+    if: needs.Setup.outputs.Language == 'undetected'
+    
     needs:
       - Setup
+      - Build-Dockerfile
 
     steps:
 
@@ -955,28 +1018,6 @@ jobs:
           ytt: true
           yq: true
 
-      # login
-      - name: Config | Login to Container Registry
-        uses: docker/login-action@v2
-        with:
-          logout: false
-          registry: ${{inputs.containerRegistry}}
-          username: ${{secrets.REGISTRY_USERNAME}}
-          password: ${{secrets.REGISTRY_PASSWORD}}
-
-      # build
-      - name: Copy config
-        run: |
-          if test -f ./manifests/configs/${{needs.Setup.outputs.Environment}}.env; then cp ./manifests/configs/${{needs.Setup.outputs.Environment}}.env ./.env; fi
-
-      - name: Build container image and push
-        uses: filipeforattini/ff-iac-github-actions/.github/actions/pack-docker-build@main
-        with:
-          cached: true
-          platforms: ${{inputs.platforms}}
-          containerRegistry: ${{inputs.containerRegistry}}
-      
-      # deploy
       - name: Pipeline config scrapper
         id: analysis
         uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
@@ -1004,13 +1045,14 @@ jobs:
           token: ${{secrets.GITHUB_TOKEN}}
           cloneTools: false
           writeSummary: true
+          kubeConfig: ${{secrets.KUBE_CONFIG}}
           version: ${{steps.versioning.outputs.version}}
           repository: ${{steps.analysis.outputs.repository}}
           namespace: ${{steps.analysis.outputs.deploy_namespace}}
 
       # configs
       - name: K8s create config-map
-        if: steps.analysis.outputs.feature_has_configs 
+        if: steps.analysis.outputs.feature_has_configs
         run: |
           kubectl create configmap -n ${{steps.analysis.outputs.deploy_namespace}} ${{steps.analysis.outputs.repository}} --from-env-file=${{steps.analysis.outputs.deploy_configs_file}} --dry-run=client --validate=false --output=yaml | kubectl apply -f -
           kubectl create configmap -n ${{steps.analysis.outputs.deploy_namespace}} ${{steps.analysis.outputs.repository}}-${{steps.versioning.outputs.version}} --from-env-file=${{steps.analysis.outputs.deploy_configs_file}} --dry-run=client --validate=false --output=yaml | kubectl apply -f -
