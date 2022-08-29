@@ -1,0 +1,235 @@
+name: svc-build
+
+concurrency:
+  group: ${{github.workflow}}-${{github.event_name}}
+
+
+#--------------------------------------------------#
+#                     Triggers                     # 
+#--------------------------------------------------#
+on:
+
+  workflow_call:
+    inputs:
+      language:
+        type: string
+        required: false
+        default: ""
+        description: "Main language of the repository"
+      environment:
+        type: string
+        required: true
+        default: dev
+        description: "Environment name"
+      containerRegistry:
+        type: string
+        required: false
+        default: ghcr.io
+        description: "Container registry to upload container images"
+      platforms:
+        type: string
+        required: false
+        default: "linux/386,linux/amd64,linux/arm/v7,linux/arm/v8,linux/arm64,linux/ppc64le,linux/s390x"
+        description: "Multi-plataform container builds"
+
+
+#--------------------------------------------------#
+#                  Workflow Jobs                   # 
+#--------------------------------------------------#
+jobs:
+
+  #--------------------------------------------------#
+  #                  Build: Node.js                  # 
+  #--------------------------------------------------#
+  Build-Node:
+    runs-on: ubuntu-latest
+    if: needs.Setup.outputs.Language == 'javascript'
+
+    steps:
+
+      # pre-job
+      - name: Setup | Cloning tools
+        uses: actions/checkout@v3
+        with:
+          ref: env/${{needs.Setup.outputs.Environment}}
+
+      - name: Pipeline config scrapper
+        id: analysis
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
+        with:
+          containerRegistry: ${{inputs.containerRegistry}}
+
+      - name: Setup | Dependencies
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/setup-binaries@main
+        with:
+          docker-qmeu: true
+          docker-buildx: true
+      
+      - name: Docs | Write summary title
+        run: |
+          echo "### 🚢 Build" >> $GITHUB_STEP_SUMMARY
+
+      # pre-build
+      - name: Create Dockerfile
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/create-dockerfile@main
+        if: steps.analysis.outputs.feature_has_dockerfile != true
+        with:
+          writeSummary: true
+          preset: node
+          params: '{"tag": "${{inputs.nodeVersion}}-slim"}'
+
+      - name: Create .dockerignore
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/create-dockerignore@main
+        if: steps.analysis.outputs.feature_has_dockerignore != true
+        with:
+          writeSummary: true
+          globsToIgnore: '["node_modules"]'
+
+      # login
+      - name: Config | Login to Container Registry
+        uses: docker/login-action@v2
+        with:
+          logout: false
+          registry: ${{inputs.containerRegistry}}
+          username: ${{secrets.REGISTRY_USERNAME}}
+          password: ${{secrets.REGISTRY_PASSWORD}}
+
+      # build
+      - name: Copy config
+        run: |
+          if test -f ./manifests/configs/${{needs.Setup.outputs.Environment}}.env; then cp ./manifests/configs/${{needs.Setup.outputs.Environment}}.env ./.env; fi
+
+      - name: Build container image and push
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/pack-docker-build@main
+        with:
+          cached: true
+          platforms: ${{inputs.platforms}}
+          containerRegistry: ${{inputs.containerRegistry}}
+
+
+  #--------------------------------------------------#
+  #                  Build: Python                   # 
+  #--------------------------------------------------#
+  Build-Python:
+    runs-on: ubuntu-latest
+    if: needs.Setup.outputs.Language == 'python'
+
+    steps:
+
+      # pre-job
+      - name: Setup | Cloning tools
+        uses: actions/checkout@v3
+        with:
+          ref: env/${{needs.Setup.outputs.Environment}}
+
+      - name: Pipeline config scrapper
+        id: analysis
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
+        with:
+          containerRegistry: ${{inputs.containerRegistry}}
+
+      - name: Setup | Dependencies
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/setup-binaries@main
+        with:
+          docker-qmeu: true
+          docker-buildx: true
+
+      - name: Docs | Write summary title
+        run: |
+          echo "### 🚢 Build" >> $GITHUB_STEP_SUMMARY
+
+      # pre-build
+      - name: Create Dockerfile
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/create-dockerfile@main
+        if: steps.analysis.outputs.feature_has_dockerfile != true
+        with:
+          writeSummary: true
+          preset: python
+          params: '{"tag": "${{inputs.pythonVersion}}"}'
+
+      - name: Create .dockerignore
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/create-dockerignore@main
+        if: steps.analysis.outputs.feature_has_dockerignore != true
+        with:
+          writeSummary: true
+
+      # login
+      - name: Config | Login to Container Registry
+        uses: docker/login-action@v2
+        with:
+          logout: false
+          registry: ${{inputs.containerRegistry}}
+          username: ${{secrets.REGISTRY_USERNAME}}
+          password: ${{secrets.REGISTRY_PASSWORD}}
+
+      # build
+      - name: Copy config
+        run: |
+          if test -f ./manifests/configs/${{needs.Setup.outputs.Environment}}.env; then cp ./manifests/configs/${{needs.Setup.outputs.Environment}}.env ./.env; fi
+
+      - name: Build container image and push
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/pack-docker-build@main
+        with:
+          cached: true
+          platforms: ${{inputs.platforms}}
+          containerRegistry: ${{inputs.containerRegistry}}
+
+
+  #--------------------------------------------------#
+  #                Build: Dockerfile                 # 
+  #--------------------------------------------------#
+  Build-Dockerfile:
+    runs-on: ubuntu-latest
+    if: needs.Setup.outputs.Language == 'undetected'
+
+    steps:
+
+      # pre-job
+      - name: Setup | Cloning tools
+        uses: actions/checkout@v3
+        with:
+          ref: env/${{needs.Setup.outputs.Environment}}
+
+      - name: Pipeline config scrapper
+        id: analysis
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
+        with:
+          containerRegistry: ${{inputs.containerRegistry}}
+
+      - name: Setup | Dependencies
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/setup-binaries@main
+        with:
+          docker-qmeu: true
+          docker-buildx: true
+
+      - name: Docs | Write summary title
+        run: |
+          echo "### 🚢 Build" >> $GITHUB_STEP_SUMMARY
+
+      # pre-build
+      - name: Create .dockerignore
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/create-dockerignore@main
+        if: steps.analysis.outputs.feature_has_dockerignore != true
+        with:
+          writeSummary: true
+
+      # login
+      - name: Config | Login to Container Registry
+        uses: docker/login-action@v2
+        with:
+          logout: false
+          registry: ${{inputs.containerRegistry}}
+          username: ${{secrets.REGISTRY_USERNAME}}
+          password: ${{secrets.REGISTRY_PASSWORD}}
+
+      # build
+      - name: Copy config
+        run: |
+          if test -f ./manifests/configs/${{needs.Setup.outputs.Environment}}.env; then cp ./manifests/configs/${{needs.Setup.outputs.Environment}}.env ./.env; fi
+
+      - name: Build container image and push
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/pack-docker-build@main
+        with:
+          cached: true
+          platforms: ${{inputs.platforms}}
+          containerRegistry: ${{inputs.containerRegistry}}
