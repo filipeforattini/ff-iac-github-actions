@@ -48,7 +48,7 @@ jobs:
       - name: Setup | Cloning tools
         uses: actions/checkout@v3
         with:
-          ref: env/${{needs.Setup.outputs.Environment}}
+          ref: env/${{inputs.environment}}
 
       - name: Pipeline config scrapper
         id: analysis
@@ -94,7 +94,7 @@ jobs:
       # build
       - name: Copy config
         run: |
-          if test -f ./manifests/configs/${{needs.Setup.outputs.Environment}}.env; then cp ./manifests/configs/${{needs.Setup.outputs.Environment}}.env ./.env; fi
+          if test -f ./manifests/configs/${{inputs.environment}}.env; then cp ./manifests/configs/${{inputs.environment}}.env ./.env; fi
 
       - name: Build container image and push
         uses: filipeforattini/ff-iac-github-actions/.github/actions/pack-docker-build@main
@@ -117,7 +117,7 @@ jobs:
       - name: Setup | Cloning tools
         uses: actions/checkout@v3
         with:
-          ref: env/${{needs.Setup.outputs.Environment}}
+          ref: env/${{inputs.environment}}
 
       - name: Pipeline config scrapper
         id: analysis
@@ -162,7 +162,7 @@ jobs:
       # build
       - name: Copy config
         run: |
-          if test -f ./manifests/configs/${{needs.Setup.outputs.Environment}}.env; then cp ./manifests/configs/${{needs.Setup.outputs.Environment}}.env ./.env; fi
+          if test -f ./manifests/configs/${{inputs.environment}}.env; then cp ./manifests/configs/${{inputs.environment}}.env ./.env; fi
 
       - name: Build container image and push
         uses: filipeforattini/ff-iac-github-actions/.github/actions/pack-docker-build@main
@@ -185,7 +185,7 @@ jobs:
       - name: Setup | Cloning tools
         uses: actions/checkout@v3
         with:
-          ref: env/${{needs.Setup.outputs.Environment}}
+          ref: env/${{inputs.environment}}
 
       - name: Pipeline config scrapper
         id: analysis
@@ -222,7 +222,7 @@ jobs:
       # build
       - name: Copy config
         run: |
-          if test -f ./manifests/configs/${{needs.Setup.outputs.Environment}}.env; then cp ./manifests/configs/${{needs.Setup.outputs.Environment}}.env ./.env; fi
+          if test -f ./manifests/configs/${{inputs.environment}}.env; then cp ./manifests/configs/${{inputs.environment}}.env ./.env; fi
 
       - name: Build container image and push
         uses: filipeforattini/ff-iac-github-actions/.github/actions/pack-docker-build@main
