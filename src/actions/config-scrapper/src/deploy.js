@@ -19,8 +19,9 @@ module.exports = async (analysis) => {
   let tags = [
     `latest`,
     `c-${commitSha}`,
-    `u-${github.context.actor}`,
     `r-${github.context.runNumber}`,
+    `u-${github.context.actor}`,
+    `u-${github.context.actor}-c-${commitSha}`,
     `b-${github.context.ref.replace('refs/heads/', '').replace('/', '-')}`,
   ]
 
