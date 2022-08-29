@@ -1,8 +1,5 @@
 name: svc-build
 
-concurrency:
-  group: ${{github.workflow}}-${{github.event_name}}
-
 
 #--------------------------------------------------#
 #                     Triggers                     # 
