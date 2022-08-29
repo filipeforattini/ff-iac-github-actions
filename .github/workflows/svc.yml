@@ -254,6 +254,9 @@ jobs:
       containerRegistry: ${{inputs.containerRegistry}}
       language: ${{needs.Setup.outputs.Language}}
       environment: ${{needs.Setup.outputs.Environment}}
+      nodeVersion: ${{inputs.nodeVersion}}
+      pythonVersion: ${{inputs.pythonVersion}}
+      goVersion: ${{inputs.goVersion}}
 
 
   #--------------------------------------------------#

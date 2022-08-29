@@ -28,6 +28,18 @@ on:
         required: false
         default: "linux/386,linux/amd64,linux/arm/v7,linux/arm/v8,linux/arm64,linux/ppc64le,linux/s390x"
         description: "Multi-plataform container builds"
+      nodeVersion:
+        type: string
+        required: false
+        default: '17'
+      pythonVersion:
+        type: string
+        required: false
+        default: '3.10'
+      goVersion:
+        type: string
+        required: false
+        default: '1.18'
 
 
 #--------------------------------------------------#
