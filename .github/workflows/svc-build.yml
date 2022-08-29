@@ -40,7 +40,7 @@ jobs:
   #--------------------------------------------------#
   Build-Node:
     runs-on: ubuntu-latest
-    if: needs.Setup.outputs.Language == 'javascript'
+    if: inputs.language == 'javascript'
 
     steps:
 
@@ -109,7 +109,7 @@ jobs:
   #--------------------------------------------------#
   Build-Python:
     runs-on: ubuntu-latest
-    if: needs.Setup.outputs.Language == 'python'
+    if: inputs.language == 'python'
 
     steps:
 
@@ -177,7 +177,7 @@ jobs:
   #--------------------------------------------------#
   Build-Dockerfile:
     runs-on: ubuntu-latest
-    if: needs.Setup.outputs.Language == 'undetected'
+    if: inputs.language == 'undetected'
 
     steps:
 

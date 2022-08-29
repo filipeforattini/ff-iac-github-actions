@@ -148,7 +148,7 @@ jobs:
     uses: filipeforattini/ff-iac-github-actions/.github/workflows/svc-version.yml@main
     needs: Setup
     secrets: inherit
-    if: github.event_name == 'push'
+    if: needs.Setup.outputs.event == 'push'
 
     with:
       language: ${{needs.Setup.outputs.Language}}
@@ -166,7 +166,6 @@ jobs:
   #--------------------------------------------------#
   Trigger-Build:
     runs-on: ubuntu-latest
-    if: github.event_name == 'push'
     needs: Tests-And-Version
 
     steps:
@@ -246,9 +245,9 @@ jobs:
   #--------------------------------------------------#
   Build:
     uses: filipeforattini/ff-iac-github-actions/.github/workflows/svc-build.yml@main
+    needs: Setup
     if: needs.Setup.outputs.event == 'deployment'
     secrets: inherit
-    needs: Setup
 
     with:
       platforms: ${{inputs.platforms}}
