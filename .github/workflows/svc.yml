@@ -56,6 +56,14 @@ on:
         type: string
         required: false
         default: '3.10'
+      goMatrix:
+        type: string
+        required: false
+        default: '["1.18"]'
+      goVersion:
+        type: string
+        required: false
+        default: '1.18'
       platforms:
         type: string
         required: false
@@ -93,10 +101,10 @@ jobs:
         id: analysis
         uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
         env:
-          PIPESECRET_KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
-          PIPESECRET_REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
-          PIPESECRET_REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
-          PIPESECRET_PIPELINE_DEPLOY_TOKEN: ${{ secrets.PIPELINE_DEPLOY_TOKEN }}
+          PIPESECRET_KUBE_CONFIG: ${{secrets.KUBE_CONFIG}}
+          PIPESECRET_REGISTRY_PASSWORD: ${{secrets.REGISTRY_PASSWORD}}
+          PIPESECRET_REGISTRY_USERNAME: ${{secrets.REGISTRY_USERNAME}}
+          PIPESECRET_PIPELINE_DEPLOY_TOKEN: ${{secrets.PIPELINE_DEPLOY_TOKEN}}
         with:
           writeSummary: true
           evaluateSecrets: true
@@ -134,217 +142,32 @@ jobs:
 
 
   #--------------------------------------------------#
-  #                  Tests: Node.js                  # 
+  #                      Routine                     # 
   #--------------------------------------------------#
-  Tests-Node:
-    runs-on: ubuntu-latest
+  Routine:    
+    uses: filipeforattini/ff-iac-github-actions/.github/workflows/svc-version.yml@main
     needs: Setup
-    if: |
-      github.event_name == 'push'
-      && needs.Setup.outputs.Language == 'javascript'
+    secrets: inherit
+    if: github.event_name == 'push'
 
-    permissions:
-      security-events: write
-
-    strategy:
-      matrix:
-        node-version: ${{fromJSON(inputs.nodeMatrix)}}
-    
-    steps:
-
-      # pre-job
-      - name: Setup | Cloning repository
-        uses: actions/checkout@v3
-
-      - name: Setup | Cloning tools
-        uses: actions/checkout@v3
-        with:
-          ref: main
-          path: .pipeline
-          repository: filipeforattini/ff-iac-github-actions
-
-      - name: Install | Node.js ${{matrix.node-version}}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{matrix.node-version}}
-
-      - name: Install | Dependency managers
-        run: npm -g install yarn npm
-
-      - name: Config | Load setup configs
-        env:
-          PIPELINE_SETUP: ${{needs.Setup.outputs.PipelineConfig}}
-        id: node_setup
-        run: |
-          echo "::set-output name=cache_key::$(echo $PIPELINE_SETUP | jq -r '.code.cacheKey')"
-          echo "::set-output name=dependency_command::$(echo $PIPELINE_SETUP | jq -r '.code.dependencyCommand')"
-
-      # load caches
-      - name: Load cache from yarn.lock
-        uses: actions/cache@v2
-        if: steps.node_setup.outputs.cache_key == 'yarn.lock'
-        with:
-          path: '**/node_modules'
-          key: ${{runner.os}}-modules-${{hashFiles('**/yarn.lock')}}
-
-      - name: Load cache from package-lock.json
-        uses: actions/cache@v2
-        if: steps.node_setup.outputs.cache_key == 'package-lock.json'
-        with:
-          path: '**/node_modules'
-          key: ${{runner.os}}-modules-${{hashFiles('**/package-lock.json')}}
-
-      - name: Load cache from package.json
-        uses: actions/cache@v2
-        if: steps.node_setup.outputs.cache_key == 'package-lock.json'
-        with:
-          path: '**/node_modules'
-          key: ${{runner.os}}-modules-${{hashFiles('**/package.json')}}
-
-      # install dependencies
-      - name: Install dependencies
-        run: |
-          if test -f ./yarn.lock; then yarn; fi
-          if test -f ./package-lock.json; then npm install; fi
-
-      # run scripts
-      - name: Run linter
-        run: npm run lint --if-present
-
-      - name: Run tests
-        run: npm run test --if-present
+    with:
+      language: ${{needs.Setup.outputs.Language}}
+      mainBranch: ${{inputs.mainBranch}}
+      nodeMatrix: ${{inputs.nodeMatrix}}
+      nodeVersion: ${{inputs.nodeVersion}}
+      pythonMatrix: ${{inputs.pythonMatrix}}
+      pythonVersion: ${{inputs.pythonVersion}}
+      goMatrix: ${{inputs.goMatrix}}
+      goVersion: ${{inputs.goVersion}}
 
 
   #--------------------------------------------------#
-  #                  Tests: Python                   # 
+  #                      Trigger                     # 
   #--------------------------------------------------#
-  Tests-Python:
-    runs-on: ubuntu-latest
-    needs: Setup
-    if: |
-      github.event_name == 'push'
-      && needs.Setup.outputs.Language == 'python'
-
-    strategy:
-      matrix:
-        python-version: ${{fromJSON(inputs.pythonMatrix)}}
-    
-    steps:
-
-      # pre-job
-      - name: Setup | Cloning repository
-        uses: actions/checkout@v3
-
-      - name: Setup | Dependencies
-        uses: filipeforattini/ff-iac-github-actions/.github/actions/setup-binaries@main
-        with:
-          python: ${{matrix.python-version}}
-
-      - name: Pip install
-        run: pip install --upgrade -r requirements.txt
-
-
-  #--------------------------------------------------#
-  #                 Release: Node.js                 # 
-  #--------------------------------------------------#
-  Release-Node:
-    runs-on: ubuntu-latest
-    needs:
-      - Tests-Node
-      - Static-Analysis
-
-    outputs:
-      Version: ${{steps.versioning.outputs.version}}
-
-    steps:
-
-      # pre-job
-      - name: Setup | Cloning repository
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-          persist-credentials: false
-
-      - name: Setup | Pipeline config scrapper
-        uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
-        id: analysis
-
-      # release
-      - name: Semantic Release
-        uses: filipeforattini/ff-iac-github-actions/.github/actions/pack-semantic-release@main
-        if: inputs.autoVersioning
-        with:
-          writeSummary: true
-          token: ${{secrets.PIPELINE_DEPLOY_TOKEN}}
-          installNode: true
-          npmPlugin: true
-          defaultBranch: ${{inputs.mainBranch}}
-          author: ${{steps.analysis.outputs.commiter_name}} 
-          email: ${{steps.analysis.outputs.commiter_email}}
-          files: '["package.json","dist/**/*.{js,css}"]'
-          
-      - name: Current Version
-        id: versioning
-        run: |
-          echo "::set-output name=version::$(cat package.json | jq -r '.version')"
-          echo -e "\n\nINFO  current version = $(cat package.json | jq -r '.version')\n\n"
-
-
-  #--------------------------------------------------#
-  #                 Release: Python                  # 
-  #--------------------------------------------------#
-  Release-Python:
-    runs-on: ubuntu-latest
-    needs:
-      - Tests-Python
-      - Static-Analysis
-
-    outputs:
-      Version: ${{steps.versioning.outputs.version}}
-
-    steps:
-
-      # pre-job
-      - name: Setup | Cloning repository
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-          persist-credentials: false
-
-      - name: Setup | Pipeline config scrapper
-        uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
-        id: analysis
-
-      # release
-      - name: Semantic Release
-        uses: filipeforattini/ff-iac-github-actions/.github/actions/pack-semantic-release@main
-        if: inputs.autoVersioning
-        with:
-          writeSummary: true
-          defaultBranch: ${{inputs.mainBranch}}
-          installNode: true
-          npmPlugin: false
-          token: ${{secrets.PIPELINE_DEPLOY_TOKEN}}
-          author: ${{steps.analysis.outputs.commiter_name}} 
-          email: ${{steps.analysis.outputs.commiter_email}}
-          files: '[]'
-
-      - name: Next Version
-        id: versioning
-        run: |
-          NEXT_VERSION=$(git for-each-ref --sort=authordate --format '%(refname)' refs/tags | tail -n 1 | sed -n -e 's/^.*refs\/tags\/v//p')
-          echo "next version = $NEXT_VERSION"
-          echo "::set-output name=version::$NEXT_VERSION"
-
-
-  #--------------------------------------------------#
-  #                      Trigger JS                  # 
-  #--------------------------------------------------#
-  Trigger-Build-Node:
+  Trigger-Build:
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
-    needs: 
-      - Release-Node
+    needs: Routine
 
     steps:
 
@@ -367,46 +190,6 @@ jobs:
           git fetch
           git checkout -B env/dev
           git commit --allow-empty -am "deploy: to dev [skip ci]\\nVersion: ${{needs.Release-Node.outputs.Version}}\nCommit: ${{steps.setup.outputs.commit_hash}}"
-          git push -f -u origin env/dev
-
-      - uses: altinukshini/deployment-action@releases/v1
-        name: Create GitHub deployment
-        id: deployment
-        with:
-          token: "${{secrets.PIPELINE_DEPLOY_TOKEN}}"
-          environment: dev
-
-
-  #--------------------------------------------------#
-  #                      Trigger PY                  # 
-  #--------------------------------------------------#
-  Trigger-Build-Python:
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push'
-    needs: 
-      - Release-Python
-
-    steps:
-
-      # pre-job
-      - name: Setup | Cloning repository
-        uses: actions/checkout@v3
-        with:
-          token: ${{secrets.PIPELINE_DEPLOY_TOKEN}}
-
-      - name: Pipeline config scrapper
-        id: analysis
-        uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
-        with:
-          containerRegistry: ${{inputs.containerRegistry}}
-
-      - name: Trigger
-        run: |
-          git config --global user.name "${{steps.analysis.outputs.commiter_name}}"
-          git config --global user.email "${{steps.analysis.outputs.commiter_email}}"
-          git fetch
-          git checkout -B env/dev
-          git commit --allow-empty -am "deploy: to dev [skip ci]\\nVersion: ${{needs.Release-Python.outputs.Version}}\nCommit: ${{steps.analysis.outputs.commit_hash}}"
           git push -f -u origin env/dev
 
       - uses: altinukshini/deployment-action@releases/v1
