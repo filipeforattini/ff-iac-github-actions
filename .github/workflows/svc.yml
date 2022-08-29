@@ -246,7 +246,7 @@ jobs:
   #--------------------------------------------------#
   Build:
     uses: filipeforattini/ff-iac-github-actions/.github/workflows/svc-build.yml@main
-    if: needs.Setup.outputs.Event == 'deployment'
+    if: needs.Setup.outputs.event == 'deployment'
     secrets: inherit
     needs: Setup
 
