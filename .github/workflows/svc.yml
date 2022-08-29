@@ -248,6 +248,7 @@ jobs:
     uses: filipeforattini/ff-iac-github-actions/.github/workflows/svc-build.yml@main
     if: github.event_name == 'deployment'
     secrets: inherit
+    needs: Setup
 
     with:
       platforms: ${{inputs.platforms}}
@@ -262,9 +263,7 @@ jobs:
   Deploy:
     runs-on: ubuntu-latest
     environment: ${{needs.Setup.outputs.Environment}}
-    
-    needs:
-      - Build
+    needs: Build
 
     steps:
 
