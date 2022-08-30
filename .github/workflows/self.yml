@@ -1,4 +1,4 @@
-name: pipeline
+name: _self
 
 on: 
   push:
