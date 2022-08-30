@@ -48,6 +48,11 @@ on:
         required: false
         default: '1.18'
 
+      # SECRETS
+      PIPELINE_DEPLOY_TOKEN:
+        type: string
+        required: true
+
     outputs:
       version: 
         description: "Version"
@@ -89,14 +94,6 @@ jobs:
 
       - name: Install | Dependency managers
         run: npm -g install yarn npm
-
-      - name: Config | Load setup configs
-        env:
-          PIPELINE_SETUP: ${{needs.Setup.outputs.PipelineConfig}}
-        id: node_setup
-        run: |
-          echo "::set-output name=cache_key::$(echo $PIPELINE_SETUP | jq -r '.code.cacheKey')"
-          echo "::set-output name=dependency_command::$(echo $PIPELINE_SETUP | jq -r '.code.dependencyCommand')"
 
       # install dependencies
       - name: Install dependencies
@@ -151,7 +148,7 @@ jobs:
       - name: Setup | Cloning repository
         uses: actions/checkout@v3
         with:
-          token: ${{secrets.PIPELINE_DEPLOY_TOKEN}}
+          token: ${{inputs.PIPELINE_DEPLOY_TOKEN}}
 
       - name: Set up Go 1.18
         uses: actions/setup-go@v3
@@ -202,7 +199,7 @@ jobs:
         if: inputs.autoVersioning
         with:
           writeSummary: true
-          token: ${{secrets.PIPELINE_DEPLOY_TOKEN}}
+          token: ${{inputs.PIPELINE_DEPLOY_TOKEN}}
           installNode: true
           npmPlugin: true
           defaultBranch: ${{inputs.mainBranch}}
@@ -249,7 +246,7 @@ jobs:
           defaultBranch: ${{inputs.mainBranch}}
           installNode: true
           npmPlugin: false
-          token: ${{secrets.PIPELINE_DEPLOY_TOKEN}}
+          token: ${{inputs.PIPELINE_DEPLOY_TOKEN}}
           author: ${{steps.analysis.outputs.commiter_name}} 
           email: ${{steps.analysis.outputs.commiter_email}}
           files: '[]'

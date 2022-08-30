@@ -159,6 +159,7 @@ jobs:
       pythonVersion: ${{inputs.pythonVersion}}
       goMatrix: ${{inputs.goMatrix}}
       goVersion: ${{inputs.goVersion}}
+      PIPELINE_DEPLOY_TOKEN: ${{secrets.PIPELINE_DEPLOY_TOKEN}}
 
 
   #--------------------------------------------------#
@@ -257,6 +258,8 @@ jobs:
       nodeVersion: ${{inputs.nodeVersion}}
       pythonVersion: ${{inputs.pythonVersion}}
       goVersion: ${{inputs.goVersion}}
+      REGISTRY_USERNAME: ${{secrets.REGISTRY_USERNAME}}
+      REGISTRY_PASSWORD: ${{secrets.REGISTRY_PASSWORD}}
 
 
   #--------------------------------------------------#

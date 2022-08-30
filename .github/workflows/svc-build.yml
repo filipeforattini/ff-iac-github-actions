@@ -40,6 +40,12 @@ on:
         type: string
         required: false
         default: '1.18'
+      REGISTRY_USERNAME:
+        type: string
+        required: true
+      REGISTRY_PASSWORD:
+        type: string
+        required: true
 
 
 #--------------------------------------------------#
@@ -100,8 +106,8 @@ jobs:
         with:
           logout: false
           registry: ${{inputs.containerRegistry}}
-          username: ${{secrets.REGISTRY_USERNAME}}
-          password: ${{secrets.REGISTRY_PASSWORD}}
+          username: ${{inputs.REGISTRY_USERNAME}}
+          password: ${{inputs.REGISTRY_PASSWORD}}
 
       # build
       - name: Copy config
@@ -168,8 +174,8 @@ jobs:
         with:
           logout: false
           registry: ${{inputs.containerRegistry}}
-          username: ${{secrets.REGISTRY_USERNAME}}
-          password: ${{secrets.REGISTRY_PASSWORD}}
+          username: ${{inputs.REGISTRY_USERNAME}}
+          password: ${{inputs.REGISTRY_PASSWORD}}
 
       # build
       - name: Copy config
@@ -228,8 +234,8 @@ jobs:
         with:
           logout: false
           registry: ${{inputs.containerRegistry}}
-          username: ${{secrets.REGISTRY_USERNAME}}
-          password: ${{secrets.REGISTRY_PASSWORD}}
+          username: ${{inputs.REGISTRY_USERNAME}}
+          password: ${{inputs.REGISTRY_PASSWORD}}
 
       # build
       - name: Copy config
