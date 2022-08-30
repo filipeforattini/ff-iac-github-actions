@@ -147,8 +147,10 @@ jobs:
   Tests-And-Version:    
     uses: filipeforattini/ff-iac-github-actions/.github/workflows/svc-version.yml@main
     needs: Setup
-    secrets: inherit
     if: needs.Setup.outputs.event == 'push'
+
+    secrets:
+      PIPELINE_DEPLOY_TOKEN: ${{secrets.PIPELINE_DEPLOY_TOKEN}}
 
     with:
       language: ${{needs.Setup.outputs.Language}}
@@ -159,7 +161,6 @@ jobs:
       pythonVersion: ${{inputs.pythonVersion}}
       goMatrix: ${{inputs.goMatrix}}
       goVersion: ${{inputs.goVersion}}
-      PIPELINE_DEPLOY_TOKEN: "${{secrets.PIPELINE_DEPLOY_TOKEN}}"
 
 
   #--------------------------------------------------#
@@ -248,7 +249,10 @@ jobs:
     uses: filipeforattini/ff-iac-github-actions/.github/workflows/svc-build.yml@main
     needs: Setup
     if: needs.Setup.outputs.event == 'deployment'
-    secrets: inherit
+
+    secrets:
+      REGISTRY_USERNAME: ${{secrets.REGISTRY_USERNAME}}
+      REGISTRY_PASSWORD: ${{secrets.REGISTRY_PASSWORD}}
 
     with:
       platforms: ${{inputs.platforms}}
@@ -258,8 +262,6 @@ jobs:
       nodeVersion: ${{inputs.nodeVersion}}
       pythonVersion: ${{inputs.pythonVersion}}
       goVersion: ${{inputs.goVersion}}
-      REGISTRY_USERNAME: "${{secrets.REGISTRY_USERNAME}}"
-      REGISTRY_PASSWORD: "${{secrets.REGISTRY_PASSWORD}}"
 
 
   #--------------------------------------------------#

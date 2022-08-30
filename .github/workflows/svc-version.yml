@@ -48,11 +48,6 @@ on:
         required: false
         default: '1.18'
 
-      # SECRETS
-      PIPELINE_DEPLOY_TOKEN:
-        type: string
-        required: true
-
     outputs:
       version: 
         description: "Version"
@@ -148,7 +143,7 @@ jobs:
       - name: Setup | Cloning repository
         uses: actions/checkout@v3
         with:
-          token: ${{inputs.PIPELINE_DEPLOY_TOKEN}}
+          token: ${{secrets.PIPELINE_DEPLOY_TOKEN}}
 
       - name: Set up Go 1.18
         uses: actions/setup-go@v3
@@ -199,7 +194,7 @@ jobs:
         if: inputs.autoVersioning
         with:
           writeSummary: true
-          token: ${{inputs.PIPELINE_DEPLOY_TOKEN}}
+          token: ${{secrets.PIPELINE_DEPLOY_TOKEN}}
           installNode: true
           npmPlugin: true
           defaultBranch: ${{inputs.mainBranch}}
@@ -246,7 +241,7 @@ jobs:
           defaultBranch: ${{inputs.mainBranch}}
           installNode: true
           npmPlugin: false
-          token: ${{inputs.PIPELINE_DEPLOY_TOKEN}}
+          token: ${{secrets.PIPELINE_DEPLOY_TOKEN}}
           author: ${{steps.analysis.outputs.commiter_name}} 
           email: ${{steps.analysis.outputs.commiter_email}}
           files: '[]'
