@@ -48,6 +48,10 @@ on:
         required: false
         default: '1.18'
 
+    secrets:
+      PIPELINE_DEPLOY_TOKEN:
+        required: true
+
     outputs:
       version: 
         description: "Version"

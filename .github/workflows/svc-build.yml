@@ -41,6 +41,12 @@ on:
         required: false
         default: '1.18'
 
+    secrets:
+      REGISTRY_USERNAME:
+        required: true
+      REGISTRY_PASSWORD:
+        required: true
+
 
 #--------------------------------------------------#
 #                  Workflow Jobs                   # 
