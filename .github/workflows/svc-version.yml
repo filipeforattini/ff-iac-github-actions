@@ -11,7 +11,7 @@ on:
       language:
         type: string
         required: false
-        default: ""
+        default: "undetected"
         description: "Main language of the repository"
       mainBranch:
         type: string
@@ -219,6 +219,97 @@ jobs:
   Release-Python:
     runs-on: ubuntu-latest
     needs: Tests-Python
+
+    outputs:
+      Version: ${{steps.versioning.outputs.version}}
+
+    steps:
+
+      # pre-job
+      - name: Setup | Cloning repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Setup | Pipeline config scrapper
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
+        id: analysis
+
+      # release
+      - name: Semantic Release
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/pack-semantic-release@main
+        if: inputs.autoVersioning
+        with:
+          writeSummary: true
+          defaultBranch: ${{inputs.mainBranch}}
+          installNode: true
+          npmPlugin: false
+          token: ${{secrets.PIPELINE_DEPLOY_TOKEN}}
+          author: ${{steps.analysis.outputs.commiter_name}} 
+          email: ${{steps.analysis.outputs.commiter_email}}
+          files: '[]'
+
+      - name: Next Version
+        id: versioning
+        run: |
+          NEXT_VERSION=$(git for-each-ref --sort=authordate --format '%(refname)' refs/tags | tail -n 1 | sed -n -e 's/^.*refs\/tags\/v//p')
+          echo "next version = $NEXT_VERSION"
+          echo "::set-output name=version::$NEXT_VERSION"
+
+
+  #--------------------------------------------------#
+  #                 Release: Python                  # 
+  #--------------------------------------------------#
+  Release-Go:
+    runs-on: ubuntu-latest
+    needs: Tests-Go
+
+    outputs:
+      Version: ${{steps.versioning.outputs.version}}
+
+    steps:
+
+      # pre-job
+      - name: Setup | Cloning repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Setup | Pipeline config scrapper
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
+        id: analysis
+
+      # release
+      - name: Semantic Release
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/pack-semantic-release@main
+        if: inputs.autoVersioning
+        with:
+          writeSummary: true
+          defaultBranch: ${{inputs.mainBranch}}
+          installNode: true
+          npmPlugin: false
+          token: ${{secrets.PIPELINE_DEPLOY_TOKEN}}
+          author: ${{steps.analysis.outputs.commiter_name}} 
+          email: ${{steps.analysis.outputs.commiter_email}}
+          files: '[]'
+
+      - name: Next Version
+        id: versioning
+        run: |
+          NEXT_VERSION=$(git for-each-ref --sort=authordate --format '%(refname)' refs/tags | tail -n 1 | sed -n -e 's/^.*refs\/tags\/v//p')
+          echo "next version = $NEXT_VERSION"
+          echo "::set-output name=version::$NEXT_VERSION"
+
+
+
+  #--------------------------------------------------#
+  #               Release: Undetected                # 
+  #--------------------------------------------------#
+  Release-Undetected:
+    runs-on: ubuntu-latest
+    if: inputs.language == 'undetected'
 
     outputs:
       Version: ${{steps.versioning.outputs.version}}
