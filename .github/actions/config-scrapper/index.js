@@ -33434,7 +33434,7 @@ module.exports = {
 const _ = __nccwpck_require__(250);
 const linguist = __nccwpck_require__(9600);
 
-const logger = __nccwpck_require__(993)
+const logger = __nccwpck_require__(7098)
 
 const LanguagesToOmit = ["Makefile"];
 const languagesRouter = {
@@ -33490,7 +33490,7 @@ const path = __nccwpck_require__(1017)
 const core = __nccwpck_require__(2186);
 const github = __nccwpck_require__(5438);
 
-const logger = __nccwpck_require__(993)
+const logger = __nccwpck_require__(7098)
 
 module.exports = async (analysis) => {
   let containerRegistry = core.getInput('containerRegistry', { required: true });
@@ -33614,7 +33614,7 @@ module.exports = async (analysis) => {
 
 const github = __nccwpck_require__(5438);
 
-const logger = __nccwpck_require__(993)
+const logger = __nccwpck_require__(7098)
 
 module.exports = async (analysis) => {
   if (github.context.payload.deployment) {
@@ -33634,7 +33634,7 @@ module.exports = async (analysis) => {
 
 const github = __nccwpck_require__(5438);
 
-const logger = __nccwpck_require__(993)
+const logger = __nccwpck_require__(7098)
 
 module.exports = async (analysis) => {
   const { environment } = github.context.payload.inputs
@@ -33758,14 +33758,6 @@ module.exports = {
 
 </details>`)
 }
-
-
-/***/ }),
-
-/***/ 993:
-/***/ ((module) => {
-
-module.exports = eval("require")("./log");
 
 
 /***/ }),

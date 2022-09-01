@@ -4,7 +4,7 @@ const path = require('path')
 const core = require("@actions/core");
 const github = require("@actions/github");
 
-const logger = require('./log')
+const logger = require('../log')
 
 module.exports = async (analysis) => {
   let containerRegistry = core.getInput('containerRegistry', { required: true });

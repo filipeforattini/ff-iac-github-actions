@@ -1,6 +1,6 @@
 const github = require("@actions/github");
 
-const logger = require('./log')
+const logger = require('../log')
 
 module.exports = async (analysis) => {
   const { environment } = github.context.payload.inputs

@@ -1,7 +1,7 @@
 const _ = require("lodash");
 const linguist = require("linguist-js");
 
-const logger = require('./log')
+const logger = require('../log')
 
 const LanguagesToOmit = ["Makefile"];
 const languagesRouter = {
