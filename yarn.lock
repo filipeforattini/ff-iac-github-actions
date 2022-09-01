@@ -528,9 +528,9 @@ js-yaml@^4.1.0:
   dependencies:
     argparse "^2.0.1"
 
-linguist-js@^2.5.2:
+linguist-js@^2.5.1:
   version "2.5.2"
-  resolved "https://registry.npmjs.org/linguist-js/-/linguist-js-2.5.2.tgz"
+  resolved "https://registry.yarnpkg.com/linguist-js/-/linguist-js-2.5.2.tgz#b81c2fef3b10a7a643b6141dc01bed7faaceb279"
   integrity sha512-NEv30oGtKUcWQfUc7o6GKV06jUglZiyeAtTrG7ypD/muQJQAH5sQruC5MwHG4Pv6doFdyxLtsfIK29z1lbEspA==
   dependencies:
     binary-extensions "^2.2.0"
