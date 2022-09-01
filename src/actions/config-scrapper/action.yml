@@ -91,10 +91,10 @@ outputs:
   organization:
     description: ""
 
-# runs:
-#   using: "node16"
-#   main: "index.js"
-
 runs:
-  using: 'docker'
-  image: 'Dockerfile'
+  using: "node16"
+  main: "index.js"
+
+# runs:
+#   using: 'docker'
+#   image: 'Dockerfile'
