@@ -13,8 +13,8 @@ module.exports = async (analysis) => {
   logger.info("code", `starting linguist analyzer`)
 
   let { languages } = await linguist(analysis.root, {
-    // categories: ["programming"],
-    // ignoredLanguages: ["Shell", "Dockerfile"],
+    categories: ["programming"],
+    ignoredLanguages: ["Shell", "Dockerfile"],
   });
 
   languages = _.omit(languages.results, LanguagesToOmit)
