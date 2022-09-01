@@ -9,15 +9,16 @@
   "scripts": {
     "commit": "npm run build && git pull && git commit --allow-empty -am \"fix: empty commit for testing\" && git push",
     "build-composition": "ACTION_NAME=setup-binaries mkdir -p .github/actions/$ACTION_NAME && cp src/actions/$ACTION_NAME/action.yml .github/actions/$ACTION_NAME/action.yml",
-    "build-action-js": "mkdir -p .github/actions/$ACTION_NAME && ncc build src/actions/$ACTION_NAME/index.js -q -s -o .github/actions/$ACTION_NAME && rm -f .github/actions/$ACTION_NAME/action.yml && cp src/actions/$ACTION_NAME/action.yml .github/actions/$ACTION_NAME/action.yml",
-    "build-action-js-with-docker": "mkdir -p .github/actions/$ACTION_NAME && ncc build src/actions/$ACTION_NAME/index.js -q -s -o .github/actions/$ACTION_NAME && rm -f .github/actions/$ACTION_NAME/action.yml && cp src/actions/$ACTION_NAME/action.yml .github/actions/$ACTION_NAME/action.yml && cp src/actions/$ACTION_NAME/Dockerfile .github/actions/$ACTION_NAME/Dockerfile",
+    "buidl-action-ncc": "mkdir -p .github/actions/$ACTION_NAME && ncc build src/actions/$ACTION_NAME/index.js -Casq -o .github/actions/$ACTION_NAME && rm -f .github/actions/$ACTION_NAME/action.yml && cp src/actions/$ACTION_NAME/action.yml .github/actions/$ACTION_NAME/action.yml",
+    "buidl-action-rollup": "mkdir -p .github/actions/$ACTION_NAME && rollup src/actions/$ACTION_NAME/index.js --silent -m -f cjs -p @rollup/plugin-json -p @rollup/plugin-commonjs -p @rollup/plugin-node-resolve -o .github/actions/$ACTION_NAME/index.js && rm -f .github/actions/$ACTION_NAME/action.yml && cp src/actions/$ACTION_NAME/action.yml .github/actions/$ACTION_NAME/action.yml",
+    "buidl-action-ncc-with-docker": "mkdir -p .github/actions/$ACTION_NAME && ncc build src/actions/$ACTION_NAME/index.js -q -s -o .github/actions/$ACTION_NAME && rm -f .github/actions/$ACTION_NAME/action.yml && cp src/actions/$ACTION_NAME/action.yml .github/actions/$ACTION_NAME/action.yml && cp src/actions/$ACTION_NAME/Dockerfile .github/actions/$ACTION_NAME/Dockerfile",
     "build": "npm run action:config-scrapper & npm run action:setup-binaries & npm run action:pack-static-code-analysis & npm run action:create-releaserc-file & npm run action:semantic-release & npm run action:pack-semantic-release & npm run action:create-dockerignore & npm run action:create-dockerfile & npm run action:pack-docker-build & npm run action:k8s-install-dependencies",
-    "action:config-scrapper": "ACTION_NAME=config-scrapper npm run build-action-js",
+    "action:config-scrapper": "ACTION_NAME=config-scrapper npm run buidl-action-rollup",
     "action:pack-static-code-analysis": "mkdir -p .github/actions/pack-static-code-analysis && cp src/actions/pack-static-code-analysis/action.yml .github/actions/pack-static-code-analysis/action.yml",
-    "action:create-releaserc-file": "ACTION_NAME=create-releaserc-file npm run build-action-js",
-    "action:semantic-release": "ACTION_NAME=semantic-release npm run build-action-js",
-    "action:create-dockerignore": "ACTION_NAME=create-dockerignore npm run build-action-js",
-    "action:create-dockerfile": "ACTION_NAME=create-dockerfile npm run build-action-js",
+    "action:create-releaserc-file": "ACTION_NAME=create-releaserc-file npm run buidl-action-ncc",
+    "action:semantic-release": "ACTION_NAME=semantic-release npm run buidl-action-ncc",
+    "action:create-dockerignore": "ACTION_NAME=create-dockerignore npm run buidl-action-ncc",
+    "action:create-dockerfile": "ACTION_NAME=create-dockerfile npm run buidl-action-ncc",
     "action:setup-binaries": "ACTION_NAME=setup-binaries npm run build-composition",
     "action:pack-semantic-release": "ACTION_NAME=pack-semantic-release npm run build-composition",
     "action:pack-docker-build": "ACTION_NAME=pack-docker-build npm run build-composition",
@@ -50,5 +51,11 @@
     "linguist-js": "filipeforattini/LinguistJS#main",
     "lodash": "^4.17.21",
     "qs": "^6.11.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^22.0.2",
+    "@rollup/plugin-json": "^4.1.0",
+    "@rollup/plugin-node-resolve": "^13.3.0",
+    "rollup": "^2.79.0"
   }
 }
