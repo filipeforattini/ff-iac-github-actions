@@ -14,7 +14,7 @@ module.exports = async (analysis) => {
 
   let { languages } = await linguist(analysis.root, {
     categories: ["programming"],
-    ignoredLanguages: ["Shell", "Dockerfile"],
+    // ignoredLanguages: ["Shell", "Dockerfile"],
   });
 
   languages = _.omit(languages.results, LanguagesToOmit)

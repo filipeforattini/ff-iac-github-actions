@@ -86,7 +86,7 @@ async function action() {
     outputs: {},
   })
   
-  logger.info('root', `run trigged by event=${analysis.event}`)
+  logger.info('system', `run trigged by [${analysis.event}] event`)
   analysis.outputs.pwd = analysis.root
   analysis.outputs.event = analysis.event
   analysis.outputs.actor = github.context.actor

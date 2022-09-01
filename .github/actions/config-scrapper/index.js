@@ -33417,11 +33417,17 @@ module.exports = {
   info(context, ...args) {
     core.info(templateInfo('ℹ️', context, ...args));
   },
+
   warn(context, ...args) {
-    core.info(templateInfo('⚠️', context, ...args));
+    core.info(templateInfo('❗', context, ...args));
   },
+
   error(context, ...args) {
     core.info(templateInfo('⛔', context, ...args));
+  },
+
+  debug(context, ...args) {
+    core.info(templateInfo('📝', context, ...args));
   },
 };
 
@@ -33447,7 +33453,7 @@ module.exports = async (analysis) => {
 
   let { languages } = await linguist(analysis.root, {
     categories: ["programming"],
-    ignoredLanguages: ["Shell", "Dockerfile"],
+    // ignoredLanguages: ["Shell", "Dockerfile"],
   });
 
   languages = _.omit(languages.results, LanguagesToOmit)
@@ -33747,7 +33753,7 @@ module.exports = async (analysis) => {
 const _ = __nccwpck_require__(250)
 
 module.exports = {
-  templateInfo: (icon, context, ...args) => `${icon}  ` +  _.pad(context, 13) + ' | ' + args.join('\n'),
+  templateInfo: (icon, context, ...args) => `${icon} |` +  _.pad(context, 13) + '| ' + args.join('\n'),
 
   templateDetails: _.template(`<details>
 <summary><%= summary %></summary>
@@ -34047,7 +34053,7 @@ async function action() {
     outputs: {},
   })
   
-  logger.info('root', `run trigged by event=${analysis.event}`)
+  logger.info('system', `run trigged by [${analysis.event}] event`)
   analysis.outputs.pwd = analysis.root
   analysis.outputs.event = analysis.event
   analysis.outputs.actor = github.context.actor
