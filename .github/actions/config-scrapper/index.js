@@ -104768,12 +104768,12 @@ function getOctokit(token, options) {
 }
 github$6.getOctokit = getOctokit;
 
-const _$3 = lodash.exports;
+const _$4 = lodash.exports;
 
 var templates = {
-  templateInfo: (icon, context, ...args) => `${icon} |` +  _$3.pad(context, 13) + '| ' + args.join('\n'),
+  templateInfo: (icon, context, ...args) => `${icon} |` +  _$4.pad(context, 14) + '| ' + args.join('\n'),
 
-  templateDetails: _$3.template(`<details>
+  templateDetails: _$4.template(`<details>
 <summary><%= summary %></summary>
 
 \`\`\`json
@@ -104783,24 +104783,24 @@ var templates = {
 </details>`)
 };
 
-const { templateInfo: templateInfo$1 } = templates;
+const { templateInfo } = templates;
 const core$3 = requireCore();
 
 var log = {
   info(context, ...args) {
-    core$3.info(templateInfo$1('ℹ️', context, ...args));
+    core$3.info(templateInfo('ℹ️', context, ...args));
   },
 
   warn(context, ...args) {
-    core$3.info(templateInfo$1('❗', context, ...args));
+    core$3.info(templateInfo('❗', context, ...args));
   },
 
   error(context, ...args) {
-    core$3.info(templateInfo$1('⛔', context, ...args));
+    core$3.info(templateInfo('⛔', context, ...args));
   },
 
   debug(context, ...args) {
-    core$3.info(templateInfo$1('📝', context, ...args));
+    core$3.info(templateInfo('📝', context, ...args));
   },
 };
 
@@ -111467,7 +111467,7 @@ async function analyse(input, opts = {}) {
 }
 var dist = analyse;
 
-const _$2 = lodash.exports;
+const _$3 = lodash.exports;
 const linguist = dist;
 
 const logger$4 = log;
@@ -111486,13 +111486,13 @@ var code = async (analysis) => {
     ignoredLanguages: ["Shell", "Dockerfile"],
   });
 
-  languages = _$2.omit(languages.results, LanguagesToOmit);
+  languages = _$3.omit(languages.results, LanguagesToOmit);
   analysis.code.languages = languages;
 
-  let langIterator = _$2.mapValues(languages, "bytes");
-  langIterator = _$2.toPairs(langIterator);
-  langIterator = langIterator.map((z) => _$2.zipObject(["language", "bytes"], z));
-  langIterator = _$2.sortBy(langIterator, "bytes");
+  let langIterator = _$3.mapValues(languages, "bytes");
+  langIterator = _$3.toPairs(langIterator);
+  langIterator = langIterator.map((z) => _$3.zipObject(["language", "bytes"], z));
+  langIterator = _$3.sortBy(langIterator, "bytes");
 
   if (langIterator.length == 0) {
     analysis.language = 'undetected';
@@ -111515,7 +111515,7 @@ var code = async (analysis) => {
 };
 
 const fs$1 = require$$0__default$1["default"];
-const _$1 = lodash.exports;
+const _$2 = lodash.exports;
 const path$1 = require$$1__default$1["default"];
 const core$1 = requireCore();
 const github$5 = github$6;
@@ -111541,7 +111541,7 @@ var deploy = async (analysis) => {
     `b-${github$5.context.ref.replace('refs/heads/', '').replace('/', '-')}`,
   ];
 
-  if (_$1.isString(analysis.environment)) {
+  if (_$2.isString(analysis.environment)) {
     tag = `e-${analysis.environment}-c-${commitSha}`;
     tags = tags.concat([
       `e-${analysis.environment}-latest`,
@@ -111565,7 +111565,7 @@ var deploy = async (analysis) => {
       `d-${committedAt.toISOString().substring(0,10)}`,
     ]);
   
-    if (_$1.isString(analysis.environment)) {
+    if (_$2.isString(analysis.environment)) {
       tags = tags.concat([
         `e-${analysis.environment}-t-${committedAt.getTime()}`,
         `e-${analysis.environment}-d-${committedAt.toISOString().substring(0,10)}`,
@@ -111584,7 +111584,7 @@ var deploy = async (analysis) => {
   logger$3.info('deployment', `tag = ${tag}`);
 
   let args = "";
-  if (_$1.isString(analysis.environment)) {
+  if (_$2.isString(analysis.environment)) {
     if(fs$1.existsSync(path$1.join(analysis.root, 'manifests', 'configs', `${analysis.environment}.env`))) {
       args = fs$1.readFileSync(path$1.join(analysis.root, 'manifests', 'configs', `${analysis.environment}.env`));
       args = args.toString().trim().split('\n').join(', ');
@@ -111738,30 +111738,36 @@ var src = {
   run: run,
 };
 
+const _$1 = lodash.exports;
+
+var analysis = (initial = {}) =>
+  new Proxy(initial, {
+    get(target, prop) {
+      if (!target[prop]) target[prop] = {};
+      return target[prop];
+    },
+
+    set(obj, prop, value) {
+      if (_$1.isString(value)) obj[prop] = prop;
+
+      if (!obj[prop]) obj[prop] = {};
+
+      obj[prop] = _$1.isObject(value) 
+        ? _$1.merge(obj[prop] || {}, value) 
+        : value;
+      
+      return true
+    },
+  });
+
 const _ = lodash.exports;
 const core = requireCore();
 const github = github$6;
 
 const logger = log;
 const scrappers = src;
-const { templateInfo, templateDetails } = templates;
-
-const analysisFactory = (initial = {}) => new Proxy(initial, {
-  get(target, prop) {
-    if (!target[prop]) target[prop] = {};
-    return target[prop]
-  },
-
-  set(obj, prop, value) {
-    if (_.isString(value)) obj[prop] = prop;
-
-    if (!obj[prop]) obj[prop] = {};
-    
-    obj[prop] = _.isObject(value)
-      ? _.merge(obj[prop], value)
-      : value;
-  }
-});
+const analysisFactory = analysis;
+const { templateDetails } = templates;
 
 async function action() {
   logger.info('system', `project root dir: ${process.cwd()}`);

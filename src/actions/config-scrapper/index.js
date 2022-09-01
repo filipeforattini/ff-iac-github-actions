@@ -4,24 +4,8 @@ const github = require("@actions/github");
 
 const logger = require('./log')
 const scrappers = require("./src");
-const { templateInfo, templateDetails } = require('./templates')
-
-const analysisFactory = (initial = {}) => new Proxy(initial, {
-  get(target, prop) {
-    if (!target[prop]) target[prop] = {}
-    return target[prop]
-  },
-
-  set(obj, prop, value) {
-    if (_.isString(value)) obj[prop] = prop
-
-    if (!obj[prop]) obj[prop] = {}
-    
-    obj[prop] = _.isObject(value)
-      ? _.merge(obj[prop], value)
-      : value
-  }
-})
+const analysisFactory = require('./analysis')
+const { templateDetails } = require('./templates')
 
 async function action() {
   logger.info('system', `project root dir: ${process.cwd()}`)
