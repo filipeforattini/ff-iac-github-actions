@@ -33410,20 +33410,20 @@ function wrappy (fn, cb) {
 /***/ 7098:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-const _ = __nccwpck_require__(250)
+const { templateInfo } = __nccwpck_require__(7655);
+const core = __nccwpck_require__(2186);
 
 module.exports = {
-  templateInfo: (context, ...args) => ':: ' +  _.pad(context, 13) + ' | ' + args.join('\n'),
-
-  templateDetails: _.template(`<details>
-<summary><%= summary %></summary>
-
-\`\`\`json
-<%= content %>
-\`\`\`
-
-</details>`)
-}
+  info(context, ...args) {
+    core.info(templateInfo('ℹ️', context, ...args));
+  },
+  warn(context, ...args) {
+    core.info(templateInfo('⚠️', context, ...args));
+  },
+  error(context, ...args) {
+    core.info(templateInfo('⛔', context, ...args));
+  },
+};
 
 
 /***/ }),
@@ -33432,10 +33432,9 @@ module.exports = {
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 const _ = __nccwpck_require__(250);
-const core = __nccwpck_require__(2186);
 const linguist = __nccwpck_require__(9600);
 
-const { templateInfo } = __nccwpck_require__(7098);
+const logger = __nccwpck_require__(993)
 
 const LanguagesToOmit = ["Makefile"];
 const languagesRouter = {
@@ -33444,6 +33443,8 @@ const languagesRouter = {
 };
 
 module.exports = async (analysis) => {
+  logger.info("code", `starting linguist analyzer`)
+
   let { languages } = await linguist(analysis.root, {
     categories: ["programming"],
     ignoredLanguages: ["Shell", "Dockerfile"],
@@ -33466,11 +33467,11 @@ module.exports = async (analysis) => {
   let language = langIterator.pop().language;
   language = language.toLowerCase();
 
-  core.info(templateInfo("code", `language ${language} detected!`));
+  logger.info("code", `language ${language} detected!`)
 
   if (languagesRouter[language]) {
     language = languagesRouter[language];
-    core.info(templateInfo("code", `language routed to ${language}!`));
+    logger.info("code", `language routed to ${language}!`)
   }
 
   analysis.language = language;
@@ -33489,7 +33490,7 @@ const path = __nccwpck_require__(1017)
 const core = __nccwpck_require__(2186);
 const github = __nccwpck_require__(5438);
 
-const { templateInfo } = __nccwpck_require__(7098)
+const logger = __nccwpck_require__(993)
 
 module.exports = async (analysis) => {
   let containerRegistry = core.getInput('containerRegistry', { required: true });
@@ -33550,7 +33551,7 @@ module.exports = async (analysis) => {
   analysis.deployment.fullname_tag = fullname_tag
   analysis.deployment.fullname_tags = fullname_tags
   analysis.deployment.tagsString = fullname_tags.join(', ')
-  core.info(templateInfo('deployment', `tag = ${tag}`))
+  logger.info('deployment', `tag = ${tag}`)
 
   let args = ""
   if (_.isString(analysis.environment)) {
@@ -33565,7 +33566,7 @@ module.exports = async (analysis) => {
   let labels = [ `org.opencontainers.image.source=https://github.com/${organization}/${name}` ]
   analysis.deployment.labels = labels 
   analysis.deployment.labelsString = labels.join(', ')
-  core.info(templateInfo('deployment', `labels = ${labels}`))
+  logger.info('deployment', `labels = ${labels}`)
 
 
   if (github.context.payload.deployment) {
@@ -33613,12 +33614,12 @@ module.exports = async (analysis) => {
 
 const github = __nccwpck_require__(5438);
 
-const { templateInfo } = __nccwpck_require__(7098)
+const logger = __nccwpck_require__(993)
 
 module.exports = async (analysis) => {
   if (github.context.payload.deployment) {
     const { environment } = github.context.payload.deployment
-    templateInfo('e.deployment', `detected environment = ${environment}`)
+    logger.info('e.deployment', `detected environment = ${environment}`)
 
     analysis.environment = environment
     analysis.outputs.environment = environment
@@ -33633,11 +33634,11 @@ module.exports = async (analysis) => {
 
 const github = __nccwpck_require__(5438);
 
-const { templateInfo } = __nccwpck_require__(7098)
+const logger = __nccwpck_require__(993)
 
 module.exports = async (analysis) => {
   const { environment } = github.context.payload.inputs
-  templateInfo('e.dispatch', `detected environment = ${environment}`)
+  logger.info('e.dispatch', `detected environment = ${environment}`)
 
   analysis.environment = environment
   analysis.outputs.environment = environment
@@ -33736,6 +33737,35 @@ module.exports = async (analysis) => {
 module.exports = async (analysis) => {
 
 }
+
+
+/***/ }),
+
+/***/ 7655:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+const _ = __nccwpck_require__(250)
+
+module.exports = {
+  templateInfo: (icon, context, ...args) => `${icon}  ` +  _.pad(context, 13) + ' | ' + args.join('\n'),
+
+  templateDetails: _.template(`<details>
+<summary><%= summary %></summary>
+
+\`\`\`json
+<%= content %>
+\`\`\`
+
+</details>`)
+}
+
+
+/***/ }),
+
+/***/ 993:
+/***/ ((module) => {
+
+module.exports = eval("require")("./log");
 
 
 /***/ }),
@@ -33941,8 +33971,9 @@ const _ = __nccwpck_require__(250)
 const core = __nccwpck_require__(2186);
 const github = __nccwpck_require__(5438);
 
+const logger = __nccwpck_require__(7098)
 const scrappers = __nccwpck_require__(2120);
-const { templateInfo, templateDetails } = __nccwpck_require__(7098)
+const { templateInfo, templateDetails } = __nccwpck_require__(7655)
 
 const analysisFactory = (initial = {}) => new Proxy(initial, {
   get(target, prop) {
@@ -33962,6 +33993,8 @@ const analysisFactory = (initial = {}) => new Proxy(initial, {
 })
 
 async function action() {
+  logger.info('system', `project root dir: ${process.cwd()}`)
+
   let writeSummary = core.getBooleanInput('writeSummary', { required: true });
 
   if (writeSummary) {
@@ -33993,8 +34026,8 @@ async function action() {
       let friendlyName = s.replace('PIPESECRET_', '')
       
       value.length > 0
-        ? core.info(templateInfo('secret', `${friendlyName} is definied.`))
-        : core.info(templateInfo('secret', `${friendlyName} is [not] definied.`))
+        ? logger.info('secret', `${friendlyName} is definied.`)
+        : logger.info('secret', `${friendlyName} is [not] definied.`)
 
       acc[friendlyName] = !_.isEmpty(value)
       return acc
@@ -34022,7 +34055,7 @@ async function action() {
     outputs: {},
   })
   
-  core.info(templateInfo('root', `run trigged by event=${analysis.event}`));
+  logger.info('root', `run trigged by event=${analysis.event}`)
   analysis.outputs.pwd = analysis.root
   analysis.outputs.event = analysis.event
   analysis.outputs.actor = github.context.actor

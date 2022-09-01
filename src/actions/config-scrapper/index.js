@@ -2,8 +2,9 @@ const _ = require('lodash')
 const core = require("@actions/core");
 const github = require("@actions/github");
 
+const logger = require('./log')
 const scrappers = require("./src");
-const { templateInfo, templateDetails } = require('./log')
+const { templateInfo, templateDetails } = require('./templates')
 
 const analysisFactory = (initial = {}) => new Proxy(initial, {
   get(target, prop) {
@@ -23,6 +24,8 @@ const analysisFactory = (initial = {}) => new Proxy(initial, {
 })
 
 async function action() {
+  logger.info('system', `project root dir: ${process.cwd()}`)
+
   let writeSummary = core.getBooleanInput('writeSummary', { required: true });
 
   if (writeSummary) {
@@ -54,8 +57,8 @@ async function action() {
       let friendlyName = s.replace('PIPESECRET_', '')
       
       value.length > 0
-        ? core.info(templateInfo('secret', `${friendlyName} is definied.`))
-        : core.info(templateInfo('secret', `${friendlyName} is [not] definied.`))
+        ? logger.info('secret', `${friendlyName} is definied.`)
+        : logger.info('secret', `${friendlyName} is [not] definied.`)
 
       acc[friendlyName] = !_.isEmpty(value)
       return acc
@@ -83,7 +86,7 @@ async function action() {
     outputs: {},
   })
   
-  core.info(templateInfo('root', `run trigged by event=${analysis.event}`));
+  logger.info('root', `run trigged by event=${analysis.event}`)
   analysis.outputs.pwd = analysis.root
   analysis.outputs.event = analysis.event
   analysis.outputs.actor = github.context.actor

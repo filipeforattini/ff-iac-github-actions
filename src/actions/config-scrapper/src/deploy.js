@@ -4,7 +4,7 @@ const path = require('path')
 const core = require("@actions/core");
 const github = require("@actions/github");
 
-const { templateInfo } = require('../log')
+const logger = require('./log')
 
 module.exports = async (analysis) => {
   let containerRegistry = core.getInput('containerRegistry', { required: true });
@@ -65,7 +65,7 @@ module.exports = async (analysis) => {
   analysis.deployment.fullname_tag = fullname_tag
   analysis.deployment.fullname_tags = fullname_tags
   analysis.deployment.tagsString = fullname_tags.join(', ')
-  core.info(templateInfo('deployment', `tag = ${tag}`))
+  logger.info('deployment', `tag = ${tag}`)
 
   let args = ""
   if (_.isString(analysis.environment)) {
@@ -80,7 +80,7 @@ module.exports = async (analysis) => {
   let labels = [ `org.opencontainers.image.source=https://github.com/${organization}/${name}` ]
   analysis.deployment.labels = labels 
   analysis.deployment.labelsString = labels.join(', ')
-  core.info(templateInfo('deployment', `labels = ${labels}`))
+  logger.info('deployment', `labels = ${labels}`)
 
 
   if (github.context.payload.deployment) {

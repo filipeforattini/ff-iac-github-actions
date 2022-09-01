@@ -1,8 +1,7 @@
 const _ = require("lodash");
-const core = require("@actions/core");
 const linguist = require("linguist-js");
 
-const { templateInfo } = require("../log");
+const logger = require('./log')
 
 const LanguagesToOmit = ["Makefile"];
 const languagesRouter = {
@@ -11,6 +10,8 @@ const languagesRouter = {
 };
 
 module.exports = async (analysis) => {
+  logger.info("code", `starting linguist analyzer`)
+
   let { languages } = await linguist(analysis.root, {
     categories: ["programming"],
     ignoredLanguages: ["Shell", "Dockerfile"],
@@ -33,11 +34,11 @@ module.exports = async (analysis) => {
   let language = langIterator.pop().language;
   language = language.toLowerCase();
 
-  core.info(templateInfo("code", `language ${language} detected!`));
+  logger.info("code", `language ${language} detected!`)
 
   if (languagesRouter[language]) {
     language = languagesRouter[language];
-    core.info(templateInfo("code", `language routed to ${language}!`));
+    logger.info("code", `language routed to ${language}!`)
   }
 
   analysis.language = language;

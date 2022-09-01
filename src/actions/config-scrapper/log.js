@@ -1,14 +1,14 @@
-const _ = require('lodash')
+const { templateInfo } = require("./templates");
+const core = require("@actions/core");
 
 module.exports = {
-  templateInfo: (context, ...args) => ':: ' +  _.pad(context, 13) + ' | ' + args.join('\n'),
-
-  templateDetails: _.template(`<details>
-<summary><%= summary %></summary>
-
-\`\`\`json
-<%= content %>
-\`\`\`
-
-</details>`)
-}
+  info(context, ...args) {
+    core.info(templateInfo('ℹ️', context, ...args));
+  },
+  warn(context, ...args) {
+    core.info(templateInfo('⚠️', context, ...args));
+  },
+  error(context, ...args) {
+    core.info(templateInfo('⛔', context, ...args));
+  },
+};
