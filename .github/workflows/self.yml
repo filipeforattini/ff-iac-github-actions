@@ -15,4 +15,3 @@ jobs:
     secrets: inherit
     with:
       mainBranch: main
-      staticAnalysis: true
