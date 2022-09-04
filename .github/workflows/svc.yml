@@ -43,11 +43,11 @@ on:
       nodeMatrix:
         type: string
         required: false
-        default: '[14, 16, 17]'
+        default: '[16, 17, 18]'
       nodeVersion:
         type: string
         required: false
-        default: '17'
+        default: '18'
       pythonMatrix:
         type: string
         required: false
