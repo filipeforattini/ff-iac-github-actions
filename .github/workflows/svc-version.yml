@@ -198,7 +198,7 @@ jobs:
         if: inputs.autoVersioning
         with:
           writeSummary: true
-          token: ${{secrets.PIPELINE_DEPLOY_TOKEN}}
+          token: "${{secrets.PIPELINE_DEPLOY_TOKEN}}"
           installNode: true
           npmPlugin: true
           defaultBranch: ${{inputs.mainBranch}}
@@ -242,10 +242,10 @@ jobs:
         if: inputs.autoVersioning
         with:
           writeSummary: true
-          defaultBranch: ${{inputs.mainBranch}}
+          token: "${{secrets.PIPELINE_DEPLOY_TOKEN}}"
           installNode: true
           npmPlugin: false
-          token: ${{secrets.PIPELINE_DEPLOY_TOKEN}}
+          defaultBranch: ${{inputs.mainBranch}}
           author: ${{steps.analysis.outputs.commiter_name}} 
           email: ${{steps.analysis.outputs.commiter_email}}
           files: '[]'
@@ -259,7 +259,7 @@ jobs:
 
 
   #--------------------------------------------------#
-  #                 Release: Python                  # 
+  #                    Release: Go                   # 
   #--------------------------------------------------#
   Release-Go:
     runs-on: ubuntu-latest
@@ -287,10 +287,10 @@ jobs:
         if: inputs.autoVersioning
         with:
           writeSummary: true
-          defaultBranch: ${{inputs.mainBranch}}
+          token: "${{secrets.PIPELINE_DEPLOY_TOKEN}}"
           installNode: true
           npmPlugin: false
-          token: ${{secrets.PIPELINE_DEPLOY_TOKEN}}
+          defaultBranch: ${{inputs.mainBranch}}
           author: ${{steps.analysis.outputs.commiter_name}} 
           email: ${{steps.analysis.outputs.commiter_email}}
           files: '[]'
@@ -333,10 +333,10 @@ jobs:
         if: inputs.autoVersioning
         with:
           writeSummary: true
-          defaultBranch: ${{inputs.mainBranch}}
+          token: ${{secrets.PIPELINE_DEPLOY_TOKEN}}
           installNode: true
           npmPlugin: false
-          token: ${{secrets.PIPELINE_DEPLOY_TOKEN}}
+          defaultBranch: ${{inputs.mainBranch}}
           author: ${{steps.analysis.outputs.commiter_name}} 
           email: ${{steps.analysis.outputs.commiter_email}}
           files: '[]'
