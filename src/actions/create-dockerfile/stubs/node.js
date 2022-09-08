@@ -13,7 +13,10 @@ FROM <%= image %>:<%= tag %>
 WORKDIR /svc
 COPY . /svc
 
-RUN <%= dependencyCommand %>
+RUN npm i -g npm yarn \
+  && npm -v \
+  && yarn -v \
+  && <%= dependencyCommand %>
 
 ENTRYPOINT ["<%= entrypoint %>"]
 CMD ["<%= command %>"]
