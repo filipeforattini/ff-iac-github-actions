@@ -13,8 +13,7 @@ FROM <%= image %>:<%= tag %>
 WORKDIR /svc
 COPY . /svc
 
-RUN npm i -g npm yarn \
-  && npm -v \
+RUN npm -v \
   && yarn -v \
   && <%= dependencyCommand %>
 
