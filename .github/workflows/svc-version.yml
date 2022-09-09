@@ -196,6 +196,7 @@ jobs:
       - name: Semantic Release
         uses: filipeforattini/ff-iac-github-actions/.github/actions/pack-semantic-release@main
         if: inputs.autoVersioning
+        continue-on-error: true
         with:
           writeSummary: true
           token: "${{secrets.PIPELINE_DEPLOY_TOKEN}}"
