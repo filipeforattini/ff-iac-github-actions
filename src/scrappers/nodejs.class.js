@@ -14,8 +14,8 @@ module.exports = class Nodejs extends Scrapper {
     const dependencyCommand = hasYarnLock 
       ? 'yarn install' 
       : hasPackageLock 
-        ? 'npm ci' 
-        : 'npm install'
+        ? 'npm ci --force'
+        : 'npm install --force'
 
     const cacheKey = hasYarnLock 
       ? 'yarn.lock' 
