@@ -66,7 +66,7 @@ jobs:
   #                  Tests: Node.js                  # 
   #--------------------------------------------------#
   Tests-Node:
-    runs-on: [self-hosted, ubuntu-latest]
+    runs-on: ubuntu-latest
     if: inputs.language == 'javascript'
 
     strategy:
@@ -112,7 +112,7 @@ jobs:
   #                  Tests: Python                   # 
   #--------------------------------------------------#
   Tests-Python:
-    runs-on: [self-hosted, ubuntu-latest]
+    runs-on: ubuntu-latest
     if: inputs.language == 'python'
 
     strategy:
@@ -138,7 +138,7 @@ jobs:
   #                    Tests: Go                     #
   #--------------------------------------------------#
   Tests-Go:
-    runs-on: [self-hosted, ubuntu-latest]
+    runs-on: ubuntu-latest
     if: inputs.language == 'go'
     
     steps:
@@ -173,7 +173,7 @@ jobs:
   #                 Release: Node.js                 # 
   #--------------------------------------------------#
   Release-Node:
-    runs-on: [self-hosted, ubuntu-latest]
+    runs-on: ubuntu-latest
     needs: Tests-Node
 
     outputs:
@@ -218,7 +218,7 @@ jobs:
   #                 Release: Python                  # 
   #--------------------------------------------------#
   Release-Python:
-    runs-on: [self-hosted, ubuntu-latest]
+    runs-on: ubuntu-latest
     needs: Tests-Python
 
     outputs:
@@ -263,7 +263,7 @@ jobs:
   #                    Release: Go                   # 
   #--------------------------------------------------#
   Release-Go:
-    runs-on: [self-hosted, ubuntu-latest]
+    runs-on: ubuntu-latest
     needs: Tests-Go
 
     outputs:
@@ -309,7 +309,7 @@ jobs:
   #               Release: Undetected                # 
   #--------------------------------------------------#
   Release-Undetected:
-    runs-on: [self-hosted, ubuntu-latest]
+    runs-on: ubuntu-latest
     if: inputs.language == 'undetected'
 
     outputs:

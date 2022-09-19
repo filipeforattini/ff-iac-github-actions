@@ -57,7 +57,7 @@ jobs:
   #                  Build: Node.js                  # 
   #--------------------------------------------------#
   Build-Node:
-    runs-on: [self-hosted, ubuntu-latest]
+    runs-on: ubuntu-latest
     if: inputs.language == 'javascript'
 
     steps:
@@ -126,7 +126,7 @@ jobs:
   #                  Build: Python                   # 
   #--------------------------------------------------#
   Build-Python:
-    runs-on: [self-hosted, ubuntu-latest]
+    runs-on: ubuntu-latest
     if: inputs.language == 'python'
 
     steps:
@@ -194,7 +194,7 @@ jobs:
   #                Build: Dockerfile                 # 
   #--------------------------------------------------#
   Build-Dockerfile:
-    runs-on: [self-hosted, ubuntu-latest]
+    runs-on: ubuntu-latest
     if: inputs.language == 'undetected'
 
     steps:
