@@ -80,7 +80,7 @@ jobs:
   #                    Setup Jobs                    # 
   #--------------------------------------------------#
   Setup:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, ubuntu-latest]
     permissions:
       contents: read
 
@@ -115,7 +115,7 @@ jobs:
   #                  Static Analysis                 # 
   #--------------------------------------------------#
   Static-Analysis:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, ubuntu-latest]
     if: needs.Setup.outputs.Event == 'push'
     needs: Setup
 
@@ -168,7 +168,7 @@ jobs:
   #                      Trigger                     # 
   #--------------------------------------------------#
   Trigger-Build:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, ubuntu-latest]
     needs: Tests-And-Version
 
     steps:
@@ -206,7 +206,7 @@ jobs:
   #                  Trigger Manual                  # 
   #--------------------------------------------------#
   Trigger-Manual:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, ubuntu-latest]
     if: github.event_name == 'workflow_dispatch'
 
     needs: 
@@ -269,7 +269,7 @@ jobs:
   #                       Deploy                     # 
   #--------------------------------------------------#
   Deploy:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, ubuntu-latest]
     environment: ${{needs.Setup.outputs.Environment}}
     needs: Build
 
