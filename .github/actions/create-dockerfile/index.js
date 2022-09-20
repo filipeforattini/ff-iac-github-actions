@@ -22088,7 +22088,7 @@ CMD ["<%= command %>"]
       return fs.existsSync(path.join(process.cwd(), 'package-lock.json'))
         ? "npm install --force"
         : fs.existsSync(path.join(process.cwd(), 'yarn.lock'))
-          ? "yarn"
+          ? "yarn install --frozen-lockfile --ignore-optional"
           : "npm install --force"
     },
     entrypoint: "npm",
@@ -22192,7 +22192,7 @@ CMD ["-g daemon off;"]
       return fs.existsSync(path.join(process.cwd(), 'package-lock.json'))
         ? "npm install --force"
         : fs.existsSync(path.join(process.cwd(), 'yarn.lock'))
-          ? "yarn"
+          ? "yarn install --frozen-lockfile --ignore-optional"
           : "npm install --force"
     },
   },

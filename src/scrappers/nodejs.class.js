@@ -12,7 +12,7 @@ module.exports = class Nodejs extends Scrapper {
     const dockerignore = ['node_modules']
 
     const dependencyCommand = hasYarnLock 
-      ? 'yarn install' 
+      ? 'yarn install --frozen-lockfile --ignore-optional' 
       : hasPackageLock 
         ? 'npm ci --force'
         : 'npm install --force'

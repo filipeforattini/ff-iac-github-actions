@@ -125,7 +125,6 @@ jobs:
   #--------------------------------------------------#
   Release:
     runs-on: ubuntu-latest
-
     if: needs.Setup.outputs.Event == 'push'
 
     needs: 
