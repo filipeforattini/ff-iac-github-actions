@@ -43,7 +43,9 @@ module.exports = async (analysis) => {
     ? new Date(github.context.payload.head_commit.timestamp) // push
     : github.context.payload.pull_request
       ? new Date(github.context.payload.pull_request.updated_at) // pr
-      : null
+      : github.context.payload.deployment
+        ? new Date(github.context.payload.deployment.created_at) // deployment
+        : null
 
   if (committedAt) {
     tags = tags.concat([
@@ -70,7 +72,7 @@ module.exports = async (analysis) => {
   analysis.deployment.tags = tags
   analysis.deployment.fullname_tag = fullname_tag
   analysis.deployment.fullname_tags = fullname_tags
-  analysis.deployment.tagsString = fullname_tags.join(', ')
+  analysis.deployment.tagsString = fullname_tags.join(',')
   logger.info('deployment', `tag = ${tag}`)
 
   let args = ""
