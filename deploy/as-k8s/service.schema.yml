@@ -4,7 +4,9 @@
   name: svc
   labels: {}
   annotations: {}
-  imagePullSecrets: false
+  imagePullSecrets: true
+  imagePullSecretsName: registry-token
+
   resources:
     #@schema/type any=True
     limits: []

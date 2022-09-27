@@ -42,7 +42,7 @@ spec:
 
       #@ if/end data.values.deployment.imagePullSecrets:
       imagePullSecrets:
-        - name: registry-token
+        - name: #@ data.values.deployment.imagePullSecretsName
 
       containers:
         - name: #@ data.values.deployment.name
