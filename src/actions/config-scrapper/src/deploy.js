@@ -10,6 +10,8 @@ module.exports = async (analysis) => {
   let containerRegistry = core.getInput('containerRegistry', { required: true });
 
   const commitSha = github.context.sha.substring(0,7)
+  const slugedBranch = github.context.ref.replace('refs/heads/', '').replace('/', '-')
+
   const [ organization, name ] = github.context.payload.repository.full_name.split('/')
   const registry = [ containerRegistry, organization, name].join('/')
 
@@ -19,10 +21,10 @@ module.exports = async (analysis) => {
   let tags = [
     `latest`,
     `c-${commitSha}`,
+    `b-${slugedBranch}`,
     `r-${github.context.runNumber}`,
     `u-${github.context.actor}`,
     `u-${github.context.actor}-c-${commitSha}`,
-    `b-${github.context.ref.replace('refs/heads/', '').replace('/', '-')}`,
   ]
 
   if (_.isString(analysis.environment)) {
@@ -30,9 +32,9 @@ module.exports = async (analysis) => {
     tags = tags.concat([
       `e-${analysis.environment}-latest`,
       `e-${analysis.environment}-c-${commitSha}`,
+      `e-${analysis.environment}-b-${slugedBranch}`,
       `e-${analysis.environment}-u-${github.context.actor}`,
       `e-${analysis.environment}-r-${github.context.runNumber}`,
-      `e-${analysis.environment}-b-${github.context.ref.replace('refs/heads/', '').replace('/', '-')}`,
     ])
   }
 
@@ -47,6 +49,8 @@ module.exports = async (analysis) => {
     tags = tags.concat([
       `t-${committedAt.getTime()}`,
       `d-${committedAt.toISOString().substring(0,10)}`,
+      `b-${slugedBranch}-t-${committedAt.getTime()}`,
+      `b-${slugedBranch}-d-${committedAt.toISOString().substring(0,10)}`,
     ])
   
     if (_.isString(analysis.environment)) {

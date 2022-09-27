@@ -111526,6 +111526,8 @@ var deploy = async (analysis) => {
   let containerRegistry = core$1.getInput('containerRegistry', { required: true });
 
   const commitSha = github$5.context.sha.substring(0,7);
+  const slugedBranch = github$5.context.ref.replace('refs/heads/', '').replace('/', '-');
+
   const [ organization, name ] = github$5.context.payload.repository.full_name.split('/');
   const registry = [ containerRegistry, organization, name].join('/');
 
@@ -111535,10 +111537,10 @@ var deploy = async (analysis) => {
   let tags = [
     `latest`,
     `c-${commitSha}`,
+    `b-${slugedBranch}`,
     `r-${github$5.context.runNumber}`,
     `u-${github$5.context.actor}`,
     `u-${github$5.context.actor}-c-${commitSha}`,
-    `b-${github$5.context.ref.replace('refs/heads/', '').replace('/', '-')}`,
   ];
 
   if (_$2.isString(analysis.environment)) {
@@ -111546,9 +111548,9 @@ var deploy = async (analysis) => {
     tags = tags.concat([
       `e-${analysis.environment}-latest`,
       `e-${analysis.environment}-c-${commitSha}`,
+      `e-${analysis.environment}-b-${slugedBranch}`,
       `e-${analysis.environment}-u-${github$5.context.actor}`,
       `e-${analysis.environment}-r-${github$5.context.runNumber}`,
-      `e-${analysis.environment}-b-${github$5.context.ref.replace('refs/heads/', '').replace('/', '-')}`,
     ]);
   }
 
@@ -111563,6 +111565,8 @@ var deploy = async (analysis) => {
     tags = tags.concat([
       `t-${committedAt.getTime()}`,
       `d-${committedAt.toISOString().substring(0,10)}`,
+      `b-${slugedBranch}-t-${committedAt.getTime()}`,
+      `b-${slugedBranch}-d-${committedAt.toISOString().substring(0,10)}`,
     ]);
   
     if (_$2.isString(analysis.environment)) {
