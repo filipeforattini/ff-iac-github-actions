@@ -111544,10 +111544,9 @@ var deploy = async (analysis) => {
   ];
 
   if (_$2.isString(analysis.environment)) {
-    tag = `e-${analysis.environment}-c-${commitSha}`;
+    tag = `r-${github$5.context.runNumber}`;
     tags = tags.concat([
       `e-${analysis.environment}`,
-      `e-${analysis.environment}-c-${commitSha}`,
       `e-${analysis.environment}-b-${slugedBranch}`,
       `e-${analysis.environment}-u-${github$5.context.actor}`,
     ]);

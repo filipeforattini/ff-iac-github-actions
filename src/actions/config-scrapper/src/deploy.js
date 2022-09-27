@@ -28,10 +28,9 @@ module.exports = async (analysis) => {
   ]
 
   if (_.isString(analysis.environment)) {
-    tag = `e-${analysis.environment}-c-${commitSha}`
+    tag = `r-${github.context.runNumber}`
     tags = tags.concat([
       `e-${analysis.environment}`,
-      `e-${analysis.environment}-c-${commitSha}`,
       `e-${analysis.environment}-b-${slugedBranch}`,
       `e-${analysis.environment}-u-${github.context.actor}`,
     ])
