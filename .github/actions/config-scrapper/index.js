@@ -111577,6 +111577,8 @@ var deploy = async (analysis) => {
     }
   }
 
+  tags = _$2(tags).sortBy().value();
+
   const fullname_tag = `${registry}:${tag}`;
   const fullname_tags = tags.map(t => `${registry}:${t}`);
 

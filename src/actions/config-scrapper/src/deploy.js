@@ -61,6 +61,8 @@ module.exports = async (analysis) => {
     }
   }
 
+  tags = _(tags).sortBy().value()
+
   const fullname_tag = `${registry}:${tag}`
   const fullname_tags = tags.map(t => `${registry}:${t}`)
 
