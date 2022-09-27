@@ -111546,7 +111546,7 @@ var deploy = async (analysis) => {
   if (_$2.isString(analysis.environment)) {
     tag = `e-${analysis.environment}-c-${commitSha}`;
     tags = tags.concat([
-      `e-${analysis.environment}-latest`,
+      `e-${analysis.environment}`,
       `e-${analysis.environment}-c-${commitSha}`,
       `e-${analysis.environment}-b-${slugedBranch}`,
       `e-${analysis.environment}-u-${github$5.context.actor}`,
@@ -111595,7 +111595,7 @@ var deploy = async (analysis) => {
   if (_$2.isString(analysis.environment)) {
     if(fs$1.existsSync(path$1.join(analysis.root, 'manifests', 'configs', `${analysis.environment}.env`))) {
       args = fs$1.readFileSync(path$1.join(analysis.root, 'manifests', 'configs', `${analysis.environment}.env`));
-      args = args.toString().trim().split('\n').join(', ');
+      args = args.toString().trim().split('\n').join(',');
     }
   }
 
@@ -111603,7 +111603,7 @@ var deploy = async (analysis) => {
 
   let labels = [ `org.opencontainers.image.source=https://github.com/${organization}/${name}` ];
   analysis.deployment.labels = labels; 
-  analysis.deployment.labelsString = labels.join(', ');
+  analysis.deployment.labelsString = labels.join(',');
   logger$3.info('deployment', `labels = ${labels}`);
 
 

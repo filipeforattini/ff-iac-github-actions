@@ -30,7 +30,7 @@ module.exports = async (analysis) => {
   if (_.isString(analysis.environment)) {
     tag = `e-${analysis.environment}-c-${commitSha}`
     tags = tags.concat([
-      `e-${analysis.environment}-latest`,
+      `e-${analysis.environment}`,
       `e-${analysis.environment}-c-${commitSha}`,
       `e-${analysis.environment}-b-${slugedBranch}`,
       `e-${analysis.environment}-u-${github.context.actor}`,
@@ -79,7 +79,7 @@ module.exports = async (analysis) => {
   if (_.isString(analysis.environment)) {
     if(fs.existsSync(path.join(analysis.root, 'manifests', 'configs', `${analysis.environment}.env`))) {
       args = fs.readFileSync(path.join(analysis.root, 'manifests', 'configs', `${analysis.environment}.env`))
-      args = args.toString().trim().split('\n').join(', ')
+      args = args.toString().trim().split('\n').join(',')
     }
   }
 
@@ -87,7 +87,7 @@ module.exports = async (analysis) => {
 
   let labels = [ `org.opencontainers.image.source=https://github.com/${organization}/${name}` ]
   analysis.deployment.labels = labels 
-  analysis.deployment.labelsString = labels.join(', ')
+  analysis.deployment.labelsString = labels.join(',')
   logger.info('deployment', `labels = ${labels}`)
 
 
