@@ -24,7 +24,7 @@ module.exports = async (analysis) => {
     `b-${slugedBranch}`,
     `r-${github.context.runNumber}`,
     `u-${github.context.actor}`,
-    `u-${github.context.actor}-c-${commitSha}`,
+    `u-${github.context.actor}-b-${slugedBranch}`,
   ]
 
   if (_.isString(analysis.environment)) {
@@ -34,7 +34,6 @@ module.exports = async (analysis) => {
       `e-${analysis.environment}-c-${commitSha}`,
       `e-${analysis.environment}-b-${slugedBranch}`,
       `e-${analysis.environment}-u-${github.context.actor}`,
-      `e-${analysis.environment}-r-${github.context.runNumber}`,
     ])
   }
 

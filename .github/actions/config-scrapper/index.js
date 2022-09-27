@@ -111540,7 +111540,7 @@ var deploy = async (analysis) => {
     `b-${slugedBranch}`,
     `r-${github$5.context.runNumber}`,
     `u-${github$5.context.actor}`,
-    `u-${github$5.context.actor}-c-${commitSha}`,
+    `u-${github$5.context.actor}-b-${slugedBranch}`,
   ];
 
   if (_$2.isString(analysis.environment)) {
@@ -111550,7 +111550,6 @@ var deploy = async (analysis) => {
       `e-${analysis.environment}-c-${commitSha}`,
       `e-${analysis.environment}-b-${slugedBranch}`,
       `e-${analysis.environment}-u-${github$5.context.actor}`,
-      `e-${analysis.environment}-r-${github$5.context.runNumber}`,
     ]);
   }
 
