@@ -61,7 +61,7 @@ http {
         index index.html index.htm;
 
         location / {
-            try_files $uri $uri/ /index.html$is_args$args;;
+            try_files $uri $uri/ /index.html$is_args$args;
         }
 
         location ~* \.(?:jpg|jpeg|gif|png|ico|cur|gz|svg|svgz|mp4|ogg|ogv|webm|htc)$ {
