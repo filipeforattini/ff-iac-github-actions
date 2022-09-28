@@ -1,8 +1,5 @@
 #@data/values
 ---
-pipelineControl:
-  environmentAsSubdomains: false
-
 ingress:
   enable: true
   className: alb

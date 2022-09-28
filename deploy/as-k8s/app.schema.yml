@@ -28,7 +28,7 @@
 #@ def defaultIngress():
   enable: false
   name: app
-  type: traefik
+  className: traefik
   
   tls:
     enable: true

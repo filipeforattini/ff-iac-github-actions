@@ -12,16 +12,22 @@ metadata:
   #@  if data.values.ingress.annotations != None:
   #@    ingressAnnotations.update(data.values.ingress.annotations)
   #@  end
+
+  #@  ingressAnnotations.update({ "kubernetes.io/ingress.class": data.values.ingress.className })
+    
+  #@  if data.values.ingress.externalDns.enable:
+  #@    if data.values.pipelineControl.environmentAsSubdomains:
+  #@      ingressAnnotations.update({ "external-dns.alpha.kubernetes.io/hostname": "{}.{}.{}".format(data.values.repository, data.values.environment, data.values.ingress.domain) })
+  #@    else:
+  #@      ingressAnnotations.update({ "external-dns.alpha.kubernetes.io/hostname": "{}-{}.{}".format(data.values.repository, data.values.environment, data.values.ingress.domain) })
+  #@    end
+  #@  end
   
   #@  if data.values.ingress.externalDns.enable:
   #@    if data.values.pipelineControl.environmentAsSubdomains:
-  #@      ingressAnnotations.update({
-  #@        "external-dns.alpha.kubernetes.io/hostname": "{}.{}.{}".format(data.values.repository, data.values.environment, data.values.ingress.domain)
-  #@      })
+  #@      ingressAnnotations.update({ "external-dns.alpha.kubernetes.io/hostname": "{}.{}.{}".format(data.values.repository, data.values.environment, data.values.ingress.domain) })
   #@    else:
-  #@      ingressAnnotations.update({
-  #@        "external-dns.alpha.kubernetes.io/hostname": "{}-{}.{}".format(data.values.repository, data.values.environment, data.values.ingress.domain)
-  #@      })
+  #@      ingressAnnotations.update({ "external-dns.alpha.kubernetes.io/hostname": "{}-{}.{}".format(data.values.repository, data.values.environment, data.values.ingress.domain) })
   #@    end
   #@  end
 
@@ -40,20 +46,17 @@ metadata:
   #@      "alb.ingress.kubernetes.io/target-type": "instance",
   #@      "alb.ingress.kubernetes.io/success-codes": "200-399",
   #@      "alb.ingress.kubernetes.io/ssl-redirect": "443",
-  #@      "alb.ingress.kubernetes.io/ssl-policy": "ELBSecurityPolicy-2016-08",
   #@      "alb.ingress.kubernetes.io/group.name": data.values.ecosystem,
   #@      "alb.ingress.kubernetes.io/load-balancer-name": data.values.ecosystem,
   #@      "alb.ingress.kubernetes.io/certificate-arn": data.values.ingress.alb.certificateArn,
-  #@      "alb.ingress.kubernetes.io/load-balancer-attributes": "idle_timeout.timeout_seconds=1200",
-  #@      "alb.ingress.kubernetes.io/healthcheck-interval-seconds": "300",
   #@      "alb.ingress.kubernetes.io/listen-ports": '[{"HTTPS": 443}]',
   #@    })
   #@  end
   annotations: #@ ingressAnnotations
 
 spec:
-  ingressClassName: #@ data.values.ingress.className
 
+  #@ if data.values.ingress.letsencrypt.enable:
   tls:
     - secretName: #@ "cert-" + data.values.repository
       hosts:
@@ -62,6 +65,7 @@ spec:
       #@ else:
        - #@ "{}-{}.{}".format(data.values.repository, data.values.environment, data.values.ingress.domain)
       #@ end
+  #@ end
 
   rules:
     - http:

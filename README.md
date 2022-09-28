@@ -236,7 +236,7 @@ env:
 
 ingress:
   enable: true
-  type: traefik
+  className: traefik
 
   tls:
     enable: true
