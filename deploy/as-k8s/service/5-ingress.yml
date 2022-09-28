@@ -8,46 +8,60 @@ metadata:
   name: #@ data.values.service.name
 
   #@  ingressAnnotations = {}
-  #@  if data.values.ingress.tls.enable:
-  #@    ingressAnnotations.update({
-  #@      "kubernetes.io/ingress.class": data.values.ingress.type,
-  #@    })
-  #@
-  #@    if data.values.ingress.tls.letsencrypt.enable:
-  #@      ingressAnnotations.update({ "cert-manager.io/" + data.values.ingress.tls.letsencrypt.type: "letsencrypt-" + data.values.environment })
-  #@    end
-  #@
-  #@    if data.values.ingress.type == "alb":
+
+  #@  if data.values.ingress.annotations != None:
+  #@    ingressAnnotations.update(data.values.ingress.annotations)
+  #@  end
+  
+  #@  if data.values.ingress.externalDns.enable:
+  #@    if data.values.pipelineControl.environmentAsSubdomains:
   #@      ingressAnnotations.update({
-  #@        "alb.ingress.kubernetes.io/target-type": "instance",
-  #@        "alb.ingress.kubernetes.io/scheme": "internet-facing",
-  #@        "alb.ingress.kubernetes.io/success-codes": "200-399",
-  #@        "alb.ingress.kubernetes.io/ssl-redirect": "443",
-  #@        "alb.ingress.kubernetes.io/ssl-policy": "ELBSecurityPolicy-2016-08",
-  #@        "alb.ingress.kubernetes.io/group.name": data.values.ecosystem,
-  #@        "alb.ingress.kubernetes.io/load-balancer-name": data.values.ecosystem,
-  #@        "alb.ingress.kubernetes.io/certificate-arn": data.values.ingress.alb.certificateArn,
-  #@        "alb.ingress.kubernetes.io/load-balancer-attributes": "idle_timeout.timeout_seconds=1200",
-  #@        "alb.ingress.kubernetes.io/healthcheck-interval-seconds": "300",
-  #@        "alb.ingress.kubernetes.io/listen-ports": '[{"HTTPS": 443}]',
+  #@        "external-dns.alpha.kubernetes.io/hostname": "{}.{}.{}".format(data.values.repository, data.values.environment, data.values.ingress.domain)
+  #@      })
+  #@    else:
+  #@      ingressAnnotations.update({
+  #@        "external-dns.alpha.kubernetes.io/hostname": "{}-{}.{}".format(data.values.repository, data.values.environment, data.values.ingress.domain)
   #@      })
   #@    end
+  #@  end
+
+  #@  if data.values.ingress.letsencrypt.enable:
+  #@    ingressAnnotations.update({ "cert-manager.io/" + data.values.ingress.letsencrypt.type: "letsencrypt-" + data.values.environment })
+  #@  end
+  #@
+  #@  if data.values.ingress.className == "alb":
+  #@    if data.values.ingress.alb.public:
+  #@      ingressAnnotations.update({ "alb.ingress.kubernetes.io/scheme": "internet-facing" })
+  #@    else:
+  #@      ingressAnnotations.update({ "alb.ingress.kubernetes.io/scheme": "internal" })
+  #@    end
+
+  #@    ingressAnnotations.update({
+  #@      "alb.ingress.kubernetes.io/target-type": "instance",
+  #@      "alb.ingress.kubernetes.io/success-codes": "200-399",
+  #@      "alb.ingress.kubernetes.io/ssl-redirect": "443",
+  #@      "alb.ingress.kubernetes.io/ssl-policy": "ELBSecurityPolicy-2016-08",
+  #@      "alb.ingress.kubernetes.io/group.name": data.values.ecosystem,
+  #@      "alb.ingress.kubernetes.io/load-balancer-name": data.values.ecosystem,
+  #@      "alb.ingress.kubernetes.io/certificate-arn": data.values.ingress.alb.certificateArn,
+  #@      "alb.ingress.kubernetes.io/load-balancer-attributes": "idle_timeout.timeout_seconds=1200",
+  #@      "alb.ingress.kubernetes.io/healthcheck-interval-seconds": "300",
+  #@      "alb.ingress.kubernetes.io/listen-ports": '[{"HTTPS": 443}]',
+  #@    })
   #@  end
   annotations: #@ ingressAnnotations
 
 spec:
+  ingressClassName: #@ data.values.ingress.className
 
-  #@ if data.values.ingress.tls.enable:
   tls:
     - secretName: #@ "cert-" + data.values.repository
-      #@ if data.values.ingress.tls.removeEnvironmentPrefix:
       hosts:
-       - #@ "{}.{}".format(data.values.repository, data.values.ingress.tls.domain)
+      #@ if data.values.pipelineControl.environmentAsSubdomains:
+       - #@ "{}.{}.{}".format(data.values.repository, data.values.environment, data.values.ingress.domain)
       #@ else:
-      hosts:
-       - #@ "{}.{}.{}".format(data.values.repository, data.values.environment, data.values.ingress.tls.domain)
+       - #@ "{}-{}.{}".format(data.values.repository, data.values.environment, data.values.ingress.domain)
       #@ end
-  #@ end
 
   rules:
     - http:
@@ -59,16 +73,14 @@ spec:
                 name: #@ data.values.deployment.name
                 port:
                   number: #@ data.values.port
-      #@  if data.values.ingress.tls.enable:
-        #@  if data.values.ingress.tls.removeEnvironmentPrefix:
-      host: #@ "{}.{}".format(data.values.repository, data.values.ingress.tls.domain)
-        #@  else:
-      host: #@ "{}.{}.{}".format(data.values.repository, data.values.environment, data.values.ingress.tls.domain)
-        #@  end
+      #@ if data.values.pipelineControl.environmentAsSubdomains:
+      host: #@ "{}.{}.{}".format(data.values.repository, data.values.environment, data.values.ingress.domain)
+      #@  else:
+      host: #@ "{}-{}.{}".format(data.values.repository, data.values.environment, data.values.ingress.domain)
       #@  end
 
 
-#@  if data.values.ingress.type == "traefik":
+#@  if data.values.ingress.className == "traefik":
 ---
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
@@ -78,8 +90,12 @@ spec:
   entryPoints:
     - web
   routes:
-    - match: #@ "Host(`{}.{}.{}`)".format(data.values.repository, data.values.environment, data.values.ingress.tls.domain)
-      kind: Rule
+    - kind: Rule
+      #@ if data.values.pipelineControl.environmentAsSubdomains:
+      match: #@ "Host(`{}.{}.{}`)".format(data.values.repository, data.values.environment, data.values.ingress.domain)
+      #@  else:
+      match: #@ "Host(`{}-{}.{}`)".format(data.values.repository, data.values.environment, data.values.ingress.domain)
+      #@  end
       services:
         - name: #@ data.values.service.name
           port:  #@ data.values.port

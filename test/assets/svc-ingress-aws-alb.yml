@@ -1,0 +1,12 @@
+#@data/values
+---
+pipelineControl:
+  environmentAsSubdomains: false
+
+ingress:
+  enable: true
+  className: alb
+  domain: forattini.app
+  alb:
+    public: true
+    certificateArn: secret

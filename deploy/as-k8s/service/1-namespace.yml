@@ -1,5 +1,5 @@
-#@  load("@ytt:data", "data")
-#@  load("@ytt:overlay", "overlay")
+#@ load("@ytt:data", "data")
+#@ load("@ytt:overlay", "overlay")
 
 #@ load("@ytt:data", "data")
 ---

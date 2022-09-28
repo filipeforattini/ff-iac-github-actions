@@ -44,28 +44,36 @@
   #! types specifics
   aws:
     internal: true
-    sslCert: secret
+    sslCert: ""
     nodeTabels: ""
 #@ end
 
 #@ def defaultIngress():
   enable: false
   name: svc
-  type: traefik
+  controller: null
+  className: traefik
+
+  #@schema/type any=True
+  labels: null
+  #@schema/type any=True
+  annotations: null
+
+  domain: acme.io
+  removeEnvironmentPrefix: false
   
-  tls:
+  externalDns:
     enable: false
-    domain: acme.io
+    
+  letsencrypt:
+    enable: false
     email: security@acme.io
-    removeEnvironmentPrefix: false
-  
-    letsencrypt:
-      enable: false
-      type: cluster-issuer
+    type: cluster-issuer
 
   #! types specifics
   alb:
-    certificateArn: secret
+    public: false
+    certificateArn: ""
   nginx:
     certmanager: true
   traefik:

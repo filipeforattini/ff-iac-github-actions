@@ -1,10 +1,8 @@
 #@data/values
 ---
-port: 1234
-
-env:
-  - name: TZ
-    value: America/Sao_Paulo
-
 service:
   enable: true
+  annotations:
+    A: "1"
+    B: "2"
+    C: "3"

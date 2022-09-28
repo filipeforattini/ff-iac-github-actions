@@ -1,0 +1,9 @@
+#@data/values
+---
+pipelineControl:
+  environmentAsSubdomains: false
+
+ingress:
+  enable: true
+  className: traefik
+  domain: forattini.app

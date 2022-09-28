@@ -16,9 +16,15 @@ metadata:
   #@  end
 
   #@  if data.values.service.externalDns.enable:
-  #@    serviceAnnotations.update({
-  #@      "external-dns.alpha.kubernetes.io/hostname": "{}.{}.{}".format(data.values.repository, data.values.environment, data.values.service.externalDns.domain)
-  #@    })
+  #@    if data.values.pipelineControl.environmentAsSubdomains:
+  #@      serviceAnnotations.update({
+  #@        "external-dns.alpha.kubernetes.io/hostname": "{}.{}.{}".format(data.values.repository, data.values.environment, data.values.service.externalDns.domain)
+  #@      })
+  #@    else:
+  #@      serviceAnnotations.update({
+  #@        "external-dns.alpha.kubernetes.io/hostname": "{}-{}.{}".format(data.values.repository, data.values.environment, data.values.service.externalDns.domain)
+  #@      })
+  #@    end
   #@  end
 
   #@  if data.values.service.controller == "aws":
@@ -26,8 +32,6 @@ metadata:
   #@      "service.beta.kubernetes.io/aws-load-balancer-type": "nlb",
   #@      "service.beta.kubernetes.io/aws-load-balancer-internal": "{}".format(data.values.service.aws.internal).lower(),
   #@      "service.beta.kubernetes.io/aws-load-balancer-backend-protocol": "http",
-  #@      "service.beta.kubernetes.io/aws-load-balancer-connection-draining-enabled": "true",
-  #@      "service.beta.kubernetes.io/aws-load-balancer-connection-draining-timeout": "60",
   #@      "service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled": "true",
   #@      "service.beta.kubernetes.io/aws-load-balancer-ssl-cert": data.values.service.aws.sslCert,
   #@      "service.beta.kubernetes.io/aws-load-balancer-ssl-ports": "443",
