@@ -155,7 +155,7 @@ elasticsearch:
     secrets: []
     secretKeys: []
     connection:
-      protocol: ""
+      protocol: "http://"
       port: 9200
       serviceName: dep-elasticsearch
       username: ""
