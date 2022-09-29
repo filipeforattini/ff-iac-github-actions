@@ -51,7 +51,7 @@ spec:
   selector: #@ data.values.service.selector.labels
   #@  else:
   #@    serviceMatchLabels = {}
-  #@    serviceMatchLabels.update({ "pipe/selector": data.values.repository + "." + data.values.deployment.name })
+  #@    serviceMatchLabels.update({ "pipeline/selector": data.values.repository + "." + data.values.deployment.name })
   selector: #@ serviceMatchLabels
   #@  end
 

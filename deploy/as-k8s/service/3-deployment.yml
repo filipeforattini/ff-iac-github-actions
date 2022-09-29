@@ -27,14 +27,14 @@ spec:
     matchLabels: #@ data.values.deployment.matchLabels.labels
     #@ else:
     #@ deploymentMatchLabels = {}
-    #@ deploymentMatchLabels.update({ "pipe/selector": data.values.repository + "." + data.values.deployment.name })
+    #@ deploymentMatchLabels.update({ "pipeline/selector": data.values.repository + "." + data.values.deployment.name })
     matchLabels: #@ deploymentMatchLabels
     #@ end
   
   template:
     metadata:
       #@ deploymentTemplateLabels = {}
-      #@ deploymentTemplateLabels.update({ "pipe/selector": data.values.repository + "." + data.values.deployment.name })
+      #@ deploymentTemplateLabels.update({ "pipeline/selector": data.values.repository + "." + data.values.deployment.name })
       #@ deploymentTemplateLabels.update(data.values.deployment.templateLabels)
       labels: #@ deploymentTemplateLabels
     spec:

@@ -13,11 +13,11 @@
 #@ globalLabels.update({ "environment": data.values.environment })
 
 #@ globalAnnotations = {}
-#@ globalAnnotations.update({ "pipe/config-md5": configMD5 })
-#@ globalAnnotations.update({ "pipe/config-sha256": configSHA256 })
-#@ globalAnnotations.update({ "pipe/ecosystem": data.values.ecosystem })
-#@ globalAnnotations.update({ "pipe/environment": data.values.environment })
-#@ globalAnnotations.update({ "pipe/updated-at": "{}".format(data.values.pipelineControl.datetime) })
+#@ globalAnnotations.update({ "pipeline/config-md5": configMD5 })
+#@ globalAnnotations.update({ "pipeline/config-sha256": configSHA256 })
+#@ globalAnnotations.update({ "pipeline/ecosystem": data.values.ecosystem })
+#@ globalAnnotations.update({ "pipeline/environment": data.values.environment })
+#@ globalAnnotations.update({ "pipeline/updated-at": "{}".format(data.values.pipelineControl.datetime) })
 #@ globalAnnotations.update({ "kubectl.kubernetes.io/last-applied-configuration": data.values.pipelineControl.datetime })
 
 ---
@@ -85,7 +85,7 @@ spec:
     matchLabels: #@ data.values.deployment.matchLabels.labels
     #@ else:
     #@ deploymentMatchLabels = {}
-    #@ deploymentMatchLabels.update({ "pipe/selector": data.values.repository + "." + data.values.deployment.name })
+    #@ deploymentMatchLabels.update({ "pipeline/selector": data.values.repository + "." + data.values.deployment.name })
     matchLabels: #@ deploymentMatchLabels
     #@ end
   
@@ -93,7 +93,7 @@ spec:
     metadata:
       #@ deploymentTemplateLabels = {}
       #@ deploymentTemplateLabels.update(globalLabels)
-      #@ deploymentTemplateLabels.update({ "pipe/selector": data.values.repository + "." + data.values.deployment.name })
+      #@ deploymentTemplateLabels.update({ "pipeline/selector": data.values.repository + "." + data.values.deployment.name })
       #@ deploymentTemplateLabels.update(data.values.deployment.templateLabels)
       labels: #@ deploymentTemplateLabels
     spec:
@@ -133,7 +133,7 @@ spec:
   selector: #@ data.values.service.selector.labels
   #@ else:
   #@ serviceMatchLabels = {}
-  #@ serviceMatchLabels.update({ "pipe/selector": data.values.repository + "." + data.values.deployment.name })
+  #@ serviceMatchLabels.update({ "pipeline/selector": data.values.repository + "." + data.values.deployment.name })
   selector: #@ serviceMatchLabels
   #@ end
 
