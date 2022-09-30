@@ -9,6 +9,32 @@ metadata:
   name: #@ data.values.service.name
   labels: #@ data.values.service.labels
 
+spec:
+  type: ClusterIP
+
+  #@  if data.values.service.selector.overwrite:
+  selector: #@ data.values.service.selector.labels
+  #@  else:
+  #@    serviceMatchLabels = {}
+  #@    serviceMatchLabels.update({ "pipeline/selector": data.values.repository + "." + data.values.deployment.name })
+  selector: #@ serviceMatchLabels
+  #@  end
+
+  #@ servicePorts = []
+  #@ servicePorts.extend(data.values.service.ports)
+  #@ servicePorts.extend([
+  #@   { "name": "http", "protocol": "TCP", "port": data.values.port, "targetPort": data.values.port }
+  #@ ])
+  ports: #@ servicePorts
+
+#@ if data.values.ingress.enable:
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: #@ "{}-{}".format(data.values.service.name, "lb")
+  labels: #@ data.values.service.labels
+
   #@  serviceAnnotations = {}
 
   #@  if data.values.service.annotations != None:
@@ -41,11 +67,7 @@ metadata:
   annotations: #@ serviceAnnotations
 
 spec:
-  #@  if data.values.service.controller != None:
   type: LoadBalancer
-  #@  else:
-  type: #@ data.values.service.type
-  #@  end
 
   #@  if data.values.service.selector.overwrite:
   selector: #@ data.values.service.selector.labels
@@ -61,4 +83,5 @@ spec:
   #@   { "name": "http", "protocol": "TCP", "port": data.values.port, "targetPort": data.values.port }
   #@ ])
   ports: #@ servicePorts
+#@  end
 #@  end

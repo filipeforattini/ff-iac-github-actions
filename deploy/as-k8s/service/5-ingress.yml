@@ -74,7 +74,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: #@ data.values.deployment.name
+                name: svc-lb
                 port:
                   number: #@ data.values.port
       #@ if data.values.pipelineControl.environmentAsSubdomains:
@@ -89,7 +89,7 @@ spec:
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
-  name: #@ data.values.service.name
+  name: svc-lb
 spec:
   entryPoints:
     - web
@@ -101,7 +101,7 @@ spec:
       match: #@ "Host(`{}-{}.{}`)".format(data.values.repository, data.values.environment, data.values.ingress.domain)
       #@  end
       services:
-        - name: #@ data.values.service.name
+        - name: svc-lb
           port:  #@ data.values.port
 #@  end
 #@  end

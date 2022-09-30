@@ -1,0 +1,403 @@
+name: mob
+
+concurrency:
+  group: ${{github.workflow}}-${{github.event_name}}
+
+
+#--------------------------------------------------#
+#                     Triggers                     # 
+#--------------------------------------------------#
+on:
+
+  workflow_call:
+
+    inputs:
+      mainBranch:
+        type: string
+        required: false
+        default: master
+        description: "Main repository branch may interfere with versioning"
+      ecosystem:
+        type: string
+        required: false
+        description: "Special prefix that will be added to the image name"
+      staticAnalysis:
+        type: boolean
+        required: false
+        default: false
+        description: "Enable static analysis scans"
+      autoVersioning:
+        type: boolean
+        required: false
+        default: true
+        description: "Enable auto versioning with semantic versioning"
+      buildDirectory:
+        type: string
+        required: false
+        default: "dist"
+        description: "Output directory from build"
+
+
+#--------------------------------------------------#
+#                  Workflow Jobs                   # 
+#--------------------------------------------------#
+jobs:
+
+  #--------------------------------------------------#
+  #                    Setup Jobs                    # 
+  #--------------------------------------------------#
+  Setup:
+    runs-on: ubuntu-latest
+
+    outputs:
+      Event: ${{steps.analysis.outputs.event}}
+      Analysis: ${{steps.analysis.outputs.result}}
+      Environment: ${{steps.analysis.outputs.environment}}
+
+    steps:
+
+      # pre-job
+      - name: Setup | Cloning repository
+        uses: actions/checkout@v3
+
+      # job
+      - name: Pipeline config scrapper
+        id: analysis
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
+        env:
+          PIPESECRET_KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+          PIPESECRET_REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
+          PIPESECRET_REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
+          PIPESECRET_PIPELINE_DEPLOY_TOKEN: ${{ secrets.PIPELINE_DEPLOY_TOKEN }}
+        with:
+          writeSummary: true
+          evaluateSecrets: true
+          containerRegistry: ${{inputs.containerRegistry}}
+
+  #--------------------------------------------------#
+  #                  Static Analysis                 # 
+  #--------------------------------------------------#
+  Static-Analysis:
+    runs-on: ubuntu-latest
+    if: needs.Setup.outputs.Event == 'push'
+    needs: Setup
+
+    permissions:
+      security-events: write
+
+    steps:
+
+      # pre-job
+      - name: Setup | Cloning repository
+        uses: actions/checkout@v3
+        if: inputs.staticAnalysis
+        with:
+          token: "${{secrets.GITHUB_TOKEN}}"
+          fetch-depth: '0'
+          persist-credentials: false
+
+      #job
+      - name: Run code analysis
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/pack-static-code-analysis@main
+        if: inputs.staticAnalysis
+        with:
+          token: "${{secrets.PIPELINE_DEPLOY_TOKEN}}"
+          language: ${{needs.Setup.outputs.Language}}
+
+
+  #--------------------------------------------------#
+  #                      Release                     # 
+  #--------------------------------------------------#
+  Release:
+    runs-on: ubuntu-latest
+    if: needs.Setup.outputs.Event == 'push'
+
+    needs: 
+      - Static-Analysis
+
+    outputs:
+      Version: ${{ steps.versioning.outputs.version }}
+
+    steps:
+
+      # pre-job
+      - name: Setup | Cloning repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          # persist-credentials: false
+
+      - name: Setup | Pipeline config scrapper
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
+        id: analysis
+
+      # release
+      - name: Semantic Release
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/pack-semantic-release@main
+        if: inputs.autoVersioning
+        with:
+          writeSummary: true
+          token: ${{secrets.PIPELINE_DEPLOY_TOKEN}}
+          installNode: true
+          npmPlugin: true
+          defaultBranch: ${{ inputs.mainBranch }}
+          author: ${{steps.analysis.outputs.commiter_name}} 
+          email: ${{steps.analysis.outputs.commiter_email}}
+          files: '["package.json","dist/**/*.{js,css}"]'
+
+      - name: Current Version
+        id: versioning
+        run: |
+          echo "::set-output name=version::$(cat package.json | jq -r '.version')"
+          echo -e "\n\nINFO  current version = $(cat package.json | jq -r '.version')\n\n"
+
+
+  #--------------------------------------------------#
+  #                      Trigger                     # 
+  #--------------------------------------------------#
+  Trigger-Build:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+
+    needs: 
+      - Release
+
+    steps:
+
+      # pre-job
+      - name: Setup | Cloning repository
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.PIPELINE_DEPLOY_TOKEN }}
+
+      - name: Pipeline config scrapper
+        id: analysis
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
+
+      - name: Trigger
+        run: |
+          git config --global user.name "${{steps.analysis.outputs.commiter_name}}"
+          git config --global user.email "${{steps.analysis.outputs.commiter_email}}"
+          git fetch
+          git checkout -B env/dev
+          git commit --allow-empty -am "deploy: to dev [skip ci]\\nVersion: ${{needs.Release.outputs.Version}}\nCommit: ${{steps.setup.outputs.commit_hash}}"
+          git push -f -u origin env/dev
+
+      - uses: altinukshini/deployment-action@releases/v1
+        name: Create GitHub deployment
+        id: deployment
+        with:
+          token: "${{ secrets.PIPELINE_DEPLOY_TOKEN }}"
+          environment: dev
+
+
+  #--------------------------------------------------#
+  #                  Trigger Manual                  # 
+  #--------------------------------------------------#
+  Trigger-Manual:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch'
+
+    needs: 
+      - Setup
+
+    steps:
+
+      # pre-job
+      - name: Setup | Cloning repository
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.PIPELINE_DEPLOY_TOKEN }}
+
+      - name: Pipeline config scrapper
+        id: analysis
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
+  
+      - name: Trigger
+        run: |
+          git config --global user.name "pipeline-bot"
+          git config --global user.email "pipeline-bot"
+          git fetch
+          git checkout -B env/${{steps.analysis.outputs.environment}}
+          git commit --allow-empty -am "deploy: to ${{steps.analysis.outputs.environment}} [skip ci]\nCommit: ${{steps.setup.outputs.commit_hash}}"
+          git push -f -u origin env/${{steps.analysis.outputs.environment}}
+
+      - uses: altinukshini/deployment-action@releases/v1
+        name: Create GitHub deployment
+        id: deployment
+        with:
+          token: "${{ secrets.PIPELINE_DEPLOY_TOKEN }}"
+          environment: ${{steps.analysis.outputs.environment}}
+
+
+  #--------------------------------------------------#
+  #                       Build                      # 
+  #--------------------------------------------------#
+  Build:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'deployment'
+
+    needs: 
+      - Setup
+
+    steps:
+
+      # pre-job
+      - name: Setup | Cloning tools
+        uses: actions/checkout@v3
+        with:
+          ref: env/${{needs.Setup.outputs.Environment}}
+
+      - name: Pipeline config scrapper
+        id: analysis
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
+        with:
+          containerRegistry: ${{inputs.containerRegistry}}
+
+      - name: Setup | Dependencies
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/setup-binaries@main
+        with:
+          docker-qmeu: true
+          docker-buildx: true
+
+      # pre-build
+      - name: Docs | Write summary title
+        run: |
+          echo "### 🚢 Build" >> $GITHUB_STEP_SUMMARY
+
+      - name: Create Dockerfile
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/create-dockerfile@main
+        if: steps.analysis.outputs.feature_has_dockerfile == 'false'
+        with:
+          writeSummary: true
+          preset: spa
+
+      - name: Create .dockerignore
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/create-dockerignore@main
+        if: steps.analysis.outputs.feature_has_dockerignore == 'false'
+        with:
+          globsToIgnore: '["node_modules"]'
+
+      # login
+      - name: Config | Login to Container Registry
+        uses: docker/login-action@v2
+        with:
+          logout: false
+          registry: ${{ inputs.containerRegistry }}
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+            
+      # build
+      - name: Copy config
+        run: |
+          if test -f ./manifests/configs/${{needs.Setup.outputs.Environment}}.env; then cp ./manifests/configs/${{needs.Setup.outputs.Environment}}.env ./.env; fi
+
+      - name: Build container image and push
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/pack-docker-build@main
+        with:
+          cached: true
+          platforms: ${{inputs.platforms}}
+          containerRegistry: ${{inputs.containerRegistry}}
+
+
+  #--------------------------------------------------#
+  #                      Deploy                      # 
+  #--------------------------------------------------#
+  Deploy:
+    runs-on: ubuntu-latest
+
+    environment: ${{needs.Setup.outputs.Environment}}
+    
+    needs:
+      - Setup
+      - Build
+
+    steps:
+
+      # pre-job
+      - name: Setup | Cloning repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          # persist-credentials: false
+        
+      - name: Setup | Cloning tools
+        uses: actions/checkout@v3
+        with:
+          ref: main
+          path: .pipeline
+          repository: filipeforattini/ff-iac-github-actions
+
+      - name: Setup | Dependencies
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/setup-binaries@main
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          docker-qmeu: true
+          docker-buildx: true
+          kubectl: true
+          ytt: true
+          yq: true
+
+      - name: Pipeline config scrapper
+        id: analysis
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
+        with:
+          containerRegistry: ${{inputs.containerRegistry}}
+
+      - name: Config | Version
+        id: versioning
+        run: |
+          NEXT_VERSION=$(git for-each-ref --sort=authordate --format '%(refname)' refs/tags | tail -n 1 | sed -n -e 's/^.*refs\/tags\/v//p')
+          echo "next version = $NEXT_VERSION"
+          echo "::set-output name=version::$NEXT_VERSION"
+
+      - name: Config | Kubectl config file
+        env:
+          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+        run: |
+          mkdir -p ~/.kube
+          echo "$KUBE_CONFIG" | base64 -d > ~/.kube/config
+
+      # namespace
+      - name: K8s create namespace
+        run: kubectl create namespace ${{steps.analysis.outputs.deploy_namespace}} --dry-run=client --validate=false --output=yaml | kubectl apply -f -
+
+      # secrets for registry auth
+      - name: Config | Login to Container Registry
+        uses: docker/login-action@v2
+        with:
+          logout: false
+          registry: ${{ inputs.containerRegistry }}
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+
+      - name: Config | Gives runner access to docker config file 
+        run: |
+          sudo chown $(whoami):docker /home/$(whoami)/.docker/config.json
+          cp /home/$(whoami)/.docker/config.json ./manifests/docker-config.json
+
+      - name: K8s create registry-token secret
+        run: kubectl create secret generic -n ${{steps.analysis.outputs.deploy_namespace}} registry-token --type=kubernetes.io/dockerconfigjson --from-file=.dockerconfigjson=./manifests/docker-config.json --dry-run=client --validate=false --output=yaml | kubectl apply -f -
+
+      # generate k8s manifests
+      - name: K8s generates final yml
+        run: |
+          ytt \
+            -f ./.pipeline/deploy/as-k8s/service.schema.yml \
+            -f ./.pipeline/deploy/as-k8s/service \
+            -f ./manifests/k8s.yml \
+            --data-value                                      ecosystem=${{steps.analysis.outputs.ecosystem}} \
+            --data-value                                   organization=${{steps.analysis.outputs.organization}} \
+            --data-value                                     repository=${{steps.analysis.outputs.repository}} \
+            --data-value                                    environment=${{steps.analysis.outputs.environment}} \
+            --data-value                              containerRegistry=${{inputs.containerRegistry}} \
+            --data-value                                            tag=${{steps.analysis.outputs.deploy_tag}} \
+            --data-value-yaml               deployment.imagePullSecrets=true \
+            --data-value                       pipelineControl.datetime=${{steps.analysis.outputs.run_started_at}} \
+            --data-value-yaml  pipelineControl.environmentsAsNamespaces=${{inputs.environmentsAsNamespaces}} \
+              > ./manifests/k8s-to-apply.yml
+
+      - name: K8s apply yml
+        run: |
+          kubectl apply -f ./manifests/k8s-to-apply.yml
+          kubectl get pods -o wide -n ${{steps.analysis.outputs.deploy_namespace}}
