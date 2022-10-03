@@ -73,7 +73,7 @@ runs:
       if: inputs.nodejs != 'false'
       shell: bash
       id: npm
-      run: npm -g install npm yarn && npm -v && yarn -v
+      run: npm -g install npm yarn && npm -g upgrade && npm -v && yarn -v
 
     # python
     - name: Setup | Python ${{ inputs.python }}
