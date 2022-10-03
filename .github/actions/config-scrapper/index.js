@@ -111523,7 +111523,7 @@ const github$5 = github$6;
 const logger$3 = log;
 
 var deploy = async (analysis) => {
-  let containerRegistry = core$1.getInput('containerRegistry', { required: true });
+  let containerRegistry = core$1.getInput('containerRegistry');
 
   const commitSha = github$5.context.sha.substring(0,7);
   const slugedBranch = github$5.context.ref.replace('refs/heads/', '').replace('/', '-');

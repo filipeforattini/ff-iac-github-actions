@@ -7,7 +7,7 @@ const github = require("@actions/github");
 const logger = require('../log')
 
 module.exports = async (analysis) => {
-  let containerRegistry = core.getInput('containerRegistry', { required: true });
+  let containerRegistry = core.getInput('containerRegistry');
 
   const commitSha = github.context.sha.substring(0,7)
   const slugedBranch = github.context.ref.replace('refs/heads/', '').replace('/', '-')
