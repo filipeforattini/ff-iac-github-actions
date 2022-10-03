@@ -135,13 +135,13 @@ jobs:
         if: inputs.autoVersioning
         with:
           writeSummary: true
-          token: ${{secrets.PIPELINE_DEPLOY_TOKEN}}
+          token: "${{secrets.PIPELINE_DEPLOY_TOKEN}}"
           installNode: true
-          npmPlugin: true
-          defaultBranch: ${{ inputs.mainBranch }}
+          npmPlugin: false
+          defaultBranch: ${{inputs.mainBranch}}
           author: ${{steps.analysis.outputs.commiter_name}} 
           email: ${{steps.analysis.outputs.commiter_email}}
-          files: '["package.json","dist/**/*.{js,css}"]'
+          files: '[]'
 
       - name: Current Version
         id: versioning
@@ -270,7 +270,7 @@ jobs:
       - name: Install dependencies
         run: |
           if test -f ./package-lock.json; then npm install --force; fi
-          if test -f ./yarn.lock; then yarn install --frozen-lockfile --ignore-optional; fi
+          if test -f ./yarn.lock; then yarn install --frozen-lockfile --ignore-optional --immutable; fi
 
       # build
       - name: Copy config

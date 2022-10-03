@@ -32,6 +32,10 @@ inputs:
     description: 'Inform the Python version'
     required: false
     default: 'false'
+  go:
+    description: 'Inform the Go version'
+    required: false
+    default: 'false'
   yq:
     description: 'Install'
     required: false
@@ -57,6 +61,8 @@ runs:
       id: node
       with:
         node-version: ${{ inputs.nodejs }}
+        cache: 'npm'
+        check-latest: true
 
     - name: Setup | NodeJs NPM & yarn
       if: inputs.nodejs != 'false'
@@ -70,6 +76,17 @@ runs:
       uses: actions/setup-python@v4.1.0
       with:
         python-version: ${{ inputs.python }}
+        check-latest: true
+        cache: 'pip'
+
+    # go
+    - name: Setup | Go ${{ inputs.python }}
+      if: inputs.python != 'false'
+      uses: actions/setup-go@v3
+      with:
+        go-version: ${{ inputs.python }}
+        check-latest: true
+        cache: true
 
     # docker
     - name: Setup | Docker QMEU
