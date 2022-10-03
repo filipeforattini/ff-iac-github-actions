@@ -67,6 +67,7 @@ runs:
       with:
         node-version: ${{ inputs.nodejs }}
         check-latest: true
+        cache: 'npm'
 
     - name: Setup | NodeJs NPM & yarn
       if: inputs.nodejs != 'false'

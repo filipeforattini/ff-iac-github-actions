@@ -23,6 +23,10 @@ inputs:
     required: true
     default: master
     description: ""
+  nodejs:
+    required: false
+    default: 18
+    description: "Nodejs version"
   files:
     required: false
     default: "[]"
@@ -58,11 +62,16 @@ runs:
         files: ${{ inputs.files }}
         npmPlugin: ${{ inputs.npmPlugin }}
 
-    - name: Setup | Dependencies
-      if: inputs.installNode
-      uses: filipeforattini/ff-iac-github-actions/.github/actions/setup-binaries@main
+    - name: Setup | NodeJs ${{ inputs.nodejs }}
+      uses: actions/setup-node@v3
       with:
-        nodejs: 18
+        node-version: ${{ inputs.nodejs }}
+
+    - name: Setup | NodeJs NPM & yarn
+      if: inputs.nodejs != 'false'
+      shell: bash
+      id: npm
+      run: npm -g install npm yarn && npm -v && yarn -v
 
     - name: Semantic Release
       uses: filipeforattini/ff-iac-github-actions/.github/actions/semantic-release@main
