@@ -22086,9 +22086,9 @@ CMD ["<%= command %>"]
     environmentVariables: ["OS=Alpine"],
     dependencyCommand: () => {
       return fs.existsSync(path.join(process.cwd(), 'package-lock.json'))
-        ? "npm install --force"
+        ? "npm ci --force --no-fund --no-bin-links --no-audit"
         : fs.existsSync(path.join(process.cwd(), 'yarn.lock'))
-          ? "yarn install --frozen-lockfile --ignore-optional"
+          ? "yarn install --frozen-lockfile --ignore-optional --immutable"
           : "npm install --force"
     },
     entrypoint: "npm",
@@ -22190,9 +22190,9 @@ CMD ["-g daemon off;"]
     buildDirectory: 'build',
     dependencyCommand: () => {
       return fs.existsSync(path.join(process.cwd(), 'package-lock.json'))
-        ? "npm install --force"
+        ? "npm ci --force --no-fund --no-bin-links --no-audit"
         : fs.existsSync(path.join(process.cwd(), 'yarn.lock'))
-          ? "yarn install --frozen-lockfile --ignore-optional"
+          ? "yarn install --frozen-lockfile --ignore-optional --immutable"
           : "npm install --force"
     },
   },
