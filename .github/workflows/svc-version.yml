@@ -156,7 +156,7 @@ jobs:
       - name: Setup | Dependencies
         uses: filipeforattini/ff-iac-github-actions/.github/actions/setup-binaries@main
         with:
-          python: ${{matrix.go-version}}
+          go: ${{matrix.go-version}}
 
       - name: Check out code into the Go module directory
         uses: actions/checkout@v3
