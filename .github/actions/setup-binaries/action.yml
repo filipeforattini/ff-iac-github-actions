@@ -36,6 +36,10 @@ inputs:
     description: 'Inform the Go version'
     required: false
     default: 'false'
+  java:
+    description: 'Inform the Java version'
+    required: false
+    default: 'false'
   yq:
     description: 'Install'
     required: false
@@ -54,6 +58,7 @@ runs:
   using: "composite"
 
   steps:
+
     # nodejs
     - name: Setup | NodeJs ${{ inputs.nodejs }}
       if: inputs.nodejs != 'false'
@@ -80,13 +85,22 @@ runs:
         cache: 'pip'
 
     # go
-    - name: Setup | Go ${{ inputs.python }}
-      if: inputs.python != 'false'
+    - name: Setup | Go ${{ inputs.go }}
+      if: inputs.go != 'false'
       uses: actions/setup-go@v3
       with:
-        go-version: ${{ inputs.python }}
+        go-version: ${{ inputs.go }}
         check-latest: true
         cache: true
+    
+    # java
+    - name: Setup | Java ${{ inputs.java }}
+      if: inputs.java != 'false'
+      uses: actions/setup-java@v3
+      with:
+        java-version: ${{ inputs.java }}
+        check-latest: true
+        cache: 'gradle'
 
     # docker
     - name: Setup | Docker QMEU

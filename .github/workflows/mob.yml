@@ -257,6 +257,7 @@ jobs:
         uses: filipeforattini/ff-iac-github-actions/.github/actions/setup-binaries@main
         with:
           nodejs: 18
+          java: 17
 
       # pre-build
       - name: Docs | Write summary title
@@ -277,10 +278,25 @@ jobs:
         run: |
           if test -f ./manifests/configs/${{needs.Setup.outputs.Environment}}.env; then cp ./manifests/configs/${{needs.Setup.outputs.Environment}}.env ./.env; fi
 
+      - name: Cache Gradle Wrapper
+        uses: actions/cache@v2
+        with:
+          path: ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}
+
+      - name: Cache Gradle Dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-caches-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-caches-
+
       - name: Build
         run: |
           cd ./android;
-          ./gradlew assembleRelease 
+          ./gradlew build --no-daemon
+          ./gradlew assembleRelease
           ./gradlew bundleRelease
 
 
