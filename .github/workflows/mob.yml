@@ -231,9 +231,9 @@ jobs:
 
 
   #--------------------------------------------------#
-  #                       Build                      # 
+  #                   Build Android                  # 
   #--------------------------------------------------#
-  Build:
+  Build-Android:
     runs-on: ubuntu-latest
     if: github.event_name == 'deployment'
 
@@ -255,88 +255,54 @@ jobs:
           containerRegistry: ${{inputs.containerRegistry}}
 
       - name: Setup | Dependencies
+        if: inputs.installNode
         uses: filipeforattini/ff-iac-github-actions/.github/actions/setup-binaries@main
         with:
-          docker-qmeu: true
-          docker-buildx: true
+          nodejs: 18
 
       # pre-build
       - name: Docs | Write summary title
         run: |
-          echo "### 🚢 Build" >> $GITHUB_STEP_SUMMARY
+          echo "### 🚢 Build Android" >> $GITHUB_STEP_SUMMARY
 
-      - name: Create Dockerfile
-        uses: filipeforattini/ff-iac-github-actions/.github/actions/create-dockerfile@main
-        if: steps.analysis.outputs.feature_has_dockerfile == 'false'
-        with:
-          writeSummary: true
-          preset: spa
+      - name: Install | Dependency managers
+        run: npm -g install yarn npm
 
-      - name: Create .dockerignore
-        uses: filipeforattini/ff-iac-github-actions/.github/actions/create-dockerignore@main
-        if: steps.analysis.outputs.feature_has_dockerignore == 'false'
-        with:
-          globsToIgnore: '["node_modules"]'
+      # install dependencies
+      - name: Install dependencies
+        run: |
+          if test -f ./package-lock.json; then npm install --force; fi
+          if test -f ./yarn.lock; then yarn install --frozen-lockfile --ignore-optional; fi
 
-      # login
-      - name: Config | Login to Container Registry
-        uses: docker/login-action@v2
-        with:
-          logout: false
-          registry: ${{ inputs.containerRegistry }}
-          username: ${{ secrets.REGISTRY_USERNAME }}
-          password: ${{ secrets.REGISTRY_PASSWORD }}
-            
       # build
       - name: Copy config
         run: |
           if test -f ./manifests/configs/${{needs.Setup.outputs.Environment}}.env; then cp ./manifests/configs/${{needs.Setup.outputs.Environment}}.env ./.env; fi
 
-      - name: Build container image and push
-        uses: filipeforattini/ff-iac-github-actions/.github/actions/pack-docker-build@main
-        with:
-          cached: true
-          platforms: ${{inputs.platforms}}
-          containerRegistry: ${{inputs.containerRegistry}}
+      - name: Build
+        run: |
+          cd ./android;
+          ./gradlew assembleRelease 
+          ./gradlew bundleRelease
 
 
   #--------------------------------------------------#
-  #                      Deploy                      # 
+  #                       Build                      # 
   #--------------------------------------------------#
-  Deploy:
+  Build-iOS:
     runs-on: ubuntu-latest
+    if: github.event_name == 'deployment'
 
-    environment: ${{needs.Setup.outputs.Environment}}
-    
-    needs:
+    needs: 
       - Setup
-      - Build
 
     steps:
 
       # pre-job
-      - name: Setup | Cloning repository
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-          # persist-credentials: false
-        
       - name: Setup | Cloning tools
         uses: actions/checkout@v3
         with:
-          ref: main
-          path: .pipeline
-          repository: filipeforattini/ff-iac-github-actions
-
-      - name: Setup | Dependencies
-        uses: filipeforattini/ff-iac-github-actions/.github/actions/setup-binaries@main
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          docker-qmeu: true
-          docker-buildx: true
-          kubectl: true
-          ytt: true
-          yq: true
+          ref: env/${{needs.Setup.outputs.Environment}}
 
       - name: Pipeline config scrapper
         id: analysis
@@ -344,60 +310,12 @@ jobs:
         with:
           containerRegistry: ${{inputs.containerRegistry}}
 
-      - name: Config | Version
-        id: versioning
+      # pre-build
+      - name: Docs | Write summary title
         run: |
-          NEXT_VERSION=$(git for-each-ref --sort=authordate --format '%(refname)' refs/tags | tail -n 1 | sed -n -e 's/^.*refs\/tags\/v//p')
-          echo "next version = $NEXT_VERSION"
-          echo "::set-output name=version::$NEXT_VERSION"
+          echo "### 🚢 Build iOS" >> $GITHUB_STEP_SUMMARY
 
-      - name: Config | Kubectl config file
-        env:
-          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+      - name: Build
         run: |
-          mkdir -p ~/.kube
-          echo "$KUBE_CONFIG" | base64 -d > ~/.kube/config
-
-      # namespace
-      - name: K8s create namespace
-        run: kubectl create namespace ${{steps.analysis.outputs.deploy_namespace}} --dry-run=client --validate=false --output=yaml | kubectl apply -f -
-
-      # secrets for registry auth
-      - name: Config | Login to Container Registry
-        uses: docker/login-action@v2
-        with:
-          logout: false
-          registry: ${{ inputs.containerRegistry }}
-          username: ${{ secrets.REGISTRY_USERNAME }}
-          password: ${{ secrets.REGISTRY_PASSWORD }}
-
-      - name: Config | Gives runner access to docker config file 
-        run: |
-          sudo chown $(whoami):docker /home/$(whoami)/.docker/config.json
-          cp /home/$(whoami)/.docker/config.json ./manifests/docker-config.json
-
-      - name: K8s create registry-token secret
-        run: kubectl create secret generic -n ${{steps.analysis.outputs.deploy_namespace}} registry-token --type=kubernetes.io/dockerconfigjson --from-file=.dockerconfigjson=./manifests/docker-config.json --dry-run=client --validate=false --output=yaml | kubectl apply -f -
-
-      # generate k8s manifests
-      - name: K8s generates final yml
-        run: |
-          ytt \
-            -f ./.pipeline/deploy/as-k8s/service.schema.yml \
-            -f ./.pipeline/deploy/as-k8s/service \
-            -f ./manifests/k8s.yml \
-            --data-value                                      ecosystem=${{steps.analysis.outputs.ecosystem}} \
-            --data-value                                   organization=${{steps.analysis.outputs.organization}} \
-            --data-value                                     repository=${{steps.analysis.outputs.repository}} \
-            --data-value                                    environment=${{steps.analysis.outputs.environment}} \
-            --data-value                              containerRegistry=${{inputs.containerRegistry}} \
-            --data-value                                            tag=${{steps.analysis.outputs.deploy_tag}} \
-            --data-value-yaml               deployment.imagePullSecrets=true \
-            --data-value                       pipelineControl.datetime=${{steps.analysis.outputs.run_started_at}} \
-            --data-value-yaml  pipelineControl.environmentsAsNamespaces=${{inputs.environmentsAsNamespaces}} \
-              > ./manifests/k8s-to-apply.yml
-
-      - name: K8s apply yml
-        run: |
-          kubectl apply -f ./manifests/k8s-to-apply.yml
-          kubectl get pods -o wide -n ${{steps.analysis.outputs.deploy_namespace}}
+          echo "coming soon"
+          # yarn ios
