@@ -300,6 +300,21 @@ jobs:
           ./gradlew assembleRelease
           ./gradlew bundleRelease
 
+      # release
+      - name: Semantic Release
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/pack-semantic-release@main
+        if: inputs.autoVersioning
+        with:
+          writeSummary: true
+          createRelease: false
+          token: "${{secrets.PIPELINE_DEPLOY_TOKEN}}"
+          installNode: true
+          npmPlugin: false
+          defaultBranch: ${{inputs.mainBranch}}
+          author: ${{steps.analysis.outputs.commiter_name}} 
+          email: ${{steps.analysis.outputs.commiter_email}}
+          files: '["./android/app/build/outputs/apk/release/app-release.apk", "./android/app/build/outputs/bundle/release/app-release.aab"]'
+
 
   #--------------------------------------------------#
   #                       Build                      # 
