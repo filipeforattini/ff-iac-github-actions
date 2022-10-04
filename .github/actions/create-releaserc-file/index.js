@@ -2806,24 +2806,29 @@ const fs = __nccwpck_require__(147);
 const path = __nccwpck_require__(17);
 const core = __nccwpck_require__(186);
 
-async function action() {  
-  let defaultBranch = core.getInput('defaultBranch', { required: true });
-  let files = JSON.parse(core.getInput('files', { required: false }))
-  let npmPlugin = core.getBooleanInput('npmPlugin', { required: false });
+async function action() {
+  let defaultBranch = core.getInput("defaultBranch", { required: true });
+  let files = JSON.parse(core.getInput("files", { required: false }));
+  let npmPlugin = core.getBooleanInput("npmPlugin", { required: false });
   let writeSummary = core.getBooleanInput("writeSummary", { required: true });
+  let createRelease = core.getBooleanInput("createRelease", { required: false });
 
   let plugins = [
     "@semantic-release/commit-analyzer",
     "@semantic-release/release-notes-generator",
     "@semantic-release/changelog",
-  ]
+  ];
 
-  if (npmPlugin) plugins = plugins.concat([[
-    "@semantic-release/npm",
-    {
-      npmPublish: false,
-    },
-  ]]);
+  if (npmPlugin) {
+    plugins = plugins.concat([
+      [
+        "@semantic-release/npm",
+        {
+          npmPublish: false,
+        },
+      ],
+    ]);
+  }
 
   plugins = plugins.concat([
     [
@@ -2834,13 +2839,18 @@ async function action() {
           "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}",
       },
     ],
-    [
-      "@semantic-release/github",
-      {
-        assets: ["README.md", "CHANGELOG.md", ...files],
-      },
-    ],
   ]);
+
+  if (createRelease) {
+    plugins = plugins.concat([
+      [
+        "@semantic-release/github",
+        {
+          assets: ["README.md", "CHANGELOG.md", ...files],
+        },
+      ],
+    ]);
+  }
 
   let releaseFile = {
     defaultBranch,
@@ -2866,7 +2876,7 @@ async function action() {
     plugins,
   };
 
-  const content = JSON.stringify(releaseFile, null, 2)
+  const content = JSON.stringify(releaseFile, null, 2);
   fs.writeFileSync(path.join(process.cwd(), ".releaserc.json"), content);
 
   if (writeSummary) {
@@ -2880,7 +2890,7 @@ async function action() {
         true
       )
       .write();
-  } 
+  }
 }
 
 try {

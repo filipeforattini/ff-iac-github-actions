@@ -18,6 +18,10 @@ inputs:
     required: false
     default: "false"
     description: ""
+  createRelease:
+    required: false
+    default: "false"
+    description: ""
 
 runs:
   using: 'node16'
