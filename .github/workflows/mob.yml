@@ -382,6 +382,7 @@ jobs:
           repo_token: "${{ secrets.PIPELINE_DEPLOY_TOKEN }}"
           prerelease: false
           title: v${{ steps.version.outputs.version }}-${{needs.Setup.outputs.Environment}}
+          automatic_release_tag: v${{ steps.version.outputs.version }}-${{needs.Setup.outputs.Environment}}
           files: |
             README.md
             CHANGELOG.md
