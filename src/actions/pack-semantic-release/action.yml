@@ -39,6 +39,10 @@ inputs:
     required: false
     default: "true"
     description: ""
+  updateChangelog:
+    required: false
+    default: "true"
+    description: ""
 
 runs:
   using: "composite"
@@ -66,6 +70,7 @@ runs:
         files: ${{ inputs.files }}
         npmPlugin: ${{ inputs.npmPlugin }}
         createRelease: ${{ inputs.createRelease }}
+        updateChangelog: ${{ inputs.updateChangelog }}
 
     - name: Setup | NodeJs ${{ inputs.nodejs }}
       uses: actions/setup-node@v3

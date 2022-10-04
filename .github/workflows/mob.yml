@@ -306,7 +306,8 @@ jobs:
         if: inputs.autoVersioning
         with:
           writeSummary: true
-          createRelease: false
+          createRelease: true
+          updateChangelog: false
           token: "${{secrets.PIPELINE_DEPLOY_TOKEN}}"
           installNode: true
           npmPlugin: false

@@ -22,6 +22,10 @@ inputs:
     required: false
     default: "true"
     description: ""
+  updateChangelog:
+    required: false
+    default: "true"
+    description: ""
 
 runs:
   using: 'node16'

@@ -2812,12 +2812,18 @@ async function action() {
   let npmPlugin = core.getBooleanInput("npmPlugin", { required: false });
   let writeSummary = core.getBooleanInput("writeSummary", { required: true });
   let createRelease = core.getBooleanInput("createRelease", { required: false });
+  let updateChangelog = core.getBooleanInput("updateChangelog", { required: false });
 
   let plugins = [
     "@semantic-release/commit-analyzer",
-    "@semantic-release/release-notes-generator",
-    "@semantic-release/changelog",
   ];
+  
+  if (updateChangelog) {
+    plugins = plugins.concat([
+      "@semantic-release/release-notes-generator",
+      "@semantic-release/changelog",
+    ])
+  }
 
   if (npmPlugin) {
     plugins = plugins.concat([
