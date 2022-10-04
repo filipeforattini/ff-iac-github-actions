@@ -1,7 +1,7 @@
 name: app
 
 concurrency:
-  group: ${{github.workflow}}-${{github.event_name}}-${{github.event.deployment.ref}}
+  group: ${{github.workflow}}-${{github.event_name}}
 
 
 #--------------------------------------------------#
