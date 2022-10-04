@@ -362,6 +362,8 @@ jobs:
         uses: actions/checkout@v3
         with:
           ref: env/${{needs.Setup.outputs.Environment}}
+          fetch-depth: 0
+          persist-credentials: false
 
       - name: Version
         id: version
