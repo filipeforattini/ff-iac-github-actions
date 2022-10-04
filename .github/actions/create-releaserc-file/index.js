@@ -2873,6 +2873,9 @@ async function action() {
       { name: "beta", prerelease: true },
       { name: "alpha", prerelease: true },
 
+      // envs
+      { name: "env/*", prerelease: true },
+
       // git-flow
       "bug/*",
       "bugfix/*",
