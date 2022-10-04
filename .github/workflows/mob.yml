@@ -377,6 +377,7 @@ jobs:
 
       - name: Make release
         uses: marvinpinto/action-automatic-releases@latest
+        continue-on-error: true
         with:
           repo_token: "${{ secrets.PIPELINE_DEPLOY_TOKEN }}"
           prerelease: false
