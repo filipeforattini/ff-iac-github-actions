@@ -294,14 +294,15 @@ jobs:
             ${{ runner.os }}-gradle-caches-
             ${{ runner.os }}-gradle-caches-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}
 
-      - name: Build
+      - name: Build Android
         run: |
           cd ./android;
           ./gradlew build --no-daemon
           ./gradlew assembleRelease
           ./gradlew bundleRelease
 
-      - uses: actions/upload-artifact@v3
+      - name: Upload | Android artifacts
+        uses: actions/upload-artifact@v3
         with:
           name: android-artifacts
           path: android/app/build/outputs/
@@ -367,7 +368,7 @@ jobs:
         run: |
           echo "::set-output name=version::$(cat package.json | jq -r '.version')"
 
-      - name: Download Android artifacts
+      - name: Download | Android artifacts
         uses: actions/download-artifact@v3
         with:
           name: android-artifacts
@@ -377,7 +378,7 @@ jobs:
         uses: marvinpinto/action-automatic-releases@latest
         with:
           repo_token: "${{ secrets.PIPELINE_DEPLOY_TOKEN }}"
-          automatic_release_tag: ${{steps.versions.outputs.version}}
+          automatic_release_tag: ${{ steps.version.outputs.version }}
           prerelease: true
           title: "${{needs.Setup.outputs.Environment}} Build"
           files: |
