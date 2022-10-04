@@ -1,7 +1,7 @@
 name: mob
 
 concurrency:
-  group: ${{github.workflow}}-${{github.event_name}}
+  group: ${{github.workflow}}-${{github.event_name}}-${{github.event.deployment.ref}}
 
 
 #--------------------------------------------------#
@@ -345,6 +345,7 @@ jobs:
   Build-Release:
     runs-on: ubuntu-latest
     if: github.event_name == 'deployment'
+    environment: ${{needs.Setup.outputs.Environment}}
 
     needs: 
       - Setup
