@@ -366,7 +366,9 @@ jobs:
       - name: Version
         id: version
         run: |
-          echo "::set-output name=version::$(cat package.json | jq -r '.version')"
+          NEXT_VERSION=$(git for-each-ref --sort=authordate --format '%(refname)' refs/tags | tail -n 1 | sed -n -e 's/^.*refs\/tags\/v//p')
+          echo "next version = $NEXT_VERSION"
+          echo "::set-output name=version::$NEXT_VERSION"
 
       - name: Download | Android artifacts
         uses: actions/download-artifact@v3
@@ -380,12 +382,13 @@ jobs:
           repo_token: "${{ secrets.PIPELINE_DEPLOY_TOKEN }}"
           automatic_release_tag: ${{ steps.version.outputs.version }}
           prerelease: true
-          title: "${{needs.Setup.outputs.Environment}} Build"
+          title: ${{ steps.version.outputs.version }}
           files: |
             README.md
             CHANGELOG.md
             LICENSE
             UNLICENSE
+            package.json
             android/app/build/outputs/apk/debug/app-debug.apk
             android/app/build/outputs/apk/release/app-release.apk
             android/app/build/outputs/bundle/release/app-release.aab
