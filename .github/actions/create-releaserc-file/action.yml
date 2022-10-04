@@ -20,7 +20,7 @@ inputs:
     description: ""
   createRelease:
     required: false
-    default: "false"
+    default: "true"
     description: ""
 
 runs:
