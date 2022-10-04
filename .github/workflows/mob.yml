@@ -314,7 +314,7 @@ jobs:
           defaultBranch: ${{inputs.mainBranch}}
           author: ${{steps.analysis.outputs.commiter_name}} 
           email: ${{steps.analysis.outputs.commiter_email}}
-          files: '["./android/app/build/outputs/apk/release/app-release.apk", "./android/app/build/outputs/bundle/release/app-release.aab"]'
+          files: '["android/app/build/outputs/apk/debug/app-debug.apk", "android/app/build/outputs/apk/release/app-release.apk", "android/app/build/outputs/bundle/release/app-release.aab"]'
 
 
   #--------------------------------------------------#
