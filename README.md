@@ -277,23 +277,17 @@ Add to your `build.gradle` config:
 ```gradle
 signingConfigs {
     debug {
-        def keystore = System.getenv("MY_KEYSTORE")
-        def kAlias = System.getenv("MY_KEYSTORE_ALIAS")
-        def kPass = System.getenv("MY_KEYSTORE_PASS")
-        
-        storeFile file("$keystore")
+        def kPass = System.getenv("ANDROID_KEYSTORE_PASSWORD")
+        storeFile file("~/.android/ff-pipeline.jks")
+        keyAlias = "pipeline-key"
         storePassword "$kPass"
-        keyAlias = "$kAlias"
         keyPassword "$kPass"
     }
     release {
-        def keystore = System.getenv("MY_KEYSTORE")
-        def kAlias = System.getenv("MY_KEYSTORE_ALIAS")
-        def kPass = System.getenv("MY_KEYSTORE_PASS")
-
-        storeFile file("$keystore")
+        def kPass = System.getenv("ANDROID_KEYSTORE_PASSWORD")
+        storeFile file("~/.android/ff-pipeline.jks")
+        keyAlias = "pipeline-key"
         storePassword "$kPass"
-        keyAlias = "$kAlias"
         keyPassword "$kPass"
     }
 }

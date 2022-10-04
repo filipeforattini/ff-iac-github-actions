@@ -263,14 +263,21 @@ jobs:
         run: |
           echo "### 🚢 Build Android" >> $GITHUB_STEP_SUMMARY
 
-      - name: Install | Dependency managers
-        run: npm -g install yarn npm
-
       # install dependencies
       - name: Install dependencies
         run: |
           if test -f ./package-lock.json; then npm ci --force --no-fund --no-audit; fi
           if test -f ./yarn.lock; then yarn install --frozen-lockfile --ignore-optional --immutable; fi
+
+      # sign
+      - name: Get signature
+        run: |
+          mkdir -p ~/.android
+          echo "$ANDROID_KEYSTORE_CERT" > ~/.android/pipeline-key.pem
+          keytool -import \
+            -keystore ~/.android/ff-pipeline.jks \
+            -alias pipeline-key \
+            -file ~/.android/pipeline-key.pem
 
       # build
       - name: Copy config
@@ -298,7 +305,9 @@ jobs:
           ./gradlew build --no-daemon
           ./gradlew assembleRelease
           ./gradlew bundleRelease
+      
 
+      # upload artifacts
       - name: Upload | Android artifacts
         uses: actions/upload-artifact@v3
         with:
