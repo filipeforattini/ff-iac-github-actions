@@ -35,6 +35,10 @@ inputs:
     required: false
     default: "false"
     description: ""
+  createRelease:
+    required: false
+    default: "true"
+    description: ""
 
 runs:
   using: "composite"
@@ -61,6 +65,7 @@ runs:
         defaultBranch: ${{ inputs.defaultBranch }}
         files: ${{ inputs.files }}
         npmPlugin: ${{ inputs.npmPlugin }}
+        createRelease: ${{ inputs.createRelease }}
 
     - name: Setup | NodeJs ${{ inputs.nodejs }}
       uses: actions/setup-node@v3
