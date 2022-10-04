@@ -250,15 +250,13 @@ jobs:
       - name: Pipeline config scrapper
         id: analysis
         uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
-        with:
-          containerRegistry: ${{inputs.containerRegistry}}
 
       - name: Setup | Dependencies
         if: inputs.installNode
         uses: filipeforattini/ff-iac-github-actions/.github/actions/setup-binaries@main
         with:
-          nodejs: 18
           java: 17
+          nodejs: 18
 
       # pre-build
       - name: Docs | Write summary title
@@ -309,7 +307,7 @@ jobs:
 
 
   #--------------------------------------------------#
-  #                       Build                      # 
+  #                     Build iOS                    # 
   #--------------------------------------------------#
   Build-iOS:
     runs-on: ubuntu-latest
@@ -329,8 +327,6 @@ jobs:
       - name: Pipeline config scrapper
         id: analysis
         uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
-        with:
-          containerRegistry: ${{inputs.containerRegistry}}
 
       # pre-build
       - name: Docs | Write summary title
@@ -379,11 +375,11 @@ jobs:
           path: android/app/build/outputs/
 
       - name: Make release
-        uses: marvinpinto/action-automatic-releases@latest
+        uses: marvinpinto/action-automatic-releases@1.2.1
         with:
           repo_token: "${{ secrets.PIPELINE_DEPLOY_TOKEN }}"
-          automatic_release_tag: ${{ steps.version.outputs.version }}
           prerelease: false
+          automatic_release_tag: ${{ steps.version.outputs.version }}-${{needs.Setup.outputs.Environment}}
           title: ${{ steps.version.outputs.version }}-${{needs.Setup.outputs.Environment}}
           files: |
             README.md
