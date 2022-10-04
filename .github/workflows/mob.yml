@@ -376,7 +376,7 @@ jobs:
           path: android/app/build/outputs/
 
       - name: Make release
-        uses: marvinpinto/action-automatic-releases@1.2.1
+        uses: marvinpinto/action-automatic-releases@latest
         with:
           repo_token: "${{ secrets.PIPELINE_DEPLOY_TOKEN }}"
           prerelease: false
