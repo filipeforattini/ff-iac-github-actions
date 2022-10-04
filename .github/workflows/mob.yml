@@ -367,12 +367,14 @@ jobs:
         run: |
           echo "::set-output name=version::$(cat package.json | jq -r '.version')"
 
-      - uses: actions/download-artifact@v3
+      - name: Download Android artifacts
+        uses: actions/download-artifact@v3
         with:
           name: android-artifacts
           path: android/app/build/outputs/
 
-      - uses: marvinpinto/action-automatic-releases@latest
+      - name: Make release
+        uses: marvinpinto/action-automatic-releases@latest
         with:
           repo_token: "${{ secrets.PIPELINE_DEPLOY_TOKEN }}"
           automatic_release_tag: ${{steps.versions.outputs.version}}

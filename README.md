@@ -272,6 +272,33 @@ keytool -export \
   -file pipeline-key.pem
 ```
 
+Add to your `build.gradle` config:
+
+```gradle
+signingConfigs {
+    debug {
+        def keystore = System.getenv("MY_KEYSTORE")
+        def kAlias = System.getenv("MY_KEYSTORE_ALIAS")
+        def kPass = System.getenv("MY_KEYSTORE_PASS")
+        
+        storeFile file("$keystore")
+        storePassword "$kPass"
+        keyAlias = "$kAlias"
+        keyPassword "$kPass"
+    }
+    release {
+        def keystore = System.getenv("MY_KEYSTORE")
+        def kAlias = System.getenv("MY_KEYSTORE_ALIAS")
+        def kPass = System.getenv("MY_KEYSTORE_PASS")
+
+        storeFile file("$keystore")
+        storePassword "$kPass"
+        keyAlias = "$kAlias"
+        keyPassword "$kPass"
+    }
+}
+
+```
 
 ### Requirements
 
