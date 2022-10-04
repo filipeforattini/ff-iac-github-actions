@@ -179,7 +179,7 @@ flowchart
 
 Add this pipeline to your repository creating a file `pipeline.yml` in your `.github/workflows` directory.
 
-#### For SVC
+#### `SVC` pipeline
 ```yml
 name: pipeline
 
@@ -243,6 +243,35 @@ ingress:
     enable: true
     domain: your.domain
 ```
+
+#### `MOB` pipeline
+
+##### Requirements
+###### Android
+
+Follow the [Android Developer Guide](https://developer.android.com/studio/publish/app-signing) for more insights.
+
+Generate your key:
+
+```bash
+keytool -genkey -v \
+  -keystore $HOME/.android/ff-pipeline.jks \
+  -alias pipeline-key \
+  -keyalg RSA \
+  -keysize 2048 \
+  -validity 10000
+```
+
+Export your key with `keytool` from Android's:
+
+```bash
+keytool -export \
+  -rfc \
+  -keystore $HOME/.android/ff-pipeline.jks \
+  -alias pipeline-key \
+  -file pipeline-key.pem
+```
+
 
 ### Requirements
 

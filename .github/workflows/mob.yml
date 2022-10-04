@@ -111,6 +111,7 @@ jobs:
     if: needs.Setup.outputs.Event == 'push'
 
     needs: 
+      - Setup
       - Static-Analysis
 
     outputs:
@@ -132,17 +133,16 @@ jobs:
       # release
       - name: Semantic Release
         uses: filipeforattini/ff-iac-github-actions/.github/actions/pack-semantic-release@main
-        if: inputs.autoVersioning
         with:
-          writeSummary: true
-          createRelease: false
           token: "${{secrets.PIPELINE_DEPLOY_TOKEN}}"
+          writeSummary: false
+          createRelease: false
+          updateChangelog: true
           installNode: true
           npmPlugin: false
           defaultBranch: ${{inputs.mainBranch}}
           author: ${{steps.analysis.outputs.commiter_name}} 
           email: ${{steps.analysis.outputs.commiter_email}}
-          files: '[]'
 
       - name: Current Version
         id: versioning
@@ -292,6 +292,7 @@ jobs:
           key: ${{ runner.os }}-gradle-caches-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-caches-
+            ${{ runner.os }}-gradle-caches-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}
 
       - name: Build
         run: |
@@ -300,21 +301,10 @@ jobs:
           ./gradlew assembleRelease
           ./gradlew bundleRelease
 
-      # release
-      - name: Semantic Release
-        uses: filipeforattini/ff-iac-github-actions/.github/actions/pack-semantic-release@main
-        if: inputs.autoVersioning
+      - uses: actions/upload-artifact@v3
         with:
-          writeSummary: true
-          createRelease: true
-          updateChangelog: false
-          token: "${{secrets.PIPELINE_DEPLOY_TOKEN}}"
-          installNode: true
-          npmPlugin: false
-          defaultBranch: ${{inputs.mainBranch}}
-          author: ${{steps.analysis.outputs.commiter_name}} 
-          email: ${{steps.analysis.outputs.commiter_email}}
-          files: '["android/app/build/outputs/apk/debug/app-debug.apk", "android/app/build/outputs/apk/release/app-release.apk", "android/app/build/outputs/bundle/release/app-release.aab"]'
+          name: android-artifacts
+          path: android/app/build/outputs/
 
 
   #--------------------------------------------------#
@@ -350,3 +340,49 @@ jobs:
         run: |
           echo "coming soon"
           # yarn ios
+
+
+  #--------------------------------------------------#
+  #                   Build Release                  # 
+  #--------------------------------------------------#
+  Build-Release:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'deployment'
+
+    needs: 
+      - Setup
+      - Build-Android
+      - Build-iOS
+
+    steps:
+
+      # pre-job
+      - name: Setup | Cloning tools
+        uses: actions/checkout@v3
+        with:
+          ref: env/${{needs.Setup.outputs.Environment}}
+
+      - name: Version
+        id: version
+        run: |
+          echo "::set-output name=version::$(cat package.json | jq -r '.version')"
+
+      - uses: actions/download-artifact@v3
+        with:
+          name: android-artifacts
+          path: android/app/build/outputs/
+
+      - uses: marvinpinto/action-automatic-releases@latest
+        with:
+          repo_token: "${{ secrets.PIPELINE_DEPLOY_TOKEN }}"
+          automatic_release_tag: ${{steps.versions.outputs.version}}
+          prerelease: true
+          title: "${{needs.Setup.outputs.Environment}} Build"
+          files: |
+            README.md
+            CHANGELOG.md
+            LICENSE
+            UNLICENSE
+            android/app/build/outputs/apk/debug/app-debug.apk
+            android/app/build/outputs/apk/release/app-release.apk
+            android/app/build/outputs/bundle/release/app-release.aab
