@@ -67,7 +67,7 @@ metadata:
   annotations: #@ serviceAnnotations
 
 spec:
-  type: LoadBalancer
+  type: NodePort
 
   #@  if data.values.service.selector.overwrite:
   selector: #@ data.values.service.selector.labels
