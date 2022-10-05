@@ -326,9 +326,6 @@ jobs:
           apksigner verify --verbose --print-certs -v4-signature-file android/app/build/outputs/apk/release/app-release.apk.idsig android/app/build/outputs/apk/release/app-release.apk
 
       - name: Gradle | Bundle Release
-        env:
-          ANDROID_KEYSTORE_PATH: '~/.android/pipeline-key.jks'
-          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
         run: |
           cd ./android; ./gradlew bundleRelease
 
