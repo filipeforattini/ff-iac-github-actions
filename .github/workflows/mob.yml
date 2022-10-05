@@ -269,7 +269,7 @@ jobs:
           if test -f ./package-lock.json; then npm ci --force --no-fund --no-audit; fi
           if test -f ./yarn.lock; then yarn install --frozen-lockfile --ignore-optional --immutable; fi
 
-      # sign
+      # signature
       - name: Get signature
         run: |
           mkdir -p ~/.android
@@ -280,10 +280,6 @@ jobs:
             -file ~/.android/pipeline-key.pem
 
       # build
-      - name: Copy config
-        run: |
-          if test -f ./manifests/configs/${{needs.Setup.outputs.Environment}}.env; then cp ./manifests/configs/${{needs.Setup.outputs.Environment}}.env ./.env; fi
-
       - name: Cache Gradle Wrapper
         uses: actions/cache@v2
         with:
@@ -299,13 +295,22 @@ jobs:
             ${{ runner.os }}-gradle-caches-
             ${{ runner.os }}-gradle-caches-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}
 
+      - name: Copy config
+        run: |
+          if test -f ./manifests/configs/${{needs.Setup.outputs.Environment}}.env; then cp ./manifests/configs/${{needs.Setup.outputs.Environment}}.env ./.env; fi
+
+      - name: Assets
+        run: |
+          mkdir -p android/app/src/main/assets
+          ./node_modules/.bin/react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res
+
       - name: Build Android
         run: |
           cd ./android;
           ./gradlew build --no-daemon
+          ./gradlew assembleDebug
           ./gradlew assembleRelease
           ./gradlew bundleRelease
-      
 
       # upload artifacts
       - name: Upload | Android artifacts
