@@ -54,6 +54,7 @@ jobs:
       Analysis: ${{steps.analysis.outputs.result}}
       Environment: ${{steps.analysis.outputs.environment}}
       Repository: ${{steps.analysis.outputs.repository}}
+      Pwd: ${{steps.analysis.outputs.pwd}}
 
     steps:
 
@@ -241,8 +242,8 @@ jobs:
       - Setup
 
     env:
-      ANDROID_KEYSTORE_PATH: 'android/pipeline-key.jks'
-      ANDROID_KEYSTORE_CERTPATH: 'android/pipeline-key.pem'
+      ANDROID_KEYSTORE_PATH: ${{needs.Setup.outputs.Pwd}}/android/pipeline-key.jks
+      ANDROID_KEYSTORE_CERTPATH: ${{needs.Setup.outputs.Pwd}}/android/pipeline-key.pem
       ANDROID_KEYSTORE_CERT: ${{ secrets.ANDROID_KEYSTORE_CERT }}
       ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
 
@@ -303,6 +304,9 @@ jobs:
             -alias pipeline-key \
             -storepass $ANDROID_KEYSTORE_PASSWORD \
             -file $ANDROID_KEYSTORE_CERTPATH
+          keytool -list \
+            -keystore $ANDROID_KEYSTORE_CERTPATH \
+            -storepass $ANDROID_KEYSTORE_PASSWORD
 
       # build
       - name: Copy config
@@ -318,7 +322,7 @@ jobs:
             --entry-file index.js \
             --bundle-output android/app/src/main/assets/index.android.bundle \
             --assets-dest android/app/src/main/res/
-          cd ./android; ./gradlew assembleDebug
+          cd ./android; ./gradlew assembleDebug; cd ..;
 
       - name: Gradle | Assemble Release
         run: |
@@ -330,7 +334,7 @@ jobs:
             --assets-dest android/app/build/intermediates/res/merged/release/
           rm -rf android/app/src/main/res/drawable-*
           rm -rf android/app/src/main/res/raw/*
-          cd ./android; ./gradlew assembleRelease
+          cd ./android; ./gradlew assembleRelease; cd ..;
 
       - name: Gradle | Sign APKSs
         run: |
