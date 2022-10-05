@@ -304,10 +304,6 @@ jobs:
           mkdir -p android/app/src/main/assets
           ./node_modules/.bin/react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res
 
-      - name: Build Android
-        run: |
-          cd ./android; ./gradlew build --no-daemon
-
       - name: Assemble Debug
         run: |
           cd ./android; ./gradlew assembleDebug
