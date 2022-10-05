@@ -139,7 +139,7 @@ jobs:
           createRelease: false
           updateChangelog: true
           installNode: true
-          npmPlugin: false
+          npmPlugin: true
           defaultBranch: ${{inputs.mainBranch}}
           author: ${{steps.analysis.outputs.commiter_name}} 
           email: ${{steps.analysis.outputs.commiter_email}}
