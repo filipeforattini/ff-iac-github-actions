@@ -411,9 +411,9 @@ jobs:
       
       - name: Prettify
         run: |
-          cp android/app/build/outputs/apk/debug/app-debug.apk android/app/build/outputs/apk/debug/${{needs.Setup.outputs.Repository}}-${{ steps.version.outputs.version }}-debug.apk
-          cp android/app/build/outputs/apk/release/app-release.apk android/app/build/outputs/apk/release/${{needs.Setup.outputs.Repository}}-${{ steps.version.outputs.version }}-release.apk
-          cp android/app/build/outputs/bundle/release/app-release.aab android/app/build/outputs/bundle/release/${{needs.Setup.outputs.Repository}}-${{ steps.version.outputs.version }}.aab
+          cp android/app/build/outputs/apk/debug/app-debug.apk android/app/build/outputs/apk/debug/${{needs.Setup.outputs.Repository}}-debug.${{ steps.version.outputs.version }}.apk
+          cp android/app/build/outputs/apk/release/app-release.apk android/app/build/outputs/apk/release/${{needs.Setup.outputs.Repository}}-release.${{ steps.version.outputs.version }}.apk
+          cp android/app/build/outputs/bundle/release/app-release.aab android/app/build/outputs/bundle/release/${{needs.Setup.outputs.Repository}}.${{ steps.version.outputs.version }}.aab
 
       - name: Make release
         uses: marvinpinto/action-automatic-releases@latest
@@ -424,6 +424,6 @@ jobs:
           title: v${{ steps.version.outputs.version }}-${{needs.Setup.outputs.Environment}}
           automatic_release_tag: v${{ steps.version.outputs.version }}-${{needs.Setup.outputs.Environment}}
           files: |
-            android/app/build/outputs/apk/debug/${{needs.Setup.outputs.Repository}}-${{ steps.version.outputs.version }}-debug.apk
-            android/app/build/outputs/apk/release/${{needs.Setup.outputs.Repository}}-${{ steps.version.outputs.version }}-release.apk
-            android/app/build/outputs/bundle/release/${{needs.Setup.outputs.Repository}}-${{ steps.version.outputs.version }}.aab
+            android/app/build/outputs/apk/debug/${{needs.Setup.outputs.Repository}}-debug.${{ steps.version.outputs.version }}.apk
+            android/app/build/outputs/apk/release/${{needs.Setup.outputs.Repository}}-release.${{ steps.version.outputs.version }}.apk
+            android/app/build/outputs/bundle/release/${{needs.Setup.outputs.Repository}}.${{ steps.version.outputs.version }}.aab
