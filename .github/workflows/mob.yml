@@ -306,11 +306,19 @@ jobs:
 
       - name: Build Android
         run: |
-          cd ./android;
-          ./gradlew build --no-daemon
-          ./gradlew assembleDebug
-          ./gradlew assembleRelease
-          ./gradlew bundleRelease
+          cd ./android; ./gradlew build --no-daemon
+
+      - name: Assemble Debug
+        run: |
+          cd ./android; ./gradlew assembleDebug
+
+      - name: Assemble Release
+        run: |
+          cd ./android; ./gradlew assembleRelease
+
+      - name: Bundle Release
+        run: |
+          cd ./android; ./gradlew bundleRelease
 
       # upload artifacts
       - name: Upload | Android artifacts
