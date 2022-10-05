@@ -53,6 +53,7 @@ jobs:
       Event: ${{steps.analysis.outputs.event}}
       Analysis: ${{steps.analysis.outputs.result}}
       Environment: ${{steps.analysis.outputs.environment}}
+      Repository: ${{steps.analysis.outputs.repository}}
 
     steps:
 
@@ -269,17 +270,7 @@ jobs:
           if test -f ./package-lock.json; then npm ci --force --no-fund --no-audit; fi
           if test -f ./yarn.lock; then yarn install --frozen-lockfile --ignore-optional --immutable; fi
 
-      # signature
-      - name: Get signature
-        run: |
-          mkdir -p ~/.android
-          echo "$ANDROID_KEYSTORE_CERT" > ~/.android/pipeline-key.pem
-          keytool -import \
-            -keystore ~/.android/ff-pipeline.jks \
-            -alias pipeline-key \
-            -file ~/.android/pipeline-key.pem
-
-      # build
+      # cache
       - name: Cache Gradle Wrapper
         uses: actions/cache@v2
         with:
@@ -295,17 +286,34 @@ jobs:
             ${{ runner.os }}-gradle-caches-
             ${{ runner.os }}-gradle-caches-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}
 
+      # signature
+      - name: Get signature
+        run: |
+          mkdir -p ~/.android
+          echo "$ANDROID_KEYSTORE_CERT" > ~/.android/pipeline-key.pem
+          keytool -import \
+            -keystore ~/.android/ff-pipeline.jks \
+            -alias pipeline-key \
+            -file ~/.android/pipeline-key.pem
+
+      # build
       - name: Copy config
         run: |
           if test -f ./manifests/configs/${{needs.Setup.outputs.Environment}}.env; then cp ./manifests/configs/${{needs.Setup.outputs.Environment}}.env ./.env; fi
 
       - name: Gradle | Assemble Debug
+        env:
+          ANDROID_KEYSTORE_PATH: '~/.android/pipeline-key.jks'
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
         run: |
           mkdir -p android/app/src/main/assets
           ./node_modules/.bin/react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res/
           cd ./android; ./gradlew assembleDebug
 
       - name: Gradle | Assemble Release
+        env:
+          ANDROID_KEYSTORE_PATH: '~/.android/pipeline-key.jks'
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
         run: |
           ./node_modules/.bin/react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/build/intermediates/res/merged/release/
           rm -rf android/app/src/main/res/drawable-*
@@ -313,6 +321,9 @@ jobs:
           cd ./android; ./gradlew assembleRelease
 
       - name: Gradle | Bundle Release
+        env:
+          ANDROID_KEYSTORE_PATH: '~/.android/pipeline-key.jks'
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
         run: |
           cd ./android; ./gradlew bundleRelease
 
@@ -392,6 +403,12 @@ jobs:
         with:
           name: android-artifacts
           path: android/app/build/outputs/
+      
+      - name: Prettify
+        run: |
+          cp android/app/build/outputs/apk/debug/app-debug.apk android/app/build/outputs/apk/debug/${{needs.Setup.outputs.Repository}}-${{ steps.version.outputs.version }}-debug.apk
+          cp android/app/build/outputs/apk/release/app-release.apk android/app/build/outputs/apk/release/${{needs.Setup.outputs.Repository}}-${{ steps.version.outputs.version }}-release.apk
+          cp android/app/build/outputs/bundle/release/app-release.aab android/app/build/outputs/bundle/release/${{needs.Setup.outputs.Repository}}-${{ steps.version.outputs.version }}.aab
 
       - name: Make release
         uses: marvinpinto/action-automatic-releases@latest
@@ -407,6 +424,6 @@ jobs:
             LICENSE
             UNLICENSE
             package.json
-            android/app/build/outputs/apk/debug/app-debug.apk
-            android/app/build/outputs/apk/release/app-release.apk
-            android/app/build/outputs/bundle/release/app-release.aab
+            android/app/build/outputs/apk/debug/${{needs.Setup.outputs.Repository}}-${{ steps.version.outputs.version }}-debug.apk
+            android/app/build/outputs/apk/release/${{needs.Setup.outputs.Repository}}-${{ steps.version.outputs.version }}-release.apk
+            android/app/build/outputs/bundle/release/${{needs.Setup.outputs.Repository}}-${{ steps.version.outputs.version }}.aab

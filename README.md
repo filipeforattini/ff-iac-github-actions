@@ -272,26 +272,29 @@ keytool -export \
   -file pipeline-key.pem
 ```
 
+Add the variable `ANDROID_KEYSTORE_PASSWORD` with the password used:
+Add the variable `ANDROID_KEYSTORE_CERT` with the value of `pipeline-key.pem`:
+
+```bash
+# cat pipeline-key.pem
+-----BEGIN CERTIFICATE-----
+...
+-----END CERTIFICATE-----
+```
+
 Add to your `build.gradle` config:
 
-```gradle
-signingConfigs {
-    debug {
-        def kPass = System.getenv("ANDROID_KEYSTORE_PASSWORD")
-        storeFile file("~/.android/ff-pipeline.jks")
-        keyAlias = "pipeline-key"
-        storePassword "$kPass"
-        keyPassword "$kPass"
+```groovy
+android {
+  signingConfigs {
+    config {
+      storeFile file(System.getenv("ANDROID_KEYSTORE_PATH"))
+      storePassword System.getenv("ANDROID_KEYSTORE_PASSWORD")
+      keyAlias "pipeline-key"
+      keyPassword System.getenv("ANDROID_KEYSTORE_PASSWORD")
     }
-    release {
-        def kPass = System.getenv("ANDROID_KEYSTORE_PASSWORD")
-        storeFile file("~/.android/ff-pipeline.jks")
-        keyAlias = "pipeline-key"
-        storePassword "$kPass"
-        keyPassword "$kPass"
-    }
+  }
 }
-
 ```
 
 ### Requirements
