@@ -240,6 +240,12 @@ jobs:
     needs: 
       - Setup
 
+    env:
+      ANDROID_KEYSTORE_PATH: '~/pipeline-key.jks'
+      ANDROID_KEYSTORE_CERTPATH: '~/pipeline-key.pem'
+      ANDROID_KEYSTORE_CERT: ${{ secrets.ANDROID_KEYSTORE_CERT }}
+      ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+
     steps:
 
       # pre-job
@@ -288,11 +294,6 @@ jobs:
 
       # signature
       - name: Get signature
-        env:
-          ANDROID_KEYSTORE_PATH: '~/.android/pipeline-key.jks'
-          ANDROID_KEYSTORE_CERTPATH: '~/.android/pipeline-key.jks'
-          ANDROID_KEYSTORE_CERT: ${{ secrets.ANDROID_KEYSTORE_CERT }}
-          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
         run: |
           mkdir -p ~/.android
           echo "$ANDROID_KEYSTORE_CERT" > $ANDROID_KEYSTORE_CERTPATH
@@ -321,9 +322,6 @@ jobs:
           cd ./android; ./gradlew assembleRelease
 
       - name: Gradle | Sign APKSs
-        env:
-          ANDROID_KEYSTORE_PATH: '~/.android/pipeline-key.jks'
-          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
         run: |
           sudo apt-get install -y apksigner
           apksigner sign \
