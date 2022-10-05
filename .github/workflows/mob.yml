@@ -419,11 +419,6 @@ jobs:
           title: v${{ steps.version.outputs.version }}-${{needs.Setup.outputs.Environment}}
           automatic_release_tag: v${{ steps.version.outputs.version }}-${{needs.Setup.outputs.Environment}}
           files: |
-            README.md
-            CHANGELOG.md
-            LICENSE
-            UNLICENSE
-            package.json
             android/app/build/outputs/apk/debug/${{needs.Setup.outputs.Repository}}-${{ steps.version.outputs.version }}-debug.apk
             android/app/build/outputs/apk/release/${{needs.Setup.outputs.Repository}}-${{ steps.version.outputs.version }}-release.apk
             android/app/build/outputs/bundle/release/${{needs.Setup.outputs.Repository}}-${{ steps.version.outputs.version }}.aab
