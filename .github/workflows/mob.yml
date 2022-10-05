@@ -297,6 +297,8 @@ jobs:
         run: |
           echo "$ANDROID_KEYSTORE_CERT" > $ANDROID_KEYSTORE_CERTPATH
           keytool -import \
+            -noprompt \
+            -trustcacerts \
             -keystore $ANDROID_KEYSTORE_PATH \
             -alias pipeline-key \
             -storepass $ANDROID_KEYSTORE_PASSWORD \
