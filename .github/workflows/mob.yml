@@ -302,23 +302,28 @@ jobs:
           if test -f ./manifests/configs/${{needs.Setup.outputs.Environment}}.env; then cp ./manifests/configs/${{needs.Setup.outputs.Environment}}.env ./.env; fi
 
       - name: Gradle | Assemble Debug
-        env:
-          ANDROID_KEYSTORE_PATH: '~/.android/pipeline-key.jks'
-          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
         run: |
           mkdir -p android/app/src/main/assets
           ./node_modules/.bin/react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res/
           cd ./android; ./gradlew assembleDebug
 
       - name: Gradle | Assemble Release
-        env:
-          ANDROID_KEYSTORE_PATH: '~/.android/pipeline-key.jks'
-          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
         run: |
           ./node_modules/.bin/react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/build/intermediates/res/merged/release/
           rm -rf android/app/src/main/res/drawable-*
           rm -rf android/app/src/main/res/raw/*
           cd ./android; ./gradlew assembleRelease
+
+      - name: Gradle | Sign APKSs
+        env:
+          ANDROID_KEYSTORE_PATH: '~/.android/pipeline-key.jks'
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+        run: |
+          sudo apt-get install -y apksigner
+          apksigner sign --ks $ANDROID_KEYSTORE_PATH --ks-key-alias pipeline-key --key-pass pass:$ANDROID_KEYSTORE_PASSWORD android/app/build/outputs/apk/debug/app-debug.apk
+          apksigner verify --verbose --print-certs -v4-signature-file android/app/build/outputs/apk/debug/app-debug.apk.idsig android/app/build/outputs/apk/debug/app-debug.apk
+          apksigner sign --ks $ANDROID_KEYSTORE_PATH --ks-key-alias pipeline-key --key-pass pass:$ANDROID_KEYSTORE_PASSWORD android/app/build/outputs/apk/release/app-release.apk
+          apksigner verify --verbose --print-certs -v4-signature-file android/app/build/outputs/apk/release/app-release.apk.idsig android/app/build/outputs/apk/release/app-release.apk
 
       - name: Gradle | Bundle Release
         env:
