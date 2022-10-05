@@ -305,7 +305,7 @@ jobs:
             -storepass $ANDROID_KEYSTORE_PASSWORD \
             -file $ANDROID_KEYSTORE_CERTPATH
           keytool -list \
-            -keystore $ANDROID_KEYSTORE_CERTPATH \
+            -keystore $ANDROID_KEYSTORE_PATH \
             -storepass $ANDROID_KEYSTORE_PASSWORD
 
       # build
