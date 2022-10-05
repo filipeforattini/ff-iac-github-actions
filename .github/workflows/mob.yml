@@ -183,8 +183,8 @@ jobs:
           git commit --allow-empty -am "deploy: to dev [skip ci]\\nVersion: ${{needs.Release.outputs.Version}}\nCommit: ${{steps.setup.outputs.commit_hash}}"
           git push -f -u origin env/dev
 
-      - uses: altinukshini/deployment-action@releases/v1
-        name: Create GitHub deployment
+      - name: Create GitHub deployment
+        uses: altinukshini/deployment-action@releases/v1
         id: deployment
         with:
           token: "${{ secrets.PIPELINE_DEPLOY_TOKEN }}"
