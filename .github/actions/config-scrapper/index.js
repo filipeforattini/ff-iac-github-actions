@@ -111593,7 +111593,7 @@ var deploy = async (analysis) => {
   if (_$2.isString(analysis.environment)) {
     if(fs$1.existsSync(path$1.join(analysis.root, 'manifests', 'configs', `${analysis.environment}.env`))) {
       args = fs$1.readFileSync(path$1.join(analysis.root, 'manifests', 'configs', `${analysis.environment}.env`));
-      args = args.toString().trim().split('\n').map(x => `--build-arg ${x}`).join(',');
+      args = args.toString().trim().split('\n').map(x => `--build-arg ${x}`).join(' ');
     }
   }
 
