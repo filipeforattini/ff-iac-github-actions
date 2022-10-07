@@ -77,7 +77,7 @@ module.exports = async (analysis) => {
   if (_.isString(analysis.environment)) {
     if(fs.existsSync(path.join(analysis.root, 'manifests', 'configs', `${analysis.environment}.env`))) {
       args = fs.readFileSync(path.join(analysis.root, 'manifests', 'configs', `${analysis.environment}.env`))
-      args = args.toString().trim().split('\n').join(',')
+      args = args.toString().trim().split('\n').map(x => `--build-arg ${x}`).join(',')
     }
   }
 
