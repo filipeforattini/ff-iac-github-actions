@@ -239,7 +239,34 @@
     limits: []
     #@schema/type any=True
     requests: []
+#@ end
 
+#@ def defaultMongodb():
+  architecture: standalone
+  auth:
+    database:	svc
+    username:	svc
+  #@schema/type any=True
+  extraEnvVars: []
+  image:
+    debug: false
+    pullPolicy: IfNotPresent
+    registry: docker.io
+    repository: bitnami/mongodb
+    tag: 6.0.2-debian-11-r1
+  metrics:
+    enabled: false
+  #@schema/type any=True
+  nodeSelector: []
+  persistence:
+    enabled: false
+    size: 2Gi	
+    storageClass: ""
+  resources:
+    #@schema/type any=True
+    limits: []
+    #@schema/type any=True
+    requests: []
 #@ end
 
 #@data/values-schema
@@ -306,5 +333,14 @@ etcd:
   version: 8.3.6
   chart: bitnami/etcd
   #@schema/default defaultEtcd()
+  #@schema/type any=True
+  values: {}
+
+#! MONGODB
+mongodb:
+  enabled: false
+  version: 13.1.7
+  chart: bitnami/mongodb
+  #@schema/default defaultMongodb()
   #@schema/type any=True
   values: {}

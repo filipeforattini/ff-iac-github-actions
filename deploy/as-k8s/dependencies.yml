@@ -302,3 +302,46 @@ etcd:
   #@    },
   #@  })
   values: #@ etcdValues
+
+mongodb:
+  enabled: #@ data.values.mongodb.enabled
+  control:
+    hash: #@ sha256.sum(json.encode(data.values.mongodb))
+    config: #@ base64.encode(json.encode(data.values.mongodb))
+    version: #@ data.values.mongodb.version
+    chart: #@ data.values.mongodb.chart
+    secrets: 
+      - auth.existingPasswordSecret
+      - auth.existingErlangSecret
+    secretKeys:
+      - mongodb-passwords
+      - mongodb-root-password
+      - mongodb-metrics-password
+      - mongodb-replica-set-key
+    connection:
+      protocol: "mongodb://"
+      port: 27017
+      serviceName: dep-mongodb
+      username: #@ data.values.repository
+      database: ""
+      secret: mongodb-password
+
+  #@  mongodbValues = {}
+  #@  mongodbValues.update(data.values.mongodb.values)
+  #@  mongodbValues = struct.encode(mongodbValues)
+  #@  mongodbValues = struct.decode(mongodbValues)
+
+  #@  mongodbAuth = mongodbValues.get("auth")
+  #@  mongodbAuth.update({
+  #@    "database": data.values.repository,
+  #@    "username": data.values.repository,
+  #@  })
+
+  #@  mongodbValues.update({ 
+  #@    "nodeSelector": ListToMap(data.values.mongodb.values.nodeSelector),
+  #@    "resources": {
+  #@      "limits": ListToMap(data.values.mongodb.values.resources.limits),
+  #@      "requests": ListToMap(data.values.mongodb.values.resources.requests),
+  #@    },
+  #@ })
+  values: #@ mongodbValues

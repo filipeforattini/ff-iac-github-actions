@@ -5,46 +5,41 @@ mysql:
   values:
     primary:
       persistence:
-        enabled: false
-        size: 2Gi
-        storageClass: longhorn
+        enabled: true
+        size: 1Gi
 
 postgres:
   enabled: true  
   values:
     primary:
       persistence:
-        enabled: false
-        size: 2Gi	
-        storageClass: longhorn
+        enabled: true
+        size: 1Gi	
 
 rabbitmq:
   enabled: true 
   values:
     persistence:
-      enabled: false
-      size: 2Gi
-      storageClass: longhorn
+      enabled: true
+      size: 1Gi
 
 elasticsearch:
   enabled: true  
   values:
     master:
       persistence:
-        size: 2Gi
-        storageClass: longhorn
+        size: 1Gi
     data:
       persistence:
-        enabled: false
-        size: 2Gi
-        storageClass: longhorn
+        enabled: true
+        size: 1Gi
 
 redis:
   enabled: true
   values:
     master:
       persistence:
-        enabled: false
+        enabled: true
 
 nats:
   enabled: true
@@ -57,4 +52,10 @@ etcd:
   enabled: true
   values:
     persistence:
-      enabled: false
+      enabled: true
+
+mongodb:
+  enabled: true
+  values:
+    persistence:
+      enabled: true

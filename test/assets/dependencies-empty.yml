@@ -14,3 +14,5 @@ nats:
   enabled: false
 etcd:
   enabled: false
+mongodb:
+  enabled: false
