@@ -322,7 +322,7 @@ mongodb:
       port: 27017
       serviceName: dep-mongodb
       username: #@ data.values.repository
-      database: #@ data.values.repository
+      database: #@ "/{}".format(data.values.repository)
       secret: mongodb-passwords
 
   #@  mongodbValues = {}
