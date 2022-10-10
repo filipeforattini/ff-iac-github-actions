@@ -163,3 +163,15 @@ runs:
         REPOSITORY_TAG_VERSION=${{inputs.version}} \
         DEPENDENCY_FILE=${{inputs.renderedOutput}} \
           ./.pipeline/src/dependency-install.sh
+
+    - name: Dependencies | MongoDB
+      if: steps.analysis.outputs.feature_has_dependencies == 'true'
+      continue-on-error: true
+      shell: bash
+      run: |	
+        K8S_NAMESPACE=${{inputs.namespace}} \
+        K8S_REPOSITORY=${{inputs.repository}} \
+        DEPENDENCY_NAME=mongodb \
+        REPOSITORY_TAG_VERSION=${{inputs.version}} \
+        DEPENDENCY_FILE=${{inputs.renderedOutput}} \
+          ./.pipeline/src/dependency-install.sh
