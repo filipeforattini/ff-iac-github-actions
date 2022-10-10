@@ -14,7 +14,7 @@
 
 ---
 #@  dependencies = []
-#@  depNames = ["mysql", "postgres", "rabbitmq", "elasticsearch", "redis", "nats", "etcd"]
+#@  depNames = ["mysql", "postgres", "rabbitmq", "elasticsearch", "redis", "nats", "etcd", "mongodb"]
 #@  for i in range(len(depNames)):
 #@    if data.values[depNames[i]].enabled:
 #@      dependencies.extend([depNames[i]])
