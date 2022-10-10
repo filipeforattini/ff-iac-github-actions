@@ -311,8 +311,7 @@ mongodb:
     version: #@ data.values.mongodb.version
     chart: #@ data.values.mongodb.chart
     secrets: 
-      - auth.existingPasswordSecret
-      - auth.existingErlangSecret
+      - auth.existingSecret
     secretKeys:
       - mongodb-passwords
       - mongodb-root-password
@@ -323,8 +322,8 @@ mongodb:
       port: 27017
       serviceName: dep-mongodb
       username: #@ data.values.repository
-      database: ""
-      secret: mongodb-password
+      database: #@ data.values.repository
+      secret: mongodb-passwords
 
   #@  mongodbValues = {}
   #@  mongodbValues.update(data.values.mongodb.values)
