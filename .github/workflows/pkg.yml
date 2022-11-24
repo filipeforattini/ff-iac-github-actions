@@ -21,16 +21,6 @@ on:
         type: string
         required: false
         description: "Special prefix that will be added to the image name"
-      containerRegistry:
-        type: string
-        required: false
-        default: ghcr.io
-        description: "Container registry to upload container images"
-      environmentsAsNamespaces:
-        type: boolean
-        required: false
-        default: false
-        description: "Separate environments as namespaces"
       staticAnalysis:
         type: boolean
         required: false
@@ -41,11 +31,6 @@ on:
         required: false
         default: true
         description: "Enable auto versioning with semantic versioning"
-      platforms:
-        type: string
-        required: false
-        default: "linux/386,linux/amd64,linux/arm/v7,linux/arm/v8,linux/arm64,linux/ppc64le,linux/s390x"
-        description: "Multi-plataform container builds"
       buildDirectory:
         type: string
         required: false
