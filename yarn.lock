@@ -830,6 +830,20 @@ linguist-js@filipeforattini/LinguistJS#main:
     node-cache "^5.1.2"
     tsx "^3.12.1"
 
+"linguist-js@https://github.com/filipeforattini/LinguistJS":
+  version "2.5.3"
+  resolved "https://github.com/filipeforattini/LinguistJS#a01bdded4b27d4b3bee262c0f6ee158f10f5fb92"
+  dependencies:
+    binary-extensions "^2.2.0"
+    commander "^9.4.1"
+    common-path-prefix "^3.0.0"
+    cross-fetch "^3.1.5"
+    ignore "^5.2.0"
+    isbinaryfile "^5.0.0"
+    js-yaml "^4.1.0"
+    node-cache "^5.1.2"
+    tsx "^3.12.1"
+
 lodash@^4.17.21:
   version "4.17.21"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
