@@ -25,7 +25,7 @@ inputs:
     description: ""
   nodejs:
     required: false
-    default: 18
+    default: '18'
     description: "Nodejs version"
   files:
     required: false
@@ -58,7 +58,7 @@ runs:
       shell: bash
       run: |
         HAS_RELEASERC_FILE=$(if test -f .releaserc.json; then (echo "true"); else (echo "false") ; fi)
-        echo "::set-output name=has_releaserc_file::$HAS_RELEASERC_FILE"
+        echo "has_releaserc_file=$HAS_RELEASERC_FILE" >> $GITHUB_OUTPUT
         echo has_releaserc_file=$HAS_RELEASERC_FILE
 
     - name: Create .releaserc.json

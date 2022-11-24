@@ -141,5 +141,5 @@ jobs:
       - name: Current Version
         id: versioning
         run: |
-          echo "::set-output name=version::$(cat package.json | jq -r '.version')"
+          echo "version=$(cat package.json | jq -r '.version')" >> $GITHUB_OUTPUT
           echo -e "\n\nINFO  current version = $(cat package.json | jq -r '.version')\n\n"

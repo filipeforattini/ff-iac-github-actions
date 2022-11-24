@@ -149,7 +149,7 @@ jobs:
       - name: Current Version
         id: versioning
         run: |
-          echo "::set-output name=version::$(cat package.json | jq -r '.version')"
+          echo "version=$(cat package.json | jq -r '.version')" >> $GITHUB_OUTPUT
           echo -e "\n\nINFO  current version = $(cat package.json | jq -r '.version')\n\n"
 
 
@@ -433,7 +433,7 @@ jobs:
         run: |
           NEXT_VERSION=$(git for-each-ref --sort=authordate --format '%(refname)' refs/tags | tail -n 1 | sed -n -e 's/^.*refs\/tags\/v//p')
           echo "next version = $NEXT_VERSION"
-          echo "::set-output name=version::$NEXT_VERSION"
+          echo "version=$NEXT_VERSION" >> $GITHUB_OUTPUT
 
       - name: Download | Android artifacts
         uses: actions/download-artifact@v3
