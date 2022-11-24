@@ -50,7 +50,8 @@
     "dayjs": "^1.11.5",
     "linguist-js": "filipeforattini/LinguistJS#main",
     "lodash": "^4.17.21",
-    "qs": "^6.11.0"
+    "qs": "^6.11.0",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^22.0.2",
