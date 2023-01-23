@@ -35,7 +35,8 @@ These workflows are highly opinionated **kubectl-apply** or **helm-upgrade** pip
    1. <a href="#service">Service (svc)</a>
    1. <a href="#infrastructure-as-code">Infrastructure as Code (iac)</a>
    1. <a href="#package">Package (pkg)</a>
-
+1. Actions
+    1. Config Scrapper
 ---
 
 ## Introduction
@@ -657,3 +658,7 @@ flowchart
     end
   end
 ```
+
+## Actions
+
+### Config Scrapper

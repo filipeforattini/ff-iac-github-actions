@@ -137,7 +137,7 @@ runs:
     # ytt
     - name: Setup | YTT
       if: inputs.ytt != 'false'
-      uses: vmware-tanzu/carvel-setup-action@v1
+      uses: carvel-dev/setup-action@v1
       id: ytt
       with:
         only: ytt

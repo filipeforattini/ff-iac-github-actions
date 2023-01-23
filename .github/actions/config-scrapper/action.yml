@@ -15,24 +15,6 @@ inputs:
     default: "false"
     description: ""
 
-  PIPESECRET_KUBE_CONFIG:
-    required: false
-    default: ""
-    description: ""
-  PIPESECRET_REGISTRY_PASSWORD:
-    required: false
-    default: ""
-    description: ""
-  PIPESECRET_REGISTRY_USERNAME:
-    required: false
-    default: ""
-    description: ""
-  PIPESECRET_PIPELINE_DEPLOY_TOKEN:
-    required: false
-    default: ""
-    description: ""
-
-
 outputs:
   actor:
     description: ""
