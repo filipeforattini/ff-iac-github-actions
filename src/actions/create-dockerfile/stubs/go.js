@@ -39,7 +39,7 @@ CMD ["<%= command %>"]
     labels: ["builder=pipeline"],
     environmentVariables: ["OS=Alpine"],
     dependencyCommand: "go mod download",
-    entrypoint: "go-app",
+    entrypoint: "./go-app",
     command: "",
   },
 
