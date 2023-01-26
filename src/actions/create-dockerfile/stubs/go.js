@@ -11,13 +11,10 @@ FROM <%= image %>:<%= tag %> as builder
 WORKDIR /svc
 COPY . /svc
 
-RUN apk add --no-cache git
-
 RUN go version \
+  && mkdir /svc/out \
   && <%= dependencyCommand %> \
-  && mkdir /svc/out
-
-RUN go build -o ./out/go-app .
+  && go build -o ./out/go-app .
 
 
 # Final step
@@ -28,10 +25,9 @@ WORKDIR /svc
 RUN apk add ca-certificates
 
 <% labels.length && print("LABEL " + labels.join(' \\\n\t')) %>
-
 <% environmentVariables.length && print("ENV "+ environmentVariables.join(' \\\n\t')) %>
 
-COPY --from=build_base /svc/out/go-app /src/go-app
+COPY --from=builder /svc/out/go-app /src/go-app
 
 ENTRYPOINT ["<%= entrypoint %>"]
 CMD ["<%= command %>"]
@@ -39,7 +35,7 @@ CMD ["<%= command %>"]
 
   defaultValues: {
     image: "golang",
-    tag: "1.12-alpine",
+    tag: "1.18",
     labels: ["builder=pipeline"],
     environmentVariables: ["OS=Alpine"],
     dependencyCommand: "go mod download",
