@@ -1,5 +1,6 @@
 module.exports = {
-  spa: require('./spa'),
-  python: require('./python'),
+  go: require('./go'),
   node: require('./node'),
+  python: require('./python'),
+  spa: require('./spa'),
 }
