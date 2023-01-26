@@ -22072,10 +22072,12 @@ FROM <%= image %>:<%= tag %> as builder
 WORKDIR /svc
 COPY . /svc
 
+ENV CGO_ENABLED=0
+
 RUN go version \
   && mkdir /svc/out \
   && <%= dependencyCommand %> \
-  && go build -o ./out/go-app .
+  && go build -a -o /svc/out/go-app .
 
 
 # Final step
@@ -22088,7 +22090,7 @@ RUN apk add ca-certificates
 <% labels.length && print("LABEL " + labels.join(' \\\n\t')) %>
 <% environmentVariables.length && print("ENV "+ environmentVariables.join(' \\\n\t')) %>
 
-COPY --from=builder /svc/out/go-app /src/go-app
+COPY --from=builder /svc/out /svc/
 
 ENTRYPOINT ["<%= entrypoint %>"]
 CMD ["<%= command %>"]
