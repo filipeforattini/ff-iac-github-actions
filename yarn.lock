@@ -400,10 +400,10 @@
   dependencies:
     "@types/node" "*"
 
-"@vercel/ncc@^0.34.0":
-  version "0.34.0"
-  resolved "https://registry.yarnpkg.com/@vercel/ncc/-/ncc-0.34.0.tgz#d0139528320e46670d949c82967044a8f66db054"
-  integrity sha512-G9h5ZLBJ/V57Ou9vz5hI8pda/YQX5HQszCs3AmIus3XzsmRn/0Ptic5otD3xVST8QLKk7AMk7AqpsyQGN7MZ9A==
+"@vercel/ncc@^0.36.1":
+  version "0.36.1"
+  resolved "https://registry.yarnpkg.com/@vercel/ncc/-/ncc-0.36.1.tgz#d4c01fdbbe909d128d1bf11c7f8b5431654c5b95"
+  integrity sha512-S4cL7Taa9yb5qbv+6wLgiKVZ03Qfkc4jGRuiUQMQ8HGBD5pcNRnHeYM33zBvJE4/zJGjJJ8GScB+WmTsn9mORw==
 
 abort-controller@^3.0.0:
   version "3.0.0"
@@ -815,20 +815,6 @@ js-yaml@^4.1.0:
   integrity sha512-wpxZs9NoxZaJESJGIZTyDEaYpl0FKSA+FB9aJiyemKhMwkxQg63h4T1KJgUGHpTqPDNRcmmYLugrRjJlBtWvRA==
   dependencies:
     argparse "^2.0.1"
-
-linguist-js@filipeforattini/LinguistJS#main:
-  version "2.5.3"
-  resolved "https://codeload.github.com/filipeforattini/LinguistJS/tar.gz/a01bdded4b27d4b3bee262c0f6ee158f10f5fb92"
-  dependencies:
-    binary-extensions "^2.2.0"
-    commander "^9.4.1"
-    common-path-prefix "^3.0.0"
-    cross-fetch "^3.1.5"
-    ignore "^5.2.0"
-    isbinaryfile "^5.0.0"
-    js-yaml "^4.1.0"
-    node-cache "^5.1.2"
-    tsx "^3.12.1"
 
 "linguist-js@https://github.com/filipeforattini/LinguistJS":
   version "2.5.3"
