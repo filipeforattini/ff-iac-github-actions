@@ -7,6 +7,9 @@ env:
     value: America/Sao_Paulo
 
 deployment:
+  nodeSelector:
+    - name: beta.kubernetes.io/arch
+      value: amd64
   resources:
     requests:
       - name: cpu 

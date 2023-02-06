@@ -12,6 +12,9 @@ postgres:
   enabled: true  
   values:
     primary:
+      nodeSelector:
+        - name: eks.amazonaws.com/custom-image
+          value: t3.super-duper-large
       persistence:
         enabled: true
         size: 1Gi	

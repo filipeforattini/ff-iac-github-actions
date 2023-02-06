@@ -39,6 +39,7 @@ spec:
       labels: #@ deploymentTemplateLabels
     spec:
       restartPolicy: Always
+      nodeSelector: #@ ListToMap(data.values.deployment.nodeSelector)
 
       #@ if/end data.values.deployment.imagePullSecrets:
       imagePullSecrets:
