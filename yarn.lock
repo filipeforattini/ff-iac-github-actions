@@ -502,10 +502,10 @@ cross-fetch@^3.1.5:
   dependencies:
     node-fetch "2.6.7"
 
-dayjs@^1.11.5:
-  version "1.11.6"
-  resolved "https://registry.yarnpkg.com/dayjs/-/dayjs-1.11.6.tgz#2e79a226314ec3ec904e3ee1dd5a4f5e5b1c7afb"
-  integrity sha512-zZbY5giJAinCG+7AGaw0wIhNZ6J8AhWuSXKvuc1KAyMiRsvGQWqh4L+MomvhdAYjN+lqvVCMq1I41e3YHvXkyQ==
+dayjs@^1.11.7:
+  version "1.11.7"
+  resolved "https://registry.yarnpkg.com/dayjs/-/dayjs-1.11.7.tgz#4b296922642f70999544d1144a2c25730fce63e2"
+  integrity sha512-+Yw9U6YO5TQohxLcIkrXBeY73WP3ejHWVvx8XCk3gxvQDCTEmS48ZrSZCKciI7Bhl/uCMyxYtE9UqRILmFphkQ==
 
 deepmerge@^4.2.2:
   version "4.2.2"
@@ -815,20 +815,6 @@ js-yaml@^4.1.0:
   integrity sha512-wpxZs9NoxZaJESJGIZTyDEaYpl0FKSA+FB9aJiyemKhMwkxQg63h4T1KJgUGHpTqPDNRcmmYLugrRjJlBtWvRA==
   dependencies:
     argparse "^2.0.1"
-
-linguist-js@filipeforattini/LinguistJS#main:
-  version "2.5.3"
-  resolved "https://codeload.github.com/filipeforattini/LinguistJS/tar.gz/a01bdded4b27d4b3bee262c0f6ee158f10f5fb92"
-  dependencies:
-    binary-extensions "^2.2.0"
-    commander "^9.4.1"
-    common-path-prefix "^3.0.0"
-    cross-fetch "^3.1.5"
-    ignore "^5.2.0"
-    isbinaryfile "^5.0.0"
-    js-yaml "^4.1.0"
-    node-cache "^5.1.2"
-    tsx "^3.12.1"
 
 "linguist-js@https://github.com/filipeforattini/LinguistJS":
   version "2.5.3"
