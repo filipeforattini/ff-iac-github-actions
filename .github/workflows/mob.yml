@@ -275,7 +275,7 @@ jobs:
       - name: Install dependencies
         run: |
           if test -f ./package-lock.json; then npm ci --force --no-fund --no-audit; fi
-          if test -f ./yarn.lock; then yarn install --frozen-lockfile --ignore-optional --immutable; fi
+          if test -f ./yarn.lock; then yarn install --frozen-lockfile --ignore-optional --immutable --network-timeout 1000000; fi
 
       # cache
       - name: Cache Gradle Wrapper
