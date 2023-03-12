@@ -30,7 +30,7 @@ CMD ["-g daemon off;"]
     buildDirectory: 'build',
     dependencyCommand: () => {
       return fs.existsSync(path.join(process.cwd(), 'package-lock.json'))
-        ? "npm ci --force --no-fund --no-audit"
+        ? "npm ci --force --no-fund --no-audit --maxsockets 1"
         : fs.existsSync(path.join(process.cwd(), 'yarn.lock'))
           ? "yarn install --frozen-lockfile --ignore-optional --immutable --network-timeout 1000000"
           : "npm install --force"

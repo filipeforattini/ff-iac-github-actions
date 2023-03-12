@@ -97,7 +97,7 @@ jobs:
       # install dependencies
       - name: Install dependencies
         run: |
-          if test -f ./package-lock.json; then npm ci --force --no-fund --no-audit; fi
+          if test -f ./package-lock.json; then npm ci --force --no-fund --no-audit --maxsockets 1; fi
           if test -f ./yarn.lock; then yarn install --frozen-lockfile --ignore-optional --immutable --network-timeout 1000000; fi
 
       # run scripts
