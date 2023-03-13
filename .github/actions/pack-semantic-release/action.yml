@@ -77,11 +77,11 @@ runs:
       with:
         node-version: ${{ inputs.nodejs }}
 
-    - name: Setup | NodeJs NPM & yarn
+    - name: Setup | NodeJs NPM & yarn & pnpm
       if: inputs.nodejs != 'false'
       shell: bash
       id: npm
-      run: npm -g install npm yarn && npm -v && yarn -v
+      run: npm -g install npm yarn pnpm && npm -v && yarn -v && pnpm -v
 
     - name: Semantic Release
       uses: filipeforattini/ff-iac-github-actions/.github/actions/semantic-release@main

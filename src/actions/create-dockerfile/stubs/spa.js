@@ -29,11 +29,13 @@ CMD ["-g daemon off;"]
   defaultValues: {
     buildDirectory: 'build',
     dependencyCommand: () => {
-      return fs.existsSync(path.join(process.cwd(), 'package-lock.json'))
-        ? "npm ci --force --no-fund --no-audit --maxsockets 1"
-        : fs.existsSync(path.join(process.cwd(), 'yarn.lock'))
-          ? "yarn install --frozen-lockfile --ignore-optional --immutable --network-timeout 1000000"
-          : "npm install --force"
+      return fs.existsSync(path.join(process.cwd(), 'pnpm-lock.json'))
+        ? "pnpm i --frozen-lockfile --force --no-color"
+        : fs.existsSync(path.join(process.cwd(), 'package-lock.json'))
+          ? "npm ci --force --no-fund --no-audit --maxsockets 1"
+          : fs.existsSync(path.join(process.cwd(), 'yarn.lock'))
+            ? "yarn install --frozen-lockfile --ignore-optional --immutable --network-timeout 1000000"
+            : "npm install --force --no-fund --no-audit --maxsockets 1"
     },
   },
 
