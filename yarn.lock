@@ -816,20 +816,6 @@ js-yaml@^4.1.0:
   dependencies:
     argparse "^2.0.1"
 
-linguist-js@filipeforattini/LinguistJS#main:
-  version "2.5.3"
-  resolved "https://codeload.github.com/filipeforattini/LinguistJS/tar.gz/a01bdded4b27d4b3bee262c0f6ee158f10f5fb92"
-  dependencies:
-    binary-extensions "^2.2.0"
-    commander "^9.4.1"
-    common-path-prefix "^3.0.0"
-    cross-fetch "^3.1.5"
-    ignore "^5.2.0"
-    isbinaryfile "^5.0.0"
-    js-yaml "^4.1.0"
-    node-cache "^5.1.2"
-    tsx "^3.12.1"
-
 "linguist-js@https://github.com/filipeforattini/LinguistJS":
   version "2.5.3"
   resolved "https://github.com/filipeforattini/LinguistJS#a01bdded4b27d4b3bee262c0f6ee158f10f5fb92"
@@ -964,10 +950,10 @@ rimraf@^3.0.0:
   dependencies:
     glob "^7.1.3"
 
-rollup@^2.79.0:
-  version "2.79.1"
-  resolved "https://registry.yarnpkg.com/rollup/-/rollup-2.79.1.tgz#bedee8faef7c9f93a2647ac0108748f497f081c7"
-  integrity sha512-uKxbd0IhMZOhjAiD5oAFp7BqvkA4Dv47qpOCtaNvng4HBwdbWtdOh8f5nZNuk2rp51PMGk3bzfWu5oayNEuYnw==
+rollup@^3.20.2:
+  version "3.20.2"
+  resolved "https://registry.yarnpkg.com/rollup/-/rollup-3.20.2.tgz#f798c600317f216de2e4ad9f4d9ab30a89b690ff"
+  integrity sha512-3zwkBQl7Ai7MFYQE0y1MeQ15+9jsi7XxfrqwTb/9EK8D9C9+//EBR4M+CuA1KODRaNbFez/lWxA5vhEGZp4MUg==
   optionalDependencies:
     fsevents "~2.3.2"
 
