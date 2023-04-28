@@ -10,6 +10,9 @@
   #@schema/type any=True
   nodeSelector: []
 
+  #@schema/type any=True
+  ports: []
+
   resources:
     #@schema/type any=True
     limits: []

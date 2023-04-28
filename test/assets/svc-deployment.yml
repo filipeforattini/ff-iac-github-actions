@@ -7,6 +7,10 @@ env:
     value: America/Sao_Paulo
 
 deployment:
+  ports:
+    - 10111
+    - 10222
+    - 10333
   nodeSelector:
     - name: beta.kubernetes.io/arch
       value: amd64

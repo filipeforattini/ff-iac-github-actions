@@ -142,6 +142,9 @@ rabbitmq:
   #@      "limits": ListToMap(data.values.rabbitmq.values.resources.limits),
   #@      "requests": ListToMap(data.values.rabbitmq.values.resources.requests),
   #@    },
+  #@    "ingress": {
+  #@       "annotations": ListToMap(data.values.rabbitmq.values.ingress.annotations),
+  #@     },
   #@ })
   values: #@ rabbitmqValues
 

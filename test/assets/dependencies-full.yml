@@ -25,6 +25,20 @@ rabbitmq:
     persistence:
       enabled: true
       size: 1Gi
+    nodeSelector:
+      - name: kubernetes.io/arch
+        value: amd64
+    ingress:
+      hostname: rabbitmq.test.com
+      annotations:
+        - name: kubernetes.io/ingress.class
+          value: alb
+        - name: alb.ingress.kubernetes.io/scheme
+          value: internal
+        - name: alb.ingress.kubernetes.io/group.name
+          value: test
+        - name: alb.ingress.kubernetes.io/load-balancer-name
+          value: test
 
 elasticsearch:
   enabled: true  

@@ -76,6 +76,9 @@
     tag: 3.10.6-debian-11-r5
   ingress:
     enabled: false
+    hostname: rabbitmq.local
+    #@schema/type any=True
+    annotations: []
   metrics:
     enabled: false
   #@schema/type any=True
