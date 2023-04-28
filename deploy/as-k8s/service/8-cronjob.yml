@@ -1,0 +1,25 @@
+#@ load("@ytt:data", "data")
+
+---
+#@ if data.values.cronjob.enable:
+apiVersion: batch/v1
+kind: CronJob
+
+metadata:
+  name: #@ data.values.cronjob.name
+  labels: #@ data.values.cronjob.labels
+  annotations: #@ data.values.cronjob.annotations
+
+spec:
+  schedule: #@ data.values.cronjob.schedule
+
+  template:
+    spec:
+      restartPolicy: Never
+      imagePullPolicy: IfNotPresent
+
+      containers:
+      - name: #@ data.values.cronjob.name
+        image: #@ "{}/{}/{}:{}".format(data.values.containerRegistry, data.values.organization, data.values.repository, data.values.tag)
+        command: #@ data.values.cronjob.command
+#@ end

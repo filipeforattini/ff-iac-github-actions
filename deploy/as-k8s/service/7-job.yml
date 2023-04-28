@@ -1,0 +1,25 @@
+#@ load("@ytt:data", "data")
+
+---
+#@ if data.values.job.enable:
+apiVersion: batch/v1
+kind: Job
+
+metadata:
+  name: #@ data.values.job.name
+  labels: #@ data.values.job.labels
+  annotations: #@ data.values.job.annotations
+
+spec:
+  backoffLimit: #@ data.values.job.backoffLimit
+
+  template:
+    spec:
+      restartPolicy: Never
+      imagePullPolicy: IfNotPresent
+
+      containers:
+      - name: #@ data.values.job.name
+        image: #@ "{}/{}/{}:{}".format(data.values.containerRegistry, data.values.organization, data.values.repository, data.values.tag)
+        command: #@ data.values.job.command
+#@ end

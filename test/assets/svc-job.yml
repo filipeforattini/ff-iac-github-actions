@@ -1,0 +1,10 @@
+#@data/values
+---
+deployment:
+  enable: false
+
+service:
+  enable: false
+
+job:
+  enable: true

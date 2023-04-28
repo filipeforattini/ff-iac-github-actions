@@ -10,6 +10,8 @@ sh $DIR_TESTS/svc-1.sh
 sh $DIR_TESTS/svc-2-deployment.sh
 sh $DIR_TESTS/svc-3-service.sh
 sh $DIR_TESTS/svc-4-ingress.sh
+sh $DIR_TESTS/svc-4-job.sh
+sh $DIR_TESTS/svc-4-cronjob.sh
 # sh $DIR_TESTS/svc-inputs.sh
 
 # app

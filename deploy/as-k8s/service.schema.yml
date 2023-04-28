@@ -86,6 +86,38 @@
     x: true
 #@ end
 
+#@ def defaultJob():
+  enable: false
+  replicas: 1
+  name: svc-job
+  labels: {}
+  annotations: {}
+  imagePullSecrets: true
+  imagePullSecretsName: registry-token
+
+  backoffLimit: 1
+  command: []
+
+  #@schema/type any=True
+  nodeSelector: []
+#@ end
+
+
+#@ def defaultCronJob():
+  enable: false
+  replicas: 1
+  name: svc-cronjob
+  labels: {}
+  annotations: {}
+  imagePullSecrets: true
+  imagePullSecretsName: registry-token
+
+  schedule: "* * * * *"
+  command: []
+
+  #@schema/type any=True
+  nodeSelector: []
+#@ end
 
 #@data/values-schema
 ---
@@ -135,3 +167,11 @@ service: null
 #@schema/default defaultIngress()
 #@schema/type any=True
 ingress: null
+
+#@schema/default defaultJob()
+#@schema/type any=True
+job: null
+
+#@schema/default defaultCronJob()
+#@schema/type any=True
+cronjob: null
