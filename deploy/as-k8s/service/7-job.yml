@@ -22,4 +22,44 @@ spec:
       - name: #@ data.values.job.name
         image: #@ "{}/{}/{}:{}".format(data.values.containerRegistry, data.values.organization, data.values.repository, data.values.tag)
         command: #@ data.values.job.command
+
+        #@ jobEnvs = []
+        #@ jobEnvs.extend(data.values.env)
+        
+        #@ for i in data.values.envFromConfigMaps:
+        #@   jobEnvs.extend([{ 
+        #@    "name": i, 
+        #@    "valueFrom": {
+        #@      "configMapKeyRef": {
+        #@        "name": data.values.repository,
+        #@        "key": i,
+        #@      }
+        #@    }
+        #@   }])
+        #@ end
+        
+        #@ for i in data.values.envFromSecrets:
+        #@   jobEnvs.extend([{ 
+        #@    "name": i, 
+        #@    "valueFrom": {
+        #@      "secretKeyRef": {
+        #@        "name": data.values.repository,
+        #@        "key": i,
+        #@      }
+        #@    }
+        #@   }])
+        #@ end
+        
+        #@ for i in data.values.envFromDependencies:
+        #@   jobEnvs.extend([{ 
+        #@    "name": (i + "_connection_string").upper(),
+        #@    "valueFrom": {
+        #@      "secretKeyRef": {
+        #@        "name": "dep-secret-" + i,
+        #@        "key": "connection-string",
+        #@      }
+        #@    }
+        #@   }])
+        #@ end
+        env: #@ jobEnvs
 #@ end
