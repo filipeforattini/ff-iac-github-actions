@@ -49,7 +49,6 @@ spec:
       containers:
         - name: #@ data.values.deployment.name
           image: #@ "{}/{}/{}:{}".format(data.values.containerRegistry, data.values.organization, data.values.repository, data.values.tag)
-          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: #@ data.values.port
           #@ for/end portNumber in data.values.deployment.ports:
