@@ -111560,7 +111560,10 @@ var deploy = async (analysis) => {
   let containerRegistry = core$1.getInput('containerRegistry');
 
   const commitSha = github$5.context.sha.substring(0,7);
-  const slugedBranch = github$5.context.ref.replace('refs/heads/', '').replace('/', '-');
+  const slugedBranch = github$5.context.ref
+    .replace('refs/heads/', '')
+    .replace('refs/tags/', '')
+    .replace('/', '-');
 
   const [ organization, name ] = github$5.context.payload.repository.full_name.split('/');
   const registry = [ containerRegistry, organization, name].join('/');

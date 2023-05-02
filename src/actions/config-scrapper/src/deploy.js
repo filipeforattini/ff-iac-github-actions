@@ -10,7 +10,10 @@ module.exports = async (analysis) => {
   let containerRegistry = core.getInput('containerRegistry');
 
   const commitSha = github.context.sha.substring(0,7)
-  const slugedBranch = github.context.ref.replace('refs/heads/', '').replace('/', '-')
+  const slugedBranch = github.context.ref
+    .replace('refs/heads/', '')
+    .replace('refs/tags/', '')
+    .replace('/', '-')
 
   const [ organization, name ] = github.context.payload.repository.full_name.split('/')
   const registry = [ containerRegistry, organization, name].join('/')
