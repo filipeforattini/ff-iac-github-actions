@@ -2,6 +2,7 @@
 
 ---
 #@ if data.values.deployment.enable:
+#@ if data.values.deployment.hpa.enable:
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
@@ -11,13 +12,14 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: #@ data.values.service.name
-  minReplicas: 1
-  maxReplicas: 3
+  minReplicas: #@ data.values.deployment.hpa.minReplicas
+  maxReplicas: #@ data.values.deployment.hpa.maxReplicas
   metrics:
   - type: Resource
     resource:
       name: cpu
       target:
         type: Utilization
-        averageUtilization: 50
+        averageUtilization: #@ data.values.deployment.hpa.cpu
+#@ end
 #@ end

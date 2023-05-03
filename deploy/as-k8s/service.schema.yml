@@ -23,6 +23,12 @@
   matchLabels:
     overwrite: false
     labels: {}
+
+  hpa:
+    enable: false
+    minReplicas: 1
+    maxReplicas: 3
+    cpu: 70
 #@ end
 
 #@ def defaultService():
