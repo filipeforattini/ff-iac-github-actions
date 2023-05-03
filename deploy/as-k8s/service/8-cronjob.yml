@@ -18,7 +18,6 @@ spec:
       template:
         spec:
           restartPolicy: Never
-          nodeSelector: #@ ListToMap(data.values.deployment.nodeSelector)
 
           #@ if/end data.values.deployment.imagePullSecrets:
           imagePullSecrets:
