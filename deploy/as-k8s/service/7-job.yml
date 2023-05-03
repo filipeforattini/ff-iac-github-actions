@@ -1,4 +1,6 @@
+#@ load("@ytt:md5", "md5")
 #@ load("@ytt:data", "data")
+#@ load("@ytt:json", "json")
 
 ---
 #@ if data.values.job.enable:
@@ -18,7 +20,7 @@ spec:
       restartPolicy: Never
 
       containers:
-      - name: #@ data.values.job.name
+      - name: #@ "{}-{}".format(data.values.job.name, md5.sum(json.encode(data.values)))
         image: #@ "{}/{}/{}:{}".format(data.values.containerRegistry, data.values.organization, data.values.repository, data.values.tag)
         command: #@ data.values.job.command
 
