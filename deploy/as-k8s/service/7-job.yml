@@ -8,7 +8,7 @@ apiVersion: batch/v1
 kind: Job
 
 metadata:
-  name: #@ data.values.job.name
+  name: #@ "{}-{}".format(data.values.job.name, md5.sum(json.encode(data.values)))
   labels: #@ data.values.job.labels
   annotations: #@ data.values.job.annotations
 
