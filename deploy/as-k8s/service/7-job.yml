@@ -16,7 +16,6 @@ spec:
   template:
     spec:
       restartPolicy: Never
-      imagePullPolicy: IfNotPresent
 
       containers:
       - name: #@ data.values.job.name
