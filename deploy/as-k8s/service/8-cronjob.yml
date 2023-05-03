@@ -13,52 +13,54 @@ metadata:
 spec:
   schedule: #@ data.values.cronjob.schedule
 
-  template:
+  jobTemplate:
     spec:
-      restartPolicy: Never
+      template:
+        spec:
+          restartPolicy: Never
 
-      containers:
-      - name: #@ data.values.cronjob.name
-        image: #@ "{}/{}/{}:{}".format(data.values.containerRegistry, data.values.organization, data.values.repository, data.values.tag)
-        command: #@ data.values.cronjob.command
+          containers:
+          - name: #@ data.values.cronjob.name
+            image: #@ "{}/{}/{}:{}".format(data.values.containerRegistry, data.values.organization, data.values.repository, data.values.tag)
+            command: #@ data.values.cronjob.command
 
-        #@ cronjobEnvs = []
-        #@ cronjobEnvs.extend(data.values.env)
-        
-        #@ for i in data.values.envFromConfigMaps:
-        #@   cronjobEnvs.extend([{ 
-        #@    "name": i, 
-        #@    "valueFrom": {
-        #@      "configMapKeyRef": {
-        #@        "name": data.values.repository,
-        #@        "key": i,
-        #@      }
-        #@    }
-        #@   }])
-        #@ end
-        
-        #@ for i in data.values.envFromSecrets:
-        #@   cronjobEnvs.extend([{ 
-        #@    "name": i, 
-        #@    "valueFrom": {
-        #@      "secretKeyRef": {
-        #@        "name": data.values.repository,
-        #@        "key": i,
-        #@      }
-        #@    }
-        #@   }])
-        #@ end
-        
-        #@ for i in data.values.envFromDependencies:
-        #@   cronjobEnvs.extend([{ 
-        #@    "name": (i + "_connection_string").upper(),
-        #@    "valueFrom": {
-        #@      "secretKeyRef": {
-        #@        "name": "dep-secret-" + i,
-        #@        "key": "connection-string",
-        #@      }
-        #@    }
-        #@   }])
-        #@ end
-        env: #@ cronjobEnvs
+            #@ cronjobEnvs = []
+            #@ cronjobEnvs.extend(data.values.env)
+            
+            #@ for i in data.values.envFromConfigMaps:
+            #@   cronjobEnvs.extend([{ 
+            #@    "name": i, 
+            #@    "valueFrom": {
+            #@      "configMapKeyRef": {
+            #@        "name": data.values.repository,
+            #@        "key": i,
+            #@      }
+            #@    }
+            #@   }])
+            #@ end
+            
+            #@ for i in data.values.envFromSecrets:
+            #@   cronjobEnvs.extend([{ 
+            #@    "name": i, 
+            #@    "valueFrom": {
+            #@      "secretKeyRef": {
+            #@        "name": data.values.repository,
+            #@        "key": i,
+            #@      }
+            #@    }
+            #@   }])
+            #@ end
+            
+            #@ for i in data.values.envFromDependencies:
+            #@   cronjobEnvs.extend([{ 
+            #@    "name": (i + "_connection_string").upper(),
+            #@    "valueFrom": {
+            #@      "secretKeyRef": {
+            #@        "name": "dep-secret-" + i,
+            #@        "key": "connection-string",
+            #@      }
+            #@    }
+            #@   }])
+            #@ end
+            env: #@ cronjobEnvs
 #@ end

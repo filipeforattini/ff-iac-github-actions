@@ -15,8 +15,6 @@ spec:
 
   template:
     spec:
-      restartPolicy: Never
-
       containers:
       - name: #@ data.values.job.name
         image: #@ "{}/{}/{}:{}".format(data.values.containerRegistry, data.values.organization, data.values.repository, data.values.tag)
