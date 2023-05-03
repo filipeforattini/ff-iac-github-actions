@@ -18,6 +18,11 @@ spec:
   template:
     spec:
       restartPolicy: Never
+      nodeSelector: #@ ListToMap(data.values.deployment.nodeSelector)
+
+      #@ if/end data.values.deployment.imagePullSecrets:
+      imagePullSecrets:
+        - name: #@ data.values.deployment.imagePullSecretsName
 
       containers:
       - name: #@ "{}-{}".format(data.values.job.name, md5.sum(json.encode(data.values)))
