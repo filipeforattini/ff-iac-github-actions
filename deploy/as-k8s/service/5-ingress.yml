@@ -50,15 +50,7 @@ metadata:
   #@      "alb.ingress.kubernetes.io/group.name": data.values.ecosystem,
   #@      "alb.ingress.kubernetes.io/load-balancer-name": data.values.ecosystem,
   #@      "alb.ingress.kubernetes.io/certificate-arn": data.values.ingress.alb.certificateArn,
-  #@      "alb.ingress.kubernetes.io/listen-ports": '[{"HTTP": 80}, {"HTTPS":443}]',
-  #@      "alb.ingress.kubernetes.io/actions.ssl-redirect": struct.encode({
-  #@        "Type": "redirect", 
-  #@        "RedirectConfig": { 
-  #@          "Protocol": "HTTPS", 
-  #@          "Port": "443", 
-  #@          "StatusCode": "HTTP_301",
-  #@        }
-  #@      }),
+  #@      "alb.ingress.kubernetes.io/listen-ports": '[{"HTTP": 80}, {"HTTPS":443}]'
   #@    })
   #@  end
   annotations: #@ ingressAnnotations
