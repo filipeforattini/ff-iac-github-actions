@@ -2887,15 +2887,6 @@ async function action() {
       "next-major",
       { name: "beta", prerelease: true },
       { name: "alpha", prerelease: true },
-
-      // envs
-      "env/*",
-
-      // git-flow
-      "bug/*",
-      "bugfix/*",
-      "release/*",
-      "feature/*",
     ],
     plugins,
   };
