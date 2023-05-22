@@ -8,3 +8,14 @@ service:
 
 job:
   enable: true
+  resources:
+    requests:
+      - name: cpu 
+        value: 1
+      - name: memory
+        value: 2Gi
+    limits: 
+      - name: cpu 
+        value: 1
+      - name: memory
+        value: 4Gi

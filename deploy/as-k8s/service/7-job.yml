@@ -2,6 +2,13 @@
 #@ load("@ytt:data", "data")
 #@ load("@ytt:json", "json")
 
+#@ def ListToMap (listOfMaps):
+#@    newMap = {}
+#@    for i in range(len(listOfMaps)):
+#@        newMap.update({ listOfMaps[i].name: listOfMaps[i].value })
+#@    end
+#@    return newMap
+#@ end
 ---
 #@ if data.values.job.enable:
 apiVersion: batch/v1
@@ -27,6 +34,12 @@ spec:
       - name: #@ "{}-{}".format(data.values.job.name, md5.sum(json.encode(data.values)))
         image: #@ "{}/{}/{}:{}".format(data.values.containerRegistry, data.values.organization, data.values.repository, data.values.tag)
         command: #@ data.values.job.command
+
+        #@  jobResources = {
+        #@    "limits": ListToMap(data.values.job.resources.limits),
+        #@    "requests": ListToMap(data.values.job.resources.requests),
+        #@  }
+        resources: #@ jobResources
 
         #@ jobEnvs = []
         #@ jobEnvs.extend(data.values.env)

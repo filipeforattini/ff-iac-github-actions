@@ -104,6 +104,12 @@
   backoffLimit: 1
   command: []
 
+  resources:
+    #@schema/type any=True
+    limits: []
+    #@schema/type any=True
+    requests: []
+
   #@schema/type any=True
   nodeSelector: []
 #@ end
@@ -120,6 +126,12 @@
 
   schedule: "* * * * *"
   command: []
+
+  resources:
+    #@schema/type any=True
+    limits: []
+    #@schema/type any=True
+    requests: []
 
   #@schema/type any=True
   nodeSelector: []

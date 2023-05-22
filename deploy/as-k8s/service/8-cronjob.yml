@@ -1,5 +1,12 @@
 #@ load("@ytt:data", "data")
 
+#@ def ListToMap (listOfMaps):
+#@    newMap = {}
+#@    for i in range(len(listOfMaps)):
+#@        newMap.update({ listOfMaps[i].name: listOfMaps[i].value })
+#@    end
+#@    return newMap
+#@ end
 ---
 #@ if data.values.cronjob.enable:
 apiVersion: batch/v1
@@ -27,6 +34,12 @@ spec:
           - name: #@ data.values.cronjob.name
             image: #@ "{}/{}/{}:{}".format(data.values.containerRegistry, data.values.organization, data.values.repository, data.values.tag)
             command: #@ data.values.cronjob.command
+
+            #@  cronjobResources = {
+            #@    "limits": ListToMap(data.values.cronjob.resources.limits),
+            #@    "requests": ListToMap(data.values.cronjob.resources.requests),
+            #@  }
+            resources: #@ cronjobResources
 
             #@ cronjobEnvs = []
             #@ cronjobEnvs.extend(data.values.env)
