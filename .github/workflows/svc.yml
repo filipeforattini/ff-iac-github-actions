@@ -247,7 +247,7 @@ jobs:
   #                       Build                      # 
   #--------------------------------------------------#
   Build:
-    uses: filipeforattini/ff-iac-github-actions/.github/workflows/svc-build.yml@main
+    uses: andrebrito16/iac-github-actions/.github/workflows/svc.yml@fix/push-go-image
     needs: Setup
     if: needs.Setup.outputs.event == 'deployment'
 
