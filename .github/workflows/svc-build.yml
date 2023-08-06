@@ -235,6 +235,15 @@ jobs:
         if: steps.analysis.outputs.feature_has_dockerignore == 'false'
         with:
           writeSummary: true
+      
+      # login
+      - name: Config | Login to Container Registry
+        uses: docker/login-action@v2
+        with:
+          logout: false
+          registry: ${{inputs.containerRegistry}}
+          username: ${{secrets.REGISTRY_USERNAME}}
+          password: ${{secrets.REGISTRY_PASSWORD}}
 
       # build
       - name: Copy config
