@@ -89,6 +89,7 @@ runs:
         cache: 'pip'
 
     - name: Setup | Poetry ${{ inputs.poetry }}
+      if: inputs.python != 'false'
       uses: snok/install-poetry@v1
       with:
         version: ${{ inputs.poetry }}
