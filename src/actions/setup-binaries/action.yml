@@ -82,7 +82,7 @@ runs:
     # python
     - name: Setup | Python ${{ inputs.python }}
       if: inputs.python != 'false'
-      uses: actions/setup-python@v4.1.0
+      uses: actions/setup-python@v4.7.0
       with:
         python-version: ${{ inputs.python }}
         check-latest: true
