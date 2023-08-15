@@ -132,9 +132,11 @@ jobs:
           python: ${{matrix.python-version}}
           poetry: 1.5.1
 
-      - name: Pip install
-        run: pip install --upgrade -r requirements.txt
-
+      - name: Install dependencies
+        run: |
+          if test -f ./pyproject.toml; then poetry install; fi
+          if test -f ./requirements.txt; then pip install --upgrade -r requirements.txt; fi
+          if test -f ./makefile; then make install; fi
 
   #--------------------------------------------------#
   #                    Tests: Go                     #
