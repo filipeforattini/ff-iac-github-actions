@@ -94,7 +94,7 @@ jobs:
 
       # pre-job
       - name: Setup | Cloning repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # job
       - name: Pipeline config scrapper
@@ -126,7 +126,7 @@ jobs:
 
       # pre-job
       - name: Setup | Cloning repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         if: inputs.staticAnalysis
         with:
           token: "${{secrets.GITHUB_TOKEN}}"
@@ -175,7 +175,7 @@ jobs:
 
       # pre-job
       - name: Setup | Cloning repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           token: "${{secrets.PIPELINE_DEPLOY_TOKEN}}"
 
@@ -216,7 +216,7 @@ jobs:
 
       # pre-job
       - name: Setup | Cloning repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           token: "${{secrets.PIPELINE_DEPLOY_TOKEN}}"
 
@@ -277,13 +277,13 @@ jobs:
 
       # pre-job
       - name: Setup | Cloning repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
           persist-credentials: false
         
       - name: Setup | Cloning tools
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: main
           path: .pipeline
