@@ -112295,7 +112295,7 @@ var deploy = async (analysis) => {
   analysis.deployment.fullname_tag = fullname_tag;
   analysis.deployment.fullname_tags = fullname_tags;
   analysis.deployment.tags_string = fullname_tags.join(',');
-  analysis.deployment.tags_command = fullname_tags.map(t => `--tag ${tag}`).join(' ');
+  analysis.deployment.tags_command = fullname_tags.map(t => `--tag ${t}`).join(' ');
   logger$3.info('deployment', `tag = ${tag}`);
 
   let args = "";
