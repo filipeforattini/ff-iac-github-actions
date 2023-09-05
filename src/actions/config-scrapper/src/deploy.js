@@ -73,7 +73,8 @@ module.exports = async (analysis) => {
   analysis.deployment.tags = tags
   analysis.deployment.fullname_tag = fullname_tag
   analysis.deployment.fullname_tags = fullname_tags
-  analysis.deployment.tagsString = fullname_tags.join(',')
+  analysis.deployment.tags_string = fullname_tags.join(',')
+  analysis.deployment.tags_command = fullname_tags.map(t => `--tag ${tag}`).join(' ')
   logger.info('deployment', `tag = ${tag}`)
 
   let args = ""
@@ -92,9 +93,9 @@ module.exports = async (analysis) => {
 
   let labels = [ `org.opencontainers.image.source=https://github.com/${organization}/${name}` ]
   analysis.deployment.labels = labels 
-  analysis.deployment.labelsString = labels.join(',')
+  analysis.deployment.labels_string = labels.join(',')
+  analysis.deployment.labels_command = labels.map(t => `--label ${tag}`).join(' ')
   logger.info('deployment', `labels = ${labels}`)
-
 
   if (github.context.payload.deployment) {
     // k8s
@@ -129,6 +130,8 @@ module.exports = async (analysis) => {
   analysis.outputs.deploy_tag = analysis.deployment.tag
   analysis.outputs.deploy_fullname_tag = analysis.deployment.fullname_tag
   analysis.outputs.build_args = analysis.deployment.build_args
-  analysis.outputs.build_tags = analysis.deployment.tagsString
-  analysis.outputs.build_labels = analysis.deployment.labelsString
+  analysis.outputs.build_tags = analysis.deployment.tags_string
+  analysis.outputs.build_tags_command = analysis.deployment.tags_command
+  analysis.outputs.build_labels = analysis.deployment.labels_string
+  analysis.outputs.build_labels_command = analysis.deployment.labels_command
 }

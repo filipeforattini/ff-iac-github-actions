@@ -112294,7 +112294,8 @@ var deploy = async (analysis) => {
   analysis.deployment.tags = tags;
   analysis.deployment.fullname_tag = fullname_tag;
   analysis.deployment.fullname_tags = fullname_tags;
-  analysis.deployment.tagsString = fullname_tags.join(',');
+  analysis.deployment.tags_string = fullname_tags.join(',');
+  analysis.deployment.tags_command = fullname_tags.map(t => `--tag ${tag}`).join(' ');
   logger$3.info('deployment', `tag = ${tag}`);
 
   let args = "";
@@ -112313,9 +112314,9 @@ var deploy = async (analysis) => {
 
   let labels = [ `org.opencontainers.image.source=https://github.com/${organization}/${name}` ];
   analysis.deployment.labels = labels; 
-  analysis.deployment.labelsString = labels.join(',');
+  analysis.deployment.labels_string = labels.join(',');
+  analysis.deployment.labels_command = labels.map(t => `--label ${tag}`).join(' ');
   logger$3.info('deployment', `labels = ${labels}`);
-
 
   if (github$5.context.payload.deployment) {
     // k8s
@@ -112350,8 +112351,10 @@ var deploy = async (analysis) => {
   analysis.outputs.deploy_tag = analysis.deployment.tag;
   analysis.outputs.deploy_fullname_tag = analysis.deployment.fullname_tag;
   analysis.outputs.build_args = analysis.deployment.build_args;
-  analysis.outputs.build_tags = analysis.deployment.tagsString;
-  analysis.outputs.build_labels = analysis.deployment.labelsString;
+  analysis.outputs.build_tags = analysis.deployment.tags_string;
+  analysis.outputs.build_tags_command = analysis.deployment.tags_command;
+  analysis.outputs.build_labels = analysis.deployment.labels_string;
+  analysis.outputs.build_labels_command = analysis.deployment.labels_command;
 };
 
 const github$4 = github$6;
