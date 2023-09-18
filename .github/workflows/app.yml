@@ -295,7 +295,7 @@ jobs:
 
       # login
       - name: Config | Login to Container Registry
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           logout: false
           registry: ${{ inputs.containerRegistry }}
@@ -379,7 +379,7 @@ jobs:
 
       # secrets for registry auth
       - name: Config | Login to Container Registry
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           logout: false
           registry: ${{ inputs.containerRegistry }}
