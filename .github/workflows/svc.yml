@@ -154,7 +154,7 @@ jobs:
   #                Tests-And-Version                 # 
   #--------------------------------------------------#
   Tests-And-Version:    
-    uses: andrebrito16/iac-github-actions/.github/workflows/svc-version.yml@feat/added-elixir-build
+    uses: filipeforattini/ff-iac-github-actions/.github/workflows/svc-version.yml@main
     needs: Setup
     if: needs.Setup.outputs.event == 'push'
 
@@ -255,7 +255,7 @@ jobs:
   #                       Build                      # 
   #--------------------------------------------------#
   Build:
-    uses: andrebrito16/iac-github-actions/.github/workflows/svc-build.yml@feat/added-elixir-build
+    uses: filipeforattini/ff-iac-github-actions/.github/workflows/svc-build.yml@main
     needs: Setup
     if: needs.Setup.outputs.event == 'deployment'
 
