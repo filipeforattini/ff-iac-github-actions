@@ -47,6 +47,14 @@ on:
         type: string
         required: false
         default: '1.18'
+      elixirVersion:
+        type: string
+        required: false
+        default: '1.12'
+      elixirMatrix:
+        type: string
+        required: false
+        default: '["1.12"]'
 
     secrets:
       PIPELINE_DEPLOY_TOKEN:
@@ -55,7 +63,7 @@ on:
     outputs:
       version: 
         description: "Version"
-        value: ${{jobs.Release-Node.outputs.Version}}${{jobs.Release-Python.outputs.Version}}${{jobs.Release-Go.outputs.Version}}
+        value: ${{jobs.Release-Node.outputs.Version}}${{jobs.Release-Python.outputs.Version}}${{jobs.Release-Go.outputs.Version}}${{jobs.Release-Elixir.outputs.Version}}
 
 #--------------------------------------------------#
 #                  Workflow Jobs                   # 
@@ -174,6 +182,40 @@ jobs:
     
       - name: Download dependencies
         run: go mod download
+  
+  #--------------------------------------------------#
+  #                    Tests: Elixir                 #
+  #--------------------------------------------------#
+  Tests-Elixir:
+    runs-on: ubuntu-latest
+    if: inputs.language == 'elixir'
+    
+    strategy:
+      matrix:
+        elixir-version: ${{fromJSON(inputs.goMatrix)}}
+
+    steps:
+
+      # pre-job
+      - name: Setup | Cloning repository
+        uses: actions/checkout@v3
+        with:
+          token: ${{secrets.PIPELINE_DEPLOY_TOKEN}}
+
+      - name: Setup | Dependencies
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/setup-binaries@main
+        with:
+          elixir: ${{matrix.elixir-version}}
+
+      - name: Check out code into the Elixir module directory
+        uses: actions/checkout@v3
+
+      - uses: actions/cache@v3
+        with:
+          path: ~/.mix
+          key: ${{runner.os}}-mix-${{hashFiles('**/mix.lock')}}
+          restore-keys: |
+            ${{runner.os}}-mix
 
 
   #--------------------------------------------------#
@@ -317,7 +359,7 @@ jobs:
   #--------------------------------------------------#
   Release-Undetected:
     runs-on: ubuntu-latest
-    if: inputs.language == 'undetected'
+    if: inputs.language == 'undetected' || inputs.language == 'elixir'
 
     outputs:
       Version: ${{steps.versioning.outputs.version}}

@@ -40,6 +40,10 @@ inputs:
     description: 'Inform the Go version'
     required: false
     default: 'false'
+  elixir:
+    description: 'Inform the Elixir version'
+    required: false
+    default: 'false'
   java:
     description: 'Inform the Java version'
     required: false
@@ -111,6 +115,15 @@ runs:
         java-version: ${{ inputs.java }}
         check-latest: true
         cache: 'gradle'
+
+    # elixir
+    - name: Setup | Elixir ${{ inputs.elixir }}
+      if: inputs.elixir != 'false'
+      uses: actions/setup-elixir@v1
+      with:
+        otp-version: ${{ inputs.elixir }}
+        check-latest: true
+        cache: 'hex'
 
     # docker
     - name: Setup | Docker QMEU

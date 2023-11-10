@@ -64,6 +64,14 @@ on:
         type: string
         required: false
         default: '1.18'
+      elixirVersion:
+        type: string
+        required: false
+        default: '1.12'
+      elixirMatrix:
+        type: string
+        required: false
+        default: '["1.12"]'
       platforms:
         type: string
         required: false
