@@ -359,7 +359,7 @@ jobs:
   #--------------------------------------------------#
   Release-Undetected:
     runs-on: ubuntu-latest
-    if: inputs.language == 'undetected' || inputs.language == 'elixir'
+    if: inputs.language == 'undetected'
 
     outputs:
       Version: ${{steps.versioning.outputs.version}}
