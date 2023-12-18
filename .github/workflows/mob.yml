@@ -367,7 +367,7 @@ jobs:
 
       # upload artifacts
       - name: Upload | Android artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: android-artifacts
           path: android/app/build/outputs/
