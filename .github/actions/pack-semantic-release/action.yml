@@ -25,7 +25,7 @@ inputs:
     description: ""
   nodejs:
     required: false
-    default: '18'
+    default: '20'
     description: "Nodejs version"
   files:
     required: false
