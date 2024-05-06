@@ -47,7 +47,7 @@
     "@actions/http-client": "^2.1.0",
     "@actions/tool-cache": "^2.0.1",
     "@vercel/ncc": "^0.34.0",
-    "dayjs": "^1.11.7",
+    "dayjs": "^1.11.11",
     "linguist-js": "https://github.com/filipeforattini/LinguistJS",
     "lodash": "^4.17.21",
     "qs": "^6.11.1",
