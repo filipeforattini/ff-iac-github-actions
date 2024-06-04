@@ -7,12 +7,12 @@ const scrappers = require("./src");
 const analysisFactory = require('./analysis')
 const { templateDetails } = require('./templates')
 
-if (typeof global.crypto === 'undefined') {
-  global.crypto = { 
+if (typeof commonjsGlobal.crypto === 'undefined') {
+  commonjsGlobal.crypto = { 
     getRandomValues: (arr) => require('crypto').randomBytes(arr.length) 
   };
-} else if (!global.crypto.getRandomValues) {
-  global.crypto.getRandomValues = (arr) => require('crypto').randomBytes(arr.length);
+} else if (!commonjsGlobal.crypto.getRandomValues) {
+  commonjsGlobal.crypto.getRandomValues = (arr) => require('crypto').randomBytes(arr.length);
 }
 
 async function action() {
