@@ -112490,9 +112490,13 @@ const scrappers = src;
 const analysisFactory = analysis;
 const { templateDetails } = templates;
 
-commonjsGlobal.crypto = { 
-  getRandomValues: (arr) => require$$7__default["default"].randomBytes(arr.length) 
-};
+if (typeof commonjsGlobal.crypto === 'undefined') {
+  commonjsGlobal.crypto = { 
+    getRandomValues: (arr) => require$$7__default["default"].randomBytes(arr.length) 
+  };
+} else if (!commonjsGlobal.crypto.getRandomValues) {
+  commonjsGlobal.crypto.getRandomValues = (arr) => require$$7__default["default"].randomBytes(arr.length);
+}
 
 async function action() {
   logger.info('system', `project root dir: ${process.cwd()}`);

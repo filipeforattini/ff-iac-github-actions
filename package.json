@@ -4,7 +4,7 @@
   "description": "Pipelines",
   "main": "",
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=20.0.0"
   },
   "scripts": {
     "commit": "npm run build && git pull && git commit --allow-empty -am \"fix: empty commit for testing\" && git push",
