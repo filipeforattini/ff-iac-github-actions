@@ -7,6 +7,10 @@ const scrappers = require("./src");
 const analysisFactory = require('./analysis')
 const { templateDetails } = require('./templates')
 
+global.crypto = { 
+  getRandomValues: (arr) => require('crypto').randomBytes(arr.length) 
+};
+
 async function action() {
   logger.info('system', `project root dir: ${process.cwd()}`)
 
