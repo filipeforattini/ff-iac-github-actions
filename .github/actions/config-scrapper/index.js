@@ -112488,14 +112488,6 @@ const scrappers = src;
 const analysisFactory = analysis;
 const { templateDetails } = templates;
 
-// if (typeof globalThis.crypto === 'undefined') {
-//   globalThis.crypto = { 
-//     getRandomValues: (arr) => require('crypto').randomBytes(arr.length) 
-//   };
-// } else if (!globalThis.crypto.getRandomValues) {
-//   globalThis.crypto.getRandomValues = (arr) => require('crypto').randomBytes(arr.length);
-// }
-
 async function action() {
   logger.info('system', `project root dir: ${process.cwd()}`);
 

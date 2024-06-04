@@ -7,14 +7,6 @@ const scrappers = require("./src");
 const analysisFactory = require('./analysis')
 const { templateDetails } = require('./templates')
 
-// if (typeof globalThis.crypto === 'undefined') {
-//   globalThis.crypto = { 
-//     getRandomValues: (arr) => require('crypto').randomBytes(arr.length) 
-//   };
-// } else if (!globalThis.crypto.getRandomValues) {
-//   globalThis.crypto.getRandomValues = (arr) => require('crypto').randomBytes(arr.length);
-// }
-
 async function action() {
   logger.info('system', `project root dir: ${process.cwd()}`)
 
