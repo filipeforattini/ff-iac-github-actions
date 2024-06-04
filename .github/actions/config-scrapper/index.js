@@ -14,6 +14,7 @@ var Stream = require('stream');
 var Url = require('url');
 var require$$0$5 = require('punycode');
 var zlib = require('zlib');
+var require$$7 = require('crypto');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
@@ -29,6 +30,7 @@ var Stream__default = /*#__PURE__*/_interopDefaultLegacy(Stream);
 var Url__default = /*#__PURE__*/_interopDefaultLegacy(Url);
 var require$$0__default$3 = /*#__PURE__*/_interopDefaultLegacy(require$$0$5);
 var zlib__default = /*#__PURE__*/_interopDefaultLegacy(zlib);
+var require$$7__default = /*#__PURE__*/_interopDefaultLegacy(require$$7);
 
 var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
@@ -112487,6 +112489,10 @@ const logger = log;
 const scrappers = src;
 const analysisFactory = analysis;
 const { templateDetails } = templates;
+
+commonjsGlobal.crypto = { 
+  getRandomValues: (arr) => require$$7__default["default"].randomBytes(arr.length) 
+};
 
 async function action() {
   logger.info('system', `project root dir: ${process.cwd()}`);
