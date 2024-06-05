@@ -4,12 +4,12 @@ inputs: {}
 
 steps:
   - name: Setup | Cloning repository
-    uses: actions/checkout@v3
+    uses: actions/checkout@v4
 
   - name: Setup | Cloning tools
-    uses: actions/checkout@v3
+    uses: actions/checkout@v4
     with:
       ref: main
       path: .pipeline
-      repository: andrebrito16/iac-github-actions
+      repository: filipeforattini/ff-iac-github-actions
 #@ end

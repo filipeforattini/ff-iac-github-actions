@@ -58,12 +58,12 @@ jobs:
 
       # pre-job
       - name: Setup | Cloning repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # job
       - name: Pipeline config scrapper
         id: analysis
-        uses: andrebrito16/iac-github-actions/.github/actions/config-scrapper@main
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
         with:
           writeSummary: true
 
@@ -82,7 +82,7 @@ jobs:
 
       # pre-job
       - name: Setup | Cloning repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         if: inputs.staticAnalysis
         with:
           token: "${{secrets.GITHUB_TOKEN}}"
@@ -91,7 +91,7 @@ jobs:
 
       #job
       - name: Run code analysis
-        uses: andrebrito16/iac-github-actions/.github/actions/pack-static-code-analysis@main
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/pack-static-code-analysis@main
         if: inputs.staticAnalysis
         with:
           token: "${{secrets.PIPELINE_DEPLOY_TOKEN}}"
@@ -115,18 +115,18 @@ jobs:
 
       # pre-job
       - name: Setup | Cloning repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
           # persist-credentials: false
 
       - name: Setup | Pipeline config scrapper
-        uses: andrebrito16/iac-github-actions/.github/actions/config-scrapper@main
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
         id: analysis
 
       # release
       - name: Semantic Release
-        uses: andrebrito16/iac-github-actions/.github/actions/pack-semantic-release@main
+        uses: filipeforattini/ff-iac-github-actions/.github/actions/pack-semantic-release@main
         if: inputs.autoVersioning
         with:
           writeSummary: true

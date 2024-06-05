@@ -36,7 +36,7 @@ runs:
 
   steps:
     - name: Setup | Dependencies
-      uses: andrebrito16/iac-github-actions/.github/actions/setup-binaries@main
+      uses: filipeforattini/ff-iac-github-actions/.github/actions/setup-binaries@main
       id: dependencies
       if: inputs.install == 'true'
       with:
@@ -45,7 +45,7 @@ runs:
 
     - name: Pipeline config scrapper
       id: analysis
-      uses: andrebrito16/iac-github-actions/.github/actions/config-scrapper@main
+      uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
       with:
         containerRegistry: ${{inputs.containerRegistry}}
 

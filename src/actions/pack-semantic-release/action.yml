@@ -62,7 +62,7 @@ runs:
         echo has_releaserc_file=$HAS_RELEASERC_FILE
 
     - name: Create .releaserc.json
-      uses: andrebrito16/iac-github-actions/.github/actions/create-releaserc-file@main
+      uses: filipeforattini/ff-iac-github-actions/.github/actions/create-releaserc-file@main
       if: steps.file_checker.outputs.has_releaserc_file == 'false'
       with:
         writeSummary: ${{ inputs.writeSummary }}
@@ -84,7 +84,7 @@ runs:
       run: npm -g install npm yarn pnpm && npm -v && yarn -v && pnpm -v
 
     - name: Semantic Release
-      uses: andrebrito16/iac-github-actions/.github/actions/semantic-release@main
+      uses: filipeforattini/ff-iac-github-actions/.github/actions/semantic-release@main
       env:
         GH_TOKEN: ${{ inputs.token }}
         GITHUB_TOKEN: ${{ inputs.token }}

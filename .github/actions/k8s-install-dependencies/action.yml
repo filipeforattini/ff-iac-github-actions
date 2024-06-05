@@ -37,16 +37,16 @@ runs:
 
     # pre-job
     - name: Setup | Cloning tools
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         token: ${{inputs.token}}
         ref: main
         path: .pipeline
-        repository: andrebrito16/iac-github-actions
+        repository: filipeforattini/ff-iac-github-actions
 
     - name: Setup | Pipeline config scrapper
       if: inputs.cloneTools != false
-      uses: andrebrito16/iac-github-actions/.github/actions/config-scrapper@main
+      uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
       id: analysis
 
     # namespace

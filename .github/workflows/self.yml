@@ -11,7 +11,7 @@ on:
 jobs:
 
   IAC:
-    uses: andrebrito16/iac-github-actions/.github/workflows/iac.yml@main
+    uses: filipeforattini/ff-iac-github-actions/.github/workflows/iac.yml@main
     secrets: inherit
     with:
       mainBranch: main
