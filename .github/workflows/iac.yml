@@ -48,6 +48,11 @@ jobs:
     steps:
 
       # pre-job
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
       - name: Setup | Cloning repository
         uses: actions/checkout@v3
 
@@ -78,6 +83,7 @@ jobs:
         with:
           fetch-depth: '0'
           persist-credentials: false
+          node-version: '20'
 
       #job
       - name: Run code analysis
