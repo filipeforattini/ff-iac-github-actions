@@ -45,7 +45,7 @@ runs:
 
     - name: Pipeline config scrapper
       id: analysis
-      uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
+      uses: andrebrito16/iac-github-actions/.github/actions/config-scrapper@main
       with:
         containerRegistry: ${{inputs.containerRegistry}}
 
