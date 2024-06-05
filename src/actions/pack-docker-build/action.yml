@@ -36,7 +36,7 @@ runs:
 
   steps:
     - name: Setup | Dependencies
-      uses: filipeforattini/ff-iac-github-actions/.github/actions/setup-binaries@main
+      uses: andrebrito16/iac-github-actions/.github/actions/setup-binaries@main
       id: dependencies
       if: inputs.install == 'true'
       with:

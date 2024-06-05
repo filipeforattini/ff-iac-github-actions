@@ -11,5 +11,5 @@ steps:
     with:
       ref: main
       path: .pipeline
-      repository: filipeforattini/ff-iac-github-actions
+      repository: andrebrito16/iac-github-actions
 #@ end

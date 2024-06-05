@@ -84,7 +84,7 @@ jobs:
         with:
           ref: main
           path: .pipeline
-          repository: filipeforattini/ff-iac-github-actions
+          repository: andrebrito16/iac-github-actions
 
       - name: Install | Node.js ${{matrix.node-version}}
         uses: actions/setup-node@v3
@@ -127,7 +127,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Setup | Dependencies
-        uses: filipeforattini/ff-iac-github-actions/.github/actions/setup-binaries@main
+        uses: andrebrito16/iac-github-actions/.github/actions/setup-binaries@main
         with:
           python: ${{matrix.python-version}}
           poetry: 1.5.1
@@ -158,7 +158,7 @@ jobs:
           token: ${{secrets.PIPELINE_DEPLOY_TOKEN}}
 
       - name: Setup | Dependencies
-        uses: filipeforattini/ff-iac-github-actions/.github/actions/setup-binaries@main
+        uses: andrebrito16/iac-github-actions/.github/actions/setup-binaries@main
         with:
           go: ${{matrix.go-version}}
 
@@ -196,12 +196,12 @@ jobs:
           persist-credentials: false
 
       - name: Setup | Pipeline config scrapper
-        uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
+        uses: andrebrito16/iac-github-actions/.github/actions/config-scrapper@main
         id: analysis
 
       # release
       - name: Semantic Release
-        uses: filipeforattini/ff-iac-github-actions/.github/actions/pack-semantic-release@main
+        uses: andrebrito16/iac-github-actions/.github/actions/pack-semantic-release@main
         if: inputs.autoVersioning
         continue-on-error: true
         with:
@@ -241,12 +241,12 @@ jobs:
           persist-credentials: false
 
       - name: Setup | Pipeline config scrapper
-        uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
+        uses: andrebrito16/iac-github-actions/.github/actions/config-scrapper@main
         id: analysis
 
       # release
       - name: Semantic Release
-        uses: filipeforattini/ff-iac-github-actions/.github/actions/pack-semantic-release@main
+        uses: andrebrito16/iac-github-actions/.github/actions/pack-semantic-release@main
         if: inputs.autoVersioning
         with:
           writeSummary: true
@@ -286,12 +286,12 @@ jobs:
           persist-credentials: false
 
       - name: Setup | Pipeline config scrapper
-        uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
+        uses: andrebrito16/iac-github-actions/.github/actions/config-scrapper@main
         id: analysis
 
       # release
       - name: Semantic Release
-        uses: filipeforattini/ff-iac-github-actions/.github/actions/pack-semantic-release@main
+        uses: andrebrito16/iac-github-actions/.github/actions/pack-semantic-release@main
         if: inputs.autoVersioning
         with:
           writeSummary: true
@@ -332,12 +332,12 @@ jobs:
           persist-credentials: false
 
       - name: Setup | Pipeline config scrapper
-        uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
+        uses: andrebrito16/iac-github-actions/.github/actions/config-scrapper@main
         id: analysis
 
       # release
       - name: Semantic Release
-        uses: filipeforattini/ff-iac-github-actions/.github/actions/pack-semantic-release@main
+        uses: andrebrito16/iac-github-actions/.github/actions/pack-semantic-release@main
         if: inputs.autoVersioning
         with:
           writeSummary: true

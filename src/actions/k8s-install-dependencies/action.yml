@@ -42,11 +42,11 @@ runs:
         token: ${{inputs.token}}
         ref: main
         path: .pipeline
-        repository: filipeforattini/ff-iac-github-actions
+        repository: andrebrito16/iac-github-actions
 
     - name: Setup | Pipeline config scrapper
       if: inputs.cloneTools != false
-      uses: filipeforattini/ff-iac-github-actions/.github/actions/config-scrapper@main
+      uses: andrebrito16/iac-github-actions/.github/actions/config-scrapper@main
       id: analysis
 
     # namespace
