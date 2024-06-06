@@ -26,6 +26,9 @@ spec:
     spec:
       restartPolicy: Never
 
+      #@ if/end data.values.job.ttlSecondsAfterFinished:
+      ttlSecondsAfterFinished: #@ data.values.job.ttlSecondsAfterFinished
+
       #@ if/end data.values.deployment.imagePullSecrets:
       imagePullSecrets:
         - name: #@ data.values.deployment.imagePullSecretsName
