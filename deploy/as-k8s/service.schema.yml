@@ -100,6 +100,7 @@
   annotations: {}
   imagePullSecrets: true
   imagePullSecretsName: registry-token
+  ttlSecondsAfterFinished: 600
 
   backoffLimit: 1
   command: []
@@ -123,7 +124,6 @@
   annotations: {}
   imagePullSecrets: true
   imagePullSecretsName: registry-token
-  ttlSecondsAfterFinished: 600
 
   schedule: "* * * * *"
   command: []
