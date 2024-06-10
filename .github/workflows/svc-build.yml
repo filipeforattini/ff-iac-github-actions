@@ -64,7 +64,7 @@ jobs:
 
       # pre-job
       - name: Setup | Cloning tools
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: env/${{inputs.environment}}
 
@@ -133,7 +133,7 @@ jobs:
 
       # pre-job
       - name: Setup | Cloning tools
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: env/${{inputs.environment}}
 
@@ -201,7 +201,7 @@ jobs:
 
       # pre-job
       - name: Setup | Cloning tools
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: env/${{inputs.environment}}
 
@@ -269,7 +269,7 @@ jobs:
 
       # pre-job
       - name: Setup | Cloning tools
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: env/${{inputs.environment}}
 

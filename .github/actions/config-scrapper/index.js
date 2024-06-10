@@ -112490,82 +112490,97 @@ const scrappers = src;
 const analysisFactory = analysis;
 const { templateDetails } = templates;
 
-commonjsGlobal.crypto = { 
-  getRandomValues: (arr) => require$$7__default["default"].randomBytes(arr.length) 
-};
+if (typeof crypto === "undefined") {
+  commonjsGlobal.crypto = {
+    getRandomValues: (arr) => require$$7__default["default"].randomBytes(arr.length),
+  };
+} else if (typeof crypto.getRandomValues === "undefined") {
+  crypto.getRandomValues = (arr) => require$$7__default["default"].randomBytes(arr.length);
+}
 
 async function action() {
-  logger.info('system', `project root dir: ${process.cwd()}`);
+  logger.info("system", `project root dir: ${process.cwd()}`);
 
-  let writeSummary = core.getBooleanInput('writeSummary', { required: true });
+  let writeSummary = core.getBooleanInput("writeSummary", { required: true });
 
   if (writeSummary) {
     await core.summary
       .addHeading("🔍 Analyzed", 3)
       .addEOL()
-      .addRaw('This step will read your repository and seak for features to aggregate value!', true)
       .addRaw(
-        templateDetails({ 
-          summary: 'Received context:',
-          content: JSON.stringify(github.context, null, 2), 
+        "This step will read your repository and seak for features to aggregate value!",
+        true,
+      )
+      .addRaw(
+        templateDetails({
+          summary: "Received context:",
+          content: JSON.stringify(github.context, null, 2),
         }),
-        true
+        true,
       )
       .write();
   }
 
-  const evaluateSecrets = core.getBooleanInput('evaluateSecrets');
+  const evaluateSecrets = core.getBooleanInput("evaluateSecrets");
 
   if (evaluateSecrets) {
     const pipelineSecrets = [
-      'PIPESECRET_KUBE_CONFIG',
-      'PIPESECRET_REGISTRY_PASSWORD',
-      'PIPESECRET_REGISTRY_USERNAME',
-      'PIPESECRET_PIPELINE_DEPLOY_TOKEN',
-    ]
-    .reduce((acc, s) => { 
-      let value = process.env[s] || '';
-      let friendlyName = s.replace('PIPESECRET_', '');
-      
+      "PIPESECRET_KUBE_CONFIG",
+      "PIPESECRET_REGISTRY_PASSWORD",
+      "PIPESECRET_REGISTRY_USERNAME",
+      "PIPESECRET_PIPELINE_DEPLOY_TOKEN",
+    ].reduce((acc, s) => {
+      let value = process.env[s] || "";
+      let friendlyName = s.replace("PIPESECRET_", "");
+
       value.length > 0
-        ? logger.info('secret', `${friendlyName} is definied.`)
-        : logger.info('secret', `${friendlyName} is [not] definied.`);
+        ? logger.info("secret", `${friendlyName} is definied.`)
+        : logger.info("secret", `${friendlyName} is [not] definied.`);
 
       acc[friendlyName] = !_.isEmpty(value);
-      return acc
+      return acc;
     }, {});
 
     await core.summary
-      .addRaw('Secrets analysis')
+      .addRaw("Secrets analysis")
       .addTable([
-        [{ data: 'secret', header: true }, { data: 'defined', header: true }],
-        ...Object.entries(pipelineSecrets).map(([key, value]) => [ key, `${value}`]),
+        [
+          { data: "secret", header: true },
+          { data: "defined", header: true },
+        ],
+        ...Object.entries(pipelineSecrets).map(([key, value]) => [
+          key,
+          `${value}`,
+        ]),
       ])
       .write();
 
-    if (!Object.values(pipelineSecrets).every(x => x)) {
-      core.setFailed(new Error('There are non-defined secrets. Please configure your repository with the secrets below in the summary.'));
+    if (!Object.values(pipelineSecrets).every((x) => x)) {
+      core.setFailed(
+        new Error(
+          "There are non-defined secrets. Please configure your repository with the secrets below in the summary.",
+        ),
+      );
     }
   }
-
 
   const analysis = analysisFactory({
     root: process.cwd(),
     actor: github.context.actor,
     event: github.context.eventName,
-    environment: 'dev',
+    environment: "dev",
     outputs: {},
   });
-  
-  logger.info('system', `run trigged by [${analysis.event}] event`);
+
+  logger.info("system", `run trigged by [${analysis.event}] event`);
   analysis.outputs.pwd = analysis.root;
   analysis.outputs.event = analysis.event;
   analysis.outputs.actor = github.context.actor;
-  analysis.outputs.environment = 'dev';
+  analysis.outputs.environment = "dev";
 
-  if (analysis.event === 'workflow_dispatch') {
+  if (analysis.event === "workflow_dispatch") {
     await scrappers.eventDispatch(analysis);
-  } else if (analysis.event === 'deployment') {
+  } else if (analysis.event === "deployment") {
     await scrappers.eventDeployment(analysis);
   }
 
@@ -112576,25 +112591,32 @@ async function action() {
     scrappers.deploy(analysis),
     scrappers.repository(analysis),
   ]);
-  
-  Object.entries(analysis.outputs)
-    .forEach(([key, value]) => {
-      core.setOutput(key, _.isObject(value) ? JSON.stringify(analysis, null, 2) : `${value}`);
-    });
-  
+
+  Object.entries(analysis.outputs).forEach(([key, value]) => {
+    core.setOutput(
+      key,
+      _.isObject(value) ? JSON.stringify(analysis, null, 2) : `${value}`,
+    );
+  });
+
   if (writeSummary) {
     await core.summary
       .addRaw(
-        templateDetails({ 
-          summary: 'Analysis:',
-          content: JSON.stringify(analysis, null, 2), 
+        templateDetails({
+          summary: "Analysis:",
+          content: JSON.stringify(analysis, null, 2),
         }),
-        true
+        true,
       )
-      .addHeading('Outputs:', 4)
+      .addHeading("Outputs:", 4)
       .addTable([
-        [{ data: 'key', header: true }, { data: 'value', header: true }],
-        ..._.sortBy(Object.entries(analysis.outputs), '[0]').map(([key, value]) => [ key, `${value}`]),
+        [
+          { data: "key", header: true },
+          { data: "value", header: true },
+        ],
+        ..._.sortBy(Object.entries(analysis.outputs), "[0]").map(
+          ([key, value]) => [key, `${value}`],
+        ),
       ])
       .write();
   }
