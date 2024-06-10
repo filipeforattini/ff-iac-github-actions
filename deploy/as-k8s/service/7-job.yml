@@ -22,12 +22,13 @@ metadata:
 spec:
   backoffLimit: #@ data.values.job.backoffLimit
 
+  #@ if/end data.values.job.ttlSecondsAfterFinished:
+  ttlSecondsAfterFinished: #@ data.values.job.ttlSecondsAfterFinished
+  
   template:
     spec:
       restartPolicy: Never
 
-      #@ if/end data.values.job.ttlSecondsAfterFinished:
-      ttlSecondsAfterFinished: #@ data.values.job.ttlSecondsAfterFinished
 
       #@ if/end data.values.deployment.imagePullSecrets:
       imagePullSecrets:
