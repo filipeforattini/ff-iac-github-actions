@@ -2,7 +2,9 @@
   enable: true
   replicas: 1
   name: svc
-  labels: {}
+  labels:
+    tags.datadoghq.com/service: ""
+    tags.datadoghq.com/version: ""
   annotations: {}
   imagePullSecrets: true
   imagePullSecretsName: registry-token
@@ -19,7 +21,9 @@
     #@schema/type any=True
     requests: []
 
-  templateLabels: {}
+  templateLabels:
+    tags.datadoghq.com/service: ""
+    tags.datadoghq.com/version: ""
   matchLabels:
     overwrite: false
     labels: {}
