@@ -2,7 +2,9 @@
   enable: true
   replicas: 1
   name: svc
+  #@schema/type any=True
   labels: {}
+  #@schema/type any=True
   annotations: {}
   imagePullSecrets: true
   imagePullSecretsName: registry-token
