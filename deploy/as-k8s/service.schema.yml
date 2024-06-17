@@ -21,6 +21,7 @@
     #@schema/type any=True
     requests: []
 
+  #@schema/type any=True
   templateLabels: {}
   matchLabels:
     overwrite: false
