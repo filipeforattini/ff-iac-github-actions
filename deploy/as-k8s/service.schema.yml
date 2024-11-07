@@ -12,6 +12,9 @@
   #@schema/type any=True
   nodeSelector: []
 
+  #schema/type any=True
+  tolerations: []
+
   #@schema/type any=True
   ports: []
 

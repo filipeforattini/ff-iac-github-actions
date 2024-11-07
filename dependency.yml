@@ -1,0 +1,24 @@
+#@data/values
+---
+postgres:
+  enabled: true
+  values:
+    primary:
+      nodeSelector:
+        - name: kubernetes.io/arch
+          value: amd64
+        - name: stone.credit/layer
+          value: inside
+      persistence:
+        enabled: true
+        size: 4Gi
+
+redis:
+  enabled: true
+  values:
+    master:
+      nodeSelector:
+        - name: kubernetes.io/arch
+          value: amd64
+        - name: stone.credit/layer
+          value: inside
