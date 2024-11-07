@@ -46,7 +46,7 @@ spec:
         #@ for tol in data.values.deployment.tolerations:
         - key: #@ tol.key
           operator: #@ tol.operator
-          value: #@ tol.value if tol.get("value") else ""
+          value: #@ tol.value
           effect: #@ tol.effect
         #@ end
       #@ end
