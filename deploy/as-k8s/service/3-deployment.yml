@@ -41,6 +41,16 @@ spec:
       restartPolicy: Always
       nodeSelector: #@ ListToMap(data.values.deployment.nodeSelector)
 
+      #@ if data.values.deployment.tolerations:
+      tolerations:
+        #@ for tol in data.values.deployment.tolerations:
+        - key: #@ tol.key
+          operator: #@ tol.operator
+          value: #@ tol.value if tol.get("value") else ""
+          effect: #@ tol.effect
+        #@ end
+      #@ end
+
       #@ if/end data.values.deployment.imagePullSecrets:
       imagePullSecrets:
         - name: #@ data.values.deployment.imagePullSecretsName
