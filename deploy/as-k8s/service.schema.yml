@@ -8,10 +8,10 @@
   annotations: {}
 
   #@schema/type any=True
-  stg-annotations: {}
+  stg_annotations: {}
 
   #@schema/type any=True
-  prd-annotations: {}
+  prd_annotations: {}
 
   imagePullSecrets: true
   imagePullSecretsName: registry-token
@@ -20,10 +20,10 @@
   nodeSelector: []
 
   #@schema/type any=True
-  stg-nodeSelector: []
+  stg_nodeSelector: []
 
   #@schema/type any=True
-  prd-nodeSelector: []
+  prd_nodeSelector: []
 
   #@schema/type any=True
   tolerations: []

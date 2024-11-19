@@ -43,9 +43,9 @@ spec:
       restartPolicy: Always
       
       #@ if data.values.environment == "prd":
-      nodeSelector: #@ ListToMap(data.values.deployment.prd-nodeSelector)
+      nodeSelector: #@ ListToMap(data.values.deployment.prd_nodeSelector)
       #@ elif data.values.environment == "stg":
-      nodeSelector: #@ ListToMap(data.values.deployment.stg-nodeSelector)
+      nodeSelector: #@ ListToMap(data.values.deployment.stg_nodeSelector)
       #@ elif hasattr(data.values.deployment, "nodeSelector"):
       nodeSelector: #@ ListToMap(data.values.deployment.nodeSelector)
       #@ else:
