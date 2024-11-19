@@ -46,6 +46,7 @@ spec:
       nodeSelector: #@ ListToMap(data.values.deployment.stg-nodeSelector)
       #@ else:
       nodeSelector: #@ ListToMap(data.values.deployment.nodeSelector)
+      #@ end
 
       #@ if data.values.environment == "prd":
       #@ if data.values.deployment.prd-tolerations:
