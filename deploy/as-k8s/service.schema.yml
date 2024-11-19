@@ -25,10 +25,10 @@
   #@schema/type any=True
   prd_nodeSelector: []
 
-  #@ schema/type any=True
+  #@schema/type any=True
   prd_tolerations: []
 
-  #@ schema/type any=True
+  #@schema/type any=True
   stg_tolerations: []
 
   #@schema/type any=True
