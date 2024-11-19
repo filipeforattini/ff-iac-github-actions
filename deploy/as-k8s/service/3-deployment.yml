@@ -49,7 +49,7 @@ spec:
       #@ elif hasattr(data.values.deployment, "nodeSelector"):
       nodeSelector: #@ ListToMap(data.values.deployment.nodeSelector)
       #@ else:
-      nodeSelector: {}  #@ // Provide a default empty map if no nodeSelector is defined
+      nodeSelector: {}
       #@ end
 
       #@ if data.values.environment == "prd":
