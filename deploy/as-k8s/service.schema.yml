@@ -6,11 +6,24 @@
   labels: {}
   #@schema/type any=True
   annotations: {}
+
+  #@schema/type any=True
+  stg-annotations: {}
+
+  #@schema/type any=True
+  prd-annotations: {}
+
   imagePullSecrets: true
   imagePullSecretsName: registry-token
 
   #@schema/type any=True
   nodeSelector: []
+
+  #@schema/type any=True
+  stg-nodeSelector: []
+
+  #@schema/type any=True
+  prd-nodeSelector: []
 
   #@schema/type any=True
   tolerations: []

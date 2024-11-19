@@ -39,8 +39,33 @@ spec:
       labels: #@ deploymentTemplateLabels
     spec:
       restartPolicy: Always
+      
+      #@ if data.values.environment == "prd":
+      nodeSelector: #@ ListToMap(data.values.deployment.prd-nodeSelector)
+      #@ elif data.values.environment == "stg":
+      nodeSelector: #@ ListToMap(data.values.deployment.stg-nodeSelector)
+      #@ else:
       nodeSelector: #@ ListToMap(data.values.deployment.nodeSelector)
 
+      #@ if data.values.environment == "prd":
+      #@ if data.values.deployment.prd-tolerations:
+      tolerations:
+        #@ for tol in data.values.deployment.prd-tolerations:
+        - key: #@ tol.key
+          operator: #@ tol.operator
+          effect: #@ tol.effect
+        #@ end
+      #@ end
+      #@ elif data.values.environment == "stg":
+      #@ if data.values.deployment.stg-tolerations:
+      tolerations:
+        #@ for tol in data.values.deployment.stg-tolerations:
+        - key: #@ tol.key
+          operator: #@ tol.operator
+          effect: #@ tol.effect
+        #@ end
+      #@ end
+      #@ else:
       #@ if data.values.deployment.tolerations:
       tolerations:
         #@ for tol in data.values.deployment.tolerations:
@@ -48,6 +73,7 @@ spec:
           operator: #@ tol.operator
           effect: #@ tol.effect
         #@ end
+      #@ end
       #@ end
 
       #@ if/end data.values.deployment.imagePullSecrets:
