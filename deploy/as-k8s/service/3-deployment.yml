@@ -53,18 +53,18 @@ spec:
       #@ end
 
       #@ if data.values.environment == "prd":
-      #@ if data.values.deployment.prd-tolerations:
+      #@ if data.values.deployment.prd_tolerations:
       tolerations:
-        #@ for tol in data.values.deployment.prd-tolerations:
+        #@ for tol in data.values.deployment.prd_tolerations:
         - key: #@ tol.key
           operator: #@ tol.operator
           effect: #@ tol.effect
         #@ end
       #@ end
       #@ elif data.values.environment == "stg":
-      #@ if data.values.deployment.stg-tolerations:
+      #@ if data.values.deployment.stg_tolerations:
       tolerations:
-        #@ for tol in data.values.deployment.stg-tolerations:
+        #@ for tol in data.values.deployment.stg_tolerations:
         - key: #@ tol.key
           operator: #@ tol.operator
           effect: #@ tol.effect
