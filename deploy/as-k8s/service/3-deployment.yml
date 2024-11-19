@@ -11,6 +11,8 @@
 #@    end
 #@    return newMap
 #@ end
+
+#@ load("@ytt:data", "data")
 ---
 #@ if data.values.deployment.enable:
 apiVersion: apps/v1
