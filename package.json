@@ -49,7 +49,7 @@
     "@vercel/ncc": "^0.34.0",
     "dayjs": "^1.11.7",
     "linguist-js": "https://github.com/filipeforattini/LinguistJS",
-    "lodash": "^4.17.21",
+    "lodash": "^4.17.23",
     "qs": "^6.11.1",
     "uuid": "^9.0.0"
   },
