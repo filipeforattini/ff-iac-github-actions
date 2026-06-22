@@ -58,7 +58,7 @@ jobs:
 
       # pre-job
       - name: Setup | Cloning repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       # job
       - name: Pipeline config scrapper
@@ -82,7 +82,7 @@ jobs:
 
       # pre-job
       - name: Setup | Cloning repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         if: inputs.staticAnalysis
         with:
           token: "${{secrets.GITHUB_TOKEN}}"
@@ -115,7 +115,7 @@ jobs:
 
       # pre-job
       - name: Setup | Cloning repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
           # persist-credentials: false
